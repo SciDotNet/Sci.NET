@@ -1,0 +1,39 @@
+name: Continuous Integration
+
+env:
+    DOTNET_INSTALL_DIR: "eng/dotnet"
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: Sci.NET.Common Version
+      id: common-version
+      uses: paulhatch/semantic-version@v5.0.0-beta
+      with:
+        change_path: "src"
+        namespace: Sci.NET
+    - name: Configure CMake
+      run: cmake -B .\eng\cmake_build\ -G "Visual Studio 17 2022"
+    - name: Generate Solutions
+      run: .\eng\Generate-Solution.ps1
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
