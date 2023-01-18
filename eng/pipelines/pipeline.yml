@@ -1,0 +1,58 @@
+parameters:
+  - name: ci
+    default: true
+  - name: deploy-dev
+  - name: deploy-rc
+  - name: deploy-prod
+  - name: configuration
+
+stages:
+  - stage: BuildAndTest
+    displayName: Build and Test
+    jobs:
+      - job: BuildAndTest
+        displayName: 'Build and Test'
+        steps:
+          - task: gitversion/setup@0
+            displayName: 'GitVersion - Setup'
+            inputs:
+              versionSpec: '5.x'
+          - task: gitversion/execute@0
+            displayName: 'GitVersion - Execute'
+            name: Version
+          - template: templates/build-and-test-template.yml
+            parameters:
+              configuration: '$(variables.buildConfiguration)'
+  - stage: DeployToDev
+    displayName: Deploy to Dev
+    jobs:
+      - job:
+        steps:
+          - task: gitversion/setup@0
+            displayName: 'GitVersion - Setup'
+            inputs:
+              versionSpec: '5.x'
+          - task: gitversion/execute@0
+            displayName: 'GitVersion - Execute'
+            name: Version
+          - template: templates/build-and-test-template.yml
+            parameters:
+              configuration: '$(variables.buildConfiguration)'
+          - task: DotNetCoreCLI@2
+            displayName: 'Dotnet Pack'
+            inputs:
+              command: 'pack'
+              packagesToPack: '$(System.DefaultWorkingDirectory)/Sci.NET.sln'
+              includesymbols: false
+              nobuild: true
+              versioningScheme: byEnvVar
+              versionEnvVar: GitVersion.NuGetVersionV2
+          - task: NuGetAuthenticate@1
+            displayName: 'NuGet Authenticate'
+          - task: DotNetCoreCLI@2
+            displayName: 'Dotnet Push'
+            inputs:
+              command: 'push'
+              packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+              nuGetFeedType: 'internal'
+              publishVstsFeed: '$(NugetVstsFeed)'
