@@ -10,6 +10,7 @@
         [switch]$TestSolution = $true
     )
 
+    $RepoRoot = Resolve-Path($RepoRoot)
     $GlobalJsonFile = Resolve-Path "$RepoRoot\global.json"
     $Dotnet = Join-Path $DotnetInstallDir "dotnet.exe"
     $vswhere = Join-Path $EngineeringRoot "vswhere.exe"
@@ -22,15 +23,10 @@
     # CMake Build
     cmake -S $RepoRoot -B $CMakeBuildDirectory
 
-    # Generate the solution
-    $GenerateSolution = Join-Path $EngineeringRoot "Generate-Solution.ps1"
-    &$GenerateSolution -r $RepoRoot -m $msbuildPath
-
-
     if ($BuildCMake)
     {
         $buildProject = Resolve-Path (Join-Path $CMakeBuildDirectory "Sci.NET.Native.sln")
-        &$msbuildPath "`"$buildProject`"" /property:Configuration = Release
+        &$msbuildPath $buildProject /property:Configuration=Release
     }
     
     if ($BuildSolution)

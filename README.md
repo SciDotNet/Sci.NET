@@ -1,3 +1,4 @@
+[![CI](https://github.com/SciDotNet/Sci.NET/actions/workflows/ci.yml/badge.svg)](https://github.com/SciDotNet/Sci.NET/actions/workflows/ci.yml)
 # Sci.NET
 
 ##### WARNING - Sci.NET is currently in a very early stage of development. The API is not stable and will change frequently. Use at your own risk.
@@ -29,13 +30,12 @@ and libraries are still being decided upon.
 
 ## Getting Started
 
-First you will need to clone the repo, build the CMake project and generate the solution files.
+First you will need to clone the repo and build the CMake project.
 ```
 git https://github.com/sciDotNet/Sci.NET --recursive
 cd Sci.NET
 ./build.cmd
 ```
-You should now have a solution file with the name `Sci.NET.sln` in the root directory. Open this file in Visual Studio and build the project.
 
 ## Contributing
 
