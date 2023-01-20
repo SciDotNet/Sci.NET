@@ -832,7 +832,3 @@ FodyWeavers.xsd
 eng/cmake_build/
 
 eng/dotnet/
-
-eng/slns/
-
-Sci.NET.sln
