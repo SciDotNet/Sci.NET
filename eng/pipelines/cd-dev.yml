@@ -1,8 +1,5 @@
 trigger:
-  branches:
-    exclude:
-      - main
-      - master
+  - master
 
 variables:
   buildPlatform: 'x64'
@@ -15,6 +12,7 @@ extends:
   template: pipeline.yml
   parameters:
     configuration: '$(variables.buildConfiguration)'
-    deploy-dev: false
+    ci: false
+    deploy-dev: true
     deploy-rc: false
     deploy-prod: false

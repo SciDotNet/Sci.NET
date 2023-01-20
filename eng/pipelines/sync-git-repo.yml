@@ -1,0 +1,10 @@
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: mirror-git-repository-vsts-task@1
+  inputs:
+    sourceGitRepositoryUri: '$(SourceRepositoryUri)'
+    destinationGitRepositoryUri: '$(DestinationGitUri)'
+    sourceVerifySSLCertificate: false
+    destinationGitRepositoryPersonalAccessToken: '$(env.GithubPAT)'

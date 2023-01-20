@@ -1,4 +1,4 @@
-parameters:
+﻿parameters:
   - name: configuration
 
 steps:
@@ -10,7 +10,7 @@ steps:
   - task: MSBuild@1
     displayName: 'Build Native Artifacts'
     inputs:
-      solution: '$(System.DefaultWorkingDirectory)\eng\cmake_build\Sci.NET.sln'
+      solution: '$(System.DefaultWorkingDirectory)\eng\cmake_build\Sci.NET.Native.sln'
       msbuildArchitecture: 'x64'
       configuration: 'Release'
 
