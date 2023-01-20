@@ -1,0 +1,56 @@
+parameters:
+  - name: configuration
+
+steps:
+  - task: CMake@1
+    displayName: 'Build CMake Project'
+    inputs:
+      workingDirectory: '$(System.DefaultWorkingDirectory)\eng\'
+      cmakeArgs: -B .\cmake_build -S ..\ -DCMAKE_BUILD_TYPE=$(configuration)
+  - task: MSBuild@1
+    displayName: 'Build Native Artifacts'
+    inputs:
+      solution: '$(System.DefaultWorkingDirectory)\eng\cmake_build\Sci.NET.sln'
+      msbuildArchitecture: 'x64'
+      configuration: 'Release'
+
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      packageType: sdk
+      useGlobalJson: true
+      includePreviewVersions: true
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'SonarCloud'
+      organization: '$(env.SonarCloudOrg)'
+      scannerMode: 'MSBuild'
+      projectKey: '$(env.SonarCloudProjectKey)'
+      projectName: '$(env.SonarCloudProjectName)'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Dotnet Restore'
+    inputs:
+      command: 'restore'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Dotnet Build (Release)'
+    inputs:
+      command: 'build'
+      arguments: '-c Release'
+
+  - task: DotNetCoreCLI@2
+    displayName: 'Dotnet Test'
+    inputs:
+      command: 'test'
+      configuration: 'Release'
+      arguments: '--collect "Code coverage"'
+      publishTestResults: true
+
+  - task: SonarCloudAnalyze@1
+
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'

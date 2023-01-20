@@ -1,0 +1,19 @@
+trigger:
+  branches:
+    exclude:
+      - main
+
+variables:
+  buildPlatform: 'x64'
+  buildConfiguration: 'Release'
+  solution: '**/*.sln'
+  GitVersion.SemVer: ''
+  GitVersion.NuGetVersionV2: ''
+
+extends:
+  template: pipeline.yml
+  parameters:
+    configuration: '$(variables.buildConfiguration)'
+    deploy-dev: false
+    deploy-rc: false
+    deploy-prod: false
