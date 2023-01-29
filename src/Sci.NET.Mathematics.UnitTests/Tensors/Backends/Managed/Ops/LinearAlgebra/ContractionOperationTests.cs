@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
+using Sci.NET.Test.Common.Assertions.Memory;
 
 namespace Sci.NET.Mathematics.UnitTests.Tensors.Backends.Managed.Ops.LinearAlgebra;
 
@@ -71,9 +72,7 @@ public class ContractionOperationTests
                 0
             });
 
-        var resultArray = result.Handle.CopyToArray(result.ElementCount);
-
-        resultArray.Should().BeEquivalentTo(
+        result.Data.Should().BeEqualTo(
             new float[]
             {
                 70, 80, 90, 158, 184, 210, 246, 288, 330, 334, 392, 450, 422, 496, 570, 510, 600, 690

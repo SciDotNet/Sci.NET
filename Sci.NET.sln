@@ -1,8 +1,4 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.BLAS.CPU", "src\Sci.NET.BLAS.CPU\Sci.NET.BLAS.CPU.csproj", "{31793B59-B79D-4E07-A52C-ED59881F8DA4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.BLAS", "src\Sci.NET.BLAS\Sci.NET.BLAS.csproj", "{2D5C2F34-75E5-42E3-B790-61F3882EAB9F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Common.UnitTests", "src\Sci.NET.Common.UnitTests\Sci.NET.Common.UnitTests.csproj", "{D6F6E4CD-89E6-4BBE-BAFE-259D28B564DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Common", "src\Sci.NET.Common\Sci.NET.Common.csproj", "{A32CDC63-9A46-4A48-9C69-2150FAE31F5C}"
@@ -15,20 +11,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics.UnitTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics", "src\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj", "{E78F13D6-C520-4CED-BFA4-26F136C9D440}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Test.Common", "src\Sci.NET.Test.Common\Sci.NET.Test.Common.csproj", "{B46A4E02-5660-4DF6-B9A9-47589DF72543}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{31793B59-B79D-4E07-A52C-ED59881F8DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{31793B59-B79D-4E07-A52C-ED59881F8DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{31793B59-B79D-4E07-A52C-ED59881F8DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{31793B59-B79D-4E07-A52C-ED59881F8DA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2D5C2F34-75E5-42E3-B790-61F3882EAB9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2D5C2F34-75E5-42E3-B790-61F3882EAB9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2D5C2F34-75E5-42E3-B790-61F3882EAB9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2D5C2F34-75E5-42E3-B790-61F3882EAB9F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6F6E4CD-89E6-4BBE-BAFE-259D28B564DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6F6E4CD-89E6-4BBE-BAFE-259D28B564DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6F6E4CD-89E6-4BBE-BAFE-259D28B564DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,6 +43,10 @@ Global
 		{E78F13D6-C520-4CED-BFA4-26F136C9D440}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E78F13D6-C520-4CED-BFA4-26F136C9D440}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E78F13D6-C520-4CED-BFA4-26F136C9D440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

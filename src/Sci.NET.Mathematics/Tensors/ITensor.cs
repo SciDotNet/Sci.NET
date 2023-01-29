@@ -4,7 +4,6 @@
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Memory.ReferenceCounting;
-using Sci.NET.Mathematics.BLAS.Layout;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -19,7 +18,7 @@ public interface ITensor<TNumber> : IDisposable, IReferenceCounted
     /// <summary>
     /// Gets the memory block storing the tensor data.
     /// </summary>
-    public TypedMemoryHandle<TNumber> Handle { get; }
+    public IMemoryBlock<TNumber> Data { get; }
 
     /// <inheritdoc cref="Shape.Dimensions" />
     public int[] Dimensions { get; }
@@ -41,9 +40,4 @@ public interface ITensor<TNumber> : IDisposable, IReferenceCounted
 
     /// <inheritdoc cref="Shape.IsMatrix"/>
     public bool IsMatrix { get; }
-
-    /// <summary>
-    /// Gets the transpose type of the tensor.
-    /// </summary>
-    public TransposeType TransposeType { get; }
 }

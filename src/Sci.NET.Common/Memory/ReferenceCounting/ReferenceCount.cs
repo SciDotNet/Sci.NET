@@ -43,7 +43,7 @@ public sealed record ReferenceCount : IDisposable
     /// <summary>
     /// Increments the reference count.
     /// </summary>
-    [MethodImpl(ImplementationOptions.InlineOptimized)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     public void Increment()
     {
         AssertNotDisposed();
@@ -53,7 +53,7 @@ public sealed record ReferenceCount : IDisposable
     /// <summary>
     /// Decrements the reference count.
     /// </summary>
-    [MethodImpl(ImplementationOptions.InlineOptimized)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     public void Decrement()
     {
         AssertNotDisposed();
@@ -82,7 +82,7 @@ public sealed record ReferenceCount : IDisposable
     /// </summary>
     /// <param name="other">The reference count to compare to.</param>
     /// <returns><c>true</c> if the counts are equal, else <c>false</c>.</returns>
-    [MethodImpl(ImplementationOptions.InlineOptimized)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     public bool CountEquals(ReferenceCount other)
     {
         var xCount = Interlocked.Read(ref _count);
@@ -102,7 +102,7 @@ public sealed record ReferenceCount : IDisposable
     /// Determines if the reference count is zero.
     /// </summary>
     /// <returns><c>true</c> if the count is zero, else <c>false</c>.</returns>
-    [MethodImpl(ImplementationOptions.InlineOptimized)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     public bool IsZero()
     {
         AssertNotDisposed();
@@ -115,7 +115,7 @@ public sealed record ReferenceCount : IDisposable
         _isDisposed = true;
     }
 
-    [MethodImpl(ImplementationOptions.InlineOptimized)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     private void AssertNotDisposed()
     {
         if (!_isDisposed)

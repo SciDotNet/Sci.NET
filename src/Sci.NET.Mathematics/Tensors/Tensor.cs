@@ -27,7 +27,8 @@ public static class Tensor
             throw new ArgumentException("The array length must match the shape size.", nameof(array));
         }
 
-        var handle = TensorBackend.Instance.MemoryManager.CopyFromArray(array);
+        var handle = TensorBackend.Instance.Create<TNumber>(shape);
+        handle.CopyFrom(array);
 
         return new Tensor<TNumber>(handle, shape);
     }

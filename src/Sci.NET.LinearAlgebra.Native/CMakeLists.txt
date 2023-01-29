@@ -11,12 +11,12 @@ file(GLOB_RECURSE PUBLIC_HEADER_FILES CONFIGURE_DEPENDS
         ${CMAKE_CURRENT_LIST_DIR}/include/*.h
         ${CMAKE_CURRENT_LIST_DIR}/include/*.hpp)
 
-add_library(Sci.NET.BLAS.Native STATIC
+add_library(Sci.NET.LinearAlgebra.Native STATIC
         ${SRC_FILES}
         ${HEADER_FILES}
         ${PUBLIC_HEADER_FILES})
 
-set_property(TARGET Sci.NET.BLAS.Native PROPERTY
+set_property(TARGET Sci.NET.LinearAlgebra.Native PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded")
 
-target_include_directories(Sci.NET.BLAS.Native PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)
+target_include_directories(Sci.NET.LinearAlgebra.Native PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include)

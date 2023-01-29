@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+      <ProjectReference Include="..\Sci.NET.Test.Common\Sci.NET.Test.Common.csproj" />
     </ItemGroup>
 
 </Project>

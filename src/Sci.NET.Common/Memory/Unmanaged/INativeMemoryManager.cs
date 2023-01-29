@@ -14,10 +14,10 @@ public interface INativeMemoryManager
     /// <summary>
     /// Allocates a block of memory of the specified size.
     /// </summary>
-    /// <param name="count">The number of elements to allocate.</param>
+    /// <param name="count">The number of elements to sdn_allocate.</param>
     /// <typeparam name="T">The type of element being stored.</typeparam>
     /// <returns>A typed handle to the memory.</returns>
-    public TypedMemoryHandle<T> Allocate<T>(SizeT count)
+    public IMemoryBlock<T> Allocate<T>(SizeT count)
         where T : unmanaged;
 
     /// <summary>
@@ -25,7 +25,7 @@ public interface INativeMemoryManager
     /// </summary>
     /// <param name="handle">The handle to free.</param>
     /// <typeparam name="T">The type of element being stored.</typeparam>
-    public void Free<T>(TypedMemoryHandle<T> handle)
+    public void Free<T>(IMemoryBlock<T> handle)
         where T : unmanaged;
 
     /// <summary>
@@ -33,9 +33,8 @@ public interface INativeMemoryManager
     /// </summary>
     /// <param name="source">The source to copy from.</param>
     /// <param name="destination">The destination to copy to.</param>
-    /// <param name="count">The number of elements to copy.</param>
     /// <typeparam name="T">The type of data to copy.</typeparam>
-    public void Copy<T>(TypedMemoryHandle<T> source, TypedMemoryHandle<T> destination, SizeT count)
+    public void CopyTo<T>(IMemoryBlock<T> source, IMemoryBlock<T> destination)
         where T : unmanaged;
 
     /// <summary>
@@ -44,7 +43,7 @@ public interface INativeMemoryManager
     /// <param name="array">The array to copy.</param>
     /// <typeparam name="T">The type of element to copy.</typeparam>
     /// <returns>A handle to the new array.</returns>
-    public TypedMemoryHandle<T> CopyFromArray<T>(T[] array)
+    public IMemoryBlock<T> CopyFromArray<T>(T[] array)
         where T : unmanaged;
 
     /// <summary>
@@ -54,6 +53,6 @@ public interface INativeMemoryManager
     /// <param name="tensorElementCount">The number of elements to copy.</param>
     /// <typeparam name="TNumber">The element type of the memory.</typeparam>
     /// <returns>A typed handle to the memory.</returns>
-    public TypedMemoryHandle<TNumber> CopyToHostMemory<TNumber>(TypedMemoryHandle<TNumber> tensorHandle, SizeT tensorElementCount)
+    public IMemoryBlock<TNumber> CopyToHostMemory<TNumber>(IMemoryBlock<TNumber> tensorHandle, SizeT tensorElementCount)
         where TNumber : unmanaged, INumber<TNumber>;
 }

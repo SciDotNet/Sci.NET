@@ -4,7 +4,6 @@
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Memory.ReferenceCounting;
-using Sci.NET.Mathematics.BLAS.Layout;
 using Sci.NET.Mathematics.Tensors.Backends;
 
 namespace Sci.NET.Mathematics.Tensors;
@@ -26,8 +25,8 @@ public class Tensor<TNumber> : ITensor<TNumber>
     public Tensor(Shape shape)
     {
         _shape = shape;
-        Handle = TensorBackend.Instance.Create<TNumber>(shape);
-        ReferenceCount = new ReferenceCount();
+        Data = TensorBackend.Instance.Create<TNumber>(shape);
+        ReferenceCount = Data.ReferenceCount;
     }
 
     /// <summary>
@@ -35,11 +34,11 @@ public class Tensor<TNumber> : ITensor<TNumber>
     /// </summary>
     /// <param name="handle">The handle to the existing data.</param>
     /// <param name="shape">The <see cref="Shape"/> of the <see cref="Tensor{TNumber}"/>.</param>
-    public Tensor(TypedMemoryHandle<TNumber> handle, Shape shape)
+    public Tensor(IMemoryBlock<TNumber> handle, Shape shape)
     {
         _shape = shape;
-        Handle = handle;
-        ReferenceCount = new ReferenceCount();
+        Data = handle;
+        ReferenceCount = handle.ReferenceCount;
     }
 
     /// <summary>
@@ -54,7 +53,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
     public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
-    public TypedMemoryHandle<TNumber> Handle { get; }
+    public IMemoryBlock<TNumber> Data { get; }
 
     /// <inheritdoc />
     public int[] Dimensions => _shape.Dimensions;
@@ -76,9 +75,6 @@ public class Tensor<TNumber> : ITensor<TNumber>
 
     /// <inheritdoc />
     public bool IsMatrix => _shape.IsMatrix;
-
-    /// <inheritdoc/>
-    public TransposeType TransposeType => TransposeType.None;
 
     /// <summary>
     /// Gets the shape of the tensor.
@@ -155,7 +151,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
 
         if (ReferenceCount.IsZero())
         {
-            TensorBackend.Instance.Free(Handle);
+            TensorBackend.Instance.Free(Data);
         }
     }
 }

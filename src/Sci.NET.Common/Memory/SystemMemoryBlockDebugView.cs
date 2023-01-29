@@ -1,0 +1,18 @@
+﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Licensed under the MIT license. See LICENSE file in the project root for full license information.
+
+using System.Diagnostics;
+
+namespace Sci.NET.Common.Memory;
+
+internal class SystemMemoryBlockDebugView<T>
+    where T : unmanaged
+{
+    public SystemMemoryBlockDebugView(SystemMemoryBlock<T> block)
+    {
+        Items = block.ToArray();
+    }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    public T[] Items { get; }
+}

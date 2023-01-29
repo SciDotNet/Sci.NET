@@ -21,7 +21,7 @@ public enum CudaStatusCode
     CudaErrorInvalidValue = 1,
 
     /// <summary>
-    /// The API call failed because it was unable to allocate enough memory to perform the requested operation.
+    /// The API call failed because it was unable to sdn_allocate enough memory to perform the requested operation.
     /// </summary>
     CudaErrorMemoryAllocation = 2,
 

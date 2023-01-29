@@ -15,7 +15,7 @@ public static class ImplementationOptions
     /// Gets <see cref="MethodImplOptions"/> to hint for inline, optimized
     /// and unmanaged code to be generated.
     /// </summary>
-    public const MethodImplOptions InlineOptimizedUnmanaged = MethodImplOptions.AggressiveInlining |
+    public const MethodImplOptions UnmanagedHotPath = MethodImplOptions.AggressiveInlining |
                                                               MethodImplOptions.AggressiveOptimization |
                                                               MethodImplOptions.Unmanaged;
 
@@ -23,16 +23,17 @@ public static class ImplementationOptions
     /// Gets <see cref="MethodImplOptions"/> to hint for inline, optimized code
     /// to be generated.
     /// </summary>
-    public const MethodImplOptions InlineOptimized = MethodImplOptions.AggressiveInlining |
+    public const MethodImplOptions HotPath = MethodImplOptions.AggressiveInlining |
                                                      MethodImplOptions.AggressiveOptimization;
 
     /// <summary>
     /// Gets <see cref="MethodImplOptions"/> to hint for inline code to be generated.
     /// </summary>
-    public const MethodImplOptions Inline = MethodImplOptions.AggressiveInlining;
+    public const MethodImplOptions FastPath = MethodImplOptions.AggressiveInlining;
 
     /// <summary>
-    /// Gets <see cref="MethodImplOptions"/> to hint for unmanaged code to be generated.
+    /// Gets <see cref="MethodImplOptions"/> to hint for indicating the method body
+    /// is written in unmanaged code.
     /// </summary>
     public const MethodImplOptions Unmanaged = MethodImplOptions.Unmanaged;
 
@@ -49,5 +50,5 @@ public static class ImplementationOptions
     /// <summary>
     /// Gets <see cref="MethodImplOptions"/> to hint for optimized code to be generated.
     /// </summary>
-    public const MethodImplOptions Optimize = MethodImplOptions.AggressiveOptimization;
+    public const MethodImplOptions AggressiveOptimization = MethodImplOptions.AggressiveOptimization;
 }
