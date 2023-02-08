@@ -4,11 +4,11 @@
 using System.Numerics;
 using Sci.NET.Common.Performance;
 
-namespace Sci.NET.Mathematics.Tensors.Backends.Default.Ops.LinearAlgebra;
+namespace Sci.NET.Mathematics.Tensors.Backends.Default;
 
-internal static class SumProductOperations
+internal class DefaultLinearAlgebraBackendOperations : ILinearAlgebraBackendOperations
 {
-    public static unsafe ITensor<TNumber> MatrixMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public ITensor<TNumber> MatrixMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (left.Rank != 2 || right.Rank != 2)
@@ -24,13 +24,13 @@ internal static class SumProductOperations
 
         var result = new Tensor<TNumber>(new Shape(left.Dimensions[0], right.Dimensions[1]));
 
-        ParallelExecutor.For(
+        LazyParallelExecutor.For(
             0,
             left.Dimensions[0],
             DefaultTensorBackend.ParallelizationThreshold / 2,
             i =>
             {
-                ParallelExecutor.For(
+                LazyParallelExecutor.For(
                     0,
                     right.Dimensions[1],
                     DefaultTensorBackend.ParallelizationThreshold / 2,
@@ -50,7 +50,7 @@ internal static class SumProductOperations
         return result;
     }
 
-    public static unsafe ITensor<TNumber> InnerProduct<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public ITensor<TNumber> InnerProduct<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (left.Rank != 1 || right.Rank != 1)
@@ -65,7 +65,7 @@ internal static class SumProductOperations
 
         var result = new Tensor<TNumber>(new Shape(0));
 
-        ParallelExecutor.For(
+        LazyParallelExecutor.For(
             0,
             left.ElementCount,
             DefaultTensorBackend.ParallelizationThreshold,

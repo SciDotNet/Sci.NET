@@ -2,8 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Common.Memory;
-using Sci.NET.Mathematics.Tensors.Backends.Default.Ops.LinearAlgebra;
-using Sci.NET.Mathematics.Tensors.Backends.Default.Ops.Elementwise;
 
 namespace Sci.NET.Mathematics.Tensors.Backends.Default;
 
@@ -14,6 +12,23 @@ namespace Sci.NET.Mathematics.Tensors.Backends.Default;
 public class DefaultTensorBackend : TensorBackend
 {
     internal const long ParallelizationThreshold = 1000;
+
+    /// <inheritdoc />
+    public override IRandomBackendOperations Random { get; } = new DefaultRandomBackendOperations();
+
+    /// <inheritdoc />
+    public override ILinearAlgebraBackendOperations LinearAlgebra { get; } =
+        new DefaultLinearAlgebraBackendOperations();
+
+    /// <inheritdoc />
+    public override ITrigonometryBackendOperations Trigonometry { get; } = new DefaultTrigonometryBackendOperations();
+
+    /// <inheritdoc />
+    public override IArithmeticBackendOperations Arithmetic { get; } = new DefaultArithmeticBackendOperations();
+
+    /// <inheritdoc />
+    public override IMathematicalBackendOperations MathematicalOperations { get; } =
+        new DefaultMathematicalBackendOperations();
 
     /// <inheritdoc />
     public override IMemoryBlock<TNumber> Create<TNumber>(Shape tensorShape)
@@ -28,38 +43,41 @@ public class DefaultTensorBackend : TensorBackend
     }
 
     /// <inheritdoc />
-    public override ITensor<TNumber> MatrixMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-    {
-        return SumProductOperations.MatrixMultiply(left, right);
-    }
-
-    /// <inheritdoc />
-    public override ITensor<TNumber> InnerProduct<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-    {
-        return SumProductOperations.InnerProduct(left, right);
-    }
-
-    /// <inheritdoc />
     public override ITensor<TNumber> ScalarMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
     {
-        return ScalarProductOperations.ScalarProduct(left, right);
+        if (left.Rank != 0 && right.Rank != 0)
+        {
+            throw new ArgumentException("At least one of the tensors must be a scalar.");
+        }
+
+        var scalar = left.Rank == 0 ? left : right;
+        var tensor = left.Rank == 0 ? right : left;
+
+        var result = new Tensor<TNumber>(new Shape(tensor.Dimensions));
+        var scalarPtr = scalar.Data[0];
+        var tensorPtr = tensor.Data;
+        var resultPtr = result.Data;
+
+        for (var i = 0; i < tensor.ElementCount; i++)
+        {
+            resultPtr[i] = scalarPtr * tensorPtr[i];
+        }
+
+        return result;
     }
 
     /// <inheritdoc />
-    public override ITensor<TNumber> Sin<TNumber>(ITensor<TNumber> tensor)
+    public override ITensor<TNumber> ScalarMultiply<TNumber>(TNumber left, ITensor<TNumber> right)
     {
-        return TrigonometryOperations.Sin(tensor);
-    }
+        var result = new Tensor<TNumber>(new Shape(right.Dimensions));
+        var tensorPtr = right.Data;
+        var resultPtr = result.Data;
 
-    /// <inheritdoc />
-    public override ITensor<TNumber> Cos<TNumber>(ITensor<TNumber> tensor)
-    {
-        return TrigonometryOperations.Cos(tensor);
-    }
+        for (var i = 0; i < right.ElementCount; i++)
+        {
+            resultPtr[i] = left * tensorPtr[i];
+        }
 
-    /// <inheritdoc />
-    public override ITensor<TNumber> Tan<TNumber>(ITensor<TNumber> tensor)
-    {
-        return TrigonometryOperations.Tan(tensor);
+        return result;
     }
 }

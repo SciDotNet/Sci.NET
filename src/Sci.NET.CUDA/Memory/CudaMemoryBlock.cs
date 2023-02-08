@@ -16,13 +16,13 @@ namespace Sci.NET.CUDA.Memory;
 /// </summary>
 /// <typeparam name="T">The type of memory being allocated.</typeparam>
 [PublicAPI]
-public readonly struct CudaMemoryBlock<T> : IMemoryBlock<T>, IValueEquatable<CudaMemoryBlock<T>>
+public sealed class CudaMemoryBlock<T> : IMemoryBlock<T>, IEquatable<CudaMemoryBlock<T>>
     where T : unmanaged
 {
     private readonly unsafe T* _pointer;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CudaMemoryBlock{T}"/> struct.
+    /// Initializes a new instance of the <see cref="CudaMemoryBlock{T}"/> class.
     /// </summary>
     /// <param name="array">The array to copy to CUDA device memory.</param>
     public unsafe CudaMemoryBlock(T[] array)
@@ -42,7 +42,7 @@ public readonly struct CudaMemoryBlock<T> : IMemoryBlock<T>, IValueEquatable<Cud
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CudaMemoryBlock{T}"/> struct.
+    /// Initializes a new instance of the <see cref="CudaMemoryBlock{T}"/> class.
     /// </summary>
     /// <param name="count">The number of elements to allocate.</param>
     public unsafe CudaMemoryBlock(long count)
@@ -65,28 +65,41 @@ public readonly struct CudaMemoryBlock<T> : IMemoryBlock<T>, IValueEquatable<Cud
     public long Length { get; }
 
     /// <inheritdoc />
+    public bool IsDisposed { get; }
+
+    /// <inheritdoc />
     public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
     public ref T this[long index] =>
         throw new PlatformNotSupportedException($"{nameof(CudaMemoryBlock<T>)} does not support indexing.");
 
-    /// <inheritdoc />
-    public static unsafe bool operator ==(CudaMemoryBlock<T> left, CudaMemoryBlock<T> right)
+    /// <summary>
+    /// Determines if the left and right <see cref="SystemMemoryBlock{T}"/>s are equal.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>A value indicating whether the two operands are equal.</returns>
+    public static bool operator ==(CudaMemoryBlock<T> left, CudaMemoryBlock<T> right)
     {
-        return left.Length == right.Length && left._pointer == right._pointer;
+        return left.Equals(right);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines if the left and right <see cref="SystemMemoryBlock{T}"/>s are not equal.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>A value indicating whether the two operands are equal.</returns>
     public static bool operator !=(CudaMemoryBlock<T> left, CudaMemoryBlock<T> right)
     {
-        return !(left == right);
+        return !left.Equals(right);
     }
 
     /// <inheritdoc />
     public unsafe void Dispose()
     {
-        CudaMemoryApi.CudaFree<T>(_pointer);
+        CudaMemoryApi.CudaFree(_pointer);
     }
 
     /// <inheritdoc />
@@ -114,6 +127,20 @@ public readonly struct CudaMemoryBlock<T> : IMemoryBlock<T>, IValueEquatable<Cud
         var dst = new CudaMemoryBlock<T>(Length);
         CopyTo(dst);
         return dst;
+    }
+
+    /// <inheritdoc />
+    public unsafe SystemMemoryBlock<T> ToSystemMemory()
+    {
+        var systemMemoryBlock = new SystemMemoryBlock<T>(Length);
+
+        CudaMemoryApi.CudaMemcpy(
+            systemMemoryBlock.ToPointer(),
+            _pointer,
+            Length,
+            CudaMemcpyKind.DeviceToHost);
+
+        return systemMemoryBlock;
     }
 
     /// <inheritdoc />
@@ -164,9 +191,9 @@ public readonly struct CudaMemoryBlock<T> : IMemoryBlock<T>, IValueEquatable<Cud
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.Equals(T)" />
-    public bool Equals(CudaMemoryBlock<T> other)
+    public unsafe bool Equals(CudaMemoryBlock<T>? other)
     {
-        return this == other;
+        return !IsDisposed && other is not null && _pointer == other._pointer && Length == other.Length;
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.Equals(object?)" />

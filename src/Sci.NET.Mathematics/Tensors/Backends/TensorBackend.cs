@@ -16,9 +16,34 @@ public abstract class TensorBackend
     private static TensorBackend? _instance;
 
     /// <summary>
-    /// Gets the default backend implementation.
+    /// Gets the current backend implementation.
     /// </summary>
     public static TensorBackend Instance => _instance ??= new DefaultTensorBackend();
+
+    /// <summary>
+    /// Gets the random backend implementation.
+    /// </summary>
+    public abstract IRandomBackendOperations Random { get; }
+
+    /// <summary>
+    /// Gets the linear algebra backend implementation.
+    /// </summary>
+    public abstract ILinearAlgebraBackendOperations LinearAlgebra { get; }
+
+    /// <summary>
+    /// Gets the trigonometry backend implementation.
+    /// </summary>
+    public abstract ITrigonometryBackendOperations Trigonometry { get; }
+
+    /// <summary>
+    /// Gets the arithmetic backend implementation.
+    /// </summary>
+    public abstract IArithmeticBackendOperations Arithmetic { get; }
+
+    /// <summary>
+    /// Gets the mathematical backend implementation.
+    /// </summary>
+    public abstract IMathematicalBackendOperations MathematicalOperations { get; }
 
     /// <summary>
     /// Sets the backend implementation.
@@ -54,29 +79,6 @@ public abstract class TensorBackend
         where TNumber : unmanaged;
 
     /// <summary>
-    /// Performs a matrix multiplication of the two tensors.
-    /// </summary>
-    /// <param name="left">The left operand.</param>
-    /// <param name="right">The right operand.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The result of the matrix multiplication between the two operands.</returns>
-    public abstract ITensor<TNumber> MatrixMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// For vectors, the inner product of two <see cref="ITensor{TNumber}"/>s is calculated,
-    /// for higher dimensions then the sum product over the last axes are calculated.
-    /// </summary>
-    /// <param name="left">The left operand.</param>
-    /// <param name="right">The right operand.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The result of the inner product operation.</returns>
-    /// <exception cref="ArgumentException">Throws when the operand shapes are incompatible with the
-    /// inner product operation.</exception>
-    public abstract ITensor<TNumber> InnerProduct<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
     /// Performs a scalar multiplication of the left and right operands.
     /// </summary>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
@@ -87,29 +89,12 @@ public abstract class TensorBackend
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
-    /// Elementwise sine of the <see cref="ITensor{TNumber}"/>.
+    /// Performs a scalar multiplication of the left and right operands.
     /// </summary>
-    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to operate on.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The result of the sin operation.</returns>
-    public abstract ITensor<TNumber> Sin<TNumber>(ITensor<TNumber> tensor)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Elementwise cosine of the <see cref="ITensor{TNumber}"/>.
-    /// </summary>
-    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to operate on.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The result of the cosine operation.</returns>
-    public abstract ITensor<TNumber> Cos<TNumber>(ITensor<TNumber> tensor)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Elementwise tangent of the <see cref="ITensor{TNumber}"/>.
-    /// </summary>
-    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to operate on.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The result of the tangent operation.</returns>
-    public abstract ITensor<TNumber> Tan<TNumber>(ITensor<TNumber> tensor)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the operation.</returns>
+    public abstract ITensor<TNumber> ScalarMultiply<TNumber>(TNumber left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

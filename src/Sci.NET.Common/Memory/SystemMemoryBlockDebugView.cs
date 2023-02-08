@@ -2,9 +2,11 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sci.NET.Common.Memory;
 
+[ExcludeFromCodeCoverage]
 internal class SystemMemoryBlockDebugView<T>
     where T : unmanaged
 {

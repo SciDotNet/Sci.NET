@@ -4,18 +4,18 @@
 using System.Numerics;
 using Sci.NET.Common.Performance;
 
-namespace Sci.NET.Mathematics.Tensors.Backends.Default.Ops.Elementwise;
+namespace Sci.NET.Mathematics.Tensors.Backends.Default;
 
-internal static class TrigonometryOperations
+internal class DefaultTrigonometryBackendOperations : ITrigonometryBackendOperations
 {
-    public static ITensor<TNumber> Sin<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Sin<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(new Shape(tensor.Dimensions));
         var tensorPtr = tensor.Data;
         var resultPtr = result.Data;
 
-        ParallelExecutor.For(
+        LazyParallelExecutor.For(
             0,
             tensor.ElementCount,
             DefaultTensorBackend.ParallelizationThreshold,
@@ -24,14 +24,14 @@ internal static class TrigonometryOperations
         return result;
     }
 
-    public static ITensor<TNumber> Cos<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Cos<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(new Shape(tensor.Dimensions));
         var tensorPtr = tensor.Data;
         var resultPtr = result.Data;
 
-        ParallelExecutor.For(
+        LazyParallelExecutor.For(
             0,
             tensor.ElementCount,
             DefaultTensorBackend.ParallelizationThreshold,
@@ -39,14 +39,14 @@ internal static class TrigonometryOperations
         return result;
     }
 
-    public static ITensor<TNumber> Tan<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Tan<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(new Shape(tensor.Dimensions));
         var tensorPtr = tensor.Data;
         var resultPtr = result.Data;
 
-        ParallelExecutor.For(
+        LazyParallelExecutor.For(
             0,
             tensor.ElementCount,
             DefaultTensorBackend.ParallelizationThreshold,

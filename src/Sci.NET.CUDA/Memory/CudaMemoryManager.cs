@@ -38,7 +38,7 @@ public class CudaMemoryManager : INativeMemoryManager
     }
 
     /// <inheritdoc />
-    public unsafe IMemoryBlock<T> CopyFromArray<T>(T[] array)
+    public IMemoryBlock<T> CopyFromArray<T>(T[] array)
         where T : unmanaged
     {
         return new CudaMemoryBlock<T>(array);

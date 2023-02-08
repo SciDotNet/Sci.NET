@@ -68,6 +68,12 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
     public IMemoryBlock<TNumber> Data { get; }
 
     /// <inheritdoc />
+    public Shape GetShape()
+    {
+        return _shape;
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
         Dispose(true);

@@ -14,6 +14,21 @@ namespace Sci.NET.CUDA.Mathematics.Backends;
 public class CudaTensorBackend : TensorBackend
 {
     /// <inheritdoc />
+    public override IRandomBackendOperations Random => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override ILinearAlgebraBackendOperations LinearAlgebra => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override ITrigonometryBackendOperations Trigonometry => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override IArithmeticBackendOperations Arithmetic => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override IMathematicalBackendOperations MathematicalOperations => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
     public override IMemoryBlock<TNumber> Create<TNumber>(Shape tensorShape)
     {
         throw new PlatformNotSupportedException();
@@ -26,37 +41,13 @@ public class CudaTensorBackend : TensorBackend
     }
 
     /// <inheritdoc />
-    public override ITensor<TNumber> MatrixMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-    {
-        throw new PlatformNotSupportedException();
-    }
-
-    /// <inheritdoc />
-    public override ITensor<TNumber> InnerProduct<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-    {
-        throw new PlatformNotSupportedException();
-    }
-
-    /// <inheritdoc />
     public override ITensor<TNumber> ScalarMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
     {
         throw new PlatformNotSupportedException();
     }
 
     /// <inheritdoc />
-    public override ITensor<TNumber> Sin<TNumber>(ITensor<TNumber> tensor)
-    {
-        throw new PlatformNotSupportedException();
-    }
-
-    /// <inheritdoc />
-    public override ITensor<TNumber> Cos<TNumber>(ITensor<TNumber> tensor)
-    {
-        throw new PlatformNotSupportedException();
-    }
-
-    /// <inheritdoc />
-    public override ITensor<TNumber> Tan<TNumber>(ITensor<TNumber> tensor)
+    public override ITensor<TNumber> ScalarMultiply<TNumber>(TNumber left, ITensor<TNumber> right)
     {
         throw new PlatformNotSupportedException();
     }

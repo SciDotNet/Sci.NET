@@ -19,6 +19,11 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     public long Length { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the <see cref="IMemoryBlock{T}"/> has been disposed.
+    /// </summary>
+    public bool IsDisposed { get; }
+
+    /// <summary>
     /// Gets the element at the specified index.
     /// </summary>
     /// <param name="index">The index of the element to get.</param>
@@ -43,6 +48,12 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// </summary>
     /// <returns>A copy of the current <see cref="IMemoryBlock{T}"/> instance.</returns>
     public IMemoryBlock<T> Copy();
+
+    /// <summary>
+    /// Copies the <see cref="IMemoryBlock{T}"/> to a <see cref="SystemMemoryBlock{T}"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IMemoryBlock{T}"/> as a <see cref="SystemMemoryBlock{T}"/>.</returns>
+    public SystemMemoryBlock<T> ToSystemMemory();
 
     /// <summary>
     /// Copies the contents of the <see cref="IMemoryBlock{T}"/> to the specified <see cref="IMemoryBlock{T}"/>.

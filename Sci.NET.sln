@@ -1,4 +1,8 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Common.UnitTests", "src\Sci.NET.Common.UnitTests\Sci.NET.Common.UnitTests.csproj", "{D6F6E4CD-89E6-4BBE-BAFE-259D28B564DA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Common", "src\Sci.NET.Common\Sci.NET.Common.csproj", "{A32CDC63-9A46-4A48-9C69-2150FAE31F5C}"
@@ -11,7 +15,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics.UnitTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics", "src\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj", "{E78F13D6-C520-4CED-BFA4-26F136C9D440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Test.Common", "src\Sci.NET.Test.Common\Sci.NET.Test.Common.csproj", "{B46A4E02-5660-4DF6-B9A9-47589DF72543}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Test.Common", "src\Sci.NET.Test.Common\Sci.NET.Test.Common.csproj", "{B46A4E02-5660-4DF6-B9A9-47589DF72543}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.DeepLearning", "src\Sci.NET.DeepLearning\Sci.NET.DeepLearning.csproj", "{4CC90A72-AA6D-4010-9D55-148C023FF90D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.DeepLearning.UnitTests", "src\Sci.NET.DeepLearning.UnitTests\Sci.NET.DeepLearning.UnitTests.csproj", "{F6F4783F-09BF-42BA-AFAB-004AE2651833}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{47D36C81-755A-46C5-BC39-2AAEC8A0595D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images.UnitTests", "src\Sci.NET.Images.UnitTests\Sci.NET.Images.UnitTests.csproj", "{1B1582C3-B40B-4807-B717-42B4D864FE37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,11 +59,29 @@ Global
 		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B46A4E02-5660-4DF6-B9A9-47589DF72543}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CC90A72-AA6D-4010-9D55-148C023FF90D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CC90A72-AA6D-4010-9D55-148C023FF90D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CC90A72-AA6D-4010-9D55-148C023FF90D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CC90A72-AA6D-4010-9D55-148C023FF90D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6F4783F-09BF-42BA-AFAB-004AE2651833}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6F4783F-09BF-42BA-AFAB-004AE2651833}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6F4783F-09BF-42BA-AFAB-004AE2651833}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6F4783F-09BF-42BA-AFAB-004AE2651833}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D7FC33C1-D019-48C6-9059-127E5015C1C5}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal

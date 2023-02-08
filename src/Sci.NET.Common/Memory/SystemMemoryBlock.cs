@@ -75,6 +75,9 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public long Length { get; }
 
     /// <inheritdoc />
+    public bool IsDisposed { get; private set; }
+
+    /// <inheritdoc />
     public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
@@ -113,9 +116,9 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <returns>A value indicating whether the two operands are equal.</returns>
-    public static unsafe bool operator !=(SystemMemoryBlock<T> left, SystemMemoryBlock<T> right)
+    public static bool operator !=(SystemMemoryBlock<T> left, SystemMemoryBlock<T> right)
     {
-        return left._reference != right._reference || left.Length != right.Length;
+        return !left.Equals(right);
     }
 
     /// <inheritdoc />
@@ -161,6 +164,24 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         {
             Unsafe.Add(ref reference, i + 0) = value;
         }
+    }
+
+    /// <summary>
+    /// Fills the <see cref="SystemMemoryBlock{T}"/> with the specified values.
+    /// </summary>
+    /// <param name="start">The start index.</param>
+    /// <param name="buffer">The values to add to the buffer.</param>
+    /// <param name="bytesToCopy">The number of bytes to copy.</param>
+    public unsafe void FillBytes(long start, byte[] buffer, long bytesToCopy)
+    {
+        var bufferPtr = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(buffer));
+        var dataPtr = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nuint)start));
+
+        Buffer.MemoryCopy(
+            bufferPtr,
+            dataPtr,
+            Length * Unsafe.SizeOf<T>(),
+            bytesToCopy);
     }
 
     /// <inheritdoc />
@@ -220,6 +241,14 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
     /// <inheritdoc />
     [MethodImpl(ImplementationOptions.FastPath)]
+    public SystemMemoryBlock<T> ToSystemMemory()
+    {
+        ReferenceCount.Increment();
+        return this;
+    }
+
+    /// <inheritdoc />
+    [MethodImpl(ImplementationOptions.FastPath)]
     public unsafe void CopyTo(IMemoryBlock<T> destination)
     {
         if (destination is not SystemMemoryBlock<T> systemMemoryBlock)
@@ -250,7 +279,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe bool Equals(SystemMemoryBlock<T>? other)
     {
-        return other is not null && _reference == other._reference && Length == other.Length;
+        return !IsDisposed && other is not null && _reference == other._reference && Length == other.Length;
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.GetHashCode" />
@@ -319,6 +348,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         if (ReferenceCount.IsZero() || !isDisposing)
         {
+            IsDisposed = true;
             NativeMemory.Free(_reference);
         }
     }

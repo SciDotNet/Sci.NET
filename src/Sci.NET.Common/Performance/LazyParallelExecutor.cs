@@ -7,7 +7,7 @@ namespace Sci.NET.Common.Performance;
 /// A helper class for executing loops in parallel.
 /// </summary>
 [PublicAPI]
-public static class ParallelExecutor
+public static class LazyParallelExecutor
 {
     /// <summary>
     /// Executes a loop in parallel if the number of iterations is greater than the threshold.

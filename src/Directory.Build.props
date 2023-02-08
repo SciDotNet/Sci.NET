@@ -9,6 +9,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TestProject Condition="$(MSBuildProjectName.EndsWith('Tests'))">true</TestProject>
         <DirectoryBuildPropsPath>$(MSBuildThisFileDirectory)</DirectoryBuildPropsPath>
+        <OutputPath>$(SolutionDir)\Artifacts\bin\$(Configuration)\</OutputPath>
         <Configurations>Debug;Release</Configurations>
         <EnableAnalyzers>true</EnableAnalyzers>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -29,9 +30,10 @@
                 <Title>Sci.NET</Title>
                 <Authors>Sci.NET</Authors>
                 <Copyright>Sci.NET 2022</Copyright>
-                <PackageIcon>icon-small.png</PackageIcon>
                 <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
                 <PackageLicenseExpression>MIT</PackageLicenseExpression>
+                <IsPackable>true</IsPackable>
+                <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
             </PropertyGroup>
             <PropertyGroup>
                 <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>

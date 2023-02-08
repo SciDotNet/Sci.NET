@@ -73,7 +73,7 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <summary>
     /// Gets a <see cref="SizeT"/> representing zero.
     /// </summary>
-    public static SizeT Zero => new(0);
+    public static SizeT Zero => new (0);
 
     /// <inheritdoc cref="FromInt64"/>
     public static implicit operator SizeT(long value)

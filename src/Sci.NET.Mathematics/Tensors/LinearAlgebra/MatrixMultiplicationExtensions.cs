@@ -12,10 +12,10 @@ namespace Sci.NET.Mathematics.Tensors.LinearAlgebra;
 [PublicAPI]
 public static class MatrixMultiplicationExtensions
 {
-    /// <inheritdoc cref="TensorBackend.MatrixMultiply{TNumber}"/>
+    /// <inheritdoc cref="ILinearAlgebraBackendOperations.MatrixMultiply{TNumber}"/>
     public static ITensor<TNumber> MatrixMultiply<TNumber>(this ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return TensorBackend.Instance.MatrixMultiply(left, right);
+        return TensorBackend.Instance.LinearAlgebra.MatrixMultiply(left, right);
     }
 }

@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// <summary>
 /// An Rank-N implementation of <see cref="ITensor{TNumber}"/>.
 /// </summary>
-/// <typeparam name="TNumber">The type of number stored by the tensor.</typeparam>
+/// <typeparam name="TNumber">The type of number stored by the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
 public class Tensor<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
@@ -26,7 +26,9 @@ public class Tensor<TNumber> : ITensor<TNumber>
     {
         _shape = shape;
         Data = TensorBackend.Instance.Create<TNumber>(shape);
-        ReferenceCount = Data.ReferenceCount;
+        ReferenceCount = new ReferenceCount();
+        ReferenceCount.Increment();
+        Data.ReferenceCount.Increment();
     }
 
     /// <summary>
@@ -38,7 +40,9 @@ public class Tensor<TNumber> : ITensor<TNumber>
     {
         _shape = shape;
         Data = handle;
-        ReferenceCount = handle.ReferenceCount;
+        ReferenceCount = new ReferenceCount();
+        ReferenceCount.Increment();
+        handle.ReferenceCount.Increment();
     }
 
     /// <summary>
@@ -87,10 +91,10 @@ public class Tensor<TNumber> : ITensor<TNumber>
         return _shape;
     }
 
-    /// <inheritdoc cref="Shape.GetIndices"/>
-    public int[] GetIndices(long linearIndex)
+    /// <inheritdoc cref="Shape.GetIndicesFromLinearIndex"/>
+    public int[] GetIndicesFromLinearIndex(long linearIndex)
     {
-        return _shape.GetIndices(linearIndex);
+        return _shape.GetIndicesFromLinearIndex(linearIndex);
     }
 
     /// <inheritdoc cref="Shape.GetLinearIndex"/>
