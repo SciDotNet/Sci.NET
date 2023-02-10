@@ -188,7 +188,15 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <inheritdoc cref="IValueEquatable{T}.GetHashCode" />
     public override int GetHashCode()
     {
-        return Dimensions.GetHashCode();
+        var result = 0;
+        var shift = 0;
+        foreach (var dim in Dimensions)
+        {
+            shift = (shift + 11) % 21;
+            result ^= (dim + 1024) << shift;
+        }
+
+        return result;
     }
 
     /// <inheritdoc />

@@ -46,17 +46,90 @@ public static class CastingExtensions
     public static ITensor<TNumber> Cast<TNumber>(this ITensor<byte> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.GetShape());
-        var length = tensor.Data.Length;
-        var data = tensor.Data;
-        var resultData = result.Data;
+        return Cast<byte, TNumber>(tensor);
+    }
 
-        LazyParallelExecutor.For(
-            0,
-            length,
-            1000,
-            i => resultData[i] = TNumber.CreateChecked(data[i]));
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<int> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<int, TNumber>(tensor);
+    }
 
-        return result;
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<long> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<long, TNumber>(tensor);
+    }
+
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<sbyte> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<sbyte, TNumber>(tensor);
+    }
+
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<uint> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<uint, TNumber>(tensor);
+    }
+
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<ulong> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<ulong, TNumber>(tensor);
+    }
+
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<float> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<float, TNumber>(tensor);
+    }
+
+    /// <summary>
+    /// Casts the <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The type to convert to.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> cast to the specified type.</returns>
+    public static ITensor<TNumber> Cast<TNumber>(this ITensor<double> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Cast<double, TNumber>(tensor);
     }
 }
