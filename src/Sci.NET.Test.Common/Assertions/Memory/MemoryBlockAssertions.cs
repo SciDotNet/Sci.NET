@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using FluentAssertions;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
@@ -13,6 +14,8 @@ namespace Sci.NET.Test.Common.Assertions.Memory;
 /// Memory block assertions.
 /// </summary>
 /// <typeparam name="TCollection">The type of the collection.</typeparam>
+[PublicAPI]
+[ExcludeFromCodeCoverage]
 [DebuggerNonUserCode]
 public class MemoryBlockAssertions<TCollection> : ReferenceTypeAssertions<IMemoryBlock<TCollection>,
     MemoryBlockAssertions<TCollection>>

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using Sci.NET.Common.Memory;
 
 namespace Sci.NET.Test.Common.Assertions.Memory;
@@ -8,6 +10,9 @@ namespace Sci.NET.Test.Common.Assertions.Memory;
 /// <summary>
 /// Extension methods for <see cref="IMemoryBlock{TCollection}"/> assertions.
 /// </summary>
+[PublicAPI]
+[ExcludeFromCodeCoverage]
+[DebuggerNonUserCode]
 public static class MemoryBlockAssertionExtensions
 {
     /// <summary>
