@@ -8,12 +8,12 @@ using Sci.NET.Common.Comparison;
 namespace Sci.NET.Mathematics.Tensors;
 
 /// <summary>
-/// Represents the tensorShape of an N-dimensional array.
+/// Represents the shape of an N-dimensional array.
 /// </summary>
 [PublicAPI]
 [DebuggerTypeProxy(typeof(Array))]
 [DebuggerDisplay("{DebuggerProxy}")]
-public sealed class Shape : IEnumerable<int>, IEquatable<Shape>
+public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Shape"/> class.
@@ -88,13 +88,23 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>
     /// <param name="index">The index to find the dimension of.</param>
     public long this[Index index] => Dimensions[index];
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Equal to operator overload.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>A value indicating whether the left and right operands are equal.</returns>
     public static bool operator ==(Shape left, Shape right)
     {
         return left.Equals(right);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Not equal to operator overload.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>A value indicating whether the left and right operands are equal.</returns>
     public static bool operator !=(Shape left, Shape right)
     {
         return !left.Equals(right);
@@ -115,6 +125,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>
         }
 
         var linearIndex = 0L;
+
         for (var i = 0; i < Rank; i++)
         {
             if (indices[i] < 0 || indices[i] >= Dimensions[i])
@@ -135,9 +146,18 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>
     /// </summary>
     /// <param name="linearIndex">The linear index.</param>
     /// <returns>The multi dimensional indices of the element at the given linear index.</returns>
-    public int[] GetIndices(long linearIndex)
+    /// <exception cref="ArgumentOutOfRangeException">The given index was out of the range of acceptable values.</exception>
+    public int[] GetIndicesFromLinearIndex(long linearIndex)
     {
+        if (linearIndex >= ElementCount || linearIndex < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(linearIndex),
+                "The linear index must be within the bounds of the tensor.");
+        }
+
         var index = new int[Rank];
+
         for (var j = Rank - 1; j >= 0; j--)
         {
             index[j] = (int)(linearIndex % this[j]);
@@ -168,7 +188,27 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>
     /// <inheritdoc cref="IValueEquatable{T}.GetHashCode" />
     public override int GetHashCode()
     {
-        return Dimensions.GetHashCode();
+        var result = 0;
+        var shift = 0;
+        foreach (var dim in Dimensions)
+        {
+            shift = (shift + 11) % 21;
+            result ^= (dim + 1024) << shift;
+        }
+
+        return result;
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"Shape<{string.Join(", ", Dimensions)}>";
+    }
+
+    /// <inheritdoc />
+    public string ToString(string? format, IFormatProvider? formatProvider)
+    {
+        return ToString();
     }
 
     /// <inheritdoc/>

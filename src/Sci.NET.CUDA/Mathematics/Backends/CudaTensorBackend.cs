@@ -1,10 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Common.Memory.Unmanaged;
-using Sci.NET.CUDA.CuBLAS;
-using Sci.NET.CUDA.Memory;
-using Sci.NET.Mathematics.BLAS;
+using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Mathematics.Tensors.Backends;
 
@@ -17,19 +14,40 @@ namespace Sci.NET.CUDA.Mathematics.Backends;
 public class CudaTensorBackend : TensorBackend
 {
     /// <inheritdoc />
-    public override INativeMemoryManager MemoryManager => new CudaMemoryManager();
+    public override IRandomBackendOperations Random => throw new PlatformNotSupportedException();
 
     /// <inheritdoc />
-    public override IBlasProvider BlasProvider => new CublasProvider();
+    public override ILinearAlgebraBackendOperations LinearAlgebra => throw new PlatformNotSupportedException();
 
     /// <inheritdoc />
-    public override ITensor<TNumber> InnerProduct<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public override ITrigonometryBackendOperations Trigonometry => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override IArithmeticBackendOperations Arithmetic => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override IMathematicalBackendOperations MathematicalOperations => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
+    public override IMemoryBlock<TNumber> Create<TNumber>(Shape tensorShape)
+    {
+        throw new PlatformNotSupportedException();
+    }
+
+    /// <inheritdoc />
+    public override void Free<TNumber>(IMemoryBlock<TNumber> handle)
     {
         throw new PlatformNotSupportedException();
     }
 
     /// <inheritdoc />
     public override ITensor<TNumber> ScalarMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    {
+        throw new PlatformNotSupportedException();
+    }
+
+    /// <inheritdoc />
+    public override ITensor<TNumber> ScalarMultiply<TNumber>(TNumber left, ITensor<TNumber> right)
     {
         throw new PlatformNotSupportedException();
     }

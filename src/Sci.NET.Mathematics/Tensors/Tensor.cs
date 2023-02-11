@@ -2,15 +2,24 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Common.Extensions;
 using Sci.NET.Mathematics.Tensors.Backends;
+using Sci.NET.Mathematics.Tensors.Exceptions;
+using Sci.NET.Mathematics.Tensors.Random;
 
 namespace Sci.NET.Mathematics.Tensors;
 
 /// <summary>
 /// Provides a set of static methods for manipulating tensors.
 /// </summary>
+[PublicAPI]
 public static class Tensor
 {
+    /// <summary>
+    /// Gets a reference to the <see cref="ITensor{TNumber}"/> random methods.
+    /// </summary>
+    public static RandomMethods Random { get; } = new ();
+
     /// <summary>
     /// Creates a tensor with the specified dimensions and values.
     /// </summary>
@@ -27,7 +36,8 @@ public static class Tensor
             throw new ArgumentException("The array length must match the shape size.", nameof(array));
         }
 
-        var handle = TensorBackend.Instance.MemoryManager.CopyFromArray(array);
+        var handle = TensorBackend.Instance.Create<TNumber>(shape);
+        handle.CopyFrom(array);
 
         return new Tensor<TNumber>(handle, shape);
     }
@@ -55,7 +65,7 @@ public static class Tensor
 
         for (var i = 0; i < shape.ElementCount; i++)
         {
-            var value = array.GetValue(shape.GetIndices(i));
+            var value = array.GetValue(shape.GetIndicesFromLinearIndex(i));
 
             flattened[i] = value is TNumber number
                 ? number
@@ -65,5 +75,39 @@ public static class Tensor
         }
 
         return FromArray(shape, flattened);
+    }
+
+    /// <summary>
+    /// Creates a tensor with the specified dimensions set to zero.
+    /// </summary>
+    /// <param name="shape">The shape of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A new <see cref="ITensor{TNumber}"/> instance with the values set to zero.</returns>
+    public static ITensor<TNumber> Zeros<TNumber>(Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return new Tensor<TNumber>(shape);
+    }
+
+    /// <summary>
+    /// Loads a <see cref="ITensor{TNumber}"/> from a file.
+    /// </summary>
+    /// <param name="file">The file to read from.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
+    /// <exception cref="InvalidShapeException">The shape does not match the number of elements.</exception>
+    public static ITensor<TNumber> Load<TNumber>(string file)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenRead(file);
+        _ = stream.Seek(0, SeekOrigin.Begin);
+        var elementCount = stream.Read<long>();
+        var rank = stream.Read<int>();
+        var dims = stream.Read<int>(rank).ToArray();
+        var data = stream.Read<TNumber>(elementCount);
+
+        return dims.Product() != elementCount
+            ? throw new InvalidShapeException("The shape does not match the number of elements.")
+            : (ITensor<TNumber>)new Tensor<TNumber>(data, new Shape(dims.ToArray()));
     }
 }

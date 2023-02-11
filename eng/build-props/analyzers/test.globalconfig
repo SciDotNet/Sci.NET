@@ -25,6 +25,9 @@ dotnet_diagnostic.SA1515.severity = suggestion
 # Elements should be documented
 dotnet_diagnostic.SA1600.severity = none
 
+# Elements should be documented
+dotnet_diagnostic.SA1601.severity = none
+
 # Use "Async" suffix in names of methods that return an awaitable type
 dotnet_diagnostic.RCS1046.severity = none
 dotnet_diagnostic.VSTHRD200.severity = none

@@ -3,22 +3,23 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup Condition="'$(TestProject)' == 'true'">
-        <PackageReference Include="coverlet.collector" Version="3.2.0">
+        <PackageReference Include="coverlet.collector">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.msbuild" Version="3.2.0">
+        <PackageReference Include="coverlet.msbuild">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="FluentAssertions" Version="6.8.0"/>
-        <PackageReference Include="xunit.extensibility.core" Version="2.4.2"/>
-        <PackageReference Include="Moq" Version="4.18.3"/>
-        <PackageReference Include="xunit" Version="2.4.2"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+        <PackageReference Include="FluentAssertions"/>
+        <PackageReference Include="xunit.extensibility.core"/>
+        <PackageReference Include="Moq"/>
+        <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit.runner.visualstudio">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0-preview-20221003-04" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <ProjectReference Include="..\Sci.NET.Test.Common\Sci.NET.Test.Common.csproj" />
     </ItemGroup>
 </Project>

@@ -1,17 +1,37 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
         <IsPackable>false</IsPackable>
-
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
-
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+        <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
-
+    <ItemGroup>
+        <Content Include="$(RootDir)\test-data\**\*.*">
+            <Link>data\</Link>
+        </Content>
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="Data\Tensors\Operations\add_float_(2-3-4)_left.tensor">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\Tensors\Operations\add_float_(2-3-4)_result.tensor">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\Tensors\Operations\add_float_(2-3-4)_right.tensor">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\Tensors\Operations\add_float(1)_right.tensor">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\Tensors\Operations\add_float_(2-3)_(1)_result.tensor">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\Tensors\Operations\add_float_(2-3)_left.tensor">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
 </Project>

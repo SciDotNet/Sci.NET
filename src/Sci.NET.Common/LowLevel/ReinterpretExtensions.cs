@@ -21,7 +21,7 @@ public static class ReinterpretExtensions
     /// <returns>The bits of the input interpreted as the bits of the output.</returns>
     /// <exception cref="ArgumentException">Throws when the size of the input type
     /// is not equal to the size of the output type.</exception>
-    [MethodImpl(ImplementationOptions.InlineOptimized)]
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static TOut Reinterpret<TIn, TOut>(this TIn value)
         where TIn : unmanaged
         where TOut : unmanaged

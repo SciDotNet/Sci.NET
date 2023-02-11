@@ -27,7 +27,7 @@ public class CudaMemoryAllocationException : CudaException
     /// Initializes a new instance of the <see cref="CudaMemoryAllocationException"/> class.
     /// </summary>
     /// <remarks>
-    /// The API call failed because it was unable to allocate enough memory to perform the requested operation.
+    /// The API call failed because it was unable to sdn_allocate enough memory to perform the requested operation.
     /// </remarks>
     /// <param name="innerException">The inner exception.</param>
     public CudaMemoryAllocationException(Exception innerException)

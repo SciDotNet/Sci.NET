@@ -4,13 +4,12 @@
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Memory.ReferenceCounting;
-using Sci.NET.Mathematics.BLAS.Layout;
 using Sci.NET.Mathematics.Tensors.Backends;
 
 namespace Sci.NET.Mathematics.Tensors;
 
 /// <summary>
-/// Implements a virtual tensor which uses the <see cref="TypedMemoryHandle{T}"/>
+/// Implements a virtual tensor which uses the <see cref="IMemoryBlock{T}"/>
 /// of a concrete tensor as its storage. This is useful for reshaping or
 /// permuting a tensor.
 /// </summary>
@@ -38,7 +37,7 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
         _shape = shape;
         ReferenceCount = tensor.ReferenceCount;
         ReferenceCount.Increment();
-        Handle = tensor.Handle;
+        Data = tensor.Data;
     }
 
     /// <inheritdoc />
@@ -66,10 +65,13 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
     public bool IsMatrix => _shape.IsMatrix;
 
     /// <inheritdoc />
-    public TransposeType TransposeType => TransposeType.None;
+    public IMemoryBlock<TNumber> Data { get; }
 
     /// <inheritdoc />
-    public TypedMemoryHandle<TNumber> Handle { get; }
+    public Shape GetShape()
+    {
+        return _shape;
+    }
 
     /// <inheritdoc />
     public void Dispose()
@@ -97,7 +99,7 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
 
         if (ReferenceCount.IsZero())
         {
-            TensorBackend.Instance.Free(Handle);
+            TensorBackend.Instance.Free(Data);
         }
     }
 }

@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using System.Runtime.InteropServices;
 using Sci.NET.Common;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Memory.Unmanaged;
@@ -18,64 +17,49 @@ namespace Sci.NET.CUDA.Memory;
 public class CudaMemoryManager : INativeMemoryManager
 {
     /// <inheritdoc />
-    public TypedMemoryHandle<T> Allocate<T>(SizeT count)
+    public IMemoryBlock<T> Allocate<T>(SizeT count)
         where T : unmanaged
     {
-        return CudaMemoryApi.CudaMalloc<T>(count);
+        return new CudaMemoryBlock<T>(count.ToInt64());
     }
 
     /// <inheritdoc />
-    public void Free<T>(TypedMemoryHandle<T> handle)
+    public void Free<T>(IMemoryBlock<T> handle)
         where T : unmanaged
     {
-        CudaMemoryApi.CudaFree(handle);
+        handle.Dispose();
     }
 
     /// <inheritdoc />
-    public void Copy<T>(TypedMemoryHandle<T> source, TypedMemoryHandle<T> destination, SizeT count)
+    public void CopyTo<T>(IMemoryBlock<T> source, IMemoryBlock<T> destination)
         where T : unmanaged
     {
-        CudaMemoryApi.CudaMemcpy(destination, source, count, CudaMemcpyKind.DeviceToDevice);
+        source.CopyTo(destination);
     }
 
     /// <inheritdoc />
-    public unsafe TypedMemoryHandle<T> CopyFromArray<T>(T[] array)
+    public IMemoryBlock<T> CopyFromArray<T>(T[] array)
         where T : unmanaged
     {
-        var dst = Allocate<T>(array.Length);
-
-#pragma warning disable RCS1176
-        fixed (T* ptr = &array[0])
-#pragma warning restore RCS1176
-        {
-            CudaMemoryApi.CudaMemcpy(
-                dst,
-                new TypedMemoryHandle<T>(ptr),
-                array.Length,
-                CudaMemcpyKind.HostToDevice);
-        }
-
-        return dst;
+        return new CudaMemoryBlock<T>(array);
     }
 
     /// <inheritdoc />
 #pragma warning disable CA1822
-    public unsafe TypedMemoryHandle<TNumber> CopyToHostMemory<TNumber>(
-        TypedMemoryHandle<TNumber> tensorHandle,
+    public unsafe IMemoryBlock<TNumber> CopyToHostMemory<TNumber>(
+        IMemoryBlock<TNumber> tensorHandle,
         SizeT tensorElementCount)
         where TNumber : unmanaged, INumber<TNumber>
 #pragma warning restore CA1822
     {
-        var handle =
-            new TypedMemoryHandle<TNumber>(
-                (TNumber*)NativeMemory.AllocZeroed(tensorElementCount.ToUIntPtr(), (nuint)sizeof(TNumber)));
+        var result = new SystemMemoryBlock<TNumber>(tensorElementCount.ToInt64());
 
         CudaMemoryApi.CudaMemcpy(
-            handle,
-            tensorHandle,
+            result.ToPointer(),
+            tensorHandle.ToPointer(),
             tensorElementCount,
             CudaMemcpyKind.DeviceToHost);
 
-        return handle;
+        return result;
     }
 }

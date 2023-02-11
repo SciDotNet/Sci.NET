@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Backends;
 using Sci.NET.Mathematics.Tensors.Manipulation;
-using Sci.NET.Mathematics.Tensors.Pointwise;
+using Sci.NET.Mathematics.Tensors.Elementwise;
 
 namespace Sci.NET.Mathematics.Tensors.LinearAlgebra;
 
@@ -33,6 +33,7 @@ public static class ContractionExtensions
         where TNumber : unmanaged, INumber<TNumber>
     {
         var contractedSize = 1;
+
         if (leftIndices.Length != rightIndices.Length)
         {
             throw new ArgumentException("The number of left and right indices must be equal.");
@@ -87,13 +88,6 @@ public static class ContractionExtensions
         using var permutedRight = right.Permute(rightPermutation.ToArray());
         using var reshapeLeft = permutedLeft.Reshape(leftSize, contractedSize);
         using var reshapeRight = permutedRight.Reshape(contractedSize, rightSize);
-
-        var leftCopy = reshapeLeft.Handle.CopyToArray(reshapeLeft.ElementCount);
-        var rightCopy = reshapeRight.Handle.CopyToArray(reshapeRight.ElementCount);
-
-        _ = leftCopy;
-        _ = rightCopy;
-
         using var mm = reshapeLeft.MatrixMultiply(reshapeRight);
         return mm.Reshape(resultShape.ToArray());
     }
@@ -138,15 +132,59 @@ public static class ContractionExtensions
 
         if (left.Rank == 1 && right.Rank == 1)
         {
-            return TensorBackend.Instance.InnerProduct(left, right);
+            return TensorBackend.Instance.LinearAlgebra.InnerProduct(left, right);
         }
 
-        return left.TensorDot(right, new int[] { left.Rank - 1 }, new int[] { right.Rank - 1 });
+        return left.TensorDot(
+            right,
+            new int[] { left.Rank - 1 },
+            new int[] { right.Rank - 1 });
+    }
+
+    /// <summary>
+    /// Calculates the dot product of two <see cref="ITensor{TNumber}"/>s.
+    /// <list type="bullet">
+    /// <item>If both <paramref name="left"/> and <paramref name="right"/> are 1-D arrays, it is equivalent to <see cref="Inner{TNumber}"/>.</item>
+    /// <item>If both <paramref name="left"/> and <paramref name="right"/> are 2-D arrays, it is equivalent to <see cref="MatrixMultiplicationExtensions.MatrixMultiply{TNumber}"/>.</item>
+    /// <item>If either <paramref name="left"/> or <paramref name="right"/> is 0-D (scalar), it is equivalent to <see cref="ScalarProductExtensions.ScalarProduct{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber},Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/></item>
+    /// <item>If <paramref name="left"/> is an N-D array and <paramref name="right"/> is a 1-D array, it is a <see cref="Contract{TNumber}"/> operation over the last axis of <paramref name="left"/> and <paramref name="right"/>.</item>
+    /// <item>If <paramref name="left"/> is an N-D array and <paramref name="right"/> is an M-D array (where M>=2), it is a <see cref="Contract{TNumber}"/> operation over the last axis of <paramref name="left"/> and the second-to-last axis of <paramref name="right"/>.</item>
+    /// </list>
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The result of the dot product operation.</returns>
+    /// <exception cref="ArgumentException">Throws when the operand shapes are incompatible with the dot product operation.</exception>
+    [SuppressMessage("Style", "IDE0046:Convert to conditional expression", Justification = "Readability")]
+    public static ITensor<TNumber> Dot<TNumber>(this ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (left.Rank == 1 && right.Rank == 1)
+        {
+            return Inner(left, right);
+        }
+
+        if (left.Rank == 0 || right.Rank == 0)
+        {
+            return left.ScalarProduct(right);
+        }
+
+        if (left.Rank == 1 && right.Rank == 1)
+        {
+            return TensorBackend.Instance.LinearAlgebra.InnerProduct(left, right);
+        }
+
+        return left.TensorDot(
+            right,
+            new int[] { left.Rank - 1 },
+            new int[] { right.Rank - 1 });
     }
 
     private static bool[] DimListToBitset(int[] leftIndices, int leftRank)
     {
         var bits = new bool[leftRank];
+
         foreach (var i in leftIndices)
         {
             bits[i] = true;

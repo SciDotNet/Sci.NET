@@ -4,7 +4,6 @@
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Memory.ReferenceCounting;
-using Sci.NET.Mathematics.BLAS.Layout;
 using Sci.NET.Mathematics.Tensors.Backends;
 
 namespace Sci.NET.Mathematics.Tensors;
@@ -12,7 +11,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// <summary>
 /// An Rank-N implementation of <see cref="ITensor{TNumber}"/>.
 /// </summary>
-/// <typeparam name="TNumber">The type of number stored by the tensor.</typeparam>
+/// <typeparam name="TNumber">The type of number stored by the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
 public class Tensor<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
@@ -26,8 +25,10 @@ public class Tensor<TNumber> : ITensor<TNumber>
     public Tensor(Shape shape)
     {
         _shape = shape;
-        Handle = TensorBackend.Instance.Create<TNumber>(shape);
+        Data = TensorBackend.Instance.Create<TNumber>(shape);
         ReferenceCount = new ReferenceCount();
+        ReferenceCount.Increment();
+        Data.ReferenceCount.Increment();
     }
 
     /// <summary>
@@ -35,11 +36,13 @@ public class Tensor<TNumber> : ITensor<TNumber>
     /// </summary>
     /// <param name="handle">The handle to the existing data.</param>
     /// <param name="shape">The <see cref="Shape"/> of the <see cref="Tensor{TNumber}"/>.</param>
-    public Tensor(TypedMemoryHandle<TNumber> handle, Shape shape)
+    public Tensor(IMemoryBlock<TNumber> handle, Shape shape)
     {
         _shape = shape;
-        Handle = handle;
+        Data = handle;
         ReferenceCount = new ReferenceCount();
+        ReferenceCount.Increment();
+        handle.ReferenceCount.Increment();
     }
 
     /// <summary>
@@ -54,7 +57,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
     public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
-    public TypedMemoryHandle<TNumber> Handle { get; }
+    public IMemoryBlock<TNumber> Data { get; }
 
     /// <inheritdoc />
     public int[] Dimensions => _shape.Dimensions;
@@ -77,9 +80,6 @@ public class Tensor<TNumber> : ITensor<TNumber>
     /// <inheritdoc />
     public bool IsMatrix => _shape.IsMatrix;
 
-    /// <inheritdoc/>
-    public TransposeType TransposeType => TransposeType.None;
-
     /// <summary>
     /// Gets the shape of the tensor.
     /// </summary>
@@ -91,10 +91,10 @@ public class Tensor<TNumber> : ITensor<TNumber>
         return _shape;
     }
 
-    /// <inheritdoc cref="Shape.GetIndices"/>
-    public int[] GetIndices(long linearIndex)
+    /// <inheritdoc cref="Shape.GetIndicesFromLinearIndex"/>
+    public int[] GetIndicesFromLinearIndex(long linearIndex)
     {
-        return _shape.GetIndices(linearIndex);
+        return _shape.GetIndicesFromLinearIndex(linearIndex);
     }
 
     /// <inheritdoc cref="Shape.GetLinearIndex"/>
@@ -155,7 +155,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
 
         if (ReferenceCount.IsZero())
         {
-            TensorBackend.Instance.Free(Handle);
+            TensorBackend.Instance.Free(Data);
         }
     }
 }
