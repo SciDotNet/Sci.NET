@@ -10,6 +10,9 @@ jobs:
     name: Build and analyze
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Sci.NET Version
         id: common-version
         uses: paulhatch/semantic-version@v5.0.0-beta
@@ -20,9 +23,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.11
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Dotnet Restore
         uses: zyactions/dotnet-restore@v1.0.1
         with: 
