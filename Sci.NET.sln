@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.DeepLearning.UnitTe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{47D36C81-755A-46C5-BC39-2AAEC8A0595D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images.UnitTests", "src\Sci.NET.Images.UnitTests\Sci.NET.Images.UnitTests.csproj", "{1B1582C3-B40B-4807-B717-42B4D864FE37}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +69,6 @@ Global
 		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47D36C81-755A-46C5-BC39-2AAEC8A0595D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B1582C3-B40B-4807-B717-42B4D864FE37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

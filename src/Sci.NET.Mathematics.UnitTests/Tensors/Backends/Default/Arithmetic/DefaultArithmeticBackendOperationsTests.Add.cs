@@ -4,17 +4,10 @@
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
-namespace Sci.NET.Mathematics.UnitTests.Tensors.Backends.Default.DefaultArithmeticBackendOperations;
+namespace Sci.NET.Mathematics.UnitTests.Tensors.Backends.Default.Arithmetic;
 
 public partial class DefaultArithmeticBackendOperationsTests
 {
-    private readonly Mathematics.Tensors.Backends.Default.DefaultArithmeticBackendOperations _sut;
-
-    public DefaultArithmeticBackendOperationsTests()
-    {
-        _sut = new Mathematics.Tensors.Backends.Default.DefaultArithmeticBackendOperations();
-    }
-
     [Fact]
     public void Add_GivenTwoTensorsOfSameShape_ReturnsExpectedResult()
     {

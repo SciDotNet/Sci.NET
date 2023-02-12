@@ -52,6 +52,16 @@ public interface IArithmeticBackendOperations
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Subtracts the right operand from the left operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The difference between the right operand and the left operand.</returns>
+    public ITensor<TNumber> Subtract<TNumber>(ITensor<TNumber> left, TNumber right)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Negates the specified <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to negate.</param>
