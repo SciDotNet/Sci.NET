@@ -63,10 +63,18 @@ internal class DefaultArithmeticBackendOperations : IArithmeticBackendOperations
     public ITensor<TNumber> Subtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var result = new Tensor<TNumber>(left.GetShape());
         var leftData = left.Data;
         var rightData = right.Data;
-        var resultPtr = result.Data;
+
+        if (left.IsScalar)
+        {
+            return Subtract(leftData[0], right);
+        }
+
+        if (right.IsScalar)
+        {
+            return Subtract(left, rightData[0]);
+        }
 
         if (left.ElementCount != right.ElementCount)
         {
@@ -74,6 +82,9 @@ internal class DefaultArithmeticBackendOperations : IArithmeticBackendOperations
                 $"The shapes {left.GetShape()} and {right.GetShape()} are not " +
                 "compatible for addition. They must have the same number of elements.");
         }
+
+        var result = new Tensor<TNumber>(left.GetShape());
+        var resultPtr = result.Data;
 
         LazyParallelExecutor.For(
             0,
@@ -96,6 +107,22 @@ internal class DefaultArithmeticBackendOperations : IArithmeticBackendOperations
             right.ElementCount,
             DefaultTensorBackend.ParallelizationThreshold,
             i => resultPtr[i] = left - rightData[i]);
+
+        return result;
+    }
+
+    public ITensor<TNumber> Subtract<TNumber>(ITensor<TNumber> left, TNumber right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(left.GetShape());
+        var leftData = left.Data;
+        var resultPtr = result.Data;
+
+        LazyParallelExecutor.For(
+            0,
+            left.ElementCount,
+            DefaultTensorBackend.ParallelizationThreshold,
+            i => resultPtr[i] = leftData[i] - right);
 
         return result;
     }
