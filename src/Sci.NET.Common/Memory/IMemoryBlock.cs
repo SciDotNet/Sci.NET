@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Common.Memory.ReferenceCounting;
-
 namespace Sci.NET.Common.Memory;
 
 /// <summary>
@@ -10,7 +8,7 @@ namespace Sci.NET.Common.Memory;
 /// </summary>
 /// <typeparam name="T">The type of memory stored within that region of memory.</typeparam>
 [PublicAPI]
-public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
+public interface IMemoryBlock<T> : IDisposable
     where T : unmanaged
 {
     /// <summary>

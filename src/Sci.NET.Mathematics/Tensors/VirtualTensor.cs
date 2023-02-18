@@ -3,8 +3,6 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Memory.ReferenceCounting;
-using Sci.NET.Mathematics.Tensors.Backends;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -35,13 +33,8 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
         }
 
         _shape = shape;
-        ReferenceCount = tensor.ReferenceCount;
-        ReferenceCount.Increment();
         Data = tensor.Data;
     }
-
-    /// <inheritdoc />
-    public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
     public int[] Dimensions => _shape.Dimensions;
@@ -74,6 +67,12 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
     }
 
     /// <inheritdoc />
+    public ITensor<TNumber> CreateReference()
+    {
+        return new VirtualTensor<TNumber>(this, _shape);
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
         Dispose(true);
@@ -93,13 +92,10 @@ public class VirtualTensor<TNumber> : ITensor<TNumber>
         }
     }
 
+#pragma warning disable CA1822
     private void ReleaseUnmanagedResources()
+#pragma warning restore CA1822
     {
-        ReferenceCount.Decrement();
-
-        if (ReferenceCount.IsZero())
-        {
-            TensorBackend.Instance.Free(Data);
-        }
+        // Release unmanaged resources.
     }
 }

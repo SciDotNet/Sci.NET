@@ -832,3 +832,5 @@ FodyWeavers.xsd
 eng/cmake_build/
 
 eng/dotnet/
+
+wip-examples/

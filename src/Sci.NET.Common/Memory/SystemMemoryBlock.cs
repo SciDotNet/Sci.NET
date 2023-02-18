@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Sci.NET.Common.Comparison;
-using Sci.NET.Common.Memory.ReferenceCounting;
 using Sci.NET.Common.Performance;
 
 namespace Sci.NET.Common.Memory;
@@ -34,8 +33,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
 
         _reference = (T*)Unsafe.AsPointer(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), 0));
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = array.Length;
     }
 
@@ -50,16 +47,12 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         var totalSize = length * elementSize;
 
         _reference = (T*)NativeMemory.AllocZeroed(totalSize);
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = count;
     }
 
     private unsafe SystemMemoryBlock(T* reference, long start, long length)
     {
         _reference = (T*)Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(reference), (nuint)start));
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = length;
     }
 
@@ -76,9 +69,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
     /// <inheritdoc />
     public bool IsDisposed { get; private set; }
-
-    /// <inheritdoc />
-    public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
     public unsafe ref T this[long index]
@@ -243,7 +233,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.FastPath)]
     public SystemMemoryBlock<T> ToSystemMemory()
     {
-        ReferenceCount.Increment();
         return this;
     }
 
@@ -344,9 +333,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
     private unsafe void Dispose(bool isDisposing)
     {
-        ReferenceCount.Decrement();
-
-        if (ReferenceCount.IsZero() || !isDisposing)
+        if (!IsDisposed || !isDisposing)
         {
             IsDisposed = true;
             NativeMemory.Free(_reference);
