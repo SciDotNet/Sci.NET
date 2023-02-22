@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Common.Performance;
 using Sci.NET.Mathematics.Tensors;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -39,6 +38,19 @@ public static class ImageLoader
     }
 
     /// <summary>
+    /// Saves an image.
+    /// </summary>
+    /// <param name="img">The image to save.</param>
+    /// <param name="path">The path to the image.</param>
+    public static void Save(ITensor<byte> img, string path)
+    {
+        if (img.Rank == 3)
+        {
+            SaveRgb24(img, path);
+        }
+    }
+
+    /// <summary>
     /// Loads an image from the specified path.
     /// </summary>
     /// <param name="path">The path to the image.</param>
@@ -62,83 +74,49 @@ public static class ImageLoader
         };
     }
 
-    private static ITensor<byte> LoadRgb24(Image<Rgb24> image)
+    private static unsafe ITensor<byte> LoadRgb24(Image<Rgb24> image)
     {
         var tensor = new Tensor<byte>(new Shape(image.Width, image.Height, 3));
-
-        // ReSharper disable AccessToDisposedClosure
-        LazyParallelExecutor.For(
-            0,
-            image.Width,
-            10000,
-            i =>
-            {
-                for (var j = 0; j < image.Height; j++)
-                {
-                    var pixel = image[(int)i, j];
-                    var index = ((i * image.Width) + j) * 3;
-
-                    tensor.Data[index + 0] = pixel.R;
-                    tensor.Data[index + 1] = pixel.G;
-                    tensor.Data[index + 2] = pixel.B;
-                }
-            });
-
+        image.Frames.RootFrame.CopyPixelDataTo(new Span<byte>(tensor.Data.ToPointer(), (int)tensor.ElementCount));
         image.Dispose();
 
         return tensor;
     }
 
-    private static ITensor<byte> LoadRgba32(Image<Rgba32> image)
+    private static unsafe ITensor<byte> LoadRgba32(Image<Rgba32> image)
     {
         var tensor = new Tensor<byte>(new Shape(image.Width, image.Height, 4));
-
-        // ReSharper disable AccessToDisposedClosure
-        LazyParallelExecutor.For(
-            0,
-            image.Width,
-            10000,
-            i =>
-            {
-                for (var j = 0; j < image.Height; j++)
-                {
-                    var pixel = image[(int)i, j];
-                    var index = ((i * image.Width) + j) * 4;
-
-                    tensor.Data[index + 0] = pixel.R;
-                    tensor.Data[index + 1] = pixel.G;
-                    tensor.Data[index + 2] = pixel.B;
-                    tensor.Data[index + 3] = pixel.A;
-                }
-            });
-
+        image.Frames.RootFrame.CopyPixelDataTo(new Span<byte>(tensor.Data.ToPointer(), (int)tensor.ElementCount));
         image.Dispose();
 
         return tensor;
     }
 
-    private static ITensor<byte> LoadBw8(Image<L8> image)
+    private static unsafe ITensor<byte> LoadBw8(Image<L8> image)
     {
         var tensor = new Tensor<byte>(new Shape(image.Width, image.Height, 1));
-
-        // ReSharper disable AccessToDisposedClosure
-        LazyParallelExecutor.For(
-            0,
-            image.Width,
-            10000,
-            i =>
-            {
-                for (var j = 0; j < image.Height; j++)
-                {
-                    var pixel = image[(int)i, j];
-                    var index = (i * image.Width) + j;
-
-                    tensor.Data[index] = pixel.PackedValue;
-                }
-            });
-
+        image.Frames.RootFrame.CopyPixelDataTo(new Span<byte>(tensor.Data.ToPointer(), (int)tensor.ElementCount));
         image.Dispose();
 
         return tensor;
+    }
+
+    private static void SaveRgb24(ITensor<byte> image, string path)
+    {
+        using var result = new Image<Rgb24>(image.Dimensions[0], image.Dimensions[1]);
+
+        for (var i = 0; i < image.Dimensions[0]; i++)
+        {
+            for (var j = 0; j < image.Dimensions[1]; j++)
+            {
+                var red = image.Data[image.GetShape().GetLinearIndex(i, j, 0)];
+                var green = image.Data[image.GetShape().GetLinearIndex(i, j, 1)];
+                var blue = image.Data[image.GetShape().GetLinearIndex(i, j, 2)];
+
+                result[i, j] = new Rgb24(red, green, blue);
+            }
+        }
+
+        result.SaveAsJpeg(path);
     }
 }

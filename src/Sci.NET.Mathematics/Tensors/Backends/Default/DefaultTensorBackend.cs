@@ -6,29 +6,35 @@ using Sci.NET.Common.Memory;
 namespace Sci.NET.Mathematics.Tensors.Backends.Default;
 
 /// <summary>
-/// A managed implementation of <see cref="TensorBackend"/>.
+/// The default <see cref="ITensor{TNumber}"/> backend implementation.
 /// </summary>
-[PublicAPI]
 public class DefaultTensorBackend : TensorBackend
 {
     internal const long ParallelizationThreshold = 1000;
 
     /// <inheritdoc />
-    public override IRandomBackendOperations Random { get; } = new DefaultRandomBackendOperations();
+    public override IRandomBackendOperations Random { get; } =
+        new DefaultRandomBackendOperations();
 
     /// <inheritdoc />
     public override ILinearAlgebraBackendOperations LinearAlgebra { get; } =
         new DefaultLinearAlgebraBackendOperations();
 
     /// <inheritdoc />
-    public override ITrigonometryBackendOperations Trigonometry { get; } = new DefaultTrigonometryBackendOperations();
+    public override ITrigonometryBackendOperations Trigonometry { get; } =
+        new DefaultTrigonometryBackendOperations();
 
     /// <inheritdoc />
-    public override IArithmeticBackendOperations Arithmetic { get; } = new DefaultArithmeticBackendOperations();
+    public override IArithmeticBackendOperations Arithmetic { get; } =
+        new DefaultArithmeticBackendOperations();
 
     /// <inheritdoc />
     public override IMathematicalBackendOperations MathematicalOperations { get; } =
         new DefaultMathematicalBackendOperations();
+
+    /// <inheritdoc />
+    public override INeuralNetworkBackendOperations NeuralNetwork { get; } =
+        new DefaultNeuralNetworkBackendOperations();
 
     /// <inheritdoc />
     public override IMemoryBlock<TNumber> Create<TNumber>(Shape tensorShape)

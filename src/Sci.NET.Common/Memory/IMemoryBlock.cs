@@ -28,12 +28,6 @@ public interface IMemoryBlock<T> : IDisposable
     public ref T this[long index] { get; }
 
     /// <summary>
-    /// Fills the contents of the memory block with the specified value.
-    /// </summary>
-    /// <param name="value">The value to fill the memory with.</param>
-    public void Fill(T value);
-
-    /// <summary>
     /// Gets a <see cref="IMemoryBlock{T}"/> that represents a slice of the current <see cref="IMemoryBlock{T}"/>.
     /// </summary>
     /// <param name="start">The start index.</param>

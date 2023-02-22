@@ -46,6 +46,11 @@ public abstract class TensorBackend
     public abstract IMathematicalBackendOperations MathematicalOperations { get; }
 
     /// <summary>
+    /// Gets the neural network backend implementation.
+    /// </summary>
+    public abstract INeuralNetworkBackendOperations NeuralNetwork { get; }
+
+    /// <summary>
     /// Sets the backend implementation.
     /// </summary>
     /// <typeparam name="TBackend">The type of backend.</typeparam>

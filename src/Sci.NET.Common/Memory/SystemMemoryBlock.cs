@@ -27,11 +27,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="array">The array to create the span from.</param>
     public unsafe SystemMemoryBlock(T[] array)
     {
-        if (!typeof(T).IsValueType || array.GetType() != typeof(T[]))
-        {
-            throw new ArgumentException("The array must be of type T[].");
-        }
-
         _reference = (T*)Unsafe.AsPointer(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), 0));
         Length = array.Length;
     }
@@ -109,51 +104,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public static bool operator !=(SystemMemoryBlock<T> left, SystemMemoryBlock<T> right)
     {
         return !left.Equals(right);
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.FastPath)]
-    public unsafe void Fill(T value)
-    {
-        nuint i = 0;
-        var reference = Unsafe.AsRef<T>(_reference);
-
-        if (Length >= 8)
-        {
-            var stopLoopAt = (nuint)(Length - 8);
-
-            do
-            {
-                Unsafe.Add(ref reference, i + 0) = value;
-                Unsafe.Add(ref reference, i + 1) = value;
-                Unsafe.Add(ref reference, i + 2) = value;
-                Unsafe.Add(ref reference, i + 3) = value;
-                Unsafe.Add(ref reference, i + 4) = value;
-                Unsafe.Add(ref reference, i + 5) = value;
-                Unsafe.Add(ref reference, i + 6) = value;
-                Unsafe.Add(ref reference, i + 7) = value;
-            }
-            while ((i += 8) <= stopLoopAt);
-        }
-
-        if ((Length & 4) != 0)
-        {
-            Unsafe.Add(ref reference, i + 0) = value;
-            Unsafe.Add(ref reference, i + 1) = value;
-            Unsafe.Add(ref reference, i + 2) = value;
-            Unsafe.Add(ref reference, i + 3) = value;
-        }
-
-        if ((Length & 2) != 0)
-        {
-            Unsafe.Add(ref reference, i + 0) = value;
-            Unsafe.Add(ref reference, i + 1) = value;
-        }
-
-        if ((Length & 1) != 0)
-        {
-            Unsafe.Add(ref reference, i + 0) = value;
-        }
     }
 
     /// <summary>

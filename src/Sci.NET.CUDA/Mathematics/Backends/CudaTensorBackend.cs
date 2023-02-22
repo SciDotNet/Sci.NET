@@ -29,6 +29,9 @@ public class CudaTensorBackend : TensorBackend
     public override IMathematicalBackendOperations MathematicalOperations => throw new PlatformNotSupportedException();
 
     /// <inheritdoc />
+    public override INeuralNetworkBackendOperations NeuralNetwork => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
     public override IMemoryBlock<TNumber> Create<TNumber>(Shape tensorShape)
     {
         throw new PlatformNotSupportedException();
