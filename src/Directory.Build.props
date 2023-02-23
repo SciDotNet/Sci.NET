@@ -13,7 +13,7 @@
         <Configurations>Debug;Release</Configurations>
         <EnableAnalyzers>true</EnableAnalyzers>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-<!--        <ServerGarbageCollection>true</ServerGarbageCollection>-->
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <RootDirectory>$(MSBuildThisFileDirectory)\..\</RootDirectory>
         <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
