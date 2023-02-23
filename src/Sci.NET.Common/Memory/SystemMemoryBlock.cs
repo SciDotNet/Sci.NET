@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Sci.NET.Common.Comparison;
-using Sci.NET.Common.Memory.ReferenceCounting;
 using Sci.NET.Common.Performance;
 
 namespace Sci.NET.Common.Memory;
@@ -28,14 +27,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="array">The array to create the span from.</param>
     public unsafe SystemMemoryBlock(T[] array)
     {
-        if (!typeof(T).IsValueType || array.GetType() != typeof(T[]))
-        {
-            throw new ArgumentException("The array must be of type T[].");
-        }
-
         _reference = (T*)Unsafe.AsPointer(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), 0));
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = array.Length;
     }
 
@@ -50,16 +42,12 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         var totalSize = length * elementSize;
 
         _reference = (T*)NativeMemory.AllocZeroed(totalSize);
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = count;
     }
 
     private unsafe SystemMemoryBlock(T* reference, long start, long length)
     {
         _reference = (T*)Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(reference), (nuint)start));
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = length;
     }
 
@@ -76,9 +64,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
     /// <inheritdoc />
     public bool IsDisposed { get; private set; }
-
-    /// <inheritdoc />
-    public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
     public unsafe ref T this[long index]
@@ -119,51 +104,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public static bool operator !=(SystemMemoryBlock<T> left, SystemMemoryBlock<T> right)
     {
         return !left.Equals(right);
-    }
-
-    /// <inheritdoc />
-    [MethodImpl(ImplementationOptions.FastPath)]
-    public unsafe void Fill(T value)
-    {
-        nuint i = 0;
-        var reference = Unsafe.AsRef<T>(_reference);
-
-        if (Length >= 8)
-        {
-            var stopLoopAt = (nuint)(Length - 8);
-
-            do
-            {
-                Unsafe.Add(ref reference, i + 0) = value;
-                Unsafe.Add(ref reference, i + 1) = value;
-                Unsafe.Add(ref reference, i + 2) = value;
-                Unsafe.Add(ref reference, i + 3) = value;
-                Unsafe.Add(ref reference, i + 4) = value;
-                Unsafe.Add(ref reference, i + 5) = value;
-                Unsafe.Add(ref reference, i + 6) = value;
-                Unsafe.Add(ref reference, i + 7) = value;
-            }
-            while ((i += 8) <= stopLoopAt);
-        }
-
-        if ((Length & 4) != 0)
-        {
-            Unsafe.Add(ref reference, i + 0) = value;
-            Unsafe.Add(ref reference, i + 1) = value;
-            Unsafe.Add(ref reference, i + 2) = value;
-            Unsafe.Add(ref reference, i + 3) = value;
-        }
-
-        if ((Length & 2) != 0)
-        {
-            Unsafe.Add(ref reference, i + 0) = value;
-            Unsafe.Add(ref reference, i + 1) = value;
-        }
-
-        if ((Length & 1) != 0)
-        {
-            Unsafe.Add(ref reference, i + 0) = value;
-        }
     }
 
     /// <summary>
@@ -243,7 +183,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.FastPath)]
     public SystemMemoryBlock<T> ToSystemMemory()
     {
-        ReferenceCount.Increment();
         return this;
     }
 
@@ -344,9 +283,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
     private unsafe void Dispose(bool isDisposing)
     {
-        ReferenceCount.Decrement();
-
-        if (ReferenceCount.IsZero() || !isDisposing)
+        if (!IsDisposed || !isDisposing)
         {
             IsDisposed = true;
             NativeMemory.Free(_reference);

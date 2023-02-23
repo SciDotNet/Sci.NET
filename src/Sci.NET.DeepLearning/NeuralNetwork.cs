@@ -34,4 +34,21 @@ public class NeuralNetwork<TNumber> : ISequentialNetwork<TNumber>
     {
         _layers.Add(layer);
     }
+
+    /// <summary>
+    /// Propagates the <paramref name="input"/> through the network.
+    /// </summary>
+    /// <param name="input">The input to the network.</param>
+    /// <returns>The result of the forward propagation.</returns>
+    public ITensor<TNumber> Forward(ITensor<TNumber> input)
+    {
+        var output = input;
+
+        foreach (var layer in _layers)
+        {
+            output = layer.Forward(output);
+        }
+
+        return output;
+    }
 }

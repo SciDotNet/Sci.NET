@@ -4,7 +4,6 @@
 using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Memory.ReferenceCounting;
 using Sci.NET.Mathematics.Tensors.Backends;
 using Sci.NET.Mathematics.Tensors.Elementwise;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
@@ -16,7 +15,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The type of number stored by the tensor.</typeparam>
 [PublicAPI]
-public interface ITensor<TNumber> : IDisposable, IReferenceCounted
+public interface ITensor<TNumber> : IDisposable
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
@@ -171,4 +170,10 @@ public interface ITensor<TNumber> : IDisposable, IReferenceCounted
     /// </summary>
     /// <returns>The shape of the <see cref="ITensor{TNumber}"/>.</returns>
     public Shape GetShape();
+
+    /// <summary>
+    /// Creates a reference to the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <returns>A reference to the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> CreateReference();
 }

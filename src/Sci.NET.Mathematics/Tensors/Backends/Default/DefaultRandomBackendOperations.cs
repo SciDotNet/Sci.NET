@@ -42,7 +42,7 @@ internal class DefaultRandomBackendOperations : IRandomBackendOperations
 
                 for (var i = 0; i < shape.ElementCount; i++)
                 {
-                    intMemoryBlock[i] = random.Next();
+                    intMemoryBlock[i] = random.Next(int.CreateChecked(min), int.CreateChecked(max));
                 }
 
                 return new Tensor<int>(intMemoryBlock, shape).Cast<int, TNumber>();

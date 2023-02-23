@@ -138,6 +138,13 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
             linearIndex += indices[i] * Strides[i];
         }
 
+        if (linearIndex >= ElementCount || linearIndex < 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(indices),
+                "The linear index must be within the bounds of the tensor.");
+        }
+
         return linearIndex;
     }
 
@@ -190,6 +197,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     {
         var result = 0;
         var shift = 0;
+
         foreach (var dim in Dimensions)
         {
             shift = (shift + 11) % 21;

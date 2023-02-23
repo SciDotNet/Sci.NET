@@ -10,7 +10,7 @@ namespace Sci.NET.Common.Memory;
 internal class SystemMemoryBlockDebugView<T>
     where T : unmanaged
 {
-    public SystemMemoryBlockDebugView(SystemMemoryBlock<T> block)
+    public SystemMemoryBlockDebugView(IMemoryBlock<T> block)
     {
         Items = block.ToArray();
     }

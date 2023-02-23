@@ -48,6 +48,9 @@ dotnet_diagnostic.CS1591.severity = warning
 # Use explicit type instead of var
 dotnet_diagnostic.IDE0008.severity = none
 
+# Use conditional expression for assignment
+dotnet_diagnostic.IDE0046.severity = none
+
 # Use expression body for operators
 dotnet_diagnostic.IDE0024.severity = none
 dotnet_diagnostic.IDE0023.severity = none

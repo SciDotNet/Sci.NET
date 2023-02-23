@@ -32,7 +32,11 @@ public static class CastingExtensions
             0,
             length,
             1000,
-            i => resultData[i] = TOut.CreateChecked(data[i]));
+            i =>
+            {
+                var tmp = data[i];
+                resultData[i] = TOut.CreateChecked(tmp);
+            });
 
         return result;
     }

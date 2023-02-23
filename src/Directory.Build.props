@@ -13,7 +13,7 @@
         <Configurations>Debug;Release</Configurations>
         <EnableAnalyzers>true</EnableAnalyzers>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-<!--        <ServerGarbageCollection>true</ServerGarbageCollection>-->
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <RootDirectory>$(MSBuildThisFileDirectory)\..\</RootDirectory>
         <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
@@ -47,7 +47,7 @@
         <Compile Include="$(RootDirectory)src/common/TestGlobalUsings.cs" Link="test.globalusings.cs"/>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="JetBrains.Annotations" Version="2022.3.1"/>
+        <PackageReference Include="JetBrains.Annotations"/>
     </ItemGroup>
     <ItemGroup>
         <None Include="$(RootDirectory)eng/build-props/images/icon-small.png">

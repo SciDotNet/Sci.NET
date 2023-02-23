@@ -10,11 +10,6 @@
         <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="$(RootDir)\test-data\**\*.*">
-            <Link>data\</Link>
-        </Content>
-    </ItemGroup>
-    <ItemGroup>
       <None Update="Data\Tensors\Operations\add_float_(2-3-4)_left.tensor">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

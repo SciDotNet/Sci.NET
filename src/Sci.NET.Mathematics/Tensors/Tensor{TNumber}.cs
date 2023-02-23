@@ -3,7 +3,6 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Memory.ReferenceCounting;
 using Sci.NET.Mathematics.Tensors.Backends;
 
 namespace Sci.NET.Mathematics.Tensors;
@@ -26,9 +25,6 @@ public class Tensor<TNumber> : ITensor<TNumber>
     {
         _shape = shape;
         Data = TensorBackend.Instance.Create<TNumber>(shape);
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
-        Data.ReferenceCount.Increment();
     }
 
     /// <summary>
@@ -40,9 +36,6 @@ public class Tensor<TNumber> : ITensor<TNumber>
     {
         _shape = shape;
         Data = handle;
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
-        handle.ReferenceCount.Increment();
     }
 
     /// <summary>
@@ -52,9 +45,6 @@ public class Tensor<TNumber> : ITensor<TNumber>
     {
         Dispose(false);
     }
-
-    /// <inheritdoc />
-    public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
     public IMemoryBlock<TNumber> Data { get; }
@@ -89,6 +79,12 @@ public class Tensor<TNumber> : ITensor<TNumber>
 #pragma warning restore CA1024
     {
         return _shape;
+    }
+
+    /// <inheritdoc />
+    public ITensor<TNumber> CreateReference()
+    {
+        return new VirtualTensor<TNumber>(this, _shape);
     }
 
     /// <inheritdoc cref="Shape.GetIndicesFromLinearIndex"/>
@@ -149,13 +145,10 @@ public class Tensor<TNumber> : ITensor<TNumber>
         }
     }
 
+#pragma warning disable CA1822
     private void ReleaseUnmanagedResources()
+#pragma warning restore CA1822
     {
-        ReferenceCount.Decrement();
-
-        if (ReferenceCount.IsZero())
-        {
-            TensorBackend.Instance.Free(Data);
-        }
+        // Release unmanaged resources.
     }
 }

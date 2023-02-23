@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Common.Memory.ReferenceCounting;
-
 namespace Sci.NET.Common.Memory;
 
 /// <summary>
@@ -10,7 +8,7 @@ namespace Sci.NET.Common.Memory;
 /// </summary>
 /// <typeparam name="T">The type of memory stored within that region of memory.</typeparam>
 [PublicAPI]
-public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
+public interface IMemoryBlock<T> : IDisposable
     where T : unmanaged
 {
     /// <summary>
@@ -28,12 +26,6 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// </summary>
     /// <param name="index">The index of the element to get.</param>
     public ref T this[long index] { get; }
-
-    /// <summary>
-    /// Fills the contents of the memory block with the specified value.
-    /// </summary>
-    /// <param name="value">The value to fill the memory with.</param>
-    public void Fill(T value);
 
     /// <summary>
     /// Gets a <see cref="IMemoryBlock{T}"/> that represents a slice of the current <see cref="IMemoryBlock{T}"/>.

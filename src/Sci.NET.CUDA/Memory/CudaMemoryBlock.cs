@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Sci.NET.Common.Comparison;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Memory.ReferenceCounting;
 using Sci.NET.CUDA.RuntimeApi;
 using Sci.NET.CUDA.RuntimeApi.Bindings.Types;
 
@@ -28,8 +27,6 @@ public sealed class CudaMemoryBlock<T> : IMemoryBlock<T>, IEquatable<CudaMemoryB
     public unsafe CudaMemoryBlock(T[] array)
     {
         _pointer = CudaMemoryApi.CudaMalloc<T>(array.LongLength);
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = array.LongLength;
 
         using var memoryBlock = new SystemMemoryBlock<T>(array);
@@ -48,16 +45,12 @@ public sealed class CudaMemoryBlock<T> : IMemoryBlock<T>, IEquatable<CudaMemoryB
     public unsafe CudaMemoryBlock(long count)
     {
         _pointer = CudaMemoryApi.CudaMalloc<T>(count);
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = count;
     }
 
     private unsafe CudaMemoryBlock(T* pointer, long start, long length)
     {
         _pointer = (T*)Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(pointer), (nuint)start));
-        ReferenceCount = new ReferenceCount();
-        ReferenceCount.Increment();
         Length = length;
     }
 
@@ -66,9 +59,6 @@ public sealed class CudaMemoryBlock<T> : IMemoryBlock<T>, IEquatable<CudaMemoryB
 
     /// <inheritdoc />
     public bool IsDisposed { get; }
-
-    /// <inheritdoc />
-    public ReferenceCount ReferenceCount { get; }
 
     /// <inheritdoc />
     public ref T this[long index] =>
@@ -100,19 +90,6 @@ public sealed class CudaMemoryBlock<T> : IMemoryBlock<T>, IEquatable<CudaMemoryB
     public unsafe void Dispose()
     {
         CudaMemoryApi.CudaFree(_pointer);
-    }
-
-    /// <inheritdoc />
-    public unsafe void Fill(T value)
-    {
-        using var block = new SystemMemoryBlock<T>(Length);
-        block.Fill(value);
-
-        CudaMemoryApi.CudaMemcpy(
-            _pointer,
-            block.ToPointer(),
-            Length,
-            CudaMemcpyKind.HostToDevice);
     }
 
     /// <inheritdoc />

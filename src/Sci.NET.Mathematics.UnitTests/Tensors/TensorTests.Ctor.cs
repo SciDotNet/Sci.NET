@@ -23,7 +23,6 @@ public partial class TensorTests
         tensor.IsScalar.Should().BeFalse();
         tensor.IsVector.Should().BeFalse();
         tensor.IsMatrix.Should().BeTrue();
-        tensor.ReferenceCount.GetCount().Should().Be(1);
 
         tensor.Strides.Should().BeEquivalentTo(
             new int[]
@@ -56,7 +55,6 @@ public partial class TensorTests
         tensor.IsScalar.Should().BeFalse();
         tensor.IsVector.Should().BeFalse();
         tensor.IsMatrix.Should().BeTrue();
-        tensor.ReferenceCount.GetCount().Should().Be(1);
 
         tensor.Strides.Should().BeEquivalentTo(
             new int[]
@@ -89,7 +87,6 @@ public partial class TensorTests
         tensor.IsScalar.Should().BeTrue();
         tensor.IsVector.Should().BeFalse();
         tensor.IsMatrix.Should().BeFalse();
-        tensor.ReferenceCount.GetCount().Should().Be(1);
 
         tensor.Strides.Should().BeEquivalentTo(
             new int[]
@@ -121,7 +118,6 @@ public partial class TensorTests
         tensor.IsScalar.Should().BeFalse();
         tensor.IsVector.Should().BeTrue();
         tensor.IsMatrix.Should().BeFalse();
-        tensor.ReferenceCount.GetCount().Should().Be(1);
 
         tensor.Strides.Should().BeEquivalentTo(
             new int[]
@@ -153,7 +149,6 @@ public partial class TensorTests
         tensor.IsScalar.Should().BeFalse();
         tensor.IsVector.Should().BeFalse();
         tensor.IsMatrix.Should().BeTrue();
-        tensor.ReferenceCount.GetCount().Should().Be(1);
 
         tensor.Strides.Should().BeEquivalentTo(
             new int[]
