@@ -5,7 +5,7 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Sci.NET.CUDA\Sci.NET.CUDA.csproj"/>
-        <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj"/>
+        <ProjectReference Include="..\Sci.NET.CUDA\Sci.NET.CUDA.csproj" />
+        <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
 </Project>

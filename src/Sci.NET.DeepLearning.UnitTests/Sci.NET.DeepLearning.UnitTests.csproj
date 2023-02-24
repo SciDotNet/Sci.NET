@@ -6,7 +6,7 @@
         <IsPackable>false</IsPackable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Sci.NET.DeepLearning\Sci.NET.DeepLearning.csproj"/>
-        <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj"/>
+        <ProjectReference Include="..\Sci.NET.DeepLearning\Sci.NET.DeepLearning.csproj" />
+        <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
 </Project>

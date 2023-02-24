@@ -12,19 +12,11 @@ namespace Sci.NET.Common.Performance;
 public static class ImplementationOptions
 {
     /// <summary>
-    /// Gets <see cref="MethodImplOptions"/> to hint for inline, optimized
-    /// and unmanaged code to be generated.
-    /// </summary>
-    public const MethodImplOptions UnmanagedHotPath = MethodImplOptions.AggressiveInlining |
-                                                              MethodImplOptions.AggressiveOptimization |
-                                                              MethodImplOptions.Unmanaged;
-
-    /// <summary>
     /// Gets <see cref="MethodImplOptions"/> to hint for inline, optimized code
     /// to be generated.
     /// </summary>
     public const MethodImplOptions HotPath = MethodImplOptions.AggressiveInlining |
-                                                     MethodImplOptions.AggressiveOptimization;
+                                             MethodImplOptions.AggressiveOptimization;
 
     /// <summary>
     /// Gets <see cref="MethodImplOptions"/> to hint for inline code to be generated.
