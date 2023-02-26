@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Media.Images.ImageFormats.Jpeg.Markers;
+
 namespace Sci.NET.Media.Images.ImageFormats.Jpeg;
 
 internal class JpegRawData
@@ -20,4 +22,8 @@ internal class JpegRawData
     private byte[] _iccData;
     private bool _hasAdobe;
     private byte[] _adobeData;
+    private JFifMarker _jfifMarker;
+    private AdobeMarker _adobeMarker;
+    
+    public JpegComponent[] 
 }

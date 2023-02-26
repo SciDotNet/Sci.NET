@@ -24,14 +24,14 @@ public readonly struct Block8X8F : IValueEquatable<Block8X8F>
     /// </summary>
     private const int Size = 8 * 8;
 
-    [FieldOffset(sizeof(float) * 0)] private readonly Vector256<float> _r0;
-    [FieldOffset(sizeof(float) * 2)] private readonly Vector256<float> _r1;
-    [FieldOffset(sizeof(float) * 4)] private readonly Vector256<float> _r2;
-    [FieldOffset(sizeof(float) * 6)] private readonly Vector256<float> _r3;
-    [FieldOffset(sizeof(float) * 8)] private readonly Vector256<float> _r4;
-    [FieldOffset(sizeof(float) * 10)] private readonly Vector256<float> _r5;
-    [FieldOffset(sizeof(float) * 12)] private readonly Vector256<float> _r6;
-    [FieldOffset(sizeof(float) * 14)] private readonly Vector256<float> _r7;
+    [FieldOffset(sizeof(float) * 8 * 0)] private readonly Vector256<float> _r0;
+    [FieldOffset(sizeof(float) * 8 * 1)] private readonly Vector256<float> _r1;
+    [FieldOffset(sizeof(float) * 8 * 2)] private readonly Vector256<float> _r2;
+    [FieldOffset(sizeof(float) * 8 * 3)] private readonly Vector256<float> _r3;
+    [FieldOffset(sizeof(float) * 8 * 4)] private readonly Vector256<float> _r4;
+    [FieldOffset(sizeof(float) * 8 * 5)] private readonly Vector256<float> _r5;
+    [FieldOffset(sizeof(float) * 8 * 6)] private readonly Vector256<float> _r6;
+    [FieldOffset(sizeof(float) * 8 * 7)] private readonly Vector256<float> _r7;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Block8X8F"/> struct.
