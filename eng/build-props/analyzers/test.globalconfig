@@ -1,0 +1,47 @@
+is_global = true
+global_level = 300
+
+# Remove the underscores from member name
+dotnet_diagnostic.CA1707.severity = none
+
+# Nested types should not be visible
+dotnet_diagnostic.CA1034.severity = none
+
+# Exception type System.Exception is not sufficiently specific
+dotnet_diagnostic.CA2201.severity = none
+
+# A property should not follow a method
+dotnet_diagnostic.SA1201.severity = silent
+
+# 'public' members should come before 'private' members
+dotnet_diagnostic.SA1202.severity = silent
+
+# Static members should appear before non-static members
+dotnet_diagnostic.SA1204.severity = silent
+
+# Single-line comment should be preceded by blank line
+dotnet_diagnostic.SA1515.severity = suggestion
+
+# Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
+
+# Elements should be documented
+dotnet_diagnostic.SA1601.severity = none
+
+# Use "Async" suffix in names of methods that return an awaitable type
+dotnet_diagnostic.RCS1046.severity = none
+dotnet_diagnostic.VSTHRD200.severity = none
+
+# XML comments
+dotnet_diagnostic.SA0001.severity = none
+dotnet_diagnostic.CS1591.severity = none
+
+# Expreession is never used
+dotnet_diagnostic.IDE0058.severity = none
+
+
+# Call dispose on objects that implement IDisposable
+dotnet_diagnostic.CA2000.severity = none
+
+# Do not use alias
+dotnet_diagnostic.RCS1056.severity = none

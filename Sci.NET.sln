@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics", "src\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj", "{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Common", "src\Sci.NET.Common\Sci.NET.Common.csproj", "{B91244C2-4289-4F73-B9EF-B4A5320D08A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.UnitTests", "src\Sci.NET.Mathematics.UnitTests\Sci.NET.Mathematics.UnitTests.csproj", "{0303C0C3-2070-456E-B254-3BDD710BC633}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Common.UnitTests", "src\Sci.NET.Common.UnitTests\Sci.NET.Common.UnitTests.csproj", "{513B5B41-5218-46FD-93EA-308056B7EFF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D955EFF8-EE73-4831-B1F0-2B04345C30B0}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Packages.props = src\Directory.Packages.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B91244C2-4289-4F73-B9EF-B4A5320D08A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91244C2-4289-4F73-B9EF-B4A5320D08A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91244C2-4289-4F73-B9EF-B4A5320D08A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91244C2-4289-4F73-B9EF-B4A5320D08A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0303C0C3-2070-456E-B254-3BDD710BC633}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0303C0C3-2070-456E-B254-3BDD710BC633}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0303C0C3-2070-456E-B254-3BDD710BC633}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0303C0C3-2070-456E-B254-3BDD710BC633}.Release|Any CPU.Build.0 = Release|Any CPU
+		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

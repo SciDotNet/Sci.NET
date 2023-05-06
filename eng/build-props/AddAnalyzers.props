@@ -1,0 +1,54 @@
+<Project>
+    <PropertyGroup>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <LangVersion>latest</LangVersion>
+        <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <TreatWarningsAsErrors Condition="'$(Configuration)' != 'Release'">false</TreatWarningsAsErrors>
+
+    </PropertyGroup>
+    <ItemGroup Condition="'$(EnableAnalyzers)' == 'true'">
+        <GlobalAnalyzerConfigFiles Include="$(RootDirectory)eng/build-props/analyzers/base.globalconfig"
+                                   Link="base.globalconfig"/>
+        <AdditionalFiles Include="$(RootDirectory)eng/build-props/analyzers/stylecop.json"
+                         Link="stylecop.json"/>
+        <GlobalAnalyzerConfigFiles Include="$(RootDirectory)eng/build-props/analyzers/test.globalconfig"
+                                   Link="test.globalconfig"
+                                   Condition="$(MSBuildProjectName.EndsWith('Tests'))"/>
+    </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="System.CLSCompliant">
+            <_Parameter1>false</_Parameter1>
+            <_Parameter1_TypeName>System.Boolean</_Parameter1_TypeName>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup Condition="'$(EnableAnalyzers)' == 'true'">
+        <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Roslynator.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Roslynator.CodeAnalysis.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Roslynator.Formatting.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+</Project>

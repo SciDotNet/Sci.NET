@@ -1,0 +1,60 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Deterministic>true</Deterministic>
+        <EmitCompilerGeneratedFiles>True</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+        <Nullable>enable</Nullable>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <TestProject Condition="$(MSBuildProjectName.EndsWith('Tests'))">true</TestProject>
+        <DirectoryBuildPropsPath>$(MSBuildThisFileDirectory)</DirectoryBuildPropsPath>
+        <OutputPath>$(SolutionDir)\Artifacts\bin\$(Configuration)\</OutputPath>
+        <Configurations>Debug;Release</Configurations>
+        <EnableAnalyzers>true</EnableAnalyzers>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+        <RootDirectory>$(MSBuildThisFileDirectory)\..\</RootDirectory>
+        <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    <Choose>
+        <When Condition="'$(TestProject)' == 'true'">
+            <PropertyGroup>
+                <TargetFramework>net7.0</TargetFramework>
+                <IsTestProject>true</IsTestProject>
+            </PropertyGroup>
+        </When>
+        <Otherwise>
+            <PropertyGroup>
+                <IsTestProject>false</IsTestProject>
+                <Title>Sci.NET</Title>
+                <Authors>Sci.NET</Authors>
+                <Copyright>Sci.NET 2023</Copyright>
+                <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+                <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+                <IsPackable>true</IsPackable>
+            </PropertyGroup>
+            <PropertyGroup>
+                <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>
+            </PropertyGroup>
+        </Otherwise>
+    </Choose>
+    <ItemGroup>
+        <Compile Include="$(RootDirectory)src/common/BaseGlobalUsings.cs" Link="base.globalusings.cs"/>
+    </ItemGroup>
+    <ItemGroup Condition="'$(TestProject)' == 'true'">
+        <Compile Include="$(RootDirectory)src/common/TestGlobalUsings.cs" Link="test.globalusings.cs"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="JetBrains.Annotations"/>
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="$(RootDirectory)eng/build-props/images/icon-small.png">
+            <Pack>True</Pack>
+            <Link>icon-small.png</Link>
+        </None>
+    </ItemGroup>
+    <Import Project="$(RootDirectory)eng/build-props/AddAnalyzers.props"/>
+    <Import Project="$(RootDirectory)eng/build-props/AddCommonTestNugetPackages.props"/>
+    <Import Project="$(RootDirectory)eng/build-props/MakeInternalsVisibleToTestProjects.props"/>
+</Project>
