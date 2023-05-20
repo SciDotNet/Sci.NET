@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Mathematics.Tensors.Arithmetic;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.Manipulation;
@@ -42,4 +43,10 @@ public interface ITensorOperationServiceFactory
     /// </summary>
     /// <returns>An instance of the <see cref="IContractionService"/>.</returns>
     public IContractionService GetContractionService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IArithmeticService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IArithmeticService"/>.</returns>
+    public IArithmeticService GetArithmeticService();
 }

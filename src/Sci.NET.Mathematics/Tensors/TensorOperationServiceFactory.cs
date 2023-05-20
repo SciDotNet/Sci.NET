@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Mathematics.Tensors.Arithmetic;
+using Sci.NET.Mathematics.Tensors.Arithmetic.Implementations;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Common.Implementations;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
@@ -17,12 +19,14 @@ internal class TensorOperationServiceFactory : ITensorOperationServiceFactory
     private readonly IPermutationService _permutationService;
     private readonly IReshapeService _reshapeService;
     private readonly IContractionService _contractionService;
+    private readonly IArithmeticService _arithmeticService;
 
     public TensorOperationServiceFactory()
     {
         _reshapeService = new ReshapeService();
         _deviceGuardService = new DeviceGuardService();
-        _matrixMultiplicationService = new MatrixMultiplicationService();
+        _matrixMultiplicationService = new MatrixMultiplicationService(this);
+        _arithmeticService = new ArithmeticService(this);
         _permutationService = new PermutationService(this);
         _contractionService = new ContractionService(this);
     }
@@ -50,5 +54,10 @@ internal class TensorOperationServiceFactory : ITensorOperationServiceFactory
     public IContractionService GetContractionService()
     {
         return _contractionService;
+    }
+
+    public IArithmeticService GetArithmeticService()
+    {
+        return _arithmeticService;
     }
 }

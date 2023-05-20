@@ -6,10 +6,9 @@ using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
-using Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
 using Sci.NET.Mathematics.Tensors.Manipulation;
 
-namespace Sci.NET.Mathematics.UnitTests.Tensors.LinearAlgebra.Contraction;
+namespace Sci.NET.Mathematics.UnitTests.Tensors.LinearAlgebra.ContractionService;
 
 public class ContractShould
 {
@@ -40,7 +39,7 @@ public class ContractShould
         tensorOperationServiceFactoryMock.Setup(x => x.GetMatrixMultiplicationService())
             .Returns(_matrixMultiplicationServiceMock.Object);
 
-        _sut = new ContractionService(tensorOperationServiceFactoryMock.Object);
+        _sut = new Mathematics.Tensors.LinearAlgebra.Implementations.ContractionService(tensorOperationServiceFactoryMock.Object);
     }
 
     [Fact]

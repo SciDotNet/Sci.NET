@@ -33,6 +33,16 @@ public class Tensor<TNumber> : ITensor<TNumber>
     /// <summary>
     /// Initializes a new instance of the <see cref="Tensor{TNumber}"/> class.
     /// </summary>
+    /// <param name="shape">The shape of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="backend">The backend type to use for the <see cref="ITensor{TNumber}"/>.</param>
+    public Tensor(Shape shape, ITensorBackend? backend = null)
+        : this(backend, shape.Dimensions)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Tensor{TNumber}"/> class.
+    /// </summary>
     /// <param name="previousTensor">The previous tensor to copy.</param>
     /// <param name="newShape">The new shape of the <see cref="Tensor{TNumber}"/>.</param>
     public Tensor(ITensor<TNumber> previousTensor, Shape newShape)
