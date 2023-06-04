@@ -12,7 +12,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// An interface providing methods too build tensor operation services.
 /// </summary>
 [PublicAPI]
-public interface ITensorOperationServiceFactory
+public interface ITensorOperationServiceProvider
 {
     /// <summary>
     /// Gets an instance of the <see cref="IMatrixMultiplicationService"/>.

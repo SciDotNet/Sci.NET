@@ -27,7 +27,7 @@ public static class MatrixMultiplicationExtensions
         where TNumber : unmanaged, INumber<TNumber>
     {
         return ServiceProvider
-            .GetTensorOperationServiceFactory()
+            .GetTensorOperationServiceProvider()
             .GetMatrixMultiplicationService()
             .MatrixMultiply(left, right);
     }

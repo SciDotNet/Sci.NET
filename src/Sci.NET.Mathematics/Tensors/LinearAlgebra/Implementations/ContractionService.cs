@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Arithmetic;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 using Sci.NET.Mathematics.Tensors.Manipulation;
@@ -12,15 +13,17 @@ internal class ContractionService : IContractionService
 {
     private readonly IDeviceGuardService _guardService;
     private readonly IMatrixMultiplicationService _matrixMultiplicationService;
+    private readonly IArithmeticService _arithmeticService;
     private readonly IReshapeService _reshapeService;
     private readonly IPermutationService _permutationService;
 
-    public ContractionService(ITensorOperationServiceFactory factory)
+    public ContractionService(ITensorOperationServiceProvider provider)
     {
-        _guardService = factory.GetDeviceGuardService();
-        _matrixMultiplicationService = factory.GetMatrixMultiplicationService();
-        _permutationService = factory.GetPermutationService();
-        _reshapeService = factory.GetReshapeService();
+        _guardService = provider.GetDeviceGuardService();
+        _matrixMultiplicationService = provider.GetMatrixMultiplicationService();
+        _permutationService = provider.GetPermutationService();
+        _reshapeService = provider.GetReshapeService();
+        _arithmeticService = provider.GetArithmeticService();
     }
 
     public ITensor<TNumber> Contract<TNumber>(
@@ -94,7 +97,7 @@ internal class ContractionService : IContractionService
         return _reshapeService.Reshape(mm, new Shape(resultShape.ToArray()));
     }
 
-    public ITensor<TNumber> Inner<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -115,7 +118,7 @@ internal class ContractionService : IContractionService
         }
 
         var result = new Scalar<TNumber>(left.Backend);
-        left.Backend.LinearAlgebra.InnerProduct(left.AsVector(), right.AsVector(), result);
+        left.Backend.LinearAlgebra.InnerProduct(left, right, result);
         return result;
     }
 
@@ -126,22 +129,17 @@ internal class ContractionService : IContractionService
 
         if (left.Shape.Rank == 1 && right.Shape.Rank == 1)
         {
-            return Inner(left, right);
+            return Inner(left.AsVector(), right.AsVector());
         }
 
         if (left.Shape.Rank == 0 || right.Shape.Rank == 0)
         {
-            // TODO: return left.Multiply(right);
-        }
-
-        if (left.Shape.Rank == 1 && right.Shape.Rank == 1)
-        {
-            return Inner(left, right);
+            return _arithmeticService.Multiply(left.AsScalar(), right.AsScalar());
         }
 
         if (left.Shape.Rank == 2 && right.Shape.Rank == 2)
         {
-            return left.AsMatrix().MatrixMultiply(right.AsMatrix());
+            return _matrixMultiplicationService.MatrixMultiply(left.AsMatrix(), right.AsMatrix());
         }
 
         return left.Contract(
@@ -150,7 +148,7 @@ internal class ContractionService : IContractionService
             new int[] { right.Shape.Rank - 1 });
     }
 
-    private static bool[] DimListToBitset(int[] leftIndices, int leftRank)
+    private static bool[] DimListToBitset(IEnumerable<int> leftIndices, int leftRank)
     {
         var bits = new bool[leftRank];
 

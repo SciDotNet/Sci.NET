@@ -9,9 +9,9 @@ internal class PermutationService : IPermutationService
 {
     private readonly IReshapeService _reshapeService;
 
-    public PermutationService(ITensorOperationServiceFactory factory)
+    public PermutationService(ITensorOperationServiceProvider provider)
     {
-        _reshapeService = factory.GetReshapeService();
+        _reshapeService = provider.GetReshapeService();
     }
 
     public ITensor<TNumber> Permute<TNumber>(ITensor<TNumber> tensor, int[] permutation)

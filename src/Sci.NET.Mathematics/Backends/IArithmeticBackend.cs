@@ -427,4 +427,59 @@ public interface IArithmeticBackend
         [AssumesShape("*")] Tensor<TNumber> right,
         [AssumesShape(nameof(right))] Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a scalar multiplication of a <see cref="Scalar{TNumber}"/> and a <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Divide<TNumber>(
+        [AssumesShape("1")] Scalar<TNumber> left,
+        [AssumesShape("1")] Scalar<TNumber> right,
+        [AssumesShape("1")] Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a scalar multiplication of a <see cref="Scalar{TNumber}"/> and a <see cref="Tensors.Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Divide<TNumber>(
+        [AssumesShape("1")] Scalar<TNumber> left,
+        [AssumesShape("i")] Tensors.Vector<TNumber> right,
+        [AssumesShape("i")] Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a scalar multiplication of a <see cref="Scalar{TNumber}"/> and a <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Divide<TNumber>(
+        [AssumesShape("1")] Scalar<TNumber> left,
+        [AssumesShape("i,j")] Matrix<TNumber> right,
+        [AssumesShape("i,j")] Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a scalar multiplication of a <see cref="Scalar{TNumber}"/> and a <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    public void Divide<TNumber>(
+        [AssumesShape("1")] Scalar<TNumber> left,
+        [AssumesShape("*")] Tensor<TNumber> right,
+        [AssumesShape(nameof(right))] Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

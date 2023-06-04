@@ -25,7 +25,7 @@ public class ContractShould
         _reshapeServiceMock = new Mock<IReshapeService>();
         _matrixMultiplicationServiceMock = new Mock<IMatrixMultiplicationService>();
 
-        var tensorOperationServiceFactoryMock = new Mock<ITensorOperationServiceFactory>();
+        var tensorOperationServiceFactoryMock = new Mock<ITensorOperationServiceProvider>();
 
         tensorOperationServiceFactoryMock.Setup(x => x.GetDeviceGuardService())
             .Returns(_deviceGuardServiceMock.Object);

@@ -6,10 +6,12 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+      <ProjectReference Include="..\Sci.NET.CUDA\Sci.NET.CUDA.csproj" />
     </ItemGroup>
 
 </Project>

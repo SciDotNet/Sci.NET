@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\Directory.Packages.props = src\Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.CUDA", "src\Sci.NET.CUDA\Sci.NET.CUDA.csproj", "{A6369782-942A-49AB-9CCF-0D6CEA349F34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.CUDA.UnitTests", "src\Sci.NET.CUDA.UnitTests\Sci.NET.CUDA.UnitTests.csproj", "{511547EB-2BB0-4147-A6EC-3ABF5A479AFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,13 @@ Global
 		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6369782-942A-49AB-9CCF-0D6CEA349F34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6369782-942A-49AB-9CCF-0D6CEA349F34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6369782-942A-49AB-9CCF-0D6CEA349F34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6369782-942A-49AB-9CCF-0D6CEA349F34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{511547EB-2BB0-4147-A6EC-3ABF5A479AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{511547EB-2BB0-4147-A6EC-3ABF5A479AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{511547EB-2BB0-4147-A6EC-3ABF5A479AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{511547EB-2BB0-4147-A6EC-3ABF5A479AFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

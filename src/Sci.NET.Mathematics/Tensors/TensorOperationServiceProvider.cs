@@ -12,7 +12,7 @@ using Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 namespace Sci.NET.Mathematics.Tensors;
 
-internal class TensorOperationServiceFactory : ITensorOperationServiceFactory
+internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
 {
     private readonly IMatrixMultiplicationService _matrixMultiplicationService;
     private readonly IDeviceGuardService _deviceGuardService;
@@ -21,7 +21,7 @@ internal class TensorOperationServiceFactory : ITensorOperationServiceFactory
     private readonly IContractionService _contractionService;
     private readonly IArithmeticService _arithmeticService;
 
-    public TensorOperationServiceFactory()
+    public TensorOperationServiceProvider()
     {
         _reshapeService = new ReshapeService();
         _deviceGuardService = new DeviceGuardService();

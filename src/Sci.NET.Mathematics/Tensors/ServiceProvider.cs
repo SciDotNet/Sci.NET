@@ -5,15 +5,15 @@ namespace Sci.NET.Mathematics.Tensors;
 
 internal static class ServiceProvider
 {
-    private static ITensorOperationServiceFactory _tensorOperationServiceFactory = new TensorOperationServiceFactory();
+    private static ITensorOperationServiceProvider _tensorOperationServiceProvider = new TensorOperationServiceProvider();
 
-    public static ITensorOperationServiceFactory GetTensorOperationServiceFactory()
+    public static ITensorOperationServiceProvider GetTensorOperationServiceProvider()
     {
-        return _tensorOperationServiceFactory;
+        return _tensorOperationServiceProvider;
     }
 
-    public static void SetTensorOperationServiceFactory(ITensorOperationServiceFactory tensorOperationServiceFactory)
+    public static void SetTensorOperationServiceProvider(ITensorOperationServiceProvider tensorOperationServiceProvider)
     {
-        _tensorOperationServiceFactory = tensorOperationServiceFactory;
+        _tensorOperationServiceProvider = tensorOperationServiceProvider;
     }
 }

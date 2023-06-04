@@ -11,9 +11,9 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
 {
     private readonly IDeviceGuardService _guardService;
 
-    public MatrixMultiplicationService(ITensorOperationServiceFactory factory)
+    public MatrixMultiplicationService(ITensorOperationServiceProvider provider)
     {
-        _guardService = factory.GetDeviceGuardService();
+        _guardService = provider.GetDeviceGuardService();
     }
 
     public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)

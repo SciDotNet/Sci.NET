@@ -154,6 +154,22 @@ public class SubtractShould
     }
 
     [Fact]
+    public void CorrectlyFillMatrix_GivenMatrixAndVector()
+    {
+        // Arrange
+        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2 }).AsVector();
+        var result = new Matrix<int>(2, 3);
+        var expectedResult = new int[] { 0, 1, 2, 2, 3, 4 };
+
+        // Act
+        _sut.Arithmetic.Subtract(left, right, result);
+
+        // Assert
+        result.ToArray().Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
     public void CorrectlyFillMatrix_GivenMatrixAndMatrix()
     {
         // Arrange
@@ -161,6 +177,43 @@ public class SubtractShould
         var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[] { 0, 0, 0, 0, 0, 0 };
+
+        // Act
+        _sut.Arithmetic.Subtract(left, right, result);
+
+        // Assert
+        result.ToArray().Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    public void CorrectlyFillsTensor_GivenTensorAndScalar()
+    {
+        // Arrange
+        var left = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
+            .AsTensor();
+        var right = new Scalar<int>(1);
+        var result = new Tensor<int>(new Shape(2, 2, 3));
+        var expectedResult = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+
+        // Act
+        _sut.Arithmetic.Subtract(left, right, result);
+
+        // Assert
+        result.ToArray().Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    public void CorrectlyFillsTensor_GivenTensorAndTensor()
+    {
+        // Arrange
+        var left = Tensor.FromArray<int>(new int[,,] { { { 5, 6, 7 }, { 8, 9, 10 } }, { { 11, 12, 13 }, { 14, 15, 16 } } })
+            .AsTensor();
+
+        var right = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
+            .AsTensor();
+
+        var result = new Tensor<int>(new Shape(2, 2, 3));
+        var expectedResult = new int[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
 
         // Act
         _sut.Arithmetic.Subtract(left, right, result);

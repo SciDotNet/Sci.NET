@@ -431,4 +431,59 @@ internal class ManagedArithmeticBackend : IArithmeticBackend
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultMemoryBlock[i] = leftMemoryBlock * rightMemoryBlock[i]);
     }
+
+    public void Divide<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Handle;
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultMemoryBlock[0] = leftMemoryBlock[0] / rightMemoryBlock[0];
+    }
+
+    public unsafe void Divide<TNumber>(Scalar<TNumber> left, Tensors.Vector<TNumber> right, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftMemoryBlock = ((SystemMemoryBlock<TNumber>)left.Handle).ToPointer()[0];
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            right.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultMemoryBlock[i] = leftMemoryBlock / rightMemoryBlock[i]);
+    }
+
+    public unsafe void Divide<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftMemoryBlock = ((SystemMemoryBlock<TNumber>)left.Handle).ToPointer()[0];
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            right.Rows,
+            0,
+            right.Columns,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            (i, j) => resultMemoryBlock[(i * result.Columns) + j] =
+                leftMemoryBlock / rightMemoryBlock[(i * right.Columns) + j]);
+    }
+
+    public unsafe void Divide<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftMemoryBlock = ((SystemMemoryBlock<TNumber>)left.Handle).ToPointer()[0];
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            right.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultMemoryBlock[i] = leftMemoryBlock / rightMemoryBlock[i]);
+    }
 }

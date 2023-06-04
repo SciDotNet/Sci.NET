@@ -41,7 +41,7 @@ public interface IContractionService
     /// <exception cref="ArgumentException">Throws when the operand shapes are incompatible with the
     /// inner product operation.</exception>
     /// <exception cref="InvalidShapeException">The given shapes were not compatible with the inner product operation.</exception>
-    public ITensor<TNumber> Inner<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -49,7 +49,7 @@ public interface IContractionService
     /// <list type="bullet">
     /// <item>If both <paramref name="left"/> and <paramref name="right"/> are 1-D arrays, it is equivalent to <see cref="Inner{TNumber}"/>.</item>
     /// <item>If both <paramref name="left"/> and <paramref name="right"/> are 2-D arrays, it is equivalent to <see cref="MatrixMultiplicationExtensions.MatrixMultiply{TNumber}"/>.</item>
-    /// <item>If either <paramref name="left"/> or <paramref name="right"/> is 0-D (scalar), it is equivalent to <see cref="ScalarProductExtensions.ScalarProduct{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber},Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/></item>
+    /// <item>If either <paramref name="left"/> or <paramref name="right"/> is 0-D (scalar), it is equivalent to <see cref="ArithmeticExtensions.Product{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber},Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/></item>
     /// <item>If <paramref name="left"/> is an N-D array and <paramref name="right"/> is a 1-D array, it is a <see cref="Contract{TNumber}"/> operation over the last axis of <paramref name="left"/> and <paramref name="right"/>.</item>
     /// <item>If <paramref name="left"/> is an N-D array and <paramref name="right"/> is an M-D array (where M>=2), it is a <see cref="Contract{TNumber}"/> operation over the last axis of <paramref name="left"/> and the second-to-last axis of <paramref name="right"/>.</item>
     /// </list>

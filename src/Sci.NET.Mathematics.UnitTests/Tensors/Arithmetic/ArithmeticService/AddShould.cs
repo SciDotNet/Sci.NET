@@ -20,7 +20,7 @@ public class AddShould
 
     public AddShould()
     {
-        var factoryMock = new Mock<ITensorOperationServiceFactory>();
+        var factoryMock = new Mock<ITensorOperationServiceProvider>();
         _guardServiceMock = new Mock<IDeviceGuardService>();
         factoryMock.Setup(f => f.GetDeviceGuardService()).Returns(_guardServiceMock.Object);
 

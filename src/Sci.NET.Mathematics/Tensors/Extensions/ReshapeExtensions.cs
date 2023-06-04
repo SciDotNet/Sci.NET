@@ -27,7 +27,7 @@ public static class ReshapeExtensions
         where TNumber : unmanaged, INumber<TNumber>
     {
         return ServiceProvider
-            .GetTensorOperationServiceFactory()
+            .GetTensorOperationServiceProvider()
             .GetReshapeService()
             .Reshape(tensor, shape);
     }

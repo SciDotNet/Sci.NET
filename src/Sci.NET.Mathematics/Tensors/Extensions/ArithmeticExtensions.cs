@@ -3,13 +3,16 @@
 
 using System.Numerics;
 
-namespace Sci.NET.Mathematics.Tensors.Arithmetic;
+#pragma warning disable IDE0130
+
+// ReSharper disable once CheckNamespace
+namespace Sci.NET.Mathematics.Tensors;
 
 /// <summary>
-/// An interface providing methods for <see cref="ITensor{TNumber}"/> arithmetic operations.
+/// Extension methods for <see cref="ITensor{TNumber}"/> arithmetic operations.
 /// </summary>
 [PublicAPI]
-public interface IArithmeticService
+public static class ArithmeticExtensions
 {
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
@@ -18,10 +21,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Scalar<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
+    public static Scalar<TNumber> Add<TNumber>(
+        this
+            Scalar<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/>.
@@ -30,10 +40,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Vector<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
+    public static Vector<TNumber> Add<TNumber>(
+        this
+            Scalar<TNumber> left,
         Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Matrix{TNumber}"/>.
@@ -42,10 +59,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
+    public static Matrix<TNumber> Add<TNumber>(
+        this
+            Scalar<TNumber> left,
         Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Tensor{TNumber}"/>.
@@ -54,10 +78,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Tensor<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
+    public static Tensor<TNumber> Add<TNumber>(
+        this
+            Scalar<TNumber> left,
         Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
@@ -66,10 +97,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Vector<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
+    public static Vector<TNumber> Add<TNumber>(
+        this
+            Vector<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/>.
@@ -78,10 +116,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Vector<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
+    public static Vector<TNumber> Add<TNumber>(
+        this
+            Vector<TNumber> left,
         Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="right"/> <see cref="Matrix{TNumber}"/>.
@@ -90,10 +135,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
+    public static Matrix<TNumber> Add<TNumber>(
+        this
+            Vector<TNumber> left,
         Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Matrix{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
@@ -102,10 +154,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
+    public static Matrix<TNumber> Add<TNumber>(
+        this
+            Matrix<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Matrix{TNumber}"/> and <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/>.
@@ -114,10 +173,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
+    public static Matrix<TNumber> Add<TNumber>(
+        this
+            Matrix<TNumber> left,
         Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Matrix{TNumber}"/> and <paramref name="right"/> <see cref="Matrix{TNumber}"/>.
@@ -126,10 +192,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
+    public static Matrix<TNumber> Add<TNumber>(
+        this
+            Matrix<TNumber> left,
         Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Tensor{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
@@ -138,10 +211,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Tensor<TNumber> Add<TNumber>(
-        Tensor<TNumber> left,
+    public static Tensor<TNumber> Add<TNumber>(
+        this
+            Tensor<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the sum of the <paramref name="left"/> <see cref="Tensor{TNumber}"/> and <paramref name="right"/> <see cref="Tensor{TNumber}"/>.
@@ -150,10 +230,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Tensor<TNumber> Add<TNumber>(
-        Tensor<TNumber> left,
+    public static Tensor<TNumber> Add<TNumber>(
+        this
+            Tensor<TNumber> left,
         Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Add(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Scalar{TNumber}"/> and <paramref name="left"/> <see cref="Scalar{TNumber}"/>.
@@ -162,10 +249,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Scalar<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
+    public static Scalar<TNumber> Subtract<TNumber>(
+        this
+            Scalar<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Scalar{TNumber}"/> and <paramref name="left"/> <see cref="Tensors.Vector{TNumber}"/>.
@@ -174,10 +268,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Vector<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
+    public static Vector<TNumber> Subtract<TNumber>(
+        this
+            Scalar<TNumber> left,
         Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Scalar{TNumber}"/> and <paramref name="left"/> <see cref="Matrix{TNumber}"/>.
@@ -186,10 +287,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Matrix<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
+    public static Matrix<TNumber> Subtract<TNumber>(
+        this
+            Scalar<TNumber> left,
         Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Scalar{TNumber}"/> and <paramref name="left"/> <see cref="Tensor{TNumber}"/>.
@@ -198,10 +306,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Tensor<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
+    public static Tensor<TNumber> Subtract<TNumber>(
+        this
+            Scalar<TNumber> left,
         Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="left"/> <see cref="Scalar{TNumber}"/>.
@@ -210,10 +325,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Vector<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
+    public static Vector<TNumber> Subtract<TNumber>(
+        this
+            Vector<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="left"/> <see cref="Tensors.Vector{TNumber}"/>.
@@ -222,10 +344,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Vector<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
+    public static Vector<TNumber> Subtract<TNumber>(
+        this
+            Vector<TNumber> left,
         Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="left"/> <see cref="Matrix{TNumber}"/>.
@@ -234,10 +363,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Matrix<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
+    public static Matrix<TNumber> Subtract<TNumber>(
+        this
+            Vector<TNumber> left,
         Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Matrix{TNumber}"/> and <paramref name="left"/> <see cref="Scalar{TNumber}"/>.
@@ -246,10 +382,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Matrix<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
+    public static Matrix<TNumber> Subtract<TNumber>(
+        this
+            Matrix<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Matrix{TNumber}"/> and <paramref name="left"/> <see cref="Tensors.Vector{TNumber}"/>.
@@ -258,10 +401,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Matrix<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
+    public static Matrix<TNumber> Subtract<TNumber>(
+        this
+            Matrix<TNumber> left,
         Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Matrix{TNumber}"/> and <paramref name="left"/> <see cref="Matrix{TNumber}"/>.
@@ -270,10 +420,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Matrix<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
+    public static Matrix<TNumber> Subtract<TNumber>(
+        this
+            Matrix<TNumber> left,
         Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Tensor{TNumber}"/> and <paramref name="left"/> <see cref="Scalar{TNumber}"/>.
@@ -282,10 +439,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Tensor<TNumber> Subtract<TNumber>(
-        Tensor<TNumber> left,
+    public static Tensor<TNumber> Subtract<TNumber>(
+        this
+            Tensor<TNumber> left,
         Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Tensor{TNumber}"/> and <paramref name="left"/> <see cref="Tensor{TNumber}"/>.
@@ -294,10 +458,17 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
-    public Tensor<TNumber> Subtract<TNumber>(
-        Tensor<TNumber> left,
+    public static Tensor<TNumber> Subtract<TNumber>(
+        this
+            Tensor<TNumber> left,
         Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
 
     /// <summary>
     /// Finds the product of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
@@ -306,8 +477,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public ITensor<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static ITensor<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
 
     /// <summary>
     /// Finds the product of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Vector{TNumber}"/>.
@@ -316,8 +493,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Vector<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static Vector<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
 
     /// <summary>
     /// Finds the product of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Matrix{TNumber}"/>.
@@ -326,8 +509,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static Matrix<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
 
     /// <summary>
     /// Finds the product of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Tensor{TNumber}"/>.
@@ -336,8 +525,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Tensor<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static Tensor<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
 
     /// <summary>
     /// Finds the quotient of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
@@ -346,8 +541,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public ITensor<TNumber> Divide<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static ITensor<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
 
     /// <summary>
     /// Finds the quotient of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Vector{TNumber}"/>.
@@ -356,8 +557,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Vector<TNumber> Divide<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static Vector<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
 
     /// <summary>
     /// Finds the quotient of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Matrix{TNumber}"/>.
@@ -366,8 +573,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Divide<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static Matrix<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
 
     /// <summary>
     /// Finds the quotient of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Tensor{TNumber}"/>.
@@ -376,6 +589,14 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Tensor<TNumber> Divide<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
+    public static Tensor<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
 }
+
+#pragma warning restore IDE0130
