@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 
 namespace Sci.NET.Common.Runtime;
 
+#pragma warning disable CA1060
+
 /// <summary>
 /// A helper class for resolving native library paths.
 /// </summary>
