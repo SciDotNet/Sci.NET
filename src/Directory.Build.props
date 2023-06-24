@@ -4,7 +4,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Deterministic>true</Deterministic>
         <EmitCompilerGeneratedFiles>True</EmitCompilerGeneratedFiles>
-        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+        <CompilerGeneratedFilesOutputPath>$(SolutionDir)\obj\GeneratedFiles</CompilerGeneratedFilesOutputPath>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TestProject Condition="$(MSBuildProjectName.EndsWith('Tests'))">true</TestProject>
