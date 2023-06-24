@@ -63,11 +63,14 @@ public class Tensor<TNumber> : ITensor<TNumber>
     /// <param name="memoryBlock">The memory block for the <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="shape">The shape of the <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="backend">The <see cref="ITensorBackend"/> instance which the <see cref="ITensor{TNumber}"/> uses.</param>
-    protected internal Tensor(IMemoryBlock<TNumber> memoryBlock, Shape shape, ITensorBackend backend)
+    /// <param name="requiresGradient">A value indicating whether the <see cref="Tensor{TNumber}"/> should have a gradient.</param>
+    public Tensor(IMemoryBlock<TNumber> memoryBlock, Shape shape, ITensorBackend backend, bool requiresGradient = false)
     {
         Handle = memoryBlock;
         Shape = shape;
         Backend = backend;
+        HasGradient = requiresGradient;
+        Gradient = requiresGradient ? new Tensor<TNumber>(shape, backend) : new Scalar<TNumber>();
     }
 
     /// <inheritdoc />
@@ -81,6 +84,55 @@ public class Tensor<TNumber> : ITensor<TNumber>
 
     /// <inheritdoc/>
     public IDevice Device => Backend.Device;
+
+    /// <inheritdoc />
+    public ITensor<TNumber> Gradient { get; }
+
+    /// <inheritdoc />
+    public bool HasGradient { get; }
+
+#pragma warning disable CS1591
+    public static Tensor<TNumber> operator +(Tensor<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator +(Scalar<TNumber> left, Tensor<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator +(Tensor<TNumber> left, Tensor<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator -(Tensor<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator -(Scalar<TNumber> left, Tensor<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator -(Tensor<TNumber> left, Tensor<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator *(Tensor<TNumber> left, Scalar<TNumber> right)
+    {
+        return right.Multiply(left);
+    }
+
+    public static Tensor<TNumber> operator *(Scalar<TNumber> left, Tensor<TNumber> right)
+    {
+        return right.Multiply(left);
+    }
+
+#pragma warning restore CS1591
 
     /// <inheritdoc />
     public unsafe Array ToArray()

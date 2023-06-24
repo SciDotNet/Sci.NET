@@ -55,4 +55,46 @@ public class Matrix<TNumber> : Tensor<TNumber>
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
     private protected Array DebuggerDisplayObject => ToArray();
+
+#pragma warning disable CS1591
+    public static Tensor<TNumber> operator +(Matrix<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator +(Scalar<TNumber> left, Matrix<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator +(Matrix<TNumber> left, Matrix<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator -(Matrix<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator -(Scalar<TNumber> left, Matrix<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator -(Matrix<TNumber> left, Matrix<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator *(Matrix<TNumber> left, Scalar<TNumber> right)
+    {
+        return right.Multiply(left);
+    }
+
+    public static Tensor<TNumber> operator *(Scalar<TNumber> left, Matrix<TNumber> right)
+    {
+        return right.Multiply(left);
+    }
+#pragma warning restore CS1591
 }

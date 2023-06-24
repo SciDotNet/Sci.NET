@@ -68,4 +68,10 @@ public interface IMemoryBlock<T> : IDisposable
     /// </summary>
     /// <param name="array">The array to copy from.</param>
     public void CopyFrom(T[] array);
+
+    /// <summary>
+    /// Writes the contents of the <see cref="IMemoryBlock{T}"/> to the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream to write to.</param>
+    void WriteTo(Stream stream);
 }

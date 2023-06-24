@@ -5,15 +5,15 @@ using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
-using Sci.NET.Mathematics.Tensors.Arithmetic;
 using Sci.NET.Mathematics.Tensors.Common;
+using Sci.NET.Mathematics.Tensors.Pointwise;
 
 namespace Sci.NET.Mathematics.UnitTests.Tensors.Arithmetic.ArithmeticService;
 
 public class AddShould
 {
     private readonly Mock<IDeviceGuardService> _guardServiceMock;
-    private readonly Mock<ITensorStorageBackend> _storageMock;
+    private readonly Mock<ITensorStorageKernels> _storageMock;
     private readonly Mock<IDevice> _deviceMock;
     private readonly Mock<ITensorBackend> _backendMock;
     private readonly IArithmeticService _sut;
@@ -24,13 +24,13 @@ public class AddShould
         _guardServiceMock = new Mock<IDeviceGuardService>();
         factoryMock.Setup(f => f.GetDeviceGuardService()).Returns(_guardServiceMock.Object);
 
-        _storageMock = new Mock<ITensorStorageBackend>();
+        _storageMock = new Mock<ITensorStorageKernels>();
         _backendMock = new Mock<ITensorBackend>();
         _deviceMock = new Mock<IDevice>();
-        _sut = new Mathematics.Tensors.Arithmetic.Implementations.ArithmeticService(factoryMock.Object);
+        _sut = new Mathematics.Tensors.Pointwise.Implementations.ArithmeticService(factoryMock.Object);
 
         _backendMock.SetupGet(x => x.Device).Returns(_deviceMock.Object);
-        _backendMock.SetupGet(x => x.Storage).Returns(new Mock<ITensorStorageBackend>().Object);
+        _backendMock.SetupGet(x => x.Storage).Returns(new Mock<ITensorStorageKernels>().Object);
 
         _storageMock.Setup(x => x.Allocate<int>(It.IsAny<Mathematics.Tensors.Shape>()))
             .Returns(new Mock<IMemoryBlock<int>>().Object);

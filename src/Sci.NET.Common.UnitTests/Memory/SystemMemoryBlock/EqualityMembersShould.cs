@@ -6,10 +6,16 @@ using Sut = Sci.NET.Common.Memory.SystemMemoryBlock<int>;
 
 namespace Sci.NET.Common.UnitTests.Memory.SystemMemoryBlock;
 
+#pragma warning disable CS1718
+
+[SuppressMessage(
+    "Microsoft.CodeAnalysis.CSharp",
+    "CS1718:Comparison made to same variable; did you mean to compare something else?",
+    Justification = "Test")]
 public class EqualityMembersShould
 {
     [Fact]
-    [SuppressMessage("ReSharper", "EqualExpressionComparison", Justification = "This is a test for equality.")]
+    [SuppressMessage("ReSharper", "EqualExpressionComparison", Justification = "Test")]
     public void ReturnTrue_GivenSameReference()
     {
         // Arrange

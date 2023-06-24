@@ -15,9 +15,9 @@ public class CtorShould
         var backend = new ManagedTensorBackend();
 
         // Assert
-        backend.Arithmetic.Should().BeOfType<ManagedArithmeticBackend>();
-        backend.LinearAlgebra.Should().BeOfType<ManagedLinearAlgebraBackend>();
-        backend.Storage.Should().BeOfType<ManagedStorageBackend>();
+        backend.Arithmetic.Should().BeOfType<ManagedArithmeticKernels>();
+        backend.LinearAlgebra.Should().BeOfType<ManagedLinearAlgebraKernels>();
+        backend.Storage.Should().BeOfType<ManagedStorageKernels>();
         backend.Device.Should().BeOfType<CpuComputeDevice>();
     }
 }

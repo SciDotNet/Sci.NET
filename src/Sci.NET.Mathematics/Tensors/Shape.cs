@@ -137,6 +137,16 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
+    /// Creates a new <see cref="Shape"/> with the given length.
+    /// </summary>
+    /// <param name="length">A vector with the given length.</param>
+    /// <returns>A shape representing a vector of the given <paramref name="length"/>.</returns>
+    public static Shape Vector(int length)
+    {
+        return new Shape(length);
+    }
+
+    /// <summary>
     /// Gets the multi dimensional indices of the element at the given linear index.
     /// </summary>
     /// <param name="linearIndex">The linear index.</param>

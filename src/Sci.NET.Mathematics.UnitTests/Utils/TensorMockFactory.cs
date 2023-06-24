@@ -12,16 +12,16 @@ public class TensorMockFactory
 {
     private readonly Mock<IDevice> _deviceMock;
     private readonly Mock<ITensorBackend> _backendMock;
-    private readonly Mock<ITensorStorageBackend> _storageMock;
+    private readonly Mock<ITensorStorageKernels> _storageMock;
 
     public TensorMockFactory(
         Mock<ITensorBackend>? backendMock = null,
-        Mock<ITensorStorageBackend>? storageMock = null,
+        Mock<ITensorStorageKernels>? storageMock = null,
         Mock<IDevice>? deviceMock = null)
     {
         _deviceMock = deviceMock ?? new Mock<IDevice>();
         _backendMock = backendMock ?? new Mock<ITensorBackend>();
-        _storageMock = storageMock ?? new Mock<ITensorStorageBackend>();
+        _storageMock = storageMock ?? new Mock<ITensorStorageKernels>();
 
         _backendMock.SetupGet(x => x.Device).Returns(_deviceMock.Object);
         _backendMock.SetupGet(x => x.Storage).Returns(_storageMock.Object);

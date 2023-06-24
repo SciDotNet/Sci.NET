@@ -913,7 +913,7 @@ dotnet_diagnostic.SA1009.severity = warning
 dotnet_diagnostic.SA1010.severity = warning
 
 # A closing square bracket within a C# statement is not spaced correctly.
-dotnet_diagnostic.SA1011.severity = warning
+dotnet_diagnostic.SA1011.severity = none
 
 # An opening brace within a C# element is not spaced correctly.
 dotnet_diagnostic.SA1012.severity = warning

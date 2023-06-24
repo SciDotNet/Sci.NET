@@ -16,7 +16,17 @@ public static class Tensor
     /// <summary>
     /// Gets the default backend for tensors.
     /// </summary>
-    public static ITensorBackend DefaultBackend => new ManagedTensorBackend();
+    public static ITensorBackend DefaultBackend { get; private set; } = new ManagedTensorBackend();
+
+    /// <summary>
+    /// Sets the default backend for tensors.
+    /// </summary>
+    /// <typeparam name="TBackend">The type of backend to use.</typeparam>
+    public static void SetDefaultBackend<TBackend>()
+        where TBackend : ITensorBackend, new()
+    {
+        DefaultBackend = new TBackend();
+    }
 
     /// <summary>
     /// Creates a tensor with the specified dimensions and values.
@@ -94,5 +104,21 @@ public static class Tensor
     {
         var newShape = tensor.Shape.Slice(indices);
         return new Tensor<TNumber>(tensor, newShape);
+    }
+
+    /// <summary>
+    /// Clones a <see cref="ITensor{TNumber}"/> with the same values and shape.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to clone.</param>
+    /// <typeparam name="TTensor">The runtime type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>An empty <typeparamref name="TTensor"/> with empty values.</returns>
+    /// <exception cref="InvalidOperationException">Throws when the <see cref="ITensor{TNumber}"/> could not be cloned.</exception>
+    public static TTensor CloneEmpty<TTensor, TNumber>(TTensor tensor)
+        where TTensor : class, ITensor<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        return result as TTensor ?? throw new InvalidOperationException();
     }
 }

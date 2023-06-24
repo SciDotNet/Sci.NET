@@ -12,22 +12,42 @@ namespace Sci.NET.Mathematics.Backends;
 public interface ITensorBackend
 {
     /// <summary>
-    /// Gets the <see cref="ITensorStorageBackend"/> implementation for the <see cref="ITensorBackend"/>.
+    /// Gets the <see cref="ITensorStorageKernels"/> implementation for the <see cref="ITensorBackend"/>.
     /// </summary>
-    public ITensorStorageBackend Storage { get; }
+    public ITensorStorageKernels Storage { get; }
 
     /// <summary>
-    /// Gets the <see cref="ILinearAlgebraBackend"/> instance for the <see cref="ITensorBackend"/>.
+    /// Gets the <see cref="ILinearAlgebraKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
-    public ILinearAlgebraBackend LinearAlgebra { get; }
+    public ILinearAlgebraKernels LinearAlgebra { get; }
 
     /// <summary>
-    /// Gets the <see cref="IArithmeticBackend"/> instance for the <see cref="ITensorBackend"/>.
+    /// Gets the <see cref="IArithmeticKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
-    public IArithmeticBackend Arithmetic { get; }
+    public IArithmeticKernels Arithmetic { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IPowerKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public IPowerKernels Power { get; }
 
     /// <summary>
     /// Gets the <see cref="IDevice"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public IDevice Device { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IReductionKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public IReductionKernels Reduction { get; }
+
+    /// <summary>
+    /// Gets the <see cref="ILinqKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public ILinqKernels Linq { get; }
+
+    /// <summary>
+    /// Gets the <see cref="ITrigonometryKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public ITrigonometryKernels Trigonometry { get; }
 }

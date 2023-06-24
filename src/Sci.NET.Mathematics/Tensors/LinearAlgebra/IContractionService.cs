@@ -49,7 +49,7 @@ public interface IContractionService
     /// <list type="bullet">
     /// <item>If both <paramref name="left"/> and <paramref name="right"/> are 1-D arrays, it is equivalent to <see cref="Inner{TNumber}"/>.</item>
     /// <item>If both <paramref name="left"/> and <paramref name="right"/> are 2-D arrays, it is equivalent to <see cref="MatrixMultiplicationExtensions.MatrixMultiply{TNumber}"/>.</item>
-    /// <item>If either <paramref name="left"/> or <paramref name="right"/> is 0-D (scalar), it is equivalent to <see cref="ArithmeticExtensions.Product{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber},Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/></item>
+    /// <item>If either <paramref name="left"/> or <paramref name="right"/> is 0-D (scalar), it is equivalent to <see cref="ArithmeticExtensions.Multiply{TNumber}(Sci.NET.Mathematics.Tensors.Scalar{TNumber},Sci.NET.Mathematics.Tensors.Scalar{TNumber})"/></item>
     /// <item>If <paramref name="left"/> is an N-D array and <paramref name="right"/> is a 1-D array, it is a <see cref="Contract{TNumber}"/> operation over the last axis of <paramref name="left"/> and <paramref name="right"/>.</item>
     /// <item>If <paramref name="left"/> is an N-D array and <paramref name="right"/> is an M-D array (where M>=2), it is a <see cref="Contract{TNumber}"/> operation over the last axis of <paramref name="left"/> and the second-to-last axis of <paramref name="right"/>.</item>
     /// </list>

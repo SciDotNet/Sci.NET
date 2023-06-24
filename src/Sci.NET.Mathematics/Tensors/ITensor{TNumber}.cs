@@ -39,6 +39,16 @@ public interface ITensor<TNumber> : IDisposable
     public IDevice Device { get; }
 
     /// <summary>
+    /// Gets the gradient of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    public ITensor<TNumber> Gradient { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="ITensor{TNumber}"/> has a gradient.
+    /// </summary>
+    public bool HasGradient { get; }
+
+    /// <summary>
     /// Gets the debugger display object.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -51,6 +61,321 @@ public interface ITensor<TNumber> : IDisposable
 #pragma warning disable CA1043
     public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
 #pragma warning restore CA1043
+
+#pragma warning disable CS1591
+    public static ITensor<TNumber> operator +(ITensor<TNumber> left, ITensor<TNumber> right)
+    {
+        if (left.IsScalar())
+        {
+            var leftScalar = left.AsScalar();
+
+            if (right.IsScalar())
+            {
+                return leftScalar.Add(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftScalar.Add(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftScalar.Add(right.AsMatrix());
+            }
+
+            return leftScalar.Add(right.AsTensor());
+        }
+
+        if (left.IsVector())
+        {
+            var leftVector = left.AsVector();
+
+            if (right.IsScalar())
+            {
+                return leftVector.Add(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftVector.Add(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftVector.Add(right.AsMatrix());
+            }
+
+            return leftVector.Add(right.AsTensor());
+        }
+
+        if (left.IsMatrix())
+        {
+            var leftMatrix = left.AsMatrix();
+
+            if (right.IsScalar())
+            {
+                return leftMatrix.Add(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftMatrix.Add(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftMatrix.Add(right.AsMatrix());
+            }
+
+            return leftMatrix.Add(right.AsTensor());
+        }
+
+        if (left.IsTensor())
+        {
+            var leftTensor = left.AsTensor();
+
+            if (right.IsScalar())
+            {
+                return leftTensor.Add(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftTensor.Add(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftTensor.Add(right.AsMatrix());
+            }
+
+            return leftTensor.Add(right.AsTensor());
+        }
+
+        throw new UnreachableException();
+    }
+
+    public static ITensor<TNumber> operator -(ITensor<TNumber> left, ITensor<TNumber> right)
+    {
+        if (left.IsScalar())
+        {
+            var leftScalar = left.AsScalar();
+
+            if (right.IsScalar())
+            {
+                return leftScalar.Subtract(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftScalar.Subtract(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftScalar.Subtract(right.AsMatrix());
+            }
+
+            return leftScalar.Subtract(right.AsTensor());
+        }
+
+        if (left.IsVector())
+        {
+            var leftVector = left.AsVector();
+
+            if (right.IsScalar())
+            {
+                return leftVector.Subtract(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftVector.Subtract(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftVector.Subtract(right.AsMatrix());
+            }
+
+            return leftVector.Subtract(right.AsTensor());
+        }
+
+        if (left.IsMatrix())
+        {
+            var leftMatrix = left.AsMatrix();
+
+            if (right.IsScalar())
+            {
+                return leftMatrix.Subtract(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftMatrix.Subtract(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftMatrix.Subtract(right.AsMatrix());
+            }
+
+            return leftMatrix.Subtract(right.AsTensor());
+        }
+
+        if (left.IsTensor())
+        {
+            var leftTensor = left.AsTensor();
+
+            if (right.IsScalar())
+            {
+                return leftTensor.Subtract(right.AsScalar());
+            }
+
+            if (right.IsVector())
+            {
+                return leftTensor.Subtract(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftTensor.Subtract(right.AsMatrix());
+            }
+
+            return leftTensor.Subtract(right.AsTensor());
+        }
+
+        throw new UnreachableException();
+    }
+
+    public static ITensor<TNumber> operator *(ITensor<TNumber> left, ITensor<TNumber> right)
+    {
+        if (left.IsScalar())
+        {
+            var leftScalar = left.AsScalar();
+
+            if (right.IsScalar())
+            {
+                return leftScalar.Multiply(right.AsVector());
+            }
+
+            if (right.IsVector())
+            {
+                return leftScalar.Multiply(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftScalar.Multiply(right.AsMatrix());
+            }
+
+            return leftScalar.Multiply(right.AsTensor());
+        }
+
+        if (left.IsVector())
+        {
+            var leftVector = left.AsVector();
+
+            if (right.IsScalar())
+            {
+                return leftVector.Multiply(right.AsScalar());
+            }
+
+            throw new ArgumentException($"Cannot multiply shape '{left.Shape} by shape '{right.Shape}'");
+        }
+
+        if (left.IsMatrix())
+        {
+            var leftMatrix = left.AsMatrix();
+
+            if (right.IsScalar())
+            {
+                return leftMatrix.Multiply(right.AsScalar());
+            }
+
+            throw new ArgumentException($"Cannot multiply shape '{left.Shape} by shape '{right.Shape}'");
+        }
+
+        if (left.IsTensor())
+        {
+            var leftTensor = left.AsTensor();
+
+            if (right.IsScalar())
+            {
+                return leftTensor.Multiply(right.AsScalar());
+            }
+
+            throw new ArgumentException($"Cannot multiply shape '{left.Shape} by shape '{right.Shape}'");
+        }
+
+        throw new UnreachableException();
+    }
+
+    public static ITensor<TNumber> operator /(ITensor<TNumber> left, ITensor<TNumber> right)
+    {
+        if (left.IsScalar())
+        {
+            var leftScalar = left.AsScalar();
+
+            if (right.IsScalar())
+            {
+                return leftScalar.Divide(right.AsVector());
+            }
+
+            if (right.IsVector())
+            {
+                return leftScalar.Divide(right.AsVector());
+            }
+
+            if (right.IsMatrix())
+            {
+                return leftScalar.Divide(right.AsMatrix());
+            }
+
+            return leftScalar.Divide(right.AsTensor());
+        }
+
+        if (left.IsVector())
+        {
+            var leftVector = left.AsVector();
+
+            if (right.IsScalar())
+            {
+                return leftVector.Divide(right.AsScalar());
+            }
+
+            throw new ArgumentException($"Cannot divide shape '{left.Shape} by shape '{right.Shape}'");
+        }
+
+        if (left.IsMatrix())
+        {
+            var leftMatrix = left.AsMatrix();
+
+            if (right.IsScalar())
+            {
+                return leftMatrix.Divide(right.AsScalar());
+            }
+
+            throw new ArgumentException($"Cannot divide shape '{left.Shape} by shape '{right.Shape}'");
+        }
+
+        if (left.IsTensor())
+        {
+            var leftTensor = left.AsTensor();
+
+            if (right.IsScalar())
+            {
+                return leftTensor.Divide(right.AsScalar());
+            }
+
+            throw new ArgumentException($"Cannot divide shape '{left.Shape} by shape '{right.Shape}'");
+        }
+
+        throw new UnreachableException();
+    }
+
+#pragma warning restore CS1591
 
     /// <summary>
     /// Gets the transpose of the <see cref="ITensor{TNumber}"/>.
@@ -127,5 +452,41 @@ public interface ITensor<TNumber> : IDisposable
     public Tensor<TNumber> AsTensor()
     {
         return new Tensor<TNumber>(this, Shape);
+    }
+
+    /// <summary>
+    /// Checks if the <see cref="ITensor{TNumber}"/> is a <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <returns><c>true</c> if the <see cref="ITensor{TNumber}"/> is a <see cref="Scalar{TNumber}"/> else, <c>false</c>.</returns>
+    public bool IsScalar()
+    {
+        return Shape.IsScalar;
+    }
+
+    /// <summary>
+    /// Checks if the <see cref="ITensor{TNumber}"/> is a <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <returns><c>true</c> if the <see cref="ITensor{TNumber}"/> is a <see cref="Vector{TNumber}"/> else, <c>false</c>.</returns>
+    public bool IsVector()
+    {
+        return Shape.IsVector;
+    }
+
+    /// <summary>
+    /// Checks if the <see cref="ITensor{TNumber}"/> is a <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <returns><c>true</c> if the <see cref="ITensor{TNumber}"/> is a <see cref="Matrix{TNumber}"/> else, <c>false</c>.</returns>
+    public bool IsMatrix()
+    {
+        return Shape.IsMatrix;
+    }
+
+    /// <summary>
+    /// Checks if the <see cref="ITensor{TNumber}"/> is a <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <returns><c>true</c> if the <see cref="ITensor{TNumber}"/> is a <see cref="Tensor{TNumber}"/> else, <c>false</c>.</returns>
+    public bool IsTensor()
+    {
+        return Shape.IsTensor;
     }
 }

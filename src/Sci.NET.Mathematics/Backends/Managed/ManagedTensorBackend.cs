@@ -18,10 +18,14 @@ public class ManagedTensorBackend : ITensorBackend
     /// </summary>
     public ManagedTensorBackend()
     {
-        Storage = new ManagedStorageBackend();
-        LinearAlgebra = new ManagedLinearAlgebraBackend();
-        Arithmetic = new ManagedArithmeticBackend();
+        Storage = new ManagedStorageKernels();
+        LinearAlgebra = new ManagedLinearAlgebraKernels();
+        Arithmetic = new ManagedArithmeticKernels();
+        Power = new ManagedPowerKernels();
         Device = new CpuComputeDevice();
+        Reduction = new ManagedReductionKernels();
+        Linq = new ManagedLinqKernels();
+        Trigonometry = new ManagedTrigonometryKernels();
     }
 
     /// <summary>
@@ -30,14 +34,26 @@ public class ManagedTensorBackend : ITensorBackend
     public static ITensorBackend Instance { get; } = new ManagedTensorBackend();
 
     /// <inheritdoc />
-    public ITensorStorageBackend Storage { get; }
+    public ITensorStorageKernels Storage { get; }
 
     /// <inheritdoc />
-    public ILinearAlgebraBackend LinearAlgebra { get; }
+    public ILinearAlgebraKernels LinearAlgebra { get; }
 
     /// <inheritdoc />
-    public IArithmeticBackend Arithmetic { get; }
+    public IArithmeticKernels Arithmetic { get; }
+
+    /// <inheritdoc />
+    public IPowerKernels Power { get; }
 
     /// <inheritdoc />
     public IDevice Device { get; }
+
+    /// <inheritdoc />
+    public IReductionKernels Reduction { get; }
+
+    /// <inheritdoc />
+    public ILinqKernels Linq { get; }
+
+    /// <inheritdoc />
+    public ITrigonometryKernels Trigonometry { get; }
 }

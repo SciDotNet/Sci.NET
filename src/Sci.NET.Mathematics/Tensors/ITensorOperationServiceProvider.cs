@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Mathematics.Tensors.Arithmetic;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.Manipulation;
+using Sci.NET.Mathematics.Tensors.Pointwise;
+using Sci.NET.Mathematics.Tensors.Serialization;
+using Sci.NET.Mathematics.Tensors.Trigonometry;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -49,4 +51,34 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="IArithmeticService"/>.</returns>
     public IArithmeticService GetArithmeticService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IPowerService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IPowerService"/>.</returns>
+    public IPowerService GetPowerService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IReductionService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IReductionService"/>.</returns>
+    public IReductionService GetReductionService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="ILinqService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ILinqService"/>.</returns>
+    public ILinqService GetLinqService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="ITrigonometryService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ITrigonometryService"/>.</returns>
+    public ITrigonometryService GetTrigonometryService();
+
+    /// <summary>
+    /// Gets an instance the <see cref="ISerializationService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ISerializationService"/>.</returns>
+    public ISerializationService GetSerializationService();
 }

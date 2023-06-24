@@ -33,4 +33,9 @@ public enum DeviceCategory
     /// An ASIC device.
     /// </summary>
     Asic = 4,
+
+    /// <summary>
+    /// A CUDA device.
+    /// </summary>
+    Cuda = 5
 }

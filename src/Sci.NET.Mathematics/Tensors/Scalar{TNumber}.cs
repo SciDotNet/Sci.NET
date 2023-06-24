@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
 
@@ -44,6 +45,32 @@ public class Scalar<TNumber> : Tensor<TNumber>
         : base(handle, Shape.Scalar, backend)
     {
     }
+
+#pragma warning disable CS1591
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Scalar<TNumber> operator +(Scalar<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Scalar<TNumber> operator -(Scalar<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Scalar<TNumber> operator *(Scalar<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Multiply(right);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Scalar<TNumber> operator /(Scalar<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Divide(right);
+    }
+#pragma warning restore CS1591
 
     /// <summary>
     /// Gets the value of the <see cref="Scalar{TNumber}"/>.

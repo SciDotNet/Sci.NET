@@ -477,7 +477,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public static ITensor<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
+    public static Scalar<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return ServiceProvider
@@ -535,13 +535,61 @@ public static class ArithmeticExtensions
     }
 
     /// <summary>
+    /// Finds the product of the <paramref name="left"/> <see cref="Vector{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    public static Vector<TNumber> Multiply<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
+
+    /// <summary>
+    /// Finds the product of the <paramref name="left"/> <see cref="Matrix{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    public static Matrix<TNumber> Multiply<TNumber>(this Matrix<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
+
+    /// <summary>
+    /// Finds the product of the <paramref name="left"/> <see cref="Tensor{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    public static Tensor<TNumber> Multiply<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Multiply(left, right);
+    }
+
+    /// <summary>
     /// Finds the quotient of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
     /// </summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public static ITensor<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
+    public static Scalar<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return ServiceProvider
@@ -590,6 +638,54 @@ public static class ArithmeticExtensions
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
     public static Tensor<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
+
+    /// <summary>
+    /// Finds the quotient of the <paramref name="left"/> <see cref="Vector{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    public static Tensor<TNumber> Divide<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
+
+    /// <summary>
+    /// Finds the quotient of the <paramref name="left"/> <see cref="Matrix{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    public static Tensor<TNumber> Divide<TNumber>(this Matrix<TNumber> left, Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return ServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Divide(left, right);
+    }
+
+    /// <summary>
+    /// Finds the quotient of the <paramref name="left"/> <see cref="Tensor{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    public static Tensor<TNumber> Divide<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return ServiceProvider

@@ -332,6 +332,33 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
+    public unsafe void WriteTo(Stream stream)
+    {
+        var reference = Unsafe.AsRef<byte>(_reference);
+        var byteLength = Length * Unsafe.SizeOf<T>();
+
+        // Write the entire block in one go if possible
+        if (byteLength <= int.MaxValue)
+        {
+            stream.Write(new ReadOnlySpan<byte>(_reference, (int)byteLength));
+            return;
+        }
+
+        // Otherwise write in chunks using long pointer
+        var remaining = byteLength;
+        var pointer = (byte*)Unsafe.AsPointer(ref reference);
+        var offset = 0L;
+
+        while (remaining > 0)
+        {
+            var chunkLength = Math.Min(remaining, int.MaxValue);
+            stream.Write(new ReadOnlySpan<byte>(pointer + offset, (int)chunkLength));
+            remaining -= chunkLength;
+            offset += chunkLength;
+        }
+    }
+
+    /// <inheritdoc />
     [MethodImpl(ImplementationOptions.HotPath)]
     public IMemoryBlock<T> Copy()
     {
