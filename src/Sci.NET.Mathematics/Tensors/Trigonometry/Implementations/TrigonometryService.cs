@@ -182,4 +182,92 @@ internal class TrigonometryService : ITrigonometryService
 
         return result;
     }
+
+    public Scalar<TNumber> Cosh<TNumber>(Scalar<TNumber> scalar)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = scalar.Backend;
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Trigonometry.Cosh(scalar, result);
+
+        return result;
+    }
+
+    public Vector<TNumber> Cosh<TNumber>(Vector<TNumber> vector)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = vector.Backend;
+        var result = new Vector<TNumber>(vector.Length, backend);
+
+        backend.Trigonometry.Cosh(vector, result);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Cosh<TNumber>(Matrix<TNumber> matrix)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = matrix.Backend;
+        var result = new Matrix<TNumber>(matrix.Rows, matrix.Columns, backend);
+
+        backend.Trigonometry.Cosh(matrix, result);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Cosh<TNumber>(Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = tensor.Backend;
+        var result = new Tensor<TNumber>(tensor.Shape, backend);
+
+        backend.Trigonometry.Cosh(tensor, result);
+
+        return result;
+    }
+
+    public Scalar<TNumber> Tanh<TNumber>(Scalar<TNumber> scalar)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = scalar.Backend;
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Trigonometry.Tanh(scalar, result);
+
+        return result;
+    }
+
+    public Vector<TNumber> Tanh<TNumber>(Vector<TNumber> vector)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = vector.Backend;
+        var result = new Vector<TNumber>(vector.Length, backend);
+
+        backend.Trigonometry.Tanh(vector, result);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Tanh<TNumber>(Matrix<TNumber> matrix)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = matrix.Backend;
+        var result = new Matrix<TNumber>(matrix.Rows, matrix.Columns, backend);
+
+        backend.Trigonometry.Tanh(matrix, result);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Tanh<TNumber>(Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var backend = tensor.Backend;
+        var result = new Tensor<TNumber>(tensor.Shape, backend);
+
+        backend.Trigonometry.Tanh(tensor, result);
+
+        return result;
+    }
 }

@@ -39,16 +39,6 @@ public interface ITensor<TNumber> : IDisposable
     public IDevice Device { get; }
 
     /// <summary>
-    /// Gets the gradient of the <see cref="ITensor{TNumber}"/>.
-    /// </summary>
-    public ITensor<TNumber> Gradient { get; }
-
-    /// <summary>
-    /// Gets a value indicating whether the <see cref="ITensor{TNumber}"/> has a gradient.
-    /// </summary>
-    public bool HasGradient { get; }
-
-    /// <summary>
     /// Gets the debugger display object.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]

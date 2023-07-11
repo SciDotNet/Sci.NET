@@ -213,4 +213,106 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultBlock[i] = TNumber.Tanh(vectorBlock[i]));
     }
+
+    public void Cosh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var scalarBlock = (SystemMemoryBlock<TNumber>)scalar.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultBlock[0] = TNumber.Cosh(scalarBlock[0]);
+    }
+
+    public void Cosh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var vectorBlock = (SystemMemoryBlock<TNumber>)vector.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            vectorBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Cosh(vectorBlock[i]));
+    }
+
+    public void Cosh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var matrixBlock = (SystemMemoryBlock<TNumber>)matrix.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            matrix.Rows,
+            0,
+            matrix.Columns,
+            ManagedTensorBackend.ParallelizationThreshold,
+            (i, j) => resultBlock[(i * result.Columns) + j] =
+                TNumber.Cosh(matrixBlock[(i * matrix.Columns) + j]));
+    }
+
+    public void Cosh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var vectorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            vectorBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Cosh(vectorBlock[i]));
+    }
+
+    public void Tanh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var scalarBlock = (SystemMemoryBlock<TNumber>)scalar.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultBlock[0] = TNumber.Tanh(scalarBlock[0]);
+    }
+
+    public void Tanh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var vectorBlock = (SystemMemoryBlock<TNumber>)vector.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            vectorBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Tanh(vectorBlock[i]));
+    }
+
+    public void Tanh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var matrixBlock = (SystemMemoryBlock<TNumber>)matrix.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            matrix.Rows,
+            0,
+            matrix.Columns,
+            ManagedTensorBackend.ParallelizationThreshold,
+            (i, j) => resultBlock[(i * result.Columns) + j] =
+                TNumber.Tanh(matrixBlock[(i * matrix.Columns) + j]));
+    }
+
+    public void Tanh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var vectorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            vectorBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Tanh(vectorBlock[i]));
+    }
 }

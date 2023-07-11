@@ -50,4 +50,9 @@ public interface ITensorBackend
     /// Gets the <see cref="ITrigonometryKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public ITrigonometryKernels Trigonometry { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IRandomKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public IRandomKernels Random { get; }
 }

@@ -162,4 +162,76 @@ public interface ITrigonometryKernels
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     public void Sinh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic cosine of the specified <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the cosh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    public void Cosh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic cosine of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the cosh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
+    public void Cosh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic cosine of the specified <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the cosh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    public void Cosh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic cosine of the specified <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the cosh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    public void Cosh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic tangent of the specified <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the tanh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    public void Tanh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic tangent of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the tanh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
+    public void Tanh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic tangent of the specified <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the tanh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    public void Tanh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the hyperbolic tangent of the specified <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the tanh of.</param>
+    /// <param name="result">Stores the result of the operation.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    public void Tanh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 }
