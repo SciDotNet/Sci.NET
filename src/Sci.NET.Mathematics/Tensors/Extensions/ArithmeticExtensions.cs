@@ -27,7 +27,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -46,7 +46,7 @@ public static class ArithmeticExtensions
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -65,7 +65,7 @@ public static class ArithmeticExtensions
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -84,7 +84,7 @@ public static class ArithmeticExtensions
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -103,7 +103,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -122,7 +122,7 @@ public static class ArithmeticExtensions
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -141,7 +141,7 @@ public static class ArithmeticExtensions
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -160,7 +160,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -179,7 +179,7 @@ public static class ArithmeticExtensions
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -198,7 +198,7 @@ public static class ArithmeticExtensions
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -217,7 +217,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -236,7 +236,7 @@ public static class ArithmeticExtensions
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Add(left, right);
@@ -255,7 +255,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -274,7 +274,7 @@ public static class ArithmeticExtensions
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -293,7 +293,7 @@ public static class ArithmeticExtensions
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -312,7 +312,7 @@ public static class ArithmeticExtensions
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -331,7 +331,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -350,7 +350,7 @@ public static class ArithmeticExtensions
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -369,7 +369,7 @@ public static class ArithmeticExtensions
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -388,7 +388,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -407,7 +407,7 @@ public static class ArithmeticExtensions
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -426,7 +426,7 @@ public static class ArithmeticExtensions
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -445,7 +445,7 @@ public static class ArithmeticExtensions
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -464,7 +464,7 @@ public static class ArithmeticExtensions
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Subtract(left, right);
@@ -480,7 +480,7 @@ public static class ArithmeticExtensions
     public static Scalar<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -496,7 +496,7 @@ public static class ArithmeticExtensions
     public static Vector<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -512,7 +512,7 @@ public static class ArithmeticExtensions
     public static Matrix<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -528,7 +528,7 @@ public static class ArithmeticExtensions
     public static Tensor<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -544,7 +544,7 @@ public static class ArithmeticExtensions
     public static Vector<TNumber> Multiply<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -560,7 +560,7 @@ public static class ArithmeticExtensions
     public static Matrix<TNumber> Multiply<TNumber>(this Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -576,7 +576,7 @@ public static class ArithmeticExtensions
     public static Tensor<TNumber> Multiply<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Multiply(left, right);
@@ -592,7 +592,7 @@ public static class ArithmeticExtensions
     public static Scalar<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);
@@ -608,7 +608,7 @@ public static class ArithmeticExtensions
     public static Vector<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);
@@ -624,7 +624,7 @@ public static class ArithmeticExtensions
     public static Matrix<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);
@@ -640,7 +640,7 @@ public static class ArithmeticExtensions
     public static Tensor<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);
@@ -656,7 +656,7 @@ public static class ArithmeticExtensions
     public static Tensor<TNumber> Divide<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);
@@ -672,7 +672,7 @@ public static class ArithmeticExtensions
     public static Tensor<TNumber> Divide<TNumber>(this Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);
@@ -688,7 +688,7 @@ public static class ArithmeticExtensions
     public static Tensor<TNumber> Divide<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
             .Divide(left, right);

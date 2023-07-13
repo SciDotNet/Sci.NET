@@ -51,8 +51,7 @@ public class EqualsShould
             .Returns("Some other device");
 
         // Act
-        // ReSharper disable once SuspiciousTypeConversion.Global - This is the point of the test
-        var result = sut.Equals(other);
+        var result = sut.Equals(other.Object);
 
         // Assert
         result.Should().BeFalse();

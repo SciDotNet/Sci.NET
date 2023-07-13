@@ -52,12 +52,38 @@ public interface IPowerService
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
-    /// Raises a <see cref="Tensor{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
+    /// Raises a <see cref="Scalar{TNumber}"/> to the power of 2.
     /// </summary>
-    /// <param name="value">The base.</param>
-    /// <param name="power">The exponent.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
-    /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
-    public Tensor<TNumber> Pow<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+    /// <param name="value">The value to square.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <paramref name="value"/> raised to the second power.</returns>
+    public Scalar<TNumber> Square<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Vector{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <paramref name="value"/> raised to the second power.</returns>
+    public Vector<TNumber> Square<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Matrix{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <paramref name="value"/> raised to the second power.</returns>
+    public Matrix<TNumber> Square<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Tensor{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <paramref name="value"/> raised to the second power.</returns>
+    public Tensor<TNumber> Square<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

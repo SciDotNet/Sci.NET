@@ -26,7 +26,7 @@ public static class LinqExtensions
         where TTensor : class, ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetLinqService()
             .Map(tensor, predicate);

@@ -27,7 +27,7 @@ public static class PermutationExtensions
     public static ITensor<TNumber> Permute<TNumber>(this ITensor<TNumber> tensor, int[] permutation)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPermutationService()
             .Permute(tensor, permutation);

@@ -10,7 +10,7 @@ internal class DeviceGuardService : IDeviceGuardService
 {
     public void GuardBinaryOperation(IDevice left, IDevice right)
     {
-        if (left.Equals(right))
+        if (!left.Equals(right))
         {
             throw new TensorDataLocalityException(
                 "The left and right operands must be on the same device, but were on {0} and {1}'",

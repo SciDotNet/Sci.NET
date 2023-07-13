@@ -63,12 +63,47 @@ internal class PowerService : IPowerService
         return result;
     }
 
-    public Tensor<TNumber> Pow<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+    public Scalar<TNumber> Square<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
-            .GetTensorOperationServiceProvider()
-            .GetPowerService()
-            .Pow(value, power);
+        var backend = value.Backend;
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Power.Square(value, result);
+
+        return result;
+    }
+
+    public Vector<TNumber> Square<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Vector<TNumber>(value.Length, backend);
+
+        backend.Power.Square(value, result);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Square<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
+
+        backend.Power.Square(value, result);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Square<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Tensor<TNumber>(value.Shape, backend);
+
+        backend.Power.Square(value, result);
+
+        return result;
     }
 }

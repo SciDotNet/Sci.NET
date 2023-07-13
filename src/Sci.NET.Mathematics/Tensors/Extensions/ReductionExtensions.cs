@@ -26,7 +26,7 @@ public static class ReductionExtensions
     public static ITensor<TNumber> Sum<TNumber>(this ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetReductionService()
             .Sum(tensor, axes, keepDims);

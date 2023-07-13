@@ -23,7 +23,7 @@ public static class TrigonometryExtensions
     public static Scalar<TNumber> Sin<TNumber>(this Scalar<TNumber> scalar)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Sin(scalar);
@@ -38,7 +38,7 @@ public static class TrigonometryExtensions
     public static Vector<TNumber> Sin<TNumber>(this Vector<TNumber> vector)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Sin(vector);
@@ -53,7 +53,7 @@ public static class TrigonometryExtensions
     public static Matrix<TNumber> Sin<TNumber>(this Matrix<TNumber> matrix)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Sin(matrix);
@@ -68,7 +68,7 @@ public static class TrigonometryExtensions
     public static Tensor<TNumber> Sin<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Sin(tensor);
@@ -83,7 +83,7 @@ public static class TrigonometryExtensions
     public static Scalar<TNumber> Cos<TNumber>(this Scalar<TNumber> scalar)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Cos(scalar);
@@ -98,7 +98,7 @@ public static class TrigonometryExtensions
     public static Vector<TNumber> Cos<TNumber>(this Vector<TNumber> vector)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Cos(vector);
@@ -113,7 +113,7 @@ public static class TrigonometryExtensions
     public static Matrix<TNumber> Cos<TNumber>(this Matrix<TNumber> matrix)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Cos(matrix);
@@ -128,7 +128,7 @@ public static class TrigonometryExtensions
     public static Tensor<TNumber> Cos<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Cos(tensor);
@@ -143,7 +143,7 @@ public static class TrigonometryExtensions
     public static Scalar<TNumber> Tan<TNumber>(this Scalar<TNumber> scalar)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Tan(scalar);
@@ -158,7 +158,7 @@ public static class TrigonometryExtensions
     public static Vector<TNumber> Tan<TNumber>(this Vector<TNumber> vector)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Tan(vector);
@@ -173,7 +173,7 @@ public static class TrigonometryExtensions
     public static Matrix<TNumber> Tan<TNumber>(this Matrix<TNumber> matrix)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Tan(matrix);
@@ -188,7 +188,7 @@ public static class TrigonometryExtensions
     public static Tensor<TNumber> Tan<TNumber>(this Tensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
             .Tan(tensor);

@@ -3,4 +3,4 @@
 
 #pragma warning disable IDE0005, SA1200
 global using JetBrains.Annotations;
-#pragma warning restore SA1200, IDE00051
+#pragma warning restore SA1200, IDE0005

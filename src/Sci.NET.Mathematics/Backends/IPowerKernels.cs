@@ -51,4 +51,40 @@ public interface IPowerKernels
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power, Tensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Scalar{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Tensors.Vector{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    void Square<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Matrix{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    void Square<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises a <see cref="Tensor{TNumber}"/> to the power of 2.
+    /// </summary>
+    /// <param name="value">The value to square.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    void Square<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

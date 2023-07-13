@@ -61,4 +61,52 @@ internal class ManagedPowerKernels : IPowerKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
     }
+
+    public void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultBlock[0] = TNumber.Abs(valueBlock[0] * valueBlock[0]);
+    }
+
+    public void Square<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
+    }
+
+    public void Square<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
+    }
+
+    public void Square<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
+    }
 }

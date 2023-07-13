@@ -32,7 +32,7 @@ public static class ContractionExtensions
         int[] rightIndices)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetContractionService()
             .Contract(left, right, leftIndices, rightIndices);
@@ -47,7 +47,7 @@ public static class ContractionExtensions
         int[] rightIndices)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetContractionService()
             .Contract(left, right, leftIndices, rightIndices);
@@ -67,7 +67,7 @@ public static class ContractionExtensions
     public static Scalar<TNumber> Inner<TNumber>(this Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetContractionService()
             .Inner(left, right);
@@ -93,7 +93,7 @@ public static class ContractionExtensions
         ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return ServiceProvider
+        return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetContractionService()
             .Dot(left, right);

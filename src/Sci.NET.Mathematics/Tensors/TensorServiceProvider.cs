@@ -3,16 +3,26 @@
 
 namespace Sci.NET.Mathematics.Tensors;
 
-internal static class ServiceProvider
+/// <summary>
+/// A service provider for tensor operations.
+/// </summary>
+[PublicAPI]
+public static class TensorServiceProvider
 {
     private static ITensorOperationServiceProvider _tensorOperationServiceProvider = new TensorOperationServiceProvider();
 
+    /// <summary>
+    /// Gets the current tensor operation service provider.
+    /// </summary>
+    /// <returns>The <see cref="ITensorOperationServiceProvider"/>.</returns>
+#pragma warning disable CA1024
     public static ITensorOperationServiceProvider GetTensorOperationServiceProvider()
+#pragma warning restore CA1024
     {
         return _tensorOperationServiceProvider;
     }
 
-    public static void SetTensorOperationServiceProvider(ITensorOperationServiceProvider tensorOperationServiceProvider)
+    internal static void SetTensorOperationServiceProvider(ITensorOperationServiceProvider tensorOperationServiceProvider)
     {
         _tensorOperationServiceProvider = tensorOperationServiceProvider;
     }

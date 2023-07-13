@@ -24,7 +24,7 @@ public static class SerializationExtensions
     public static void SaveNumpy<TNumber>(this ITensor<TNumber> tensor, string path)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        ServiceProvider
+        TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetSerializationService()
             .SaveNpy(tensor, path);
