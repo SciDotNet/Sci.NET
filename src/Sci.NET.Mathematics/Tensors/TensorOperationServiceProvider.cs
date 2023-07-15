@@ -29,6 +29,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly ILinqService _linqService;
     private readonly ITrigonometryService _trigonometryService;
     private readonly ISerializationService _serializationService;
+    private readonly ICastingService _castingService;
 
     public TensorOperationServiceProvider()
     {
@@ -38,6 +39,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _linqService = new LinqService();
         _trigonometryService = new TrigonometryService();
         _serializationService = new SerializationService();
+        _castingService = new CastingService();
         _powerService = new PowerService(this);
         _matrixMultiplicationService = new MatrixMultiplicationService(this);
         _arithmeticService = new ArithmeticService(this);
@@ -98,5 +100,10 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public ISerializationService GetSerializationService()
     {
         return _serializationService;
+    }
+
+    public ICastingService GetCastingService()
+    {
+        return _castingService;
     }
 }

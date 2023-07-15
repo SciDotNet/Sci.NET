@@ -368,6 +368,23 @@ public interface ITensor<TNumber> : IDisposable
 #pragma warning restore CS1591
 
     /// <summary>
+    /// Creates a copy of the <see cref="ITensor{TNumber}"/> on the specified <typeparamref name="TDevice"/>.
+    /// </summary>
+    /// <typeparam name="TDevice">The device to copy to.</typeparam>
+    /// <returns>A new <see cref="ITensor{TNumber}"/> on the specified device.</returns>
+    public ITensor<TNumber> To<TDevice>()
+        where TDevice : IDevice, new()
+    {
+        var backend = new TDevice().GetTensorBackend();
+        var storage = backend.Storage.Allocate<TNumber>(Shape);
+        var systemMemoryCopy = Handle;
+
+        systemMemoryCopy.CopyTo(storage);
+
+        return new Tensor<TNumber>(storage, Shape, backend);
+    }
+
+    /// <summary>
     /// Gets the transpose of the <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <returns>The transpose of the <see cref="ITensor{TNumber}"/>.</returns>

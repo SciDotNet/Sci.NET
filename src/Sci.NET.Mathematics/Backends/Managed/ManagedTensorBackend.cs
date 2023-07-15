@@ -27,6 +27,7 @@ public class ManagedTensorBackend : ITensorBackend
         Linq = new ManagedLinqKernels();
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
+        Casting = new ManagedCastingKernels();
     }
 
     /// <summary>
@@ -60,4 +61,7 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public IRandomKernels Random { get; }
+
+    /// <inheritdoc />
+    public ICastingKernels Casting { get; }
 }

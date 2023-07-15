@@ -81,4 +81,10 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="ISerializationService"/>.</returns>
     public ISerializationService GetSerializationService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="ICastingService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ICastingService"/>.</returns>
+    public ICastingService GetCastingService();
 }

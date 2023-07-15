@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Common.Runtime;
+using Sci.NET.Mathematics.Backends.Managed;
 
 namespace Sci.NET.Mathematics.Backends.Devices;
 
@@ -41,6 +42,12 @@ public class CpuComputeDevice : IDevice
 
     /// <inheritdoc />
     public DeviceCategory Category => DeviceCategory.Cpu;
+
+    /// <inheritdoc />
+    public ITensorBackend GetTensorBackend()
+    {
+        return ManagedTensorBackend.Instance;
+    }
 
     /// <inheritdoc />
     public bool Equals(IDevice? other)

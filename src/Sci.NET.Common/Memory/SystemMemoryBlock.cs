@@ -466,6 +466,50 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <summary>
+    /// Gets a <see cref="Span{T}"/> to the <see cref="SystemMemoryBlock{T}"/>.
+    /// </summary>
+    /// <returns>A span to this instance.</returns>
+    /// <exception cref="InvalidOperationException">The length of the <see cref="SystemMemoryBlock{T}"/> is too big to create a <see cref="Span{T}"/>.</exception>
+    public unsafe Span<T> AsSpan()
+    {
+        if (Length > int.MaxValue)
+        {
+            throw new InvalidOperationException("Cannot create a span larger than int.MaxValue");
+        }
+
+        return new Span<T>(_reference, (int)Length);
+    }
+
+    /// <summary>
+    /// Reinterprets the <see cref="SystemMemoryBlock{T}"/> as a <see cref="SystemMemoryBlock{TOut}"/>.
+    /// </summary>
+    /// <typeparam name="TOut">The output type parameter.</typeparam>
+    /// <returns>A copy of this instance as a <see cref="SystemMemoryBlock{TOut}"/>.</returns>
+    /// <exception cref="InvalidOperationException">Throws when the sizes of each type are incompatible.</exception>
+    public unsafe SystemMemoryBlock<TOut> DangerousReinterpretCast<TOut>()
+        where TOut : unmanaged
+    {
+        var totalBytes = Length * Unsafe.SizeOf<T>();
+        var tOutSize = Unsafe.SizeOf<TOut>();
+
+        if (totalBytes % tOutSize != 0)
+        {
+            throw new InvalidOperationException("Cannot reinterpret cast to a type with a different size");
+        }
+
+        var resultLength = totalBytes / tOutSize;
+        var result = new SystemMemoryBlock<TOut>(resultLength);
+
+        Buffer.MemoryCopy(
+            _reference,
+            result._reference,
+            totalBytes,
+            totalBytes);
+
+        return result;
+    }
+
+    /// <summary>
     /// Disposes the <see cref="SystemMemoryBlock{T}"/>.
     /// </summary>
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>

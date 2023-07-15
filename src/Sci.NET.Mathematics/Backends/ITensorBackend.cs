@@ -55,4 +55,9 @@ public interface ITensorBackend
     /// Gets the <see cref="IRandomKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public IRandomKernels Random { get; }
+
+    /// <summary>
+    /// Gets the <see cref="ICastingKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public ICastingKernels Casting { get; }
 }

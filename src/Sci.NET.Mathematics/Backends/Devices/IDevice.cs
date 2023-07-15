@@ -23,4 +23,10 @@ public interface IDevice : IEquatable<IDevice>
     /// Gets the category of the device.
     /// </summary>
     public DeviceCategory Category { get; }
+
+    /// <summary>
+    /// Gets the <see cref="ITensorBackend"/> of the device.
+    /// </summary>
+    /// <returns>The <see cref="ITensorBackend"/> for the device.</returns>
+    public ITensorBackend GetTensorBackend();
 }

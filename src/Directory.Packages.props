@@ -21,7 +21,7 @@
     <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
   <ItemGroup Label="Common">
-    <PackageVersion Include="SixLabors.ImageSharp" Version="2.1.3" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageVersion Include="GtkSharp" Version="3.24.24.38" />
     <PackageVersion Include="Autofac" Version="6.5.0" />
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
