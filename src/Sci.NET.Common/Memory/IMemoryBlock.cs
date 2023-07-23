@@ -22,6 +22,12 @@ public interface IMemoryBlock<T> : IDisposable
     public bool IsDisposed { get; }
 
     /// <summary>
+    /// Gets or sets the value at the specified index.
+    /// </summary>
+    /// <param name="index">The index to query.</param>
+    public ref T this[long index] { get; }
+
+    /// <summary>
     /// Copies the contents of the <see cref="IMemoryBlock{T}"/> to a new <see cref="IMemoryBlock{T}"/>.
     /// </summary>
     /// <returns>A copy of the current <see cref="IMemoryBlock{T}"/> instance.</returns>
@@ -73,5 +79,23 @@ public interface IMemoryBlock<T> : IDisposable
     /// Writes the contents of the <see cref="IMemoryBlock{T}"/> to the specified stream.
     /// </summary>
     /// <param name="stream">The stream to write to.</param>
-    void WriteTo(Stream stream);
+    public void WriteTo(Stream stream);
+
+    /// <summary>
+    /// Copies the contents of the specified <see cref="IMemoryBlock{T}"/> to the <see cref="IMemoryBlock{T}"/>.
+    /// </summary>
+    /// <param name="handle">The memory block to copy from.</param>
+    /// <param name="srcIdx">The source index to start from.</param>
+    /// <param name="dstIdx">The destination index to start from.</param>
+    /// <param name="count">The number of elements to copy.</param>
+    public void BlockCopy(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count);
+
+    /// <summary>
+    /// Copies the contents of the specified <see cref="Span{T}"/> to the <see cref="IMemoryBlock{T}"/>.
+    /// </summary>
+    /// <param name="buffer">The buffer to copy from.</param>
+    /// <param name="srcIdx">The source index to start from.</param>
+    /// <param name="dstIdx">The destination index to start from.</param>
+    /// <param name="count">The number of elements to copy.</param>
+    public void BlockCopy(Span<byte> buffer, int srcIdx, int dstIdx, int count);
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 
 #pragma warning disable IDE0130
@@ -21,6 +22,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Scalar<TNumber> Add<TNumber>(
         this
             Scalar<TNumber> left,
@@ -40,6 +42,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Add<TNumber>(
         this
             Scalar<TNumber> left,
@@ -59,6 +62,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Add<TNumber>(
         this
             Scalar<TNumber> left,
@@ -78,6 +82,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Add<TNumber>(
         this
             Scalar<TNumber> left,
@@ -97,6 +102,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Add<TNumber>(
         this
             Vector<TNumber> left,
@@ -116,6 +122,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Add<TNumber>(
         this
             Vector<TNumber> left,
@@ -135,6 +142,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Add<TNumber>(
         this
             Vector<TNumber> left,
@@ -154,6 +162,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Add<TNumber>(
         this
             Matrix<TNumber> left,
@@ -173,9 +182,9 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Add<TNumber>(
-        this
-            Matrix<TNumber> left,
+        this Matrix<TNumber> left,
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -192,6 +201,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Add<TNumber>(
         this
             Matrix<TNumber> left,
@@ -211,6 +221,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Add<TNumber>(
         this
             Tensor<TNumber> left,
@@ -230,6 +241,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Add<TNumber>(
         this
             Tensor<TNumber> left,
@@ -249,6 +261,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Scalar<TNumber> Subtract<TNumber>(
         this
             Scalar<TNumber> left,
@@ -268,6 +281,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Subtract<TNumber>(
         this
             Scalar<TNumber> left,
@@ -287,6 +301,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Subtract<TNumber>(
         this
             Scalar<TNumber> left,
@@ -306,6 +321,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Subtract<TNumber>(
         this
             Scalar<TNumber> left,
@@ -325,6 +341,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Subtract<TNumber>(
         this
             Vector<TNumber> left,
@@ -344,6 +361,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Subtract<TNumber>(
         this
             Vector<TNumber> left,
@@ -363,6 +381,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Subtract<TNumber>(
         this
             Vector<TNumber> left,
@@ -382,6 +401,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Subtract<TNumber>(
         this
             Matrix<TNumber> left,
@@ -401,6 +421,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Subtract<TNumber>(
         this
             Matrix<TNumber> left,
@@ -420,6 +441,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Subtract<TNumber>(
         this
             Matrix<TNumber> left,
@@ -439,6 +461,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Subtract<TNumber>(
         this
             Tensor<TNumber> left,
@@ -458,6 +481,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The sum of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Subtract<TNumber>(
         this
             Tensor<TNumber> left,
@@ -477,6 +501,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Scalar<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -493,6 +518,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -509,6 +535,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -525,6 +552,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Multiply<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -541,6 +569,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Multiply<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -557,6 +586,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Multiply<TNumber>(this Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -573,6 +603,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Multiply<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -589,6 +620,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Scalar<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -605,6 +637,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -621,6 +654,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -637,6 +671,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Divide<TNumber>(this Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -653,6 +688,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Divide<TNumber>(this Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -669,6 +705,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Divide<TNumber>(this Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -685,6 +722,7 @@ public static class ArithmeticExtensions
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
     /// <returns>The quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Divide<TNumber>(this Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {

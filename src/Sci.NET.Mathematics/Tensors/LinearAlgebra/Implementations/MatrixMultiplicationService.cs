@@ -21,7 +21,7 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
 
-        if (left.Shape[0] != right.Shape[1])
+        if (left.Shape.Dimensions[1] != right.Shape.Dimensions[0])
         {
             throw new InvalidShapeException(
                 "The number of columns of the left matrix must match the number of rows of the right matrix.");

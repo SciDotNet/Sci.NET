@@ -86,4 +86,40 @@ public interface IPowerService
     /// <returns>The <paramref name="value"/> raised to the second power.</returns>
     public Tensor<TNumber> Square<TNumber>(Tensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">The value to raise e to the power of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>e raised to the power of <paramref name="value"/>.</returns>
+    public Scalar<TNumber> Exp<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">The value to raise e to the power of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>e raised to the power of <paramref name="value"/>.</returns>
+    public Vector<TNumber> Exp<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">The value to raise e to the power of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>e raised to the power of <paramref name="value"/>.</returns>
+    public Matrix<TNumber> Exp<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">The value to raise e to the power of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>e raised to the power of <paramref name="value"/>.</returns>
+    public Tensor<TNumber> Exp<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
 }

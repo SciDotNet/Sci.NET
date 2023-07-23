@@ -19,7 +19,7 @@ public class EqualityMembersShould
     public void ReturnTrue_GivenSameReference()
     {
         // Arrange
-        var block = new Sut(10);
+        using var block = new Sut(10);
 
         // Act
         var methodResult = block.Equals(block);

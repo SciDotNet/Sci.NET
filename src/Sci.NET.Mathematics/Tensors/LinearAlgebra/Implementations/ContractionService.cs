@@ -127,25 +127,33 @@ internal class ContractionService : IContractionService
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
 
-        if (left.Shape.Rank == 1 && right.Shape.Rank == 1)
+        if (left.IsVector() && right.IsVector())
         {
             return Inner(left.AsVector(), right.AsVector());
         }
 
-        if (left.Shape.Rank == 0 || right.Shape.Rank == 0)
+        if (left.IsScalar() || right.IsScalar())
         {
             return _arithmeticService.Multiply(left.AsScalar(), right.AsScalar());
         }
 
-        if (left.Shape.Rank == 2 && right.Shape.Rank == 2)
+        if (left.IsMatrix() && right.IsMatrix())
         {
             return _matrixMultiplicationService.MatrixMultiply(left.AsMatrix(), right.AsMatrix());
+        }
+
+        if (right.IsVector())
+        {
+            return left.Contract(
+                right,
+                new int[] { left.Shape.Rank - 1 },
+                new int[] { right.Shape.Rank - 1 });
         }
 
         return left.Contract(
             right,
             new int[] { left.Shape.Rank - 1 },
-            new int[] { right.Shape.Rank - 1 });
+            new int[] { right.Shape.Rank - 2 });
     }
 
     private static bool[] DimListToBitset(IEnumerable<int> leftIndices, int leftRank)

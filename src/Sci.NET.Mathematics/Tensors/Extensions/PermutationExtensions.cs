@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 
 // ReSharper disable once CheckNamespace
@@ -24,6 +25,7 @@ public static class PermutationExtensions
     /// <returns>The permuted <see cref="ITensor{TNumber}"/>.</returns>
     /// <exception cref="ArgumentException">Throws when the <paramref name="permutation"/>
     /// indices are invalid.</exception>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Permute<TNumber>(this ITensor<TNumber> tensor, int[] permutation)
         where TNumber : unmanaged, INumber<TNumber>
     {

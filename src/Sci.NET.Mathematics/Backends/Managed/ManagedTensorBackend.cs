@@ -28,6 +28,8 @@ public class ManagedTensorBackend : ITensorBackend
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
         Casting = new ManagedCastingKernels();
+        NeuralNetworks = new ManagedNeuralNetworkKernels();
+        ActivationFunctions = new ManagedActivationFunctionKernels();
     }
 
     /// <summary>
@@ -64,4 +66,10 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public ICastingKernels Casting { get; }
+
+    /// <inheritdoc />
+    public INeuralNetworkKernels NeuralNetworks { get; }
+
+    /// <inheritdoc />
+    public IActivationFunctionKernels ActivationFunctions { get; }
 }

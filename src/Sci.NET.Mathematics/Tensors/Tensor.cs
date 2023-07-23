@@ -103,7 +103,7 @@ public static class Tensor
         where TNumber : unmanaged, INumber<TNumber>
     {
         var newShape = tensor.Shape.Slice(indices);
-        return new Tensor<TNumber>(tensor, newShape);
+        return new Tensor<TNumber>(tensor.Handle, newShape, tensor.Backend);
     }
 
     /// <summary>
@@ -118,7 +118,36 @@ public static class Tensor
         where TTensor : class, ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+#pragma warning disable CA2000
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+#pragma warning restore CA2000
         return result as TTensor ?? throw new InvalidOperationException();
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified path.
+    /// </summary>
+    /// <param name="path">The path to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> Load<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .Load<TNumber>(path);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with zeros..
+    /// </summary>
+    /// <param name="dimensions">The dimensions of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given dimensions and filled with zeros.</returns>
+    public static ITensor<TNumber> Zeros<TNumber>(params int[] dimensions)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return new Tensor<TNumber>(new Shape(dimensions));
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 
 // ReSharper disable once CheckNamespace
@@ -22,6 +23,7 @@ public static class LinqExtensions
     /// <typeparam name="TTensor">The concrete <see cref="ITensor{TNumber}"/> type.</typeparam>
     /// <typeparam name="TNumber">The concrete <typeparamref name="TNumber"/> type.</typeparam>
     /// <returns>The mapped <typeparamref name="TTensor"/>.</returns>
+    [DebuggerStepThrough]
     public static TTensor Map<TTensor, TNumber>(this TTensor tensor, Func<TNumber, TNumber> predicate)
         where TTensor : class, ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>

@@ -49,7 +49,8 @@ public interface ITensor<TNumber> : IDisposable
     /// </summary>
     /// <param name="indices">The indices of the <see cref="ITensor{TNumber}"/> to slice.</param>
 #pragma warning disable CA1043
-    public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
+    public ITensor<TNumber> this[params int[] indices] { get; }
+
 #pragma warning restore CA1043
 
 #pragma warning disable CS1591

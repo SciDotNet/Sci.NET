@@ -13,74 +13,38 @@ namespace Sci.NET.Mathematics.Backends;
 public interface IActivationFunctionKernels
 {
     /// <summary>
-    /// Calculates the sigmoid of <paramref name="value"></paramref>.
+    /// Computes the sigmoid function on the given <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="value">The value to pass to the sigmoid function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
+    /// <param name="value">The value to compute the sigmoid function on.</param>
+    /// <param name="result">The result of the sigmoid function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Sigmoid<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+    public void Sigmoid<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the 1st derivative of the sigmoid function on the given <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The value to compute the sigmoid derivative function on.</param>
+    /// <param name="result">The result of the sigmoid derivative function.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void SigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the ReLU activation function on the given <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The value to compute the ReLU function on.</param>
+    /// <param name="result">The result of the ReLU function.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void ReLU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
-    /// Calculates the sigmoid of <paramref name="value"></paramref>.
+    /// Computes the 1st derivative of the ReLU function on the given <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="value">The value to pass to the sigmoid function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
+    /// <param name="value">The value to compute the ReLU derivative function on.</param>
+    /// <param name="result">The result of the ReLU derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Sigmoid<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Calculates the sigmoid of <paramref name="value"></paramref>.
-    /// </summary>
-    /// <param name="value">The value to pass to the sigmoid function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Sigmoid<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Calculates the sigmoid of <paramref name="value"></paramref>.
-    /// </summary>
-    /// <param name="value">The value to pass to the sigmoid function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Sigmoid<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Calculates the softmax of <paramref name="value"></paramref>.
-    /// </summary>
-    /// <param name="value">The value to pass to the softmax function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Softmax<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Calculates the softmax of <paramref name="value"></paramref>.
-    /// </summary>
-    /// <param name="value">The value to pass to the softmax function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Softmax<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Calculates the softmax of <paramref name="value"></paramref>.
-    /// </summary>
-    /// <param name="value">The value to pass to the softmax function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Softmax<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Calculates the softmax of <paramref name="value"></paramref>.
-    /// </summary>
-    /// <param name="value">The value to pass to the softmax function.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Softmax<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+    public void ReLUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 }

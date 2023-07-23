@@ -18,6 +18,8 @@ namespace Sci.NET.Mathematics.Tensors;
 public class Tensor<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
+    private readonly WeakReference<IMemoryBlock<TNumber>> _weakHandle;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Tensor{TNumber}"/> class.
     /// </summary>
@@ -28,6 +30,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
         Shape = new Shape(shape);
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        _weakHandle = new WeakReference<IMemoryBlock<TNumber>>(Handle);
     }
 
     /// <summary>
@@ -55,6 +58,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
         Handle = previousTensor.Handle;
         Backend = previousTensor.Backend;
         Shape = newShape;
+        _weakHandle = new WeakReference<IMemoryBlock<TNumber>>(Handle);
     }
 
     /// <summary>
@@ -68,6 +72,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
         Handle = memoryBlock;
         Shape = shape;
         Backend = backend;
+        _weakHandle = new WeakReference<IMemoryBlock<TNumber>>(Handle);
     }
 
     /// <inheritdoc />
@@ -81,6 +86,12 @@ public class Tensor<TNumber> : ITensor<TNumber>
 
     /// <inheritdoc/>
     public IDevice Device => Backend.Device;
+
+    /// <inheritdoc />
+#pragma warning disable CA1043
+    public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
+
+#pragma warning restore CA1043
 
 #pragma warning disable CS1591
     public static Tensor<TNumber> operator +(Tensor<TNumber> left, Scalar<TNumber> right)
@@ -170,6 +181,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
         if (disposing)
         {
             Handle.Dispose();
+            _ = _weakHandle.TryGetTarget(out _);
         }
     }
 }

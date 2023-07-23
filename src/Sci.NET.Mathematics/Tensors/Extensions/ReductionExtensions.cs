@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 
 #pragma warning disable IDE0130
@@ -23,6 +24,7 @@ public static class ReductionExtensions
     /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The sum of all of the elements in the <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Sum<TNumber>(this ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {

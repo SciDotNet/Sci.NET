@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
 
@@ -10,7 +11,7 @@ internal class ReductionService : IReductionService
     public ITensor<TNumber> Sum<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (axes is null || axes.Length == 0)
+        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length >= 0)
         {
             if (!keepDims)
             {
@@ -25,6 +26,16 @@ internal class ReductionService : IReductionService
                 tensor.Backend.Reduction.ReduceAddAllKeepDims(tensor, result);
                 return result;
             }
+        }
+
+        if (axes.Length > tensor.Shape.Dimensions.Length)
+        {
+            throw new InvalidShapeException("The number of axes to sum over cannot exceed the number of dimensions.");
+        }
+
+        if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
+        {
+            throw new InvalidShapeException("The axes to sum over must be within the bounds of the tensor.");
         }
 
         if (!keepDims)
