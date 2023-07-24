@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Numerics;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Mathematics.Tensors.Exceptions;
@@ -17,22 +18,23 @@ namespace Sci.NET.MachineLearning.NeuralNetworks.Layers;
 public class Conv2D<TNumber> : Conv2dParameters, ILayer<TNumber>
     where TNumber : unmanaged, IFloatingPoint<TNumber>
 {
-    private ITensor<TNumber> _weights;
-    private ITensor<TNumber> _bias;
-    private ITensor<TNumber> _dw;
-    private ITensor<TNumber> _db;
+    private const string WeightsParameterName = "weights";
+    private const string BiasesParameterName = "biases";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Conv2D{TNumber}"/> class.
     /// </summary>
     public Conv2D()
     {
-        _weights = new Tensor<TNumber>();
-        _bias = new Tensor<TNumber>();
-        _dw = new Tensor<TNumber>();
-        _db = new Tensor<TNumber>();
         Input = Tensor.Zeros<TNumber>(1, 1);
         Output = Tensor.Zeros<TNumber>(1, 1);
+
+        Parameters =
+            new ParameterSet<TNumber>
+            {
+                { WeightsParameterName, new Shape(Filters, KernelSizeY, KernelSizeX) },
+                { BiasesParameterName, new Shape(Filters) }
+            };
     }
 
     /// <inheritdoc />
@@ -43,6 +45,9 @@ public class Conv2D<TNumber> : Conv2dParameters, ILayer<TNumber>
 
     /// <inheritdoc />
     public ITensor<TNumber> Output { get; private set; }
+
+    /// <inheritdoc />
+    public ParameterSet<TNumber> Parameters { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
@@ -58,11 +63,12 @@ public class Conv2D<TNumber> : Conv2dParameters, ILayer<TNumber>
         }
 
         var inputTensor = input.AsTensor();
+        ref var weights = ref Parameters[WeightsParameterName].Value;
 
         Input = input;
 
         Output = inputTensor.Conv2DForward(
-            _weights.AsTensor(),
+            weights.AsTensor(),
             StrideX,
             StrideY,
             PaddingX,
@@ -83,12 +89,9 @@ public class Conv2D<TNumber> : Conv2dParameters, ILayer<TNumber>
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        _weights = _weights.To<TDevice>();
-        _bias = _bias.To<TDevice>();
-        _dw = _dw.To<TDevice>();
-        _db = _db.To<TDevice>();
-        Input = Input.To<TDevice>();
-        Output = Output.To<TDevice>();
+        Parameters.To<TDevice>();
+        Input.To<TDevice>();
+        Output.To<TDevice>();
     }
 
     /// <inheritdoc />
@@ -108,10 +111,7 @@ public class Conv2D<TNumber> : Conv2dParameters, ILayer<TNumber>
         {
             Input.Dispose();
             Output.Dispose();
-            _weights.Dispose();
-            _bias.Dispose();
-            _dw.Dispose();
-            _db.Dispose();
+            Parameters.Dispose();
         }
     }
 }

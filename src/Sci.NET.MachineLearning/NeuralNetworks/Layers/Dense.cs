@@ -3,8 +3,8 @@
 
 using System.Numerics;
 using Sci.NET.Common.Profiling;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Backends.Devices;
-using Sci.NET.Mathematics.Backends.Managed;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
@@ -18,10 +18,8 @@ namespace Sci.NET.MachineLearning.NeuralNetworks.Layers;
 public class Dense<TNumber> : ILayer<TNumber>
     where TNumber : unmanaged, IFloatingPoint<TNumber>
 {
-    private ITensor<TNumber> _weights;
-    private ITensor<TNumber> _biases;
-    private ITensor<TNumber> _dw;
-    private ITensor<TNumber> _db;
+    private const string WeightsParameterName = "weights";
+    private const string BiasesParameterName = "biases";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Dense{TNumber}"/> class.
@@ -33,27 +31,14 @@ public class Dense<TNumber> : ILayer<TNumber>
         InputFeatures = inputFeatures;
         OutputFeatures = outputFeatures;
 
-        _weights = new Matrix<TNumber>(inputFeatures, outputFeatures, ManagedTensorBackend.Instance);
-        _biases = new Mathematics.Tensors.Vector<TNumber>(outputFeatures, ManagedTensorBackend.Instance);
-        _dw = new Scalar<TNumber>();
-        _db = new Scalar<TNumber>();
+        Parameters = new ParameterSet<TNumber>
+        {
+            { WeightsParameterName, new Shape(inputFeatures, outputFeatures) },
+            { BiasesParameterName, new Shape(1, outputFeatures) }
+        };
 
         Input = Tensor.Zeros<TNumber>(1, 1);
         Output = Tensor.Zeros<TNumber>(1, 1);
-
-        for (var i = 0; i < _weights.Handle.Length; i++)
-        {
-#pragma warning disable CA5394
-            _weights.Handle[i] = TNumber.CreateChecked(Random.Shared.NextDouble() / 100.0d);
-#pragma warning restore CA5394
-        }
-
-        for (var i = 0; i < _weights.Handle.Length; i++)
-        {
-#pragma warning disable CA5394
-            _weights.Handle[i] = TNumber.CreateChecked(Random.Shared.NextDouble() / 100.0d);
-#pragma warning restore CA5394
-        }
     }
 
     /// <summary>
@@ -76,6 +61,9 @@ public class Dense<TNumber> : ILayer<TNumber>
     public ITensor<TNumber> Output { get; private set; }
 
     /// <inheritdoc />
+    public ParameterSet<TNumber> Parameters { get; }
+
+    /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
 #pragma warning disable SA1013
@@ -87,7 +75,11 @@ public class Dense<TNumber> : ILayer<TNumber>
         }
 #pragma warning restore SA1013
 
-        var output = (input.Dot(_weights).Transpose() + _biases).Transpose();
+        ref var weights = ref Parameters[WeightsParameterName].Value;
+        ref var bias = ref Parameters[BiasesParameterName].Value;
+
+        var output = input.Dot(weights);
+        output += bias.Broadcast(output.Shape);
 
         Input = input;
         Output = output;
@@ -99,22 +91,24 @@ public class Dense<TNumber> : ILayer<TNumber>
     public ITensor<TNumber> Backward(ITensor<TNumber> error)
     {
         using var m = new Scalar<TNumber>(TNumber.CreateChecked(error.Shape[0]));
-        _dw = Input.Transpose().Dot(error);
-        _db = error.Sum(new int[] { 0 });
 
-        return _weights.Transpose().Dot(error);
+        ref var weights = ref Parameters[WeightsParameterName].Value;
+        ref var dw = ref Parameters[WeightsParameterName].Gradient;
+        ref var db = ref Parameters[BiasesParameterName].Gradient;
+
+        dw = Input.Transpose().Dot(error);
+        db = error.Sum(new int[] { 0 }, keepDims: true);
+
+        return weights.Dot(error.Transpose()).Transpose();
     }
 
     /// <inheritdoc />
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        _weights = _weights.To<TDevice>().AsMatrix();
-        _biases = _biases.To<TDevice>().AsVector();
-        _dw = _dw.To<TDevice>().AsScalar();
-        _db = _db.To<TDevice>().AsScalar();
-        Input = Input.To<TDevice>();
-        Output = Output.To<TDevice>();
+        Input.To<TDevice>();
+        Output.To<TDevice>();
+        Parameters.To<TDevice>();
     }
 
     /// <inheritdoc />
@@ -139,10 +133,7 @@ public class Dense<TNumber> : ILayer<TNumber>
 
         IsDisposed = true;
 
-        _weights.Dispose();
-        _biases.Dispose();
-        _dw.Dispose();
-        _db.Dispose();
+        Parameters.Dispose();
         Input.Dispose();
         Output.Dispose();
     }

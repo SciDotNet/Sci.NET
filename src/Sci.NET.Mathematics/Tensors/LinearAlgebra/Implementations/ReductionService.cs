@@ -13,44 +13,44 @@ internal class ReductionService : IReductionService
     {
         if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length >= 0)
         {
+            var result = new Scalar<TNumber>(tensor.Backend);
+            tensor.Backend.Reduction.ReduceAddAll(tensor, result);
+
             if (!keepDims)
             {
-                var result = new Scalar<TNumber>(tensor.Backend);
-                tensor.Backend.Reduction.ReduceAddAll(tensor, result);
                 return result;
             }
-            else
-            {
-                var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
-                var result = new Tensor<TNumber>(resultShape, tensor.Backend);
-                tensor.Backend.Reduction.ReduceAddAllKeepDims(tensor, result);
-                return result;
-            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+            return resultTensor;
         }
 
         if (axes.Length > tensor.Shape.Dimensions.Length)
         {
-            throw new InvalidShapeException("The number of axes to sum over cannot exceed the number of dimensions.");
+            throw new InvalidShapeException(
+                $"The number of axes to sum over cannot exceed the number of dimensions in shape {tensor.Shape}.");
         }
 
         if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
         {
-            throw new InvalidShapeException("The axes to sum over must be within the bounds of the tensor.");
+            throw new InvalidShapeException(
+                $"The axes to sum over must be within the bounds of the tensor with shape {tensor.Shape}.");
         }
 
-        if (!keepDims)
         {
             var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
             var result = new Tensor<TNumber>(resultShape, tensor.Backend);
             tensor.Backend.Reduction.ReduceAddAxis(tensor, axes, result);
-            return result;
-        }
-        else
-        {
-            var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
-            var result = new Tensor<TNumber>(resultShape, tensor.Backend);
-            tensor.Backend.Reduction.ReduceAddAxisKeepDims(tensor, axes, result);
-            return result;
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+            return resultTensor;
         }
     }
 

@@ -4,6 +4,7 @@
 using System.Numerics;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -149,5 +150,38 @@ public static class Tensor
         where TNumber : unmanaged, INumber<TNumber>
     {
         return new Tensor<TNumber>(new Shape(dimensions));
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified <paramref name="shape"/> which is filled with zeros..
+    /// </summary>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with zeros.</returns>
+    public static ITensor<TNumber> Zeros<TNumber>(Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return new Tensor<TNumber>(shape);
+    }
+
+    /// <summary>
+    /// Overwrites the values of the <paramref name="tensor"/> with the values of the <paramref name="other"/> tensor.
+    /// This should only be used on rare occasions where referential integrity is required (I.E weights in a neural network).
+    /// </summary>
+    /// <param name="tensor">The tensor to overwrite.</param>
+    /// <param name="other">The tensor to overwrite with.</param>
+    /// <typeparam name="TNumber">The number type of the tensors.</typeparam>
+    /// <returns>The overwritten tensor.</returns>
+    /// <exception cref="InvalidShapeException">Throws when the shapes of the tensors are not equal.</exception>
+    public static ITensor<TNumber> InPlaceOverwrite<TNumber>(this ITensor<TNumber> tensor, ITensor<TNumber> other)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (tensor.Shape != other.Shape)
+        {
+            throw new InvalidShapeException($"The shapes of the tensors must be equal but were {tensor.Shape} and {other.Shape}.");
+        }
+
+        other.Handle.CopyTo(tensor.Handle);
+        return tensor;
     }
 }

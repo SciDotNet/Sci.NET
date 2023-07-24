@@ -4,6 +4,7 @@
 using System.Numerics;
 using Sci.NET.Common.Profiling;
 using Sci.NET.MachineLearning.NeuralNetworks.Layers;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.MachineLearning.NeuralNetworks;
@@ -14,7 +15,7 @@ namespace Sci.NET.MachineLearning.NeuralNetworks;
 /// <typeparam name="TNumber">The number type of the network.</typeparam>
 [PublicAPI]
 public class Network<TNumber> : IDisposable
-    where TNumber : unmanaged, IFloatingPoint<TNumber>
+    where TNumber : unmanaged, INumber<TNumber>
 {
     private readonly List<ILayer<TNumber>> _layers;
     private ITensor<TNumber> _input;
@@ -68,6 +69,36 @@ public class Network<TNumber> : IDisposable
 
         _output = result;
         return _output;
+    }
+
+    /// <summary>
+    /// Propagates the error through the <see cref="Network{TNumber}"/>.
+    /// </summary>
+    /// <param name="error">The error to propagate.</param>
+    public void Backward(ITensor<TNumber> error)
+    {
+        var result = error;
+
+        foreach (var layer in _layers.Reverse<ILayer<TNumber>>())
+        {
+            result = layer.Backward(result);
+        }
+    }
+
+    /// <summary>
+    /// Gets the parameters of the <see cref="Network{TNumber}"/>.
+    /// </summary>
+    /// <returns>The parameters of the <see cref="Network{TNumber}"/>.</returns>
+    public ParameterCollection<TNumber> Parameters()
+    {
+        var collection = new ParameterCollection<TNumber>();
+
+        foreach (var layer in _layers)
+        {
+            collection.Add(layer.Parameters);
+        }
+
+        return collection;
     }
 
     /// <inheritdoc />

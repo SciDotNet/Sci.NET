@@ -70,4 +70,9 @@ public interface ITensorBackend
     /// Gets the <see cref="IActivationFunctionKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public IActivationFunctionKernels ActivationFunctions { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IBroadcastingKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public IBroadcastingKernels Broadcasting { get; }
 }

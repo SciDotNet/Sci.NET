@@ -30,6 +30,7 @@ public class ManagedTensorBackend : ITensorBackend
         Casting = new ManagedCastingKernels();
         NeuralNetworks = new ManagedNeuralNetworkKernels();
         ActivationFunctions = new ManagedActivationFunctionKernels();
+        Broadcasting = new ManagedBroadcastingKernels();
     }
 
     /// <summary>
@@ -72,4 +73,7 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public IActivationFunctionKernels ActivationFunctions { get; }
+
+    /// <inheritdoc />
+    public IBroadcastingKernels Broadcasting { get; }
 }

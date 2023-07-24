@@ -46,6 +46,11 @@ public class Scalar<TNumber> : Tensor<TNumber>
     {
     }
 
+    /// <summary>
+    /// Gets the value of the <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    public TNumber ScalarValue => Handle.ToArray()[0];
+
 #pragma warning disable CS1591
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Scalar<TNumber> operator +(Scalar<TNumber> left, Scalar<TNumber> right)
@@ -70,6 +75,7 @@ public class Scalar<TNumber> : Tensor<TNumber>
     {
         return left.Divide(right);
     }
+
 #pragma warning restore CS1591
 
     /// <summary>

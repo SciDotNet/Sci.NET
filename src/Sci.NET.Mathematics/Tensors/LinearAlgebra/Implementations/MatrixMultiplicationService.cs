@@ -24,7 +24,7 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
         if (left.Shape.Dimensions[1] != right.Shape.Dimensions[0])
         {
             throw new InvalidShapeException(
-                "The number of columns of the left matrix must match the number of rows of the right matrix.");
+                $"The number of columns of the left matrix must match the number of rows of the right matrix but got {left.Shape} and {right.Shape}.");
         }
 
         var resultShape = new Shape(left.Rows, right.Columns);

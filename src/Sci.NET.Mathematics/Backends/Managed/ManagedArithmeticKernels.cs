@@ -480,6 +480,20 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
             i => resultMemoryBlock[i] = leftMemoryBlock[i] * rightMemoryBlock);
     }
 
+    public void Multiply<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Handle;
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            left.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultMemoryBlock[i] = leftMemoryBlock[i] * rightMemoryBlock[i]);
+    }
+
     public void Divide<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right, Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -584,5 +598,107 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
             left.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultMemoryBlock[i] = leftMemoryBlock[i] / rightMemoryBlock);
+    }
+
+    public void Negate<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultMemoryBlock[0] = -valueMemoryBlock[0];
+    }
+
+    public void Negate<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            value.Length,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            i => resultMemoryBlock[i] = -valueMemoryBlock[i]);
+    }
+
+    public void Negate<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            value.Rows,
+            0,
+            value.Columns,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            (i, j) => resultMemoryBlock[(i * result.Columns) + j] =
+                -valueMemoryBlock[(i * value.Columns) + j]);
+    }
+
+    public void Negate<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            value.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            i => resultMemoryBlock[i] = -valueMemoryBlock[i]);
+    }
+
+    public void Abs<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultMemoryBlock[0] = TNumber.Abs(valueMemoryBlock[0]);
+    }
+
+    public void Abs<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            value.Length,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            i => resultMemoryBlock[i] = TNumber.Abs(valueMemoryBlock[i]));
+    }
+
+    public void Abs<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            value.Rows,
+            0,
+            value.Columns,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            (i, j) => resultMemoryBlock[(i * result.Columns) + j] =
+                TNumber.Abs(valueMemoryBlock[(i * value.Columns) + j]));
+    }
+
+    public void Abs<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var valueMemoryBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            value.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            i => resultMemoryBlock[i] = TNumber.Abs(valueMemoryBlock[i]));
     }
 }

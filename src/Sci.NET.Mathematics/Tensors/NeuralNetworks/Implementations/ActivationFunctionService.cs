@@ -55,6 +55,8 @@ internal class ActivationFunctionService : IActivationFunctionService
     public ITensor<TNumber> SoftmaxPrime<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
-        throw new NotSupportedException();
+        using var one = new Scalar<TNumber>(TNumber.CreateChecked(1));
+        var softmax = value.Softmax().AsTensor();
+        return softmax.Multiply(one - softmax);
     }
 }

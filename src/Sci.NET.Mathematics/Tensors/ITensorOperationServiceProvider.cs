@@ -106,4 +106,10 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="IActivationFunctionService"/>.</returns>
     public IActivationFunctionService GetActivationFunctionService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IBroadcastService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IBroadcastService"/>.</returns>
+    public IBroadcastService GetBroadcastingService();
 }

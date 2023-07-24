@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 
@@ -24,6 +25,7 @@ public class Flatten<TNumber> : ILayer<TNumber>
         FlattenAxis = flattenAxis;
         Input = Tensor.Zeros<TNumber>(1, 1);
         Output = Tensor.Zeros<TNumber>(1, 1);
+        Parameters = new ParameterSet<TNumber>();
     }
 
     /// <inheritdoc />
@@ -34,6 +36,9 @@ public class Flatten<TNumber> : ILayer<TNumber>
 
     /// <inheritdoc />
     public ITensor<TNumber> Output { get; private set; }
+
+    /// <inheritdoc />
+    public ParameterSet<TNumber> Parameters { get; }
 
     /// <summary>
     /// Gets the axis to flatten.
@@ -69,8 +74,8 @@ public class Flatten<TNumber> : ILayer<TNumber>
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        Input = Input.To<TDevice>();
-        Output = Output.To<TDevice>();
+        Input.To<TDevice>();
+        Output.To<TDevice>();
     }
 
     /// <inheritdoc />

@@ -112,9 +112,7 @@ internal class ContractionService : IContractionService
         if (left.Shape.Rank != 1 || right.Shape.Rank != 1)
         {
             throw new InvalidShapeException(
-                "Inner product is only defined for vectors, but got shapes '{0}' and {1}.",
-                left.Shape,
-                left.Shape);
+                $"Inner product is only defined for vectors, but got shapes {left.Shape} and {right.Shape}.");
         }
 
         var result = new Scalar<TNumber>(left.Backend);

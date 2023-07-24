@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Tensors;
 
@@ -29,6 +30,11 @@ public interface ILayer<TNumber> : ITensorLocalityOperations, IDisposable
     /// Gets the output of the layer.
     /// </summary>
     public ITensor<TNumber> Output { get; }
+
+    /// <summary>
+    /// Gets the parameters of the layer.
+    /// </summary>
+    public ParameterSet<TNumber> Parameters { get; }
 
     /// <summary>
     /// Propagates the input through the layer.

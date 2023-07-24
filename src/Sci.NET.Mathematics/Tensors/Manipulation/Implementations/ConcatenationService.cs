@@ -60,7 +60,8 @@ internal class ConcatenationService : IConcatenationService
 
         if (!tensors.All(t => t.Shape.Dimensions.SequenceEqual(shape.Dimensions)))
         {
-            throw new InvalidShapeException("All tensors must have the same shape.");
+            throw new InvalidShapeException(
+                $"All tensors must have the same shape, but were {string.Join(',', tensors.Select(x => x.Shape.ToString()))}.");
         }
     }
 

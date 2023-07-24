@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Runtime.CompilerServices;
+
 namespace Sci.NET.Mathematics.Tensors.Exceptions;
 
 /// <summary>
@@ -12,19 +14,15 @@ public class InvalidShapeException : Exception
     /// <summary>
     /// Initializes a new instance of the <see cref="InvalidShapeException"/> class.
     /// </summary>
-    /// <param name="reason">The reason the shape is invalid.</param>
-    /// <param name="shapes">The shapes causing the exception.</param>
-    [StringFormatMethod(nameof(reason))]
-    public InvalidShapeException(string reason, params Shape[] shapes)
-#pragma warning disable CA1305
-        : base($"The given shape is invalid. {string.Format(reason, shapes.GetEnumerator())}.")
-#pragma warning restore CA1305
+    /// <param name="handler">The interpolated string handler.</param>
+    public InvalidShapeException([InterpolatedStringHandlerArgument] InvalidShapeInterpolatedStringHandler handler)
+        : base($"The given shape is invalid. {handler.GetFormattedString()}.")
     {
-        GivenShape = shapes;
+        GivenShapes = handler.GetShapes();
     }
 
     /// <summary>
     /// Gets the given shape.
     /// </summary>
-    public IEnumerable<Shape> GivenShape { get; }
+    public IEnumerable<Shape> GivenShapes { get; }
 }

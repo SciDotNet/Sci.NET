@@ -15,7 +15,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The type of the numbers stored in the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
-public interface ITensor<TNumber> : IDisposable
+public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
@@ -248,7 +248,7 @@ public interface ITensor<TNumber> : IDisposable
 
             if (right.IsScalar())
             {
-                return leftScalar.Multiply(right.AsVector());
+                return leftScalar.Multiply(right.AsScalar());
             }
 
             if (right.IsVector())
@@ -273,7 +273,7 @@ public interface ITensor<TNumber> : IDisposable
                 return leftVector.Multiply(right.AsScalar());
             }
 
-            throw new ArgumentException($"Cannot multiply shape '{left.Shape} by shape '{right.Shape}'");
+            throw new InvalidShapeException($"Cannot multiply shape {left.Shape} by shape {right.Shape}'");
         }
 
         if (left.IsMatrix())
@@ -285,7 +285,7 @@ public interface ITensor<TNumber> : IDisposable
                 return leftMatrix.Multiply(right.AsScalar());
             }
 
-            throw new ArgumentException($"Cannot multiply shape '{left.Shape} by shape '{right.Shape}'");
+            throw new InvalidShapeException($"Cannot multiply shape {left.Shape} by shape {right.Shape}");
         }
 
         if (left.IsTensor())
@@ -297,7 +297,7 @@ public interface ITensor<TNumber> : IDisposable
                 return leftTensor.Multiply(right.AsScalar());
             }
 
-            throw new ArgumentException($"Cannot multiply shape '{left.Shape} by shape '{right.Shape}'");
+            throw new InvalidShapeException($"Cannot multiply shape {left.Shape} by shape {right.Shape}");
         }
 
         throw new UnreachableException();
@@ -311,7 +311,7 @@ public interface ITensor<TNumber> : IDisposable
 
             if (right.IsScalar())
             {
-                return leftScalar.Divide(right.AsVector());
+                return leftScalar.Divide(right.AsScalar());
             }
 
             if (right.IsVector())
@@ -336,7 +336,7 @@ public interface ITensor<TNumber> : IDisposable
                 return leftVector.Divide(right.AsScalar());
             }
 
-            throw new ArgumentException($"Cannot divide shape '{left.Shape} by shape '{right.Shape}'");
+            throw new InvalidShapeException($"Cannot divide shape {left.Shape} by shape {right.Shape}");
         }
 
         if (left.IsMatrix())
@@ -348,7 +348,7 @@ public interface ITensor<TNumber> : IDisposable
                 return leftMatrix.Divide(right.AsScalar());
             }
 
-            throw new ArgumentException($"Cannot divide shape '{left.Shape} by shape '{right.Shape}'");
+            throw new InvalidShapeException($"Cannot divide shape {left.Shape} by shape {right.Shape}");
         }
 
         if (left.IsTensor())
@@ -360,30 +360,38 @@ public interface ITensor<TNumber> : IDisposable
                 return leftTensor.Divide(right.AsScalar());
             }
 
-            throw new ArgumentException($"Cannot divide shape '{left.Shape} by shape '{right.Shape}'");
+            throw new InvalidShapeException($"Cannot divide shape {left.Shape} by shape {right.Shape}");
+        }
+
+        throw new UnreachableException();
+    }
+
+    public static ITensor<TNumber> operator -(ITensor<TNumber> tensor)
+    {
+        if (tensor.IsScalar())
+        {
+            return tensor.AsScalar().Negate();
+        }
+
+        if (tensor.IsVector())
+        {
+            return tensor.AsVector().Negate();
+        }
+
+        if (tensor.IsMatrix())
+        {
+            return tensor.AsMatrix().Negate();
+        }
+
+        if (tensor.IsTensor())
+        {
+            return tensor.AsTensor().Negate();
         }
 
         throw new UnreachableException();
     }
 
 #pragma warning restore CS1591
-
-    /// <summary>
-    /// Creates a copy of the <see cref="ITensor{TNumber}"/> on the specified <typeparamref name="TDevice"/>.
-    /// </summary>
-    /// <typeparam name="TDevice">The device to copy to.</typeparam>
-    /// <returns>A new <see cref="ITensor{TNumber}"/> on the specified device.</returns>
-    public ITensor<TNumber> To<TDevice>()
-        where TDevice : IDevice, new()
-    {
-        var backend = new TDevice().GetTensorBackend();
-        var storage = backend.Storage.Allocate<TNumber>(Shape);
-        var systemMemoryCopy = Handle;
-
-        systemMemoryCopy.CopyTo(storage);
-
-        return new Tensor<TNumber>(storage, Shape, backend);
-    }
 
     /// <summary>
     /// Gets the transpose of the <see cref="ITensor{TNumber}"/>.
@@ -411,7 +419,7 @@ public interface ITensor<TNumber> : IDisposable
     {
         if (!Shape.IsScalar)
         {
-            throw new InvalidShapeException("The tensor must be a scalar, but got shape {0}", Shape);
+            throw new InvalidShapeException($"The tensor must be a scalar, but got shape {Shape}");
         }
 
         return new Scalar<TNumber>(Handle, Backend);
@@ -428,8 +436,7 @@ public interface ITensor<TNumber> : IDisposable
         if (!Shape.IsVector)
         {
             throw new InvalidShapeException(
-                "The tensor must be 1-dimensional to be converted to a vector, but got shape {0}",
-                Shape);
+                $"The tensor must be 1-dimensional to be converted to a vector, but got shape {Shape}");
         }
 
         return new Vector<TNumber>(Shape.Dimensions[0], Handle, Backend);
@@ -446,8 +453,7 @@ public interface ITensor<TNumber> : IDisposable
         if (!Shape.IsMatrix)
         {
             throw new InvalidShapeException(
-                "The tensor must be 2-dimensional to be converted to a matrix, but got shape {0}",
-                Shape);
+                $"The tensor must be 2-dimensional to be converted to a matrix, but got shape {Shape}");
         }
 
         return new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Handle, Backend);

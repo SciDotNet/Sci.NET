@@ -10,9 +10,4 @@
       <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="NeuralNetworks\Onnx\" />
-      <Folder Include="NeuralNetworks\Optimizers\" />
-    </ItemGroup>
-
 </Project>

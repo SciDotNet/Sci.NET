@@ -35,9 +35,11 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly IConvolutionService _convolutionService;
     private readonly IConcatenationService _concatenationService;
     private readonly IActivationFunctionService _activationFunctionService;
+    private readonly IBroadcastService _broadcastService;
 
     public TensorOperationServiceProvider()
     {
+        _broadcastService = new BroadcastService();
         _reshapeService = new ReshapeService();
         _deviceGuardService = new DeviceGuardService();
         _reductionService = new ReductionService();
@@ -128,5 +130,10 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public IActivationFunctionService GetActivationFunctionService()
     {
         return _activationFunctionService;
+    }
+
+    public IBroadcastService GetBroadcastingService()
+    {
+        return _broadcastService;
     }
 }

@@ -79,7 +79,7 @@ public class Tensor<TNumber> : ITensor<TNumber>
     public Shape Shape { get; }
 
     /// <inheritdoc />
-    public IMemoryBlock<TNumber> Handle { get; }
+    public IMemoryBlock<TNumber> Handle { get; private set; }
 
     /// <inheritdoc />
     public ITensorBackend Backend { get; }
@@ -163,6 +163,27 @@ public class Tensor<TNumber> : ITensor<TNumber>
             bytesToCopy);
 
         return result;
+    }
+
+    /// <inheritdoc />
+    public void To<TDevice>()
+        where TDevice : IDevice, new()
+    {
+        var newDevice = new TDevice();
+
+        if (newDevice.Name == Device.Name)
+        {
+            return;
+        }
+
+        var newBackend = newDevice.GetTensorBackend();
+        var oldHandle = Handle;
+        var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
+        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
+
+        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
+        Handle = newHandle;
+        oldHandle.Dispose();
     }
 
     /// <inheritdoc />

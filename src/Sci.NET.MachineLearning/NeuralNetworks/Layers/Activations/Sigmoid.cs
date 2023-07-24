@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 
@@ -22,6 +23,7 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     {
         Input = Tensor.Zeros<TNumber>(1, 1);
         Output = Tensor.Zeros<TNumber>(1, 1);
+        Parameters = new ParameterSet<TNumber>();
     }
 
     /// <inheritdoc />
@@ -32,6 +34,9 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
 
     /// <inheritdoc />
     public ITensor<TNumber> Output { get; private set; }
+
+    /// <inheritdoc />
+    public ParameterSet<TNumber> Parameters { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
@@ -52,7 +57,8 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        // No parameters to move.
+        Input.To<TDevice>();
+        Output.To<TDevice>();
     }
 
     /// <inheritdoc />
