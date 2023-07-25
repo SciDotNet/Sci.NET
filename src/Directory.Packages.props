@@ -2,19 +2,19 @@
   <ItemGroup Label="Test">
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.5" />
     <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.5" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageVersion Include="System.Management" Version="7.0.1" />
-    <PackageVersion Include="xunit" Version="2.4.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
-    <PackageVersion Include="xunit.extensibility.core" Version="2.4.2" />
-    <PackageVersion Include="coverlet.collector" Version="3.2.0" />
-    <PackageVersion Include="coverlet.msbuild" Version="3.2.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
+    <PackageVersion Include="System.Management" Version="7.0.2" />
+    <PackageVersion Include="xunit" Version="2.5.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.0" />
+    <PackageVersion Include="xunit.extensibility.core" Version="2.5.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.0" />
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="6.11.0" />
     <PackageVersion Include="Moq" Version="4.18.4" />
   </ItemGroup>
   <ItemGroup Label="Analyzers">
-    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.1" />
-    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.5.22" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.3" />
+    <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40" />
     <PackageVersion Include="Roslynator.Analyzers" Version="4.3.0" />
     <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.3.0" />
     <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.3.0" />
@@ -25,7 +25,7 @@
     <PackageVersion Include="GtkSharp" Version="3.24.24.38" />
     <PackageVersion Include="Autofac" Version="6.5.0" />
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageVersion Include="JetBrains.Annotations" Version="2022.3.1" />
+    <PackageVersion Include="JetBrains.Annotations" Version="2023.2.0" />
   </ItemGroup>
   <ItemGroup Label="Source Generators">
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.0-2.final" />
