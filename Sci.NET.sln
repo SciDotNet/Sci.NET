@@ -14,15 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\Directory.Packages.props = src\Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.IntegrationTests", "src\Sci.NET.Mathematics.IntegrationTests\Sci.NET.Mathematics.IntegrationTests.csproj", "{B1B20982-A3D2-4677-B934-32137A65BAD1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Images.UnitTests", "src\Sci.NET.Images.UnitTests\Sci.NET.Images.UnitTests.csproj", "{8D1D5658-335A-48B9-B8BD-8CBB81336929}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.MachineLearning", "src\Sci.NET.MachineLearning\Sci.NET.MachineLearning.csproj", "{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.MachineLearning.UnitTests", "src\Sci.NET.MachineLearning.UnitTests\Sci.NET.MachineLearning.UnitTests.csproj", "{7D3475E5-8A80-48C7-9444-1EF8605F55A4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Datasets", "Datasets", "{A89249A7-5AAC-47CF-9E3C-869FD5524A0F}"
 EndProject
@@ -58,10 +54,6 @@ Global
 		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{513B5B41-5218-46FD-93EA-308056B7EFF3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1B20982-A3D2-4677-B934-32137A65BAD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1B20982-A3D2-4677-B934-32137A65BAD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1B20982-A3D2-4677-B934-32137A65BAD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1B20982-A3D2-4677-B934-32137A65BAD1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -74,10 +66,6 @@ Global
 		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
