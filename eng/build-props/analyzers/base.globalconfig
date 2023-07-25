@@ -21,6 +21,9 @@ dotnet_diagnostic.CA1054.severity = none
 dotnet_diagnostic.CA1055.severity = none
 dotnet_diagnostic.CA2234.severity = none
 
+# Avoid out parameters
+dotnet_diagnostic.CA1021.severity = none
+
 # Language keyword conflicts with namespace
 dotnet_diagnostic.CA1716.severity = none
 
