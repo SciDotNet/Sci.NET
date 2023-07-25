@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
@@ -23,6 +24,7 @@ public static class MatrixMultiplicationExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The result of the matrix multiplication.</returns>
     /// <exception cref="InvalidShapeException">The shapes of the operands were invalid.</exception>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> MatrixMultiply<TNumber>(this Matrix<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
@@ -25,6 +26,7 @@ public static class ContractionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the contraction operation.</returns>
     /// <exception cref="ArgumentException">Throws when an argument is invalid.</exception>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Contract<TNumber>(
         this ITensor<TNumber> left,
         ITensor<TNumber> right,
@@ -40,6 +42,7 @@ public static class ContractionExtensions
 
     /// <inheritdoc cref="Contract{TNumber}"/>
     /// <remarks>An alias of <see cref="Contract{TNumber}"/>.</remarks>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> TensorDot<TNumber>(
         this ITensor<TNumber> left,
         ITensor<TNumber> right,
@@ -64,6 +67,7 @@ public static class ContractionExtensions
     /// <exception cref="ArgumentException">Throws when the operand shapes are incompatible with the
     /// inner product operation.</exception>
     /// <exception cref="InvalidShapeException">The given shapes were not compatible with the inner product operation.</exception>
+    [DebuggerStepThrough]
     public static Scalar<TNumber> Inner<TNumber>(this Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -88,6 +92,7 @@ public static class ContractionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the dot product operation.</returns>
     /// <exception cref="ArgumentException">Throws when the operand shapes are incompatible with the dot product operation.</exception>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Dot<TNumber>(
         this ITensor<TNumber> left,
         ITensor<TNumber> right)

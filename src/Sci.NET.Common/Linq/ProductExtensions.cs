@@ -20,6 +20,8 @@ public static class ProductExtensions
     public static TNumber Product<TNumber>(this IEnumerable<TNumber> source)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return source.Aggregate((a, b) => a * b);
+        var enumerable = source.ToList();
+
+        return enumerable.Count == 0 ? TNumber.One : enumerable.Aggregate((a, b) => a * b);
     }
 }

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Devices;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -14,39 +15,68 @@ namespace Sci.NET.Mathematics.Tensors;
 /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
 [PublicAPI]
 [DebuggerDisplay("{ToArray()}")]
-public class Matrix<TNumber> : Tensor<TNumber>
+public sealed class Matrix<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Matrix{TNumber}"/> class.
     /// </summary>
-    /// <param name="rows">The number of rows in the matrix.</param>
-    /// <param name="columns">The number of columns in the matrix.</param>
-    /// <param name="backend">The backend to use.</param>
+    /// <param name="rows">The number of rows in the <see cref="Matrix{TNumber}"/>.</param>
+    /// <param name="columns">The number of columns in the <see cref="Matrix{TNumber}"/>.</param>
+    /// <param name="backend">The backend type to use for the <see cref="Matrix{TNumber}"/>.</param>
     public Matrix(int rows, int columns, ITensorBackend? backend = null)
-        : base(backend, rows, columns)
     {
+        Shape = new Shape(rows, columns);
+        Backend = backend ?? Tensor.DefaultBackend;
+        Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        IsMemoryOwner = true;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Matrix{TNumber}"/> class.
     /// </summary>
-    /// <param name="rows">The number of rows in the matrix.</param>
-    /// <param name="columns">The number of columns in the matrix.</param>
-    /// <param name="memoryBlock">The memory block for the matrix.</param>
-    /// <param name="backend">The backend type for the <see cref="Matrix{TNumber}"/>.</param>
-    public Matrix(int rows, int columns, IMemoryBlock<TNumber> memoryBlock, ITensorBackend? backend = null)
-        : base(memoryBlock, new Shape(rows, columns), backend ?? Tensor.DefaultBackend)
+    /// <param name="rows">The number of rows in the <see cref="Matrix{TNumber}"/>.</param>
+    /// <param name="columns">The number of columns in the <see cref="Matrix{TNumber}"/>.</param>
+    /// <param name="handle">The memory handle to use for the <see cref="Matrix{TNumber}"/>.</param>
+    /// <param name="backend">The backend type to use for the <see cref="Matrix{TNumber}"/>.</param>
+    public Matrix(int rows, int columns, IMemoryBlock<TNumber> handle, ITensorBackend backend)
     {
+        Shape = new Shape(rows, columns);
+        Backend = backend;
+        Handle = handle;
+        IsMemoryOwner = true;
     }
 
     /// <summary>
-    /// Gets the number of rows in the matrix.
+    /// Finalizes an instance of the <see cref="Matrix{TNumber}"/> class.
+    /// </summary>
+    ~Matrix()
+    {
+        Dispose(false);
+    }
+
+    /// <inheritdoc />
+    public IDevice Device => Backend.Device;
+
+    /// <inheritdoc />
+    public Shape Shape { get; }
+
+    /// <inheritdoc />
+    public IMemoryBlock<TNumber> Handle { get; private set; }
+
+    /// <inheritdoc />
+    public ITensorBackend Backend { get; }
+
+    /// <inheritdoc />
+    public bool IsMemoryOwner { get; set; }
+
+    /// <summary>
+    /// Gets the number of rows in the <see cref="Matrix{TNumber}"/>.
     /// </summary>
     public int Rows => Shape[0];
 
     /// <summary>
-    /// Gets the number of columns in the matrix.
+    /// Gets the number of columns in the <see cref="Matrix{TNumber}"/>.
     /// </summary>
     public int Columns => Shape[1];
 
@@ -54,47 +84,78 @@ public class Matrix<TNumber> : Tensor<TNumber>
     /// Gets the debugger display object.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    private protected Array DebuggerDisplayObject => ToArray();
+#pragma warning disable IDE0051, RCS1213
+    private Array DebuggerDisplayObject => ToArray();
+#pragma warning restore RCS1213, IDE0051
 
-#pragma warning disable CS1591
-    public static Tensor<TNumber> operator +(Matrix<TNumber> left, Scalar<TNumber> right)
+    /// <inheritdoc />
+#pragma warning disable CA1043, CA2000
+    public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
+
+    /// <summary>
+    /// Gets the <see cref="Scalar{TNumber}"/> at the specified index.
+    /// </summary>
+    /// <param name="x">The row index.</param>
+    /// <param name="y">The column index.</param>
+    public Scalar<TNumber> this[int x, int y] => Tensor.Slice(this, x, y).ToScalar();
+
+    /// <summary>
+    /// Gets the <see cref="Vector{TNumber}"/> at the specified index.
+    /// </summary>
+    /// <param name="x">The row index.</param>
+    public Vector<TNumber> this[int x] => Tensor.Slice(this, x).ToVector();
+
+#pragma warning restore CA2000, CA1043
+
+    /// <inheritdoc />
+    public Array ToArray()
     {
-        return left.Add(right);
+        return Tensor.ToArray(this);
     }
 
-    public static Tensor<TNumber> operator +(Scalar<TNumber> left, Matrix<TNumber> right)
+    /// <inheritdoc/>
+    void ITensor<TNumber>.DetachMemory()
     {
-        return left.Add(right);
+        IsMemoryOwner = false;
     }
 
-    public static Tensor<TNumber> operator +(Matrix<TNumber> left, Matrix<TNumber> right)
+    /// <inheritdoc />
+    public void To<TDevice>()
+        where TDevice : IDevice, new()
     {
-        return left.Add(right);
+        var newDevice = new TDevice();
+
+        if (newDevice.Name == Device.Name)
+        {
+            return;
+        }
+
+        var newBackend = newDevice.GetTensorBackend();
+        var oldHandle = Handle;
+        var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
+        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
+
+        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
+        Handle = newHandle;
+        oldHandle.Dispose();
     }
 
-    public static Tensor<TNumber> operator -(Matrix<TNumber> left, Scalar<TNumber> right)
+    /// <inheritdoc />
+    public void Dispose()
     {
-        return left.Subtract(right);
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    public static Tensor<TNumber> operator -(Scalar<TNumber> left, Matrix<TNumber> right)
+    /// <summary>
+    /// Disposes of the <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
+    private void Dispose(bool disposing)
     {
-        return left.Subtract(right);
+        if (disposing && IsMemoryOwner)
+        {
+            Handle.Dispose();
+        }
     }
-
-    public static Tensor<TNumber> operator -(Matrix<TNumber> left, Matrix<TNumber> right)
-    {
-        return left.Subtract(right);
-    }
-
-    public static Tensor<TNumber> operator *(Matrix<TNumber> left, Scalar<TNumber> right)
-    {
-        return right.Multiply(left);
-    }
-
-    public static Tensor<TNumber> operator *(Scalar<TNumber> left, Matrix<TNumber> right)
-    {
-        return right.Multiply(left);
-    }
-#pragma warning restore CS1591
 }

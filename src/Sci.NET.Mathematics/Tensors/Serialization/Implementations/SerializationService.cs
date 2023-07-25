@@ -6,11 +6,14 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Sci.NET.Common.Attributes;
 using Sci.NET.Common.Performance;
+using Sci.NET.Common.Streams;
 
 namespace Sci.NET.Mathematics.Tensors.Serialization.Implementations;
 
 internal class SerializationService : ISerializationService
 {
+    private const string SerializerVersion = "Sci.NET v0.2";
+
     [PreviewFeature]
     [MethodImpl(ImplementationOptions.AggressiveOptimization)]
     public unsafe void SaveNpy<TNumber>(ITensor<TNumber> tensor, string path)
@@ -78,6 +81,75 @@ internal class SerializationService : ISerializationService
         stream.Close();
     }
 
+    public void Save<TNumber>(ITensor<TNumber> tensor, string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenWrite(path);
+
+        var rank = tensor.Shape.Rank;
+        var shape = tensor.Shape.Dimensions;
+        var typeBytes = GetDataType<TNumber>();
+
+        stream.WriteString(SerializerVersion);
+        stream.WriteValue(rank);
+        stream.WriteValue(Unsafe.SizeOf<TNumber>());
+        stream.WriteString(typeBytes);
+
+        for (var i = 0; i < rank; i++)
+        {
+            stream.WriteValue(shape[i]);
+        }
+
+        tensor.Handle.WriteTo(stream);
+
+        stream.Flush();
+        stream.Close();
+    }
+
+    public ITensor<TNumber> Load<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenRead(path);
+
+        var version = stream.ReadString();
+        var rank = stream.ReadValue<int>();
+        var bytesPerElement = stream.ReadValue<int>();
+        var type = stream.ReadString();
+        var shape = new int[rank];
+
+        for (var i = 0; i < rank; i++)
+        {
+            shape[i] = stream.ReadValue<int>();
+        }
+
+        if (version != SerializerVersion)
+        {
+            throw new NotSupportedException("The tensor was created with a different version of the serializer.");
+        }
+
+        if (bytesPerElement != Unsafe.SizeOf<TNumber>() || type != GetDataType<TNumber>())
+        {
+            throw new InvalidDataException(
+                "The data type of the tensor does not match the data type of the serializer.");
+        }
+
+        var tensor = new Tensor<TNumber>(new Shape(shape));
+        var handle = tensor.Handle;
+        var bufferSize = tensor.Shape.ElementCount <= int.MaxValue ? (int)tensor.Shape.ElementCount : int.MaxValue;
+        var buffer = new Span<byte>(new byte[bufferSize]);
+        var bytesRead = 0;
+        var bytesToRead = Unsafe.SizeOf<TNumber>() * tensor.Shape.ElementCount;
+
+        while (bytesRead < bytesToRead)
+        {
+            var bytes = stream.Read(buffer);
+            handle.BlockCopy(buffer, 0, bytesRead / Unsafe.SizeOf<TNumber>(), bytes);
+            bytesRead += bytes;
+        }
+
+        return tensor;
+    }
+
     // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
     private static ReadOnlySpan<byte> GetNumpyDataType<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
@@ -95,6 +167,26 @@ internal class SerializationService : ISerializationService
             float => "<f4"u8,
             double => "<f8"u8,
             _ => throw new NotSupportedException()
+        };
+    }
+
+    private static string GetDataType<TNumber>()
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TNumber.Zero switch
+        {
+            byte => "u1",
+            sbyte => "i1",
+            ushort => "u2",
+            short => "i2",
+            uint => "u4",
+            int => "i4",
+            ulong => "u8",
+            long => "i8",
+            Half => "f2",
+            float => "f4",
+            double => "f8",
+            _ => "unknown"
         };
     }
 }

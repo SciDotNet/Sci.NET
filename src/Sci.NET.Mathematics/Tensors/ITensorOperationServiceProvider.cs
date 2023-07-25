@@ -4,6 +4,7 @@
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.Manipulation;
+using Sci.NET.Mathematics.Tensors.NeuralNetworks;
 using Sci.NET.Mathematics.Tensors.Pointwise;
 using Sci.NET.Mathematics.Tensors.Serialization;
 using Sci.NET.Mathematics.Tensors.Trigonometry;
@@ -87,4 +88,28 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="ICastingService"/>.</returns>
     public ICastingService GetCastingService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IConvolutionService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IConvolutionService"/>.</returns>
+    public IConvolutionService GetConvolutionService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IConcatenationService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IConvolutionService"/>.</returns>
+    public IConcatenationService GetConcatenationService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IActivationFunctionService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IActivationFunctionService"/>.</returns>
+    public IActivationFunctionService GetActivationFunctionService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IBroadcastService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IBroadcastService"/>.</returns>
+    public IBroadcastService GetBroadcastingService();
 }

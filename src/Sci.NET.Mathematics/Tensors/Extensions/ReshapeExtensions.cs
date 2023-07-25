@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 
 // ReSharper disable once CheckNamespace
@@ -23,6 +24,7 @@ public static class ReshapeExtensions
     /// <returns>The reshaped <see cref="ITensor{TNumber}"/>.</returns>
     /// <exception cref="ArgumentException">Throws if the new <paramref name="shape"/> is incompatible with
     /// the <see cref="ITensor{TNumber}"/>.</exception>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Reshape<TNumber>(this ITensor<TNumber> tensor, Shape shape)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -33,6 +35,7 @@ public static class ReshapeExtensions
     }
 
     /// <inheritdoc cref="Reshape{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber},Sci.NET.Mathematics.Tensors.Shape)"/>>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Reshape<TNumber>(this ITensor<TNumber> tensor, params int[] shape)
         where TNumber : unmanaged, INumber<TNumber>
     {

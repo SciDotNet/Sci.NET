@@ -58,7 +58,7 @@ public interface IPowerKernels
     /// <param name="value">The value to square.</param>
     /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+    public void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -67,7 +67,7 @@ public interface IPowerKernels
     /// <param name="value">The value to square.</param>
     /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    void Square<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+    public void Square<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -76,7 +76,7 @@ public interface IPowerKernels
     /// <param name="value">The value to square.</param>
     /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    void Square<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+    public void Square<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -85,6 +85,51 @@ public interface IPowerKernels
     /// <param name="value">The value to square.</param>
     /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    void Square<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+    public void Square<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/> and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="value">The exponent.</param>
+    /// <param name="result">The <see cref="Scalar{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Exp<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/> and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="value">The exponent.</param>
+    /// <param name="result">The <see cref="Tensors.Vector{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Exp<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/> and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="value">The exponent.</param>
+    /// <param name="result">The <see cref="Matrix{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Exp<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Raises e to the power of <paramref name="value"/> and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="value">The exponent.</param>
+    /// <param name="result">The <see cref="Tensor{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Exp<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the natural logarithm of <paramref name="value"/> and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="value">The value to find the natural logarithm of.</param>
+    /// <param name="result">The <see cref="Scalar{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 }

@@ -20,6 +20,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Images", "src\Sci.N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Images.UnitTests", "src\Sci.NET.Images.UnitTests\Sci.NET.Images.UnitTests.csproj", "{8D1D5658-335A-48B9-B8BD-8CBB81336929}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.MachineLearning", "src\Sci.NET.MachineLearning\Sci.NET.MachineLearning.csproj", "{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.MachineLearning.UnitTests", "src\Sci.NET.MachineLearning.UnitTests\Sci.NET.MachineLearning.UnitTests.csproj", "{7D3475E5-8A80-48C7-9444-1EF8605F55A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Datasets", "Datasets", "{A89249A7-5AAC-47CF-9E3C-869FD5524A0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST", "src\Datasets\Sci.NET.Datasets.MNIST\Sci.NET.Datasets.MNIST.csproj", "{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST.UnitTests", "src\Datasets\Sci.NET.Datasets.MNIST.UnitTests\Sci.NET.Datasets.MNIST.UnitTests.csproj", "{BAE5B32A-DEEC-45FB-B545-33A8A1D150F1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets", "src\Sci.NET.Datasets\Sci.NET.Datasets.csproj", "{368FE95C-6C18-471A-A083-BE04EFC2768A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{16FB9E8F-939B-4A6E-8C4D-8A227B713396}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Examples.MNIST", "examples\Sci.NET.Examples.MNIST\Sci.NET.Examples.MNIST.csproj", "{A5CAD52B-2E1B-492A-B503-B4875417BBF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,7 +70,34 @@ Global
 		{8D1D5658-335A-48B9-B8BD-8CBB81336929}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D1D5658-335A-48B9-B8BD-8CBB81336929}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D1D5658-335A-48B9-B8BD-8CBB81336929}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D3475E5-8A80-48C7-9444-1EF8605F55A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAE5B32A-DEEC-45FB-B545-33A8A1D150F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAE5B32A-DEEC-45FB-B545-33A8A1D150F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAE5B32A-DEEC-45FB-B545-33A8A1D150F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAE5B32A-DEEC-45FB-B545-33A8A1D150F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{368FE95C-6C18-471A-A083-BE04EFC2768A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{368FE95C-6C18-471A-A083-BE04EFC2768A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{368FE95C-6C18-471A-A083-BE04EFC2768A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{368FE95C-6C18-471A-A083-BE04EFC2768A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5CAD52B-2E1B-492A-B503-B4875417BBF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5CAD52B-2E1B-492A-B503-B4875417BBF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5CAD52B-2E1B-492A-B503-B4875417BBF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5CAD52B-2E1B-492A-B503-B4875417BBF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
+		{BAE5B32A-DEEC-45FB-B545-33A8A1D150F1} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
+		{A5CAD52B-2E1B-492A-B503-B4875417BBF3} = {16FB9E8F-939B-4A6E-8C4D-8A227B713396}
 	EndGlobalSection
 EndGlobal

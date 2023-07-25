@@ -26,4 +26,17 @@ internal class ManagedLinqKernels : ILinqKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultBlock[i] = action(tensorBlock[i]));
     }
+
+    public void Clip<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Min(TNumber.Max(tensorBlock[i], min), max));
+    }
 }

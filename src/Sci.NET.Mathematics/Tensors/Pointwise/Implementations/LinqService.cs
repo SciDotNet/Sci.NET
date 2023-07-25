@@ -17,4 +17,14 @@ internal class LinqService : ILinqService
 
         return result;
     }
+
+    public ITensor<TNumber> Clip<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = Tensor.CloneEmpty<ITensor<TNumber>, TNumber>(tensor);
+
+        tensor.Backend.Linq.Clip(tensor, result, min, max);
+
+        return result;
+    }
 }

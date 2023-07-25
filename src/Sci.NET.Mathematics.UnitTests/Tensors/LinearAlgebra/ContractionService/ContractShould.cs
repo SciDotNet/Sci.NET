@@ -82,10 +82,10 @@ public class ContractShould
         _reshapeServiceMock.Setup(x => x.Reshape(permutedRightMock.Object, It.IsAny<Mathematics.Tensors.Shape>()))
             .Returns(reshapedRightMock.Object);
 
-        reshapedLeftMock.Setup(x => x.AsMatrix())
+        reshapedLeftMock.Setup(x => x.ToMatrix())
             .Returns(reshapedLeftMatrixMock.Object);
 
-        reshapedRightMock.Setup(x => x.AsMatrix())
+        reshapedRightMock.Setup(x => x.ToMatrix())
             .Returns(reshapedRightMatrixMock.Object);
 
         _matrixMultiplicationServiceMock.Setup(x => x.MatrixMultiply(It.IsAny<Matrix<int>>(), It.IsAny<Matrix<int>>()))
@@ -120,8 +120,8 @@ public class ContractShould
             x => x.Reshape(permutedRightMock.Object, new Mathematics.Tensors.Shape(6, 4)),
             Times.Once);
 
-        reshapedLeftMock.Verify(x => x.AsMatrix(), Times.Once);
-        reshapedRightMock.Verify(x => x.AsMatrix(), Times.Once);
+        reshapedLeftMock.Verify(x => x.ToMatrix(), Times.Once);
+        reshapedRightMock.Verify(x => x.ToMatrix(), Times.Once);
 
         _matrixMultiplicationServiceMock.Verify(
             x => x.MatrixMultiply(reshapedLeftMatrixMock.Object, reshapedRightMatrixMock.Object),

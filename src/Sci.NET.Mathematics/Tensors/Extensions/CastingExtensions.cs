@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
+
 #pragma warning disable IDE0130
 
 // ReSharper disable once CheckNamespace
@@ -20,6 +22,7 @@ public static class CastingExtensions
     /// <typeparam name="TIn">The input number type.</typeparam>
     /// <typeparam name="TOut">The output number type.</typeparam>
     /// <returns>The input cast to <typeparamref name="TOut"/>.</returns>
+    [DebuggerStepThrough]
     public static Scalar<TOut> Cast<TIn, TOut>(this Scalar<TIn> input)
         where TIn : unmanaged, System.Numerics.INumber<TIn>
         where TOut : unmanaged, System.Numerics.INumber<TOut>
@@ -37,6 +40,7 @@ public static class CastingExtensions
     /// <typeparam name="TIn">The input number type.</typeparam>
     /// <typeparam name="TOut">The output number type.</typeparam>
     /// <returns>The input cast to <typeparamref name="TOut"/>.</returns>
+    [DebuggerStepThrough]
     public static Vector<TOut> Cast<TIn, TOut>(this Vector<TIn> input)
         where TIn : unmanaged, System.Numerics.INumber<TIn>
         where TOut : unmanaged, System.Numerics.INumber<TOut>
@@ -54,6 +58,7 @@ public static class CastingExtensions
     /// <typeparam name="TIn">The input number type.</typeparam>
     /// <typeparam name="TOut">The output number type.</typeparam>
     /// <returns>The input cast to <typeparamref name="TOut"/>.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TOut> Cast<TIn, TOut>(this Matrix<TIn> input)
         where TIn : unmanaged, System.Numerics.INumber<TIn>
         where TOut : unmanaged, System.Numerics.INumber<TOut>
@@ -71,6 +76,7 @@ public static class CastingExtensions
     /// <typeparam name="TIn">The input number type.</typeparam>
     /// <typeparam name="TOut">The output number type.</typeparam>
     /// <returns>The input cast to <typeparamref name="TOut"/>.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TOut> Cast<TIn, TOut>(this Tensor<TIn> input)
         where TIn : unmanaged, System.Numerics.INumber<TIn>
         where TOut : unmanaged, System.Numerics.INumber<TOut>

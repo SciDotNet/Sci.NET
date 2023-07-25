@@ -7,6 +7,8 @@ using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
 using Sci.NET.Mathematics.Tensors.Manipulation;
 using Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
+using Sci.NET.Mathematics.Tensors.NeuralNetworks;
+using Sci.NET.Mathematics.Tensors.NeuralNetworks.Implementations;
 using Sci.NET.Mathematics.Tensors.Pointwise;
 using Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 using Sci.NET.Mathematics.Tensors.Serialization;
@@ -30,9 +32,14 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly ITrigonometryService _trigonometryService;
     private readonly ISerializationService _serializationService;
     private readonly ICastingService _castingService;
+    private readonly IConvolutionService _convolutionService;
+    private readonly IConcatenationService _concatenationService;
+    private readonly IActivationFunctionService _activationFunctionService;
+    private readonly IBroadcastService _broadcastService;
 
     public TensorOperationServiceProvider()
     {
+        _broadcastService = new BroadcastService();
         _reshapeService = new ReshapeService();
         _deviceGuardService = new DeviceGuardService();
         _reductionService = new ReductionService();
@@ -40,11 +47,14 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _trigonometryService = new TrigonometryService();
         _serializationService = new SerializationService();
         _castingService = new CastingService();
+        _activationFunctionService = new ActivationFunctionService();
         _powerService = new PowerService(this);
         _matrixMultiplicationService = new MatrixMultiplicationService(this);
         _arithmeticService = new ArithmeticService(this);
         _permutationService = new PermutationService(this);
         _contractionService = new ContractionService(this);
+        _convolutionService = new ConvolutionService(this);
+        _concatenationService = new ConcatenationService(this);
     }
 
     public IMatrixMultiplicationService GetMatrixMultiplicationService()
@@ -105,5 +115,25 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public ICastingService GetCastingService()
     {
         return _castingService;
+    }
+
+    public IConvolutionService GetConvolutionService()
+    {
+        return _convolutionService;
+    }
+
+    public IConcatenationService GetConcatenationService()
+    {
+        return _concatenationService;
+    }
+
+    public IActivationFunctionService GetActivationFunctionService()
+    {
+        return _activationFunctionService;
+    }
+
+    public IBroadcastService GetBroadcastingService()
+    {
+        return _broadcastService;
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.CompilerServices;
+using Sci.NET.Common.Performance;
 
 namespace Sci.NET.Common.LowLevel;
 
@@ -19,6 +20,7 @@ public static class CastingExtensions
     /// <typeparam name="TOut">The output type.</typeparam>
     /// <returns>The input cast to the <typeparamref name="TOut"/> type.</returns>
     /// <exception cref="InvalidOperationException">Throws if the two types are not the same length.</exception>
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static unsafe TOut ReinterpretCast<TIn, TOut>(this TIn value)
         where TIn : unmanaged
         where TOut : unmanaged

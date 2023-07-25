@@ -109,4 +109,65 @@ internal class ManagedPowerKernels : IPowerKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
     }
+
+    public void Exp<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        resultBlock[0] = TNumber.Exp(valueBlock[0]);
+    }
+
+    public void Exp<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
+    }
+
+    public void Exp<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
+    }
+
+    public void Exp<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
+    }
+
+    public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+
+        LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Log(valueBlock[i]));
+    }
 }

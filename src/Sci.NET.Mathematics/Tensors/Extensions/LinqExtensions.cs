@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 
 // ReSharper disable once CheckNamespace
@@ -22,6 +23,7 @@ public static class LinqExtensions
     /// <typeparam name="TTensor">The concrete <see cref="ITensor{TNumber}"/> type.</typeparam>
     /// <typeparam name="TNumber">The concrete <typeparamref name="TNumber"/> type.</typeparam>
     /// <returns>The mapped <typeparamref name="TTensor"/>.</returns>
+    [DebuggerStepThrough]
     public static TTensor Map<TTensor, TNumber>(this TTensor tensor, Func<TNumber, TNumber> predicate)
         where TTensor : class, ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>
@@ -30,5 +32,23 @@ public static class LinqExtensions
             .GetTensorOperationServiceProvider()
             .GetLinqService()
             .Map(tensor, predicate);
+    }
+
+    /// <summary>
+    /// Clips the values of the <see cref="ITensor{TNumber}"/> to the specified range.
+    /// </summary>
+    /// <param name="tensor">The the <see cref="ITensor{TNumber}"/> to operate on.</param>
+    /// <param name="min">The minimum value to clip to.</param>
+    /// <param name="max">The maximum value to clip to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The clipped <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Clip<TNumber>(this ITensor<TNumber> tensor, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetLinqService()
+            .Clip(tensor, min, max);
     }
 }

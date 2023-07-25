@@ -106,4 +106,59 @@ internal class PowerService : IPowerService
 
         return result;
     }
+
+    public Scalar<TNumber> Exp<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Power.Exp(value, result);
+
+        return result;
+    }
+
+    public Vector<TNumber> Exp<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Vector<TNumber>(value.Length, backend);
+
+        backend.Power.Exp(value, result);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Exp<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
+
+        backend.Power.Exp(value, result);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Exp<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Tensor<TNumber>(value.Shape, backend);
+
+        backend.Power.Exp(value, result);
+
+        return result;
+    }
+
+    public ITensor<TNumber> Log<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = Tensor.CloneEmpty<ITensor<TNumber>, TNumber>(value);
+
+        backend.Power.Log(value, result);
+
+        return result;
+    }
 }

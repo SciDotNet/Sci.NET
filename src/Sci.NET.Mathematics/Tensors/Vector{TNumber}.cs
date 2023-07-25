@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Devices;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -13,32 +14,59 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
 [PublicAPI]
-public class Vector<TNumber> : Tensor<TNumber>
+public sealed class Vector<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Vector{TNumber}"/> class.
     /// </summary>
-    /// <param name="length">The length of the vector.</param>
-    /// <param name="backend">The backend instance to use.</param>
+    /// <param name="length">The length of the <see cref="Vector{TNumber}"/>.</param>
+    /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
     public Vector(int length, ITensorBackend? backend = null)
-        : base(backend, length)
     {
+        Shape = new Shape(length);
+        Backend = backend ?? Tensor.DefaultBackend;
+        Handle = Backend.Storage.Allocate<TNumber>(Shape);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Vector{TNumber}"/> class.
     /// </summary>
     /// <param name="length">The length of the <see cref="Vector{TNumber}"/>.</param>
-    /// <param name="memoryBlock">The memory block of the <see cref="Vector{TNumber}"/>.</param>
-    /// <param name="tensorBackend">The backend instance.</param>
-    public Vector(int length, IMemoryBlock<TNumber> memoryBlock, ITensorBackend tensorBackend)
-        : base(memoryBlock, new Shape(length), tensorBackend)
+    /// <param name="handle">The memory handle to use for the <see cref="Vector{TNumber}"/>.</param>
+    /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
+    public Vector(int length, IMemoryBlock<TNumber> handle, ITensorBackend backend)
     {
+        Shape = new Shape(length);
+        Backend = backend;
+        Handle = handle;
     }
 
     /// <summary>
-    /// Gets the length of the vector.
+    /// Finalizes an instance of the <see cref="Vector{TNumber}"/> class.
+    /// </summary>
+    ~Vector()
+    {
+        Dispose(false);
+    }
+
+    /// <inheritdoc />
+    public IDevice Device => Backend.Device;
+
+    /// <inheritdoc />
+    public Shape Shape { get; }
+
+    /// <inheritdoc />
+    public IMemoryBlock<TNumber> Handle { get; private set; }
+
+    /// <inheritdoc />
+    public ITensorBackend Backend { get; }
+
+    /// <inheritdoc />
+    public bool IsMemoryOwner { get; private set; }
+
+    /// <summary>
+    /// Gets the length of the <see cref="Vector{TNumber}"/>.
     /// </summary>
     public int Length => Shape[0];
 
@@ -46,47 +74,70 @@ public class Vector<TNumber> : Tensor<TNumber>
     /// Gets the debugger display object.
     /// </summary>
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    private protected Array DebuggerDisplayObject => ToArray();
+#pragma warning disable IDE0051, RCS1213
+    private Array DebuggerDisplayObject => ToArray();
+#pragma warning restore RCS1213, IDE0051
 
-#pragma warning disable CS1591
-    public static Tensor<TNumber> operator +(Vector<TNumber> left, Scalar<TNumber> right)
+    /// <inheritdoc />
+#pragma warning disable CA1043, CA2000
+    public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
+
+    /// <summary>
+    /// Gets the <see cref="Scalar{TNumber}"/> at the specified index.
+    /// </summary>
+    /// <param name="index">The index of the scalar to get.</param>
+    public Scalar<TNumber> this[int index] => Tensor.Slice(this, index).ToScalar();
+#pragma warning restore CA2000, CA1043
+
+    /// <inheritdoc />
+    public Array ToArray()
     {
-        return left.Add(right);
+        return Tensor.ToArray(this);
     }
 
-    public static Tensor<TNumber> operator +(Scalar<TNumber> left, Vector<TNumber> right)
+    /// <inheritdoc />
+    void ITensor<TNumber>.DetachMemory()
     {
-        return left.Add(right);
+        IsMemoryOwner = false;
     }
 
-    public static Tensor<TNumber> operator +(Vector<TNumber> left, Vector<TNumber> right)
+    /// <inheritdoc />
+    public void To<TDevice>()
+        where TDevice : IDevice, new()
     {
-        return left.Add(right);
+        var newDevice = new TDevice();
+
+        if (newDevice.Name == Device.Name)
+        {
+            return;
+        }
+
+        var newBackend = newDevice.GetTensorBackend();
+        var oldHandle = Handle;
+        var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
+        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
+
+        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
+        Handle = newHandle;
+        oldHandle.Dispose();
     }
 
-    public static Tensor<TNumber> operator -(Vector<TNumber> left, Scalar<TNumber> right)
+    /// <inheritdoc />
+    public void Dispose()
     {
-        return left.Subtract(right);
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
-    public static Tensor<TNumber> operator -(Scalar<TNumber> left, Vector<TNumber> right)
+    /// <summary>
+    /// Disposes of the <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
+    private void Dispose(bool disposing)
     {
-        return left.Subtract(right);
+        if (disposing && IsMemoryOwner)
+        {
+            Handle.Dispose();
+        }
     }
-
-    public static Tensor<TNumber> operator -(Vector<TNumber> left, Vector<TNumber> right)
-    {
-        return left.Subtract(right);
-    }
-
-    public static Tensor<TNumber> operator *(Vector<TNumber> left, Scalar<TNumber> right)
-    {
-        return right.Multiply(left);
-    }
-
-    public static Tensor<TNumber> operator *(Scalar<TNumber> left, Vector<TNumber> right)
-    {
-        return right.Multiply(left);
-    }
-#pragma warning restore CS1591
 }

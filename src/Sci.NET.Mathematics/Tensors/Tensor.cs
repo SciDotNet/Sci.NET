@@ -2,8 +2,12 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -103,7 +107,7 @@ public static class Tensor
         where TNumber : unmanaged, INumber<TNumber>
     {
         var newShape = tensor.Shape.Slice(indices);
-        return new Tensor<TNumber>(tensor, newShape);
+        return new Tensor<TNumber>(tensor.Handle, newShape, tensor.Backend);
     }
 
     /// <summary>
@@ -118,7 +122,108 @@ public static class Tensor
         where TTensor : class, ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+#pragma warning disable CA2000
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+#pragma warning restore CA2000
         return result as TTensor ?? throw new InvalidOperationException();
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified path.
+    /// </summary>
+    /// <param name="path">The path to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> Load<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .Load<TNumber>(path);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with zeros..
+    /// </summary>
+    /// <param name="dimensions">The dimensions of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given dimensions and filled with zeros.</returns>
+    public static ITensor<TNumber> Zeros<TNumber>(params int[] dimensions)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return new Tensor<TNumber>(new Shape(dimensions));
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified <paramref name="shape"/> which is filled with zeros..
+    /// </summary>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with zeros.</returns>
+    public static ITensor<TNumber> Zeros<TNumber>(Shape shape, IDevice? device = null)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        device ??= new CpuComputeDevice();
+        return new Tensor<TNumber>(shape, device.GetTensorBackend());
+    }
+
+    /// <summary>
+    /// Overwrites the values of the <paramref name="tensor"/> with the values of the <paramref name="other"/> tensor.
+    /// This should only be used on rare occasions where referential integrity is required (I.E weights in a neural network).
+    /// </summary>
+    /// <param name="tensor">The tensor to overwrite.</param>
+    /// <param name="other">The tensor to overwrite with.</param>
+    /// <typeparam name="TNumber">The number type of the tensors.</typeparam>
+    /// <returns>The overwritten tensor.</returns>
+    /// <exception cref="InvalidShapeException">Throws when the shapes of the tensors are not equal.</exception>
+    public static ITensor<TNumber> InPlaceOverwrite<TNumber>(this ITensor<TNumber> tensor, ITensor<TNumber> other)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (tensor.Shape != other.Shape)
+        {
+            throw new InvalidShapeException(
+                $"The shapes of the tensors must be equal but were {tensor.Shape} and {other.Shape}.");
+        }
+
+        other.Handle.CopyTo(tensor.Handle);
+        return tensor;
+    }
+
+    /// <summary>
+    /// Converts a <see cref="ITensor{TNumber}"/> to an array.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> as an array.</returns>
+    /// <exception cref="InvalidOperationException">Throws when the <see cref="ITensor{TNumber}"/> is a <see cref="Scalar{TNumber}"/>.</exception>
+    public static unsafe Array ToArray<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (tensor.Shape.IsScalar)
+        {
+            throw new InvalidOperationException("Cannot convert a scalar to an array.");
+        }
+
+        var result = Array.CreateInstance(typeof(TNumber), tensor.Shape.Dimensions);
+        result.Initialize();
+
+        var startIndex = tensor.Shape.DataOffset;
+        var endIndex = startIndex + tensor.Shape.ElementCount;
+        var bytesToCopy = Unsafe.SizeOf<TNumber>() * (endIndex - startIndex);
+        var systemMemoryClone = tensor.Handle.ToSystemMemory();
+
+        var sourcePointer = Unsafe.AsPointer(
+            ref Unsafe.Add(ref Unsafe.AsRef<TNumber>(systemMemoryClone.ToPointer()), (nuint)startIndex));
+        var destinationPointer = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(result));
+
+        Buffer.MemoryCopy(
+            sourcePointer,
+            destinationPointer,
+            Unsafe.SizeOf<TNumber>() * result.LongLength,
+            bytesToCopy);
+
+        return result;
     }
 }

@@ -2,8 +2,6 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
@@ -15,7 +13,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
-public class Tensor<TNumber> : ITensor<TNumber>
+public sealed class Tensor<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
@@ -70,88 +68,66 @@ public class Tensor<TNumber> : ITensor<TNumber>
         Backend = backend;
     }
 
+    /// <summary>
+    /// Finalizes an instance of the <see cref="Tensor{TNumber}"/> class.
+    /// </summary>
+    ~Tensor()
+    {
+        Dispose(false);
+    }
+
     /// <inheritdoc />
     public Shape Shape { get; }
 
     /// <inheritdoc />
-    public IMemoryBlock<TNumber> Handle { get; }
+    public IMemoryBlock<TNumber> Handle { get; private set; }
 
     /// <inheritdoc />
     public ITensorBackend Backend { get; }
 
+    /// <inheritdoc />
+    public bool IsMemoryOwner { get; private set; }
+
     /// <inheritdoc/>
     public IDevice Device => Backend.Device;
 
-#pragma warning disable CS1591
-    public static Tensor<TNumber> operator +(Tensor<TNumber> left, Scalar<TNumber> right)
-    {
-        return left.Add(right);
-    }
+    /// <inheritdoc />
+#pragma warning disable CA1043
+    public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
 
-    public static Tensor<TNumber> operator +(Scalar<TNumber> left, Tensor<TNumber> right)
-    {
-        return left.Add(right);
-    }
-
-    public static Tensor<TNumber> operator +(Tensor<TNumber> left, Tensor<TNumber> right)
-    {
-        return left.Add(right);
-    }
-
-    public static Tensor<TNumber> operator -(Tensor<TNumber> left, Scalar<TNumber> right)
-    {
-        return left.Subtract(right);
-    }
-
-    public static Tensor<TNumber> operator -(Scalar<TNumber> left, Tensor<TNumber> right)
-    {
-        return left.Subtract(right);
-    }
-
-    public static Tensor<TNumber> operator -(Tensor<TNumber> left, Tensor<TNumber> right)
-    {
-        return left.Subtract(right);
-    }
-
-    public static Tensor<TNumber> operator *(Tensor<TNumber> left, Scalar<TNumber> right)
-    {
-        return right.Multiply(left);
-    }
-
-    public static Tensor<TNumber> operator *(Scalar<TNumber> left, Tensor<TNumber> right)
-    {
-        return right.Multiply(left);
-    }
-
-#pragma warning restore CS1591
+#pragma warning restore CA1043
 
     /// <inheritdoc />
-    public unsafe Array ToArray()
+    public Array ToArray()
     {
-        if (Shape.IsScalar)
+        return Tensor.ToArray(this);
+    }
+
+    /// <inheritdoc/>
+    void ITensor<TNumber>.DetachMemory()
+    {
+        IsMemoryOwner = false;
+    }
+
+    /// <inheritdoc />
+    public void To<TDevice>()
+        where TDevice : IDevice, new()
+    {
+        var newDevice = new TDevice();
+
+        if (newDevice.Name == Device.Name)
         {
-            throw new InvalidOperationException("Cannot convert a scalar to an array.");
+            return;
         }
 
-        var result = Array.CreateInstance(typeof(TNumber), Shape.Dimensions);
-        result.Initialize();
+        var newBackend = newDevice.GetTensorBackend();
+        var oldHandle = Handle;
+        var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
+        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
 
-        var startIndex = Shape.DataOffset;
-        var endIndex = startIndex + Shape.ElementCount;
-        var bytesToCopy = Unsafe.SizeOf<TNumber>() * (endIndex - startIndex);
-        var systemMemoryClone = Handle.ToSystemMemory();
-
-        var sourcePointer = Unsafe.AsPointer(
-            ref Unsafe.Add(ref Unsafe.AsRef<TNumber>(systemMemoryClone.ToPointer()), (nuint)startIndex));
-        var destinationPointer = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(result));
-
-        Buffer.MemoryCopy(
-            sourcePointer,
-            destinationPointer,
-            Unsafe.SizeOf<TNumber>() * result.LongLength,
-            bytesToCopy);
-
-        return result;
+        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
+        Handle = newHandle;
+        oldHandle.Dispose();
     }
 
     /// <inheritdoc />
@@ -165,9 +141,9 @@ public class Tensor<TNumber> : ITensor<TNumber>
     /// Releases the unmanaged resources used by the <see cref="Tensor{TNumber}"/> and optionally releases the managed resources.
     /// </summary>
     /// <param name="disposing">A value indicating whether the instance is disposing.</param>
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
-        if (disposing)
+        if (disposing && IsMemoryOwner)
         {
             Handle.Dispose();
         }
