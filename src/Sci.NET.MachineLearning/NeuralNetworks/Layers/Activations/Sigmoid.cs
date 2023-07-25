@@ -19,11 +19,13 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     /// <summary>
     /// Initializes a new instance of the <see cref="Sigmoid{TNumber}"/> class.
     /// </summary>
-    public Sigmoid()
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    public Sigmoid(IDevice? device = null)
     {
+        Device = device ?? new CpuComputeDevice();
+        Parameters = new ParameterSet<TNumber>(Device);
         Input = Tensor.Zeros<TNumber>(1, 1);
         Output = Tensor.Zeros<TNumber>(1, 1);
-        Parameters = new ParameterSet<TNumber>();
     }
 
     /// <inheritdoc />
@@ -37,6 +39,9 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
 
     /// <inheritdoc />
     public ParameterSet<TNumber> Parameters { get; }
+
+    /// <inheritdoc />
+    public IDevice Device { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)

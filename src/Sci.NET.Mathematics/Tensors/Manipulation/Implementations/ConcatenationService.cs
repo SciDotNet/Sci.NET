@@ -22,7 +22,7 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Scalar<TNumber>, TNumber>(scalars);
 #pragma warning restore CA2000
-        return result.AsVector();
+        return result.ToVector();
     }
 
     public Matrix<TNumber> Concatenate<TNumber>(ICollection<Vector<TNumber>> vectors)
@@ -31,7 +31,7 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Vector<TNumber>, TNumber>(vectors);
 #pragma warning restore CA2000
-        return result.AsMatrix();
+        return result.ToMatrix();
     }
 
     public Tensor<TNumber> Concatenate<TNumber>(ICollection<Matrix<TNumber>> tensors)
@@ -40,7 +40,7 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Matrix<TNumber>, TNumber>(tensors);
 #pragma warning restore CA2000
-        return result.AsTensor();
+        return result.ToTensor();
     }
 
     public Tensor<TNumber> Concatenate<TNumber>(ICollection<Tensor<TNumber>> tensors)
@@ -49,7 +49,7 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Tensor<TNumber>, TNumber>(tensors);
 #pragma warning restore CA2000
-        return result.AsTensor();
+        return result.ToTensor();
     }
 
     private static void EnsureSameShape<TTensor, TNumber>(ICollection<TTensor> tensors)

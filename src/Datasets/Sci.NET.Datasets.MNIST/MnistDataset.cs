@@ -35,8 +35,8 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
         var trainingImages = Tensor.Load<byte>($@"{root}\resources\digits.sdnt");
         var trainingLabels = Tensor.Load<byte>($@"{root}\resources\labels.sdnt");
 
-        _trainingImages = trainingImages.AsTensor().Cast<byte, TNumber>();
-        _trainingLabels = trainingLabels.AsMatrix().Cast<byte, TNumber>();
+        _trainingImages = trainingImages.ToTensor().Cast<byte, TNumber>();
+        _trainingLabels = trainingLabels.ToMatrix().Cast<byte, TNumber>();
 
         Transforms = transforms;
         BatchSize = batchSize;
@@ -98,7 +98,7 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
 
         for (var i = 0; i < BatchSize; i++)
         {
-            if (batchIndicesIndex >= NumExamples)
+            if ((batchIndicesIndex * BatchSize) + i >= NumExamples)
             {
                 batchIndicesIndex = 0;
             }
@@ -114,10 +114,13 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
             var image = _trainingImages[nextExample];
             var label = _trainingLabels[nextExample];
 
-            image = Transforms.Aggregate(image, (current, transform) => transform.Execute(current));
+            foreach (var transform in Transforms)
+            {
+                image = transform.Execute(image);
+            }
 
-            batchImages.Add(image.AsTensor());
-            batchLabels.Add(label.AsVector());
+            batchImages.Add(image.ToTensor());
+            batchLabels.Add(label);
         }
 
         return new ImageOneHotCategoryBatch<TNumber>(batchImages.Concatenate(), batchLabels.Concatenate());

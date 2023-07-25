@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -13,6 +14,7 @@ namespace Sci.NET.Common.Runtime;
 /// A helper class for resolving native library paths.
 /// </summary>
 [PublicAPI]
+[ExcludeFromCodeCoverage]
 public static class RuntimeDllImportResolver
 {
     /// <summary>

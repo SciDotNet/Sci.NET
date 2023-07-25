@@ -90,9 +90,9 @@ internal class ContractionService : IContractionService
         using var permutedLeft = _permutationService.Permute(left, leftPermutation.ToArray());
         using var permutedRight = _permutationService.Permute(right, rightPermutation.ToArray());
         using var reshapeLeft = _reshapeService.Reshape(permutedLeft, new Shape(leftSize, contractedSize));
-        using var reshapeLeftMatrix = reshapeLeft.AsMatrix();
+        using var reshapeLeftMatrix = reshapeLeft.ToMatrix();
         using var reshapeRight = _reshapeService.Reshape(permutedRight, new Shape(contractedSize, rightSize));
-        using var reshapeRightMatrix = reshapeRight.AsMatrix();
+        using var reshapeRightMatrix = reshapeRight.ToMatrix();
         using var mm = _matrixMultiplicationService.MatrixMultiply(reshapeLeftMatrix, reshapeRightMatrix);
         return _reshapeService.Reshape(mm, new Shape(resultShape.ToArray()));
     }
@@ -127,17 +127,17 @@ internal class ContractionService : IContractionService
 
         if (left.IsVector() && right.IsVector())
         {
-            return Inner(left.AsVector(), right.AsVector());
+            return Inner(left.ToVector(), right.ToVector());
         }
 
         if (left.IsScalar() || right.IsScalar())
         {
-            return _arithmeticService.Multiply(left.AsScalar(), right.AsScalar());
+            return _arithmeticService.Multiply(left.ToScalar(), right.ToScalar());
         }
 
         if (left.IsMatrix() && right.IsMatrix())
         {
-            return _matrixMultiplicationService.MatrixMultiply(left.AsMatrix(), right.AsMatrix());
+            return _matrixMultiplicationService.MatrixMultiply(left.ToMatrix(), right.ToMatrix());
         }
 
         if (right.IsVector())

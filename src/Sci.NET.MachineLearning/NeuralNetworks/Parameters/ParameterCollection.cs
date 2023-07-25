@@ -30,6 +30,12 @@ public class ParameterCollection<TNumber> : ICollection<ParameterSet<TNumber>>
     /// <inheritdoc />
     public bool IsReadOnly { get; }
 
+    /// <summary>
+    /// Gets the <see cref="ParameterSet{TNumber}"/> at the specified index.
+    /// </summary>
+    /// <param name="i">The index of the <see cref="ParameterSet{TNumber}"/> to get.</param>
+    public ParameterSet<TNumber> this[int i] => _parameterSets[i];
+
     /// <inheritdoc />
     public void Add(ParameterSet<TNumber> item)
     {
@@ -58,6 +64,22 @@ public class ParameterCollection<TNumber> : ICollection<ParameterSet<TNumber>>
     public bool Remove(ParameterSet<TNumber> item)
     {
         return _parameterSets.Remove(item);
+    }
+
+    /// <summary>
+    /// Gets all the parameters in the collection.
+    /// </summary>
+    /// <returns>An enumerable of all the parameters in the collection.</returns>
+    public IEnumerable<NamedParameter<TNumber>> GetAll()
+    {
+        var parameters = new List<NamedParameter<TNumber>>();
+
+        foreach (var collection in _parameterSets)
+        {
+            parameters.AddRange(collection);
+        }
+
+        return parameters;
     }
 
     /// <inheritdoc />

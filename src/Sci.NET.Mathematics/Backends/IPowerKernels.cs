@@ -123,4 +123,13 @@ public interface IPowerKernels
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Exp<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the natural logarithm of <paramref name="value"/> and stores the result in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="value">The value to find the natural logarithm of.</param>
+    /// <param name="result">The <see cref="Scalar{TNumber}"/> to store the result in.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 }

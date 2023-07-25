@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.MachineLearning.NeuralNetworks.Parameters.Initializers;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
@@ -24,11 +25,13 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     /// </summary>
     /// <param name="name">The name of the parameter.</param>
     /// <param name="shape">The shape of the parameter.</param>
-    public NamedParameter(string name, Shape shape)
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    public NamedParameter(string name, Shape shape, IDevice? device = null)
     {
         Name = name;
-        _gradient = Tensor.Zeros<TNumber>(shape);
-        _value = Tensor.Zeros<TNumber>(shape);
+        Device = device ?? new CpuComputeDevice();
+        _gradient = Initializer.Initialize<TNumber>(shape, Device);
+        _value = Initializer.Initialize<TNumber>(shape, Device);
     }
 
     /// <summary>
@@ -47,6 +50,14 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     public ref ITensor<TNumber> Gradient => ref _gradient;
 
     /// <inheritdoc />
+    public IDevice Device { get; }
+
+    /// <summary>
+    /// Gets the initializer for the parameter.
+    /// </summary>
+    public IParameterInitializer Initializer { get; init; } = new DefaultParameterInitializer();
+
+    /// <inheritdoc />
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
@@ -60,7 +71,7 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     /// <param name="amount">The amount to change the parameter.</param>
     public void UpdateValue(ITensor<TNumber> amount)
     {
-        Value += amount;
+        Value = _value.Add(amount);
     }
 
     /// <inheritdoc />

@@ -19,11 +19,13 @@ public class ReLU<TNumber> : ILayer<TNumber>
     /// <summary>
     /// Initializes a new instance of the <see cref="ReLU{TNumber}"/> class.
     /// </summary>
-    public ReLU()
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    public ReLU(IDevice? device = null)
     {
-        Input = Tensor.Zeros<TNumber>(1, 1);
-        Output = Tensor.Zeros<TNumber>(1, 1);
-        Parameters = new ParameterSet<TNumber>();
+        Device = device ?? new CpuComputeDevice();
+        Input = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
+        Output = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
+        Parameters = new ParameterSet<TNumber>(Device);
     }
 
     /// <inheritdoc />
@@ -37,6 +39,9 @@ public class ReLU<TNumber> : ILayer<TNumber>
 
     /// <inheritdoc />
     public ParameterSet<TNumber> Parameters { get; }
+
+    /// <inheritdoc />
+    public IDevice Device { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)

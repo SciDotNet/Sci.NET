@@ -35,7 +35,7 @@ public class MultiplyShould
         _sut.Arithmetic.Multiply(left, right, result);
 
         // Assert
-        result.GetValue().Should().Be(expectedResult);
+        result.Value.Should().Be(expectedResult);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class MultiplyShould
     {
         // Arrange
         var left = new Scalar<int>(2);
-        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
         var result = new Vector<int>(3);
         var expectedResult = new int[] { 2, 4, 6 };
 
@@ -59,7 +59,7 @@ public class MultiplyShould
     {
         // Arrange
         var left = new Scalar<int>(2);
-        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
+        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[,] { { 2, 4, 6 }, { 8, 10, 12 } };
 
@@ -77,9 +77,41 @@ public class MultiplyShould
         var left = new Scalar<int>(2);
 
         var right = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
-            .AsTensor();
+            .ToTensor();
         var result = new Tensor<int>(_sut, 2, 2, 3);
         var expectedResult = new int[,,] { { { 2, 4, 6 }, { 8, 10, 12 } }, { { 14, 16, 18 }, { 20, 22, 24 } } };
+
+        // Act
+        _sut.Arithmetic.Multiply(left, right, result);
+
+        // Assert
+        result.ToArray().Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    public void CorrectlyFillVector_GivenVectorAndScalar()
+    {
+        // Arrange
+        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).ToVector();
+        var right = new Scalar<int>(2);
+        var result = new Vector<int>(6);
+        var expectedResult = new int[] { 2, 4, 6, 8, 10, 12 };
+
+        // Act
+        _sut.Arithmetic.Multiply(left, right, result);
+
+        // Assert
+        result.ToArray().Should().BeEquivalentTo(expectedResult);
+    }
+
+    [Fact]
+    public void CorrectlyFillVector_GivenVectorAndVector()
+    {
+        // Arrange
+        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).ToVector();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).ToVector();
+        var result = new Vector<int>(6);
+        var expectedResult = new int[] { 1, 4, 9, 16, 25, 36 };
 
         // Act
         _sut.Arithmetic.Multiply(left, right, result);

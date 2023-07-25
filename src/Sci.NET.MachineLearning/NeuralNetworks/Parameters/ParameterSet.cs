@@ -22,10 +22,15 @@ public class ParameterSet<TNumber> : ICollection<NamedParameter<TNumber>>, ITens
     /// <summary>
     /// Initializes a new instance of the <see cref="ParameterSet{TNumber}"/> class.
     /// </summary>
-    public ParameterSet()
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    public ParameterSet(IDevice device)
     {
         _namedParameters = new List<NamedParameter<TNumber>>();
+        Device = device;
     }
+
+    /// <inheritdoc />
+    public IDevice Device { get; }
 
     /// <inheritdoc />
     public int Count => _namedParameters.Count;

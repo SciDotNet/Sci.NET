@@ -20,16 +20,21 @@ public class Flatten<TNumber> : ILayer<TNumber>
     /// Initializes a new instance of the <see cref="Flatten{TNumber}"/> class.
     /// </summary>
     /// <param name="flattenAxis">The axis to flatten.</param>
-    public Flatten(int flattenAxis = 1)
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    public Flatten(int flattenAxis = 1, IDevice? device = null)
     {
         FlattenAxis = flattenAxis;
-        Input = Tensor.Zeros<TNumber>(1, 1);
-        Output = Tensor.Zeros<TNumber>(1, 1);
-        Parameters = new ParameterSet<TNumber>();
+        Device = device ?? new CpuComputeDevice();
+        Parameters = new ParameterSet<TNumber>(Device);
+        Input = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
+        Output = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
     }
 
     /// <inheritdoc />
     public bool IsDisposed { get; }
+
+    /// <inheritdoc />
+    public IDevice Device { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Input { get; private set; }

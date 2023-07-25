@@ -34,7 +34,7 @@ public class SubtractShould
         _sut.Arithmetic.Subtract(left, right, result);
 
         // Assert
-        result.GetValue().Should().Be(0);
+        result.Value.Should().Be(0);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class SubtractShould
     {
         // Arrange
         var left = new Scalar<int>(1);
-        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
         var result = new Vector<int>(3);
         var expectedResult = new int[] { 0, -1, -2 };
 
@@ -58,7 +58,7 @@ public class SubtractShould
     {
         // Arrange
         var left = new Scalar<int>(1);
-        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
+        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[] { 0, -1, -2, -3, -4, -5 };
 
@@ -76,7 +76,7 @@ public class SubtractShould
         var left = new Scalar<int>(1);
 
         var right = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
-            .AsTensor();
+            .ToTensor();
 
         var result = new Tensor<int>(new Shape(2, 2, 3));
 
@@ -93,7 +93,7 @@ public class SubtractShould
     public void CorrectlyFillVector_GivenVectorAndScalar()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
+        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
         var right = new Scalar<int>(1);
         var result = new Vector<int>(3);
         var expectedResult = new int[] { 0, 1, 2 };
@@ -109,8 +109,8 @@ public class SubtractShould
     public void CorrectlyFillsMatrix_GivenVectorAndMatrix()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
-        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
+        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
+        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[] { 0, -1, -2, -3, -2, -4 };
 
@@ -125,7 +125,7 @@ public class SubtractShould
     public void CorrectlyFillMatrix_GivenMatrixAndScalar()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
+        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
         var right = new Scalar<int>(1);
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[] { 0, 1, 2, 3, 4, 5 };
@@ -141,8 +141,8 @@ public class SubtractShould
     public void CorrectlyFillVector_GivenVectorAndVector()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
-        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
+        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
         var result = new Vector<int>(3);
         var expectedResult = new int[] { 0, 0, 0 };
 
@@ -157,8 +157,8 @@ public class SubtractShould
     public void CorrectlyFillMatrix_GivenMatrixAndVector()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
-        var right = Tensor.FromArray<int>(new int[] { 1, 2 }).AsVector();
+        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2 }).ToVector();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[] { 0, 1, 2, 2, 3, 4 };
 
@@ -173,8 +173,8 @@ public class SubtractShould
     public void CorrectlyFillMatrix_GivenMatrixAndMatrix()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
-        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).AsMatrix();
+        var left = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
+        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }).ToMatrix();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[] { 0, 0, 0, 0, 0, 0 };
 
@@ -190,7 +190,7 @@ public class SubtractShould
     {
         // Arrange
         var left = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
-            .AsTensor();
+            .ToTensor();
         var right = new Scalar<int>(1);
         var result = new Tensor<int>(new Shape(2, 2, 3));
         var expectedResult = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
@@ -207,10 +207,10 @@ public class SubtractShould
     {
         // Arrange
         var left = Tensor.FromArray<int>(new int[,,] { { { 5, 6, 7 }, { 8, 9, 10 } }, { { 11, 12, 13 }, { 14, 15, 16 } } })
-            .AsTensor();
+            .ToTensor();
 
         var right = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
-            .AsTensor();
+            .ToTensor();
 
         var result = new Tensor<int>(new Shape(2, 2, 3));
         var expectedResult = new int[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };

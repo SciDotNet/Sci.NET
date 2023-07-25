@@ -2,8 +2,8 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Common.Profiling;
 using Sci.NET.MachineLearning.NeuralNetworks.Layers;
+using Sci.NET.MachineLearning.NeuralNetworks.Losses;
 using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Tensors;
 
@@ -29,8 +29,6 @@ public class Network<TNumber> : IDisposable
         _layers = new List<ILayer<TNumber>>();
         _input = Tensor.Zeros<TNumber>(1, 1);
         _output = Tensor.Zeros<TNumber>(1, 1);
-
-        Profiler.LogGeneric("Network created.");
     }
 
     /// <summary>
@@ -48,8 +46,6 @@ public class Network<TNumber> : IDisposable
     public void AddLayer(ILayer<TNumber> layer)
     {
         _layers.Add(layer);
-
-        Profiler.LogGeneric("Layer added");
     }
 
     /// <summary>
@@ -74,10 +70,10 @@ public class Network<TNumber> : IDisposable
     /// <summary>
     /// Propagates the error through the <see cref="Network{TNumber}"/>.
     /// </summary>
-    /// <param name="error">The error to propagate.</param>
-    public void Backward(ITensor<TNumber> error)
+    /// <param name="loss">The error to propagate.</param>
+    public void Backward(ILossFunction<TNumber> loss)
     {
-        var result = error;
+        var result = loss.Gradient;
 
         foreach (var layer in _layers.Reverse<ILayer<TNumber>>())
         {
@@ -120,8 +116,6 @@ public class Network<TNumber> : IDisposable
     /// <param name="disposing">Whether or not the object is being disposed.</param>
     protected virtual void Dispose(bool disposing)
     {
-        Profiler.LogGeneric("Network disposed.");
-
         if (disposing)
         {
             foreach (var layer in _layers)

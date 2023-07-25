@@ -295,7 +295,7 @@ public interface IArithmeticKernels
     public void Subtract<TNumber>(
         [AssumesShape("i")] Tensors.Vector<TNumber> left,
         [AssumesShape("i,j")] Matrix<TNumber> right,
-        [AssumesShape("i, j")] Matrix<TNumber> result)
+        [AssumesShape("i,j")] Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -422,6 +422,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Multiply<TNumber>(
         [AssumesShape("1")] Scalar<TNumber> left,
         [AssumesShape("*")] Tensor<TNumber> right,
@@ -435,10 +436,39 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Multiply<TNumber>(
         [AssumesShape("i")] Tensors.Vector<TNumber> left,
         [AssumesShape("1")] Scalar<TNumber> right,
         [AssumesShape("i")] Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a point-wise multiplication of a <see cref="Tensors.Vector{TNumber}"/> and a <see cref="Tensors.Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">A <see cref="Tensors.Vector{TNumber}"/> containing the point-wise product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Multiply<TNumber>(
+        [AssumesShape("i")] Tensors.Vector<TNumber> left,
+        [AssumesShape("i")] Tensors.Vector<TNumber> right,
+        [AssumesShape("i")] Tensors.Vector<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the element-wise product of the <paramref name="left"/> <see cref="ITensor{TNumber}"/> and <paramref name="right"/> <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">Stores the element-wise product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Multiply<TNumber>(
+        [AssumesShape("i")] Tensors.Vector<TNumber> left,
+        [AssumesShape("i,j")] Matrix<TNumber> right,
+        [AssumesShape("i,j")] Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -448,9 +478,23 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Multiply<TNumber>(
         [AssumesShape("i,j")] Matrix<TNumber> left,
         [AssumesShape("1")] Scalar<TNumber> right,
+        [AssumesShape("i,j")] Matrix<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a point-wise multiplication of a <see cref="Matrix{TNumber}"/> and a <see cref="Tensors.Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/> and <see cref="Tensors.Vector{TNumber}"/> instances.</typeparam>
+    public void Multiply<TNumber>(
+        [AssumesShape("i,j")] Matrix<TNumber> left,
+        [AssumesShape("i,j")] Matrix<TNumber> right,
         [AssumesShape("i,j")] Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
@@ -461,6 +505,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Multiply<TNumber>(
         [AssumesShape("*")] Tensor<TNumber> left,
         [AssumesShape("1")] Scalar<TNumber> right,
@@ -474,6 +519,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> operands.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Multiply<TNumber>(
         [AssumesShape("*")] Tensor<TNumber> left,
         [AssumesShape(nameof(left))] Tensor<TNumber> right,
@@ -529,6 +575,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Divide<TNumber>(
         [AssumesShape("1")] Scalar<TNumber> left,
         [AssumesShape("*")] Tensor<TNumber> right,
@@ -542,6 +589,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Divide<TNumber>(
         [AssumesShape("*")] Tensors.Vector<TNumber> left,
         [AssumesShape("1")] Scalar<TNumber> right,
@@ -555,6 +603,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Divide<TNumber>(
         [AssumesShape("*")] Matrix<TNumber> left,
         [AssumesShape("1")] Scalar<TNumber> right,
@@ -568,6 +617,7 @@ public interface IArithmeticKernels
     /// <param name="right">The right operand.</param>
     /// <param name="result">The product of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
     public void Divide<TNumber>(
         [AssumesShape("*")] Tensor<TNumber> left,
         [AssumesShape("1")] Scalar<TNumber> right,
@@ -580,7 +630,10 @@ public interface IArithmeticKernels
     /// <param name="value">The value to negate.</param>
     /// <param name="result">The result <see cref="Scalar{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Negate<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+    [AssumesValidDevice]
+    public void Negate<TNumber>(
+        [AssumesShape("1")] Scalar<TNumber> value,
+        [AssumesShape("1")] Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -589,7 +642,10 @@ public interface IArithmeticKernels
     /// <param name="value">The value to negate.</param>
     /// <param name="result">The result <see cref="Tensors.Vector{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    public void Negate<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+    [AssumesValidDevice]
+    public void Negate<TNumber>(
+        [AssumesShape("i")] Tensors.Vector<TNumber> value,
+        [AssumesShape("i")] Tensors.Vector<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -598,7 +654,10 @@ public interface IArithmeticKernels
     /// <param name="value">The value to negate.</param>
     /// <param name="result">The result <see cref="Matrix{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Negate<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
+    [AssumesValidDevice]
+    public void Negate<TNumber>(
+        [AssumesShape("i,j")] Matrix<TNumber> value,
+        [AssumesShape("i,j")] Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -607,7 +666,10 @@ public interface IArithmeticKernels
     /// <param name="value">The value to negate.</param>
     /// <param name="result">The result <see cref="Tensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Negate<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+    [AssumesValidDevice]
+    public void Negate<TNumber>(
+        [AssumesShape("*")] Tensor<TNumber> value,
+        [AssumesShape(nameof(value))] Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -616,6 +678,7 @@ public interface IArithmeticKernels
     /// <param name="value">The value to find the absolute value of.</param>
     /// <param name="result">The result <see cref="Scalar{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    [AssumesValidDevice]
     public void Abs<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
@@ -625,6 +688,7 @@ public interface IArithmeticKernels
     /// <param name="value">The value to find the absolute value of.</param>
     /// <param name="result">The result <see cref="Tensors.Vector{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
+    [AssumesValidDevice]
     public void Abs<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
@@ -634,6 +698,7 @@ public interface IArithmeticKernels
     /// <param name="value">The value to find the absolute value of.</param>
     /// <param name="result">The result <see cref="Matrix{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    [AssumesValidDevice]
     public void Abs<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
@@ -643,6 +708,28 @@ public interface IArithmeticKernels
     /// <param name="value">The value to find the absolute value of.</param>
     /// <param name="result">The result <see cref="Tensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    [AssumesValidDevice]
     public void Abs<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the element-wise square root of the <paramref name="tensor"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the square root of.</param>
+    /// <param name="result">Stores the element-wise square root of the <paramref name="tensor"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Sqrt<TNumber>(ITensor<TNumber> tensor, Tensor<TNumber> result)
+        where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the element-wise quotient of the <paramref name="left"/> <see cref="ITensor{TNumber}"/> and <paramref name="right"/> <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <param name="result">Stores the element-wise quotient of the <paramref name="left"/> and <paramref name="right"/> parameters.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/> instances.</typeparam>
+    [AssumesValidDevice]
+    public void Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 }

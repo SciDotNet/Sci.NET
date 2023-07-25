@@ -100,7 +100,7 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Pow(value.AsScalar(), power);
+                .Pow(value.ToScalar(), power);
         }
 
         if (value.IsVector())
@@ -108,7 +108,7 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Pow(value.AsVector(), power);
+                .Pow(value.ToVector(), power);
         }
 
         if (value.IsMatrix())
@@ -116,13 +116,13 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Pow(value.AsMatrix(), power);
+                .Pow(value.ToMatrix(), power);
         }
 
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Pow(value.AsTensor(), power);
+            .Pow(value.ToTensor(), power);
     }
 
     /// <summary>
@@ -204,7 +204,7 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Square(value.AsScalar());
+                .Square(value.ToScalar());
         }
 
         if (value.IsVector())
@@ -212,7 +212,7 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Square(value.AsVector());
+                .Square(value.ToVector());
         }
 
         if (value.IsMatrix())
@@ -220,13 +220,13 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Square(value.AsMatrix());
+                .Square(value.ToMatrix());
         }
 
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Square(value.AsTensor());
+            .Square(value.ToTensor());
     }
 
     /// <summary>
@@ -303,7 +303,7 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Exp(value.AsScalar());
+                .Exp(value.ToScalar());
         }
 
         if (value.IsVector())
@@ -311,7 +311,7 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Exp(value.AsVector());
+                .Exp(value.ToVector());
         }
 
         if (value.IsMatrix())
@@ -319,12 +319,27 @@ public static class PowerExtensions
             return TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetPowerService()
-                .Exp(value.AsMatrix());
+                .Exp(value.ToMatrix());
         }
 
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Exp(value.AsTensor());
+            .Exp(value.ToTensor());
+    }
+
+    /// <summary>
+    /// Finds the natural logarithm of a <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Scalar{TNumber}"/> to find the natural logarithm of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
+    public static ITensor<TNumber> Log<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPowerService()
+            .Log(tensor);
     }
 }

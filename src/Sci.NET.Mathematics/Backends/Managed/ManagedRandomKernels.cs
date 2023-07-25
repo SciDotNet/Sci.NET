@@ -3,7 +3,6 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Random;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -14,8 +13,8 @@ internal class ManagedRandomKernels : IRandomKernels
         where TNumber : unmanaged, INumber<TNumber>
     {
 #pragma warning disable CA5394, CA2000
-        seed ??= DateTime.UtcNow.Ticks;
-        MersenneTwister.Instance.Seed((uint)seed.GetHashCode());
+
+        var range = max - min;
 
         switch (min)
         {
@@ -24,8 +23,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultHalfMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextFloat(float.CreateChecked(min), float.CreateChecked(max)));
+                    var random = Random.Shared.NextDouble();
+                    resultHalfMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultHalfMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -34,8 +33,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultFloatMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextFloat(float.CreateChecked(min), float.CreateChecked(max)));
+                    var random = Random.Shared.NextDouble();
+                    resultFloatMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultFloatMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -44,8 +43,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultDoubleMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextDouble(double.CreateChecked(min), double.CreateChecked(max)));
+                    var random = Random.Shared.NextDouble();
+                    resultDoubleMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultDoubleMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -54,8 +53,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultByteMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextInt(byte.CreateChecked(min), byte.CreateChecked(max)));
+                    var random = Random.Shared.Next();
+                    resultByteMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultByteMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -64,8 +63,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultSByteMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextInt(sbyte.CreateChecked(min), sbyte.CreateChecked(max)));
+                    var random = Random.Shared.Next();
+                    resultSByteMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultSByteMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -74,8 +73,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultShortMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextInt(short.CreateChecked(min), short.CreateChecked(max)));
+                    var random = Random.Shared.Next();
+                    resultShortMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultShortMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -84,8 +83,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultUShortMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextInt(ushort.CreateChecked(min), ushort.CreateChecked(max)));
+                    var random = Random.Shared.Next();
+                    resultUShortMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultUShortMemoryBlock, shape, ManagedTensorBackend.Instance);
@@ -94,8 +93,8 @@ internal class ManagedRandomKernels : IRandomKernels
 
                 for (var i = 0L; i < shape.ElementCount; i++)
                 {
-                    resultIntMemoryBlock[i] = TNumber.CreateChecked(
-                        MersenneTwister.Instance.NextInt(int.CreateChecked(min), int.CreateChecked(max)));
+                    var random = Random.Shared.Next();
+                    resultIntMemoryBlock[i] = min + (TNumber.CreateChecked(random) * range);
                 }
 
                 return new Tensor<TNumber>(resultIntMemoryBlock, shape, ManagedTensorBackend.Instance);

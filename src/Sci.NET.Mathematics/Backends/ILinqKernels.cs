@@ -26,4 +26,19 @@ public interface ILinqKernels
         Func<TNumber, TNumber> action)
         where TTensor : class, ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Clips the values of the <see cref="ITensor{TNumber}"/> to the specified range.
+    /// </summary>
+    /// <param name="tensor">The the <see cref="ITensor{TNumber}"/> to operate on.</param>
+    /// <param name="result">The place to store the result of thee operation.</param>
+    /// <param name="min">The minimum value to clip to.</param>
+    /// <param name="max">The maximum value to clip to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Clip<TNumber>(
+        ITensor<TNumber> tensor,
+        ITensor<TNumber> result,
+        TNumber min,
+        TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

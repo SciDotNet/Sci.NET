@@ -17,7 +17,7 @@ public interface IBroadcastService
     /// <param name="source">The source <see cref="Shape"/>.</param>
     /// <param name="target">The target <see cref="Shape"/>.</param>
     /// <returns>Whether the source <see cref="Shape"/> can be broadcast to the target <see cref="Shape"/>.</returns>
-    public bool CanBroadcast(Shape source, Shape target);
+    public bool CanBroadcastTo(Shape source, Shape target);
 
     /// <summary>
     /// Determines whether a binary operation can be broadcast.

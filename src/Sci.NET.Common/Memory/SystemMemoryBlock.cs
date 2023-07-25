@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using Sci.NET.Common.Comparison;
 using Sci.NET.Common.Performance;
-using Sci.NET.Common.Profiling;
 
 namespace Sci.NET.Common.Memory;
 
@@ -37,8 +36,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
             _reference,
             array.LongLength * Unsafe.SizeOf<T>(),
             array.LongLength * Unsafe.SizeOf<T>());
-
-        Profiler.LogAllocation($"SystemMemoryBlock {(nuint)_reference} allocated.", GetHashCode());
     }
 
     /// <summary>
@@ -53,8 +50,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         _reference = (T*)NativeMemory.AllocZeroed(totalSize);
         Length = count;
-
-        Profiler.LogAllocation($"SystemMemoryBlock {(nuint)_reference} allocated.", GetHashCode());
     }
 
     /// <summary>
@@ -726,13 +721,10 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
     private unsafe void Dispose(bool isDisposing)
     {
-        Profiler.LogObjectDisposed($"SystemMemoryBlock {(nuint)_reference} disposed.", GetHashCode());
-
         if (!IsDisposed && isDisposing)
         {
             IsDisposed = true;
             NativeMemory.Free(_reference);
-            Profiler.LogMemoryFree($"SystemMemoryBlock {(nuint)_reference} freed.", GetHashCode());
         }
     }
 }

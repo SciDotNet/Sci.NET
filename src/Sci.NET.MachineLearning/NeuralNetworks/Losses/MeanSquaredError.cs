@@ -14,23 +14,41 @@ namespace Sci.NET.MachineLearning.NeuralNetworks.Losses;
 public class MeanSquaredError<TNumber> : ILossFunction<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MeanSquaredError{TNumber}"/> class.
+    /// </summary>
+    public MeanSquaredError()
+    {
+        Loss = Tensor.Zeros<TNumber>(1, 1);
+        Gradient = Tensor.Zeros<TNumber>(1, 1);
+    }
+
+    /// <inheritdoc />
+    public ITensor<TNumber> Loss { get; private set; }
+
+    /// <inheritdoc />
+    public ITensor<TNumber> Gradient { get; private set; }
+
     /// <inheritdoc />
     public ITensor<TNumber> CalculateLoss(ITensor<TNumber> y, ITensor<TNumber> yHat)
     {
         var backend = y.Backend;
 
         using var m = new Scalar<TNumber>(TNumber.CreateChecked(y.Shape.Dimensions[0]), backend);
-        using var error = y - yHat;
+        using var error = y.Subtract(yHat);
         using var squaredError = error.Square();
         using var sum = squaredError.Sum(new int[] { 1 });
-        return sum / m;
+
+        Loss = sum.Divide(m);
+        Gradient = CalculateGradient(y, yHat);
+
+        return Loss;
     }
 
-    /// <inheritdoc />
-    public ITensor<TNumber> CalculateGradient(ITensor<TNumber> y, ITensor<TNumber> yHat)
+    private static ITensor<TNumber> CalculateGradient(ITensor<TNumber> y, ITensor<TNumber> yHat)
     {
         using var minusTwo = new Scalar<TNumber>(TNumber.CreateChecked(-2), y.Backend);
         using var m = new Scalar<TNumber>(TNumber.CreateChecked(y.Shape.Dimensions[0]), y.Backend);
-        return minusTwo * (y - yHat) / m;
+        return minusTwo.Multiply(y.Subtract(yHat)).Divide(m);
     }
 }

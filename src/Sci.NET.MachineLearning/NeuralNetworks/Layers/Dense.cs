@@ -2,7 +2,6 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Common.Profiling;
 using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
@@ -26,12 +25,14 @@ public class Dense<TNumber> : ILayer<TNumber>
     /// </summary>
     /// <param name="inputFeatures">The number of input features.</param>
     /// <param name="outputFeatures">The number of output features.</param>
-    public Dense(int inputFeatures, int outputFeatures)
+    /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
+    public Dense(int inputFeatures, int outputFeatures, IDevice? device = null)
     {
         InputFeatures = inputFeatures;
         OutputFeatures = outputFeatures;
+        Device = device ?? new CpuComputeDevice();
 
-        Parameters = new ParameterSet<TNumber>
+        Parameters = new ParameterSet<TNumber>(Device)
         {
             { WeightsParameterName, new Shape(inputFeatures, outputFeatures) },
             { BiasesParameterName, new Shape(1, outputFeatures) }
@@ -53,6 +54,9 @@ public class Dense<TNumber> : ILayer<TNumber>
 
     /// <inheritdoc />
     public bool IsDisposed { get; private set; }
+
+    /// <inheritdoc />
+    public IDevice Device { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Input { get; private set; }
@@ -78,8 +82,12 @@ public class Dense<TNumber> : ILayer<TNumber>
         ref var weights = ref Parameters[WeightsParameterName].Value;
         ref var bias = ref Parameters[BiasesParameterName].Value;
 
+        Output.Dispose();
+
         var output = input.Dot(weights);
-        output += bias.Broadcast(output.Shape);
+        var broadcastBias = bias.Broadcast(output.Shape);
+
+        output = output.Add(broadcastBias);
 
         Input = input;
         Output = output;
@@ -124,8 +132,6 @@ public class Dense<TNumber> : ILayer<TNumber>
     /// <param name="disposing">A value indicating whether the instance is disposing.</param>
     protected virtual void Dispose(bool disposing)
     {
-        Profiler.LogObjectDisposed("Dense layer disposed", GetHashCode());
-
         if (!disposing)
         {
             return;

@@ -8,9 +8,9 @@ namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 internal class BroadcastService : IBroadcastService
 {
-    public bool CanBroadcast(Shape source, Shape target)
+    public bool CanBroadcastTo(Shape source, Shape target)
     {
-        if (source == target)
+        if (source.Where(x => x != 1).SequenceEqual(target.Where(x => x != 1)))
         {
             return true;
         }
@@ -36,7 +36,7 @@ internal class BroadcastService : IBroadcastService
 
     public bool CanBroadcastBinaryOp(Shape left, Shape right)
     {
-        return left.Rank > right.Rank ? CanBroadcast(right, left) : CanBroadcast(left, right);
+        return left.Rank > right.Rank ? CanBroadcastTo(right, left) : CanBroadcastTo(left, right);
     }
 
     public ITensor<TNumber> Broadcast<TNumber>(ITensor<TNumber> tensor, Shape targetShape)
@@ -47,7 +47,7 @@ internal class BroadcastService : IBroadcastService
             return tensor;
         }
 
-        if (!CanBroadcast(tensor.Shape, targetShape))
+        if (!CanBroadcastTo(tensor.Shape, targetShape))
         {
             throw new InvalidShapeException($"Cannot broadcast shapes {tensor.Shape} and {targetShape}.");
         }
@@ -79,7 +79,7 @@ internal class BroadcastService : IBroadcastService
 
         var (bigger, smaller) = shouldSwap ? (right, left) : (left, right);
 
-        if (!CanBroadcast(smaller.Shape, bigger.Shape))
+        if (!CanBroadcastTo(smaller.Shape, bigger.Shape))
         {
             throw new InvalidShapeException($"Cannot broadcast shapes {left.Shape} and {right.Shape}.");
         }

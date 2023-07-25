@@ -29,8 +29,8 @@ public class MatrixMultiplyShould
     public void ReturnExpectedResults_GivenValidMatrices()
     {
         // Arrange
-        var a = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }, _sut).AsMatrix();
-        var b = Tensor.FromArray<int>(new int[,] { { 7, 8 }, { 9, 10 }, { 11, 12 } }, _sut).AsMatrix();
+        var a = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 4, 5, 6 } }, _sut).ToMatrix();
+        var b = Tensor.FromArray<int>(new int[,] { { 7, 8 }, { 9, 10 }, { 11, 12 } }, _sut).ToMatrix();
         var result = new Matrix<int>(a.Rows, b.Columns);
         var expected = new int[] { 58, 64, 139, 154 };
 

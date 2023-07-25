@@ -20,8 +20,8 @@ public class InnerProductShould
     public void ReturnCorrectResult()
     {
         // Arrange
-        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, _sut).AsVector();
-        var right = Tensor.FromArray<int>(new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 }, _sut).AsVector();
+        var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }, _sut).ToVector();
+        var right = Tensor.FromArray<int>(new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 }, _sut).ToVector();
         var result = new Scalar<int>();
         const int expected = 220;
 

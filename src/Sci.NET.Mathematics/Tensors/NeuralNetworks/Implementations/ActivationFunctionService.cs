@@ -49,14 +49,14 @@ internal class ActivationFunctionService : IActivationFunctionService
         using var expScores = value.Exp();
         using var sumExpScores = expScores.Sum();
 
-        return expScores / sumExpScores;
+        return expScores.Divide(sumExpScores);
     }
 
     public ITensor<TNumber> SoftmaxPrime<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         using var one = new Scalar<TNumber>(TNumber.CreateChecked(1));
-        var softmax = value.Softmax().AsTensor();
-        return softmax.Multiply(one - softmax);
+        var softmax = value.Softmax().ToTensor();
+        return softmax.Multiply(one.Subtract(softmax));
     }
 }

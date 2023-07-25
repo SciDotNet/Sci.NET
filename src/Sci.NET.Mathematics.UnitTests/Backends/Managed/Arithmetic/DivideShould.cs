@@ -35,7 +35,7 @@ public class DivideShould
         _sut.Arithmetic.Divide(left, right, result);
 
         // Assert
-        result.GetValue().Should().Be(expectedResult);
+        result.Value.Should().Be(expectedResult);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class DivideShould
     {
         // Arrange
         var left = new Scalar<int>(12);
-        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).AsVector();
+        var right = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
         var result = new Vector<int>(3);
         var expectedResult = new int[] { 12, 6, 4 };
 
@@ -59,7 +59,7 @@ public class DivideShould
     {
         // Arrange
         var left = new Scalar<int>(30);
-        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 10, 15, 30 } }).AsMatrix();
+        var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3 }, { 10, 15, 30 } }).ToMatrix();
         var result = new Matrix<int>(2, 3);
         var expectedResult = new int[,] { { 30, 15, 10 }, { 3, 2, 1 } };
 
@@ -77,7 +77,7 @@ public class DivideShould
         var left = new Scalar<int>(27720);
 
         var right = Tensor.FromArray<int>(new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } }, { { 7, 8, 9 }, { 10, 11, 12 } } })
-            .AsTensor();
+            .ToTensor();
         var result = new Tensor<int>(new Shape(2, 2, 3));
 
         var expectedResult = new int[,,]

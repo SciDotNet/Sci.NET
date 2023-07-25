@@ -3,6 +3,8 @@
 
 using System.Numerics;
 using Sci.NET.MachineLearning.NeuralNetworks.Parameters;
+using Sci.NET.Mathematics.Backends;
+using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.MachineLearning.NeuralNetworks.Optimizers;
 
@@ -11,13 +13,18 @@ namespace Sci.NET.MachineLearning.NeuralNetworks.Optimizers;
 /// </summary>
 /// <typeparam name="TNumber">The number type of the optimizer.</typeparam>
 [PublicAPI]
-public interface IOptimizer<TNumber>
+public interface IOptimizer<TNumber> : ITensorLocalityOperations
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
     /// Gets the network of the optimizer.
     /// </summary>
     public ParameterCollection<TNumber> Parameters { get; }
+
+    /// <summary>
+    /// Gets the learning rate of the optimizer.
+    /// </summary>
+    public Scalar<TNumber> LearningRate { get; }
 
     /// <summary>
     /// Updates the weights and biases of the network.

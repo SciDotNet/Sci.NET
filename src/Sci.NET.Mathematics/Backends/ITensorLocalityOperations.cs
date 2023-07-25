@@ -13,6 +13,11 @@ namespace Sci.NET.Mathematics.Backends;
 public interface ITensorLocalityOperations
 {
     /// <summary>
+    /// Gets the device the data is stored on.
+    /// </summary>
+    public IDevice Device { get; }
+
+    /// <summary>
     /// Moves the tensor to the given device.
     /// </summary>
     /// <typeparam name="TDevice">The device to move to.</typeparam>

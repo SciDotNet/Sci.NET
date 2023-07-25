@@ -32,6 +32,6 @@ public class NormalizeByFactor<TNumber> : IImageTransform<TNumber>
     public ITensor<TNumber> Execute(ITensor<TNumber> tensor)
     {
         using var scale = new Scalar<TNumber>(Scale, tensor.Backend);
-        return tensor * scale;
+        return tensor.Multiply(scale);
     }
 }

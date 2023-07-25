@@ -150,4 +150,15 @@ internal class PowerService : IPowerService
 
         return result;
     }
+
+    public ITensor<TNumber> Log<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = Tensor.CloneEmpty<ITensor<TNumber>, TNumber>(value);
+
+        backend.Power.Log(value, result);
+
+        return result;
+    }
 }

@@ -122,4 +122,13 @@ public interface IPowerService
     /// <returns>e raised to the power of <paramref name="value"/>.</returns>
     public Tensor<TNumber> Exp<TNumber>(Tensor<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the natural logarithm of <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">The value to find the natural logarithm of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The natural logarithm of <paramref name="value"/>.</returns>
+    public ITensor<TNumber> Log<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 }

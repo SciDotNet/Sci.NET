@@ -33,4 +33,22 @@ public static class LinqExtensions
             .GetLinqService()
             .Map(tensor, predicate);
     }
+
+    /// <summary>
+    /// Clips the values of the <see cref="ITensor{TNumber}"/> to the specified range.
+    /// </summary>
+    /// <param name="tensor">The the <see cref="ITensor{TNumber}"/> to operate on.</param>
+    /// <param name="min">The minimum value to clip to.</param>
+    /// <param name="max">The maximum value to clip to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The clipped <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Clip<TNumber>(this ITensor<TNumber> tensor, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetLinqService()
+            .Clip(tensor, min, max);
+    }
 }
