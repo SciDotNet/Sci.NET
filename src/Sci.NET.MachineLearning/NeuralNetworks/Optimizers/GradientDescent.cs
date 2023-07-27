@@ -48,8 +48,9 @@ public class GradientDescent<TNumber> : IOptimizer<TNumber>
             Parameters.GetAll(),
             namedParameter =>
             {
-                var gradient = namedParameter.Gradient;
-                var delta = gradient.Multiply(LearningRate.Negate());
+                using var gradient = namedParameter.Gradient;
+                using var negativeLearningRate = LearningRate.Negate();
+                using var delta = gradient.Multiply(negativeLearningRate);
 
                 namedParameter.UpdateValue(delta);
             });

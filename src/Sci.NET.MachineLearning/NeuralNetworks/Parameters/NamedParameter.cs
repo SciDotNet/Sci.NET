@@ -17,9 +17,6 @@ namespace Sci.NET.MachineLearning.NeuralNetworks.Parameters;
 public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     where TNumber : unmanaged, INumber<TNumber>
 {
-    private ITensor<TNumber> _value;
-    private ITensor<TNumber> _gradient;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="NamedParameter{TNumber}"/> class.
     /// </summary>
@@ -30,8 +27,8 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     {
         Name = name;
         Device = device ?? new CpuComputeDevice();
-        _gradient = Initializer.Initialize<TNumber>(shape, Device);
-        _value = Initializer.Initialize<TNumber>(shape, Device);
+        Gradient = Initializer.Initialize<TNumber>(shape, Device);
+        Value = Initializer.Initialize<TNumber>(shape, Device);
     }
 
     /// <summary>
@@ -42,12 +39,12 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     /// <summary>
     /// Gets the value of the parameter.
     /// </summary>
-    public ref ITensor<TNumber> Value => ref _value;
+    public ITensor<TNumber> Value { get; private set; }
 
     /// <summary>
     /// Gets the gradient of the parameter.
     /// </summary>
-    public ref ITensor<TNumber> Gradient => ref _gradient;
+    public ITensor<TNumber> Gradient { get; private set; }
 
     /// <inheritdoc />
     public IDevice Device { get; }
@@ -71,7 +68,18 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     /// <param name="amount">The amount to change the parameter.</param>
     public void UpdateValue(ITensor<TNumber> amount)
     {
-        Value = _value.Add(amount);
+        Value.Dispose();
+        Value = Value.Add(amount);
+    }
+
+    /// <summary>
+    /// Sets the gradient of the parameter.
+    /// </summary>
+    /// <param name="gradient">The gradient to set.</param>
+    public void SetGradient(ITensor<TNumber> gradient)
+    {
+        Gradient.Dispose();
+        Gradient = gradient;
     }
 
     /// <inheritdoc />
@@ -89,8 +97,8 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     {
         if (disposing)
         {
-            _value.Dispose();
-            _gradient.Dispose();
+            Gradient.Dispose();
+            Gradient.Dispose();
         }
     }
 }

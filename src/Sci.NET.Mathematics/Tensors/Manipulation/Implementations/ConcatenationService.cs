@@ -22,6 +22,7 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Scalar<TNumber>, TNumber>(scalars);
 #pragma warning restore CA2000
+
         return result.ToVector();
     }
 
@@ -31,15 +32,17 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Vector<TNumber>, TNumber>(vectors);
 #pragma warning restore CA2000
+
         return result.ToMatrix();
     }
 
-    public Tensor<TNumber> Concatenate<TNumber>(ICollection<Matrix<TNumber>> tensors)
+    public Tensor<TNumber> Concatenate<TNumber>(ICollection<Matrix<TNumber>> matrices)
         where TNumber : unmanaged, INumber<TNumber>
     {
 #pragma warning disable CA2000
-        var result = TypeAgnosticConcatenate<Matrix<TNumber>, TNumber>(tensors);
+        var result = TypeAgnosticConcatenate<Matrix<TNumber>, TNumber>(matrices);
 #pragma warning restore CA2000
+
         return result.ToTensor();
     }
 
@@ -49,6 +52,7 @@ internal class ConcatenationService : IConcatenationService
 #pragma warning disable CA2000
         var result = TypeAgnosticConcatenate<Tensor<TNumber>, TNumber>(tensors);
 #pragma warning restore CA2000
+
         return result.ToTensor();
     }
 
@@ -60,8 +64,7 @@ internal class ConcatenationService : IConcatenationService
 
         if (!tensors.All(t => t.Shape.Dimensions.SequenceEqual(shape.Dimensions)))
         {
-            throw new InvalidShapeException(
-                $"All tensors must have the same shape, but were {string.Join(',', tensors.Select(x => x.Shape.ToString()))}.");
+            throw new InvalidShapeException($"All tensors must have the same shape, but were {string.Join(',', tensors.Select(x => x.Shape.ToString()))}.");
         }
     }
 

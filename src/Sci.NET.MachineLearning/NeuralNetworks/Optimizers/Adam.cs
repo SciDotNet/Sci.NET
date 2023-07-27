@@ -86,29 +86,32 @@ public class Adam<TNumber> : IOptimizer<TNumber>, IDisposable
             {
                 var namedParameter = allParameters[i];
 
-                var weightedAvgM = _beta1.Multiply(_m[i]);
-                var weightedAvgV = _beta2.Multiply(_v[i]);
-
-                var contributionM = _one.Subtract(_beta1).Multiply(namedParameter.Gradient);
-                var contributionV = _one.Subtract(_beta2).Multiply(namedParameter.Gradient.Square());
+                using var weightedAvgM = _beta1.Multiply(_m[i]);
+                using var weightedAvgV = _beta2.Multiply(_v[i]);
+                using var oneMinusBeta1 = _one.Subtract(_beta1);
+                using var oneMinusBeta2 = _one.Subtract(_beta2);
+                using var squaredGradient = namedParameter.Gradient.Square();
+                using var contributionM = oneMinusBeta1.Multiply(namedParameter.Gradient);
+                using var contributionV = oneMinusBeta2.Multiply(squaredGradient);
 
                 _m[i] = weightedAvgM.Add(contributionM);
                 _v[i] = weightedAvgV.Add(contributionV);
 
-                var mHat = _m[i].ToTensor().Divide(_one.Subtract(_beta1.Pow(_t)));
-                var vHat = _v[i].ToTensor().Divide(_one.Subtract(_beta2.Pow(_t)));
+                using var beta1PowT = _beta1.Pow(_t);
+                using var beta2PowT = _beta2.Pow(_t);
+                using var oneMinusBeta1PowT = _one.Subtract(beta1PowT);
+                using var oneMinusBeta2PowT = _one.Subtract(beta2PowT);
+                using var mHat = _m[i].ToTensor().Divide(oneMinusBeta1PowT);
+                using var vHat = _v[i].ToTensor().Divide(oneMinusBeta2PowT);
 
-                var delta = _minusOne.Multiply(LearningRate.Multiply(mHat).Divide(vHat.Sqrt().Add(_epsilon)));
+                using var vHatSqrt = vHat.Sqrt();
+                using var vHatSqrtAddEpsilon = vHatSqrt.Add(_epsilon);
+                using var learningRateMHat = LearningRate.Multiply(mHat);
+                using var lrMHatDivVHatSqrtAddEpsilon = learningRateMHat.Divide(vHatSqrtAddEpsilon);
+
+                using var delta = _minusOne.Multiply(lrMHatDivVHatSqrtAddEpsilon);
 
                 namedParameter.UpdateValue(delta);
-
-                weightedAvgM.Dispose();
-                weightedAvgV.Dispose();
-                contributionM.Dispose();
-                contributionV.Dispose();
-                mHat.Dispose();
-                vHat.Dispose();
-                delta.Dispose();
             });
     }
 

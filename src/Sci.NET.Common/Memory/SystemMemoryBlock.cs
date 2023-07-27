@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
+using Sci.NET.Common.Collections;
 using Sci.NET.Common.Comparison;
 using Sci.NET.Common.Performance;
 
@@ -23,6 +24,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     where T : unmanaged
 {
     private readonly unsafe T* _reference;
+    private readonly ConcurrentList<Guid> _rentals;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SystemMemoryBlock{T}"/> class.
@@ -31,6 +33,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public unsafe SystemMemoryBlock(T[] array)
         : this(array.LongLength)
     {
+        _rentals = new ConcurrentList<Guid>();
+
         Buffer.MemoryCopy(
             Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(array)),
             _reference,
@@ -44,6 +48,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="count">The number of elements to allocate.</param>
     public unsafe SystemMemoryBlock(long count)
     {
+        _rentals = new ConcurrentList<Guid>();
+
         var length = (nuint)count;
         var elementSize = (nuint)Unsafe.SizeOf<T>();
         var totalSize = length * elementSize;
@@ -80,6 +86,11 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         [MethodImpl(ImplementationOptions.HotPath)]
         get
         {
+            if (IsDisposed)
+            {
+                throw new ObjectDisposedException("The memory block has been disposed.");
+            }
+
             if (index < 0 || index >= Length)
             {
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -715,16 +726,36 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         return result;
     }
 
+    /// <param name="id"></param>
+    /// <inheritdoc />
+    public void Rent(Guid id)
+    {
+        _rentals.Add(id);
+    }
+
+    /// <param name="id"></param>
+    /// <inheritdoc />
+    public void Release(Guid id)
+    {
+        _ = _rentals.Remove(id);
+    }
+
     /// <summary>
     /// Disposes the <see cref="SystemMemoryBlock{T}"/>.
     /// </summary>
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
     private unsafe void Dispose(bool isDisposing)
     {
+        ReleaseUnmanagedResources();
+
         if (!IsDisposed && isDisposing)
         {
             IsDisposed = true;
-            NativeMemory.Free(_reference);
         }
+    }
+
+    private unsafe void ReleaseUnmanagedResources()
+    {
+        NativeMemory.Free(_reference);
     }
 }

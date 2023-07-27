@@ -32,10 +32,10 @@ public interface IConcatenationService
     /// <summary>
     /// Concatenates a collection of <see cref="Matrix{TNumber}"/> into a <see cref="Tensor{TNumber}"/>.
     /// </summary>
-    /// <param name="tensors">The matrices to concatenate.</param>
+    /// <param name="matrices">The matrices to concatenate.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The concatenated <see cref="Matrix{TNumber}"/> collection.</returns>
-    public Tensor<TNumber> Concatenate<TNumber>(ICollection<Matrix<TNumber>> tensors)
+    public Tensor<TNumber> Concatenate<TNumber>(ICollection<Matrix<TNumber>> matrices)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>

@@ -8,7 +8,7 @@ namespace Sci.NET.Common.Memory;
 /// </summary>
 /// <typeparam name="T">The type of memory stored within that region of memory.</typeparam>
 [PublicAPI]
-public interface IMemoryBlock<T> : IDisposable
+public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     where T : unmanaged
 {
     /// <summary>
