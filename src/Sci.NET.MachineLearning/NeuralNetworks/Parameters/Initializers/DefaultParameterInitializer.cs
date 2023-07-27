@@ -15,6 +15,6 @@ internal class DefaultParameterInitializer : IParameterInitializer
         return device
             .GetTensorBackend()
             .Random
-            .Uniform(shape, TNumber.CreateChecked(0.0001f), TNumber.CreateChecked(0.1f));
+            .Uniform(shape, TNumber.CreateChecked(0.0001f), TNumber.CreateChecked(0.001f));
     }
 }

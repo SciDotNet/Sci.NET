@@ -20,7 +20,7 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
 {
     private readonly Tensor<TNumber> _trainingImages;
     private readonly Matrix<TNumber> _trainingLabels;
-    private readonly List<int> _batchOrder;
+    private readonly List<int> _sampleOrder;
     private int _currentBatch;
 
     /// <summary>
@@ -32,11 +32,11 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
     {
         var root = Path.GetDirectoryName(typeof(MnistDataset<TNumber>).Assembly.Location);
 
-        var trainingImages = Tensor.Load<byte>($@"{root}\resources\digits.sdnt");
+        var trainingImages = Tensor.Load<byte>($@"{root}\resources\images.sdnt");
         var trainingLabels = Tensor.Load<byte>($@"{root}\resources\labels.sdnt");
 
         _trainingImages = trainingImages.ToTensor().Cast<byte, TNumber>();
-        _trainingLabels = trainingLabels.ToMatrix().Cast<byte, TNumber>();
+        _trainingLabels = ((ITensor<TNumber>)trainingLabels.ToTensor().Cast<byte, TNumber>()).ToMatrix();
 
         Transforms = transforms;
         BatchSize = batchSize;
@@ -47,7 +47,12 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
         InputShape = new Shape(inputShape);
         OutputShape = new Shape(BatchSize, _trainingLabels.Shape[1]);
 
-        _batchOrder = Enumerable.Range(0, NumBatches).ToList();
+        _sampleOrder = new List<int>();
+
+        for (var i = 0; i < (BatchSize * NumBatches) - 1; i++)
+        {
+            _sampleOrder.Add(i % NumExamples);
+        }
     }
 
     /// <inheritdoc />
@@ -78,7 +83,7 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
     /// <inheritdoc />
     public void Shuffle(int? seed = null)
     {
-        _batchOrder.Shuffle(seed);
+        _sampleOrder.Shuffle(seed);
     }
 
     /// <inheritdoc />
@@ -94,19 +99,11 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
         var batchImages = new List<Tensor<TNumber>>();
         var batchLabels = new List<Mathematics.Tensors.Vector<TNumber>>();
         var nextIndices = new List<int>();
-        var batchIndicesIndex = _currentBatch * BatchSize;
+        var batchStartIndex = _currentBatch * BatchSize;
 
         for (var i = 0; i < BatchSize; i++)
         {
-            if ((batchIndicesIndex * BatchSize) + i >= NumExamples)
-            {
-                batchIndicesIndex = 0;
-            }
-
-            var index = _batchOrder[batchIndicesIndex];
-            nextIndices.Add(index);
-
-            batchIndicesIndex++;
+            nextIndices.Add(_sampleOrder[batchStartIndex + i]);
         }
 
         foreach (var nextExample in nextIndices)
@@ -116,14 +113,23 @@ public class MnistDataset<TNumber> : IDataset<ImageOneHotCategoryBatch<TNumber>>
 
             foreach (var transform in Transforms)
             {
-                image = transform.Execute(image);
+                var newImage = transform.Execute(image);
+                image.Dispose();
+                image = newImage;
             }
 
             batchImages.Add(image.ToTensor());
             batchLabels.Add(label);
         }
 
-        return new ImageOneHotCategoryBatch<TNumber>(batchImages.Concatenate(), batchLabels.Concatenate());
+        var result = new ImageOneHotCategoryBatch<TNumber>(batchImages.Concatenate(), batchLabels.Concatenate());
+
+        foreach (var tmpTensor in batchImages.Concat<ITensor<TNumber>>(batchLabels))
+        {
+            tmpTensor.Dispose();
+        }
+
+        return result;
     }
 
     /// <inheritdoc />

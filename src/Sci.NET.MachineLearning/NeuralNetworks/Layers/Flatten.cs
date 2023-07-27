@@ -53,6 +53,9 @@ public class Flatten<TNumber> : ILayer<TNumber>
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
+        Input.Dispose();
+        Output.Dispose();
+
         Input = input;
         var inputShape = input.Shape.ToArray();
         var outputShape = new int[FlattenAxis + 1];

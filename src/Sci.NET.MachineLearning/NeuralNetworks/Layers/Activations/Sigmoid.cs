@@ -46,6 +46,9 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
+        Input.Dispose();
+        Output.Dispose();
+
         Input = input;
         Output = input.Sigmoid();
 

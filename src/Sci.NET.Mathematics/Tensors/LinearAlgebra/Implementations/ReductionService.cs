@@ -50,6 +50,7 @@ internal class ReductionService : IReductionService
 
             var resultTensor = result.Broadcast(tensor.Shape);
             result.Dispose();
+
             return resultTensor;
         }
     }

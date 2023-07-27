@@ -17,6 +17,8 @@ namespace Sci.NET.Mathematics.Tensors;
 public sealed class Scalar<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
+    private readonly Guid _id = Guid.NewGuid();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Scalar{TNumber}"/> class.
     /// </summary>
@@ -26,6 +28,8 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         Shape = Shape.Scalar;
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        IsMemoryOwner = true;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -40,6 +44,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
         Handle[0] = value;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -52,7 +57,8 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         Shape = Shape.Scalar;
         Backend = backend;
         Handle = handle;
-        IsMemoryOwner = true;
+        IsMemoryOwner = false;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -88,13 +94,9 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// </summary>
     public TNumber Value => Handle[0];
 
-    /// <summary>
-    /// Gets the debugger display object.
-    /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 #pragma warning disable IDE0051, RCS1213
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
     private Array DebuggerDisplayObject => ToArray();
-
 #pragma warning restore RCS1213, IDE0051
 
     /// <inheritdoc />
@@ -154,6 +156,8 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
     private void Dispose(bool disposing)
     {
+        Handle.Release(_id);
+
         if (disposing && IsMemoryOwner)
         {
             Handle.Dispose();

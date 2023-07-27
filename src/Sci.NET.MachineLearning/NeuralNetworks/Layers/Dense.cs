@@ -70,6 +70,9 @@ public class Dense<TNumber> : ILayer<TNumber>
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
+        Input.Dispose();
+        Output.Dispose();
+
 #pragma warning disable SA1013
         if (input.Shape[1] != InputFeatures)
         {
@@ -79,20 +82,16 @@ public class Dense<TNumber> : ILayer<TNumber>
         }
 #pragma warning restore SA1013
 
-        ref var weights = ref Parameters[WeightsParameterName].Value;
-        ref var bias = ref Parameters[BiasesParameterName].Value;
+        var weights = Parameters[WeightsParameterName].Value;
+        var bias = Parameters[BiasesParameterName].Value;
 
-        Output.Dispose();
-
-        var output = input.Dot(weights);
-        var broadcastBias = bias.Broadcast(output.Shape);
-
-        output = output.Add(broadcastBias);
+        using var weightedInput = input.Dot(weights);
+        var weightedInputPlusBias = weightedInput.Add(bias);
 
         Input = input;
-        Output = output;
+        Output = weightedInputPlusBias;
 
-        return output;
+        return Output;
     }
 
     /// <inheritdoc />
@@ -100,12 +99,10 @@ public class Dense<TNumber> : ILayer<TNumber>
     {
         using var m = new Scalar<TNumber>(TNumber.CreateChecked(error.Shape[0]));
 
-        ref var weights = ref Parameters[WeightsParameterName].Value;
-        ref var dw = ref Parameters[WeightsParameterName].Gradient;
-        ref var db = ref Parameters[BiasesParameterName].Gradient;
+        var weights = Parameters[WeightsParameterName].Value;
 
-        dw = Input.Transpose().Dot(error);
-        db = error.Sum(new int[] { 0 }, keepDims: true);
+        Parameters[WeightsParameterName].SetGradient(Input.Transpose().Dot(error));
+        Parameters[BiasesParameterName].SetGradient(error.Sum(new int[] { 0 }, keepDims: true));
 
         return weights.Dot(error.Transpose()).Transpose();
     }

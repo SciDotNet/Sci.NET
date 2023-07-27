@@ -17,6 +17,8 @@ namespace Sci.NET.Mathematics.Tensors;
 public sealed class Vector<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
+    private readonly Guid _id = Guid.NewGuid();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Vector{TNumber}"/> class.
     /// </summary>
@@ -27,6 +29,8 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         Shape = new Shape(length);
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        IsMemoryOwner = true;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -40,6 +44,8 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         Shape = new Shape(length);
         Backend = backend;
         Handle = handle;
+        IsMemoryOwner = false;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -70,11 +76,8 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     /// </summary>
     public int Length => Shape[0];
 
-    /// <summary>
-    /// Gets the debugger display object.
-    /// </summary>
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 #pragma warning disable IDE0051, RCS1213
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
     private Array DebuggerDisplayObject => ToArray();
 #pragma warning restore RCS1213, IDE0051
 
@@ -135,6 +138,8 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
     private void Dispose(bool disposing)
     {
+        Handle.Release(_id);
+
         if (disposing && IsMemoryOwner)
         {
             Handle.Dispose();

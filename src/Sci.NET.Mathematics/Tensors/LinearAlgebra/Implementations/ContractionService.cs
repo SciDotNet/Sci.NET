@@ -104,19 +104,17 @@ internal class ContractionService : IContractionService
 
         if (left.Shape[^1] != right.Shape[^1])
         {
-            throw new ArgumentException(
-                "The last dimensions of the left and right operands must be equal.",
-                nameof(right));
+            throw new ArgumentException("The last dimensions of the left and right operands must be equal.", nameof(right));
         }
 
         if (left.Shape.Rank != 1 || right.Shape.Rank != 1)
         {
-            throw new InvalidShapeException(
-                $"Inner product is only defined for vectors, but got shapes {left.Shape} and {right.Shape}.");
+            throw new InvalidShapeException($"Inner product is only defined for vectors, but got shapes {left.Shape} and {right.Shape}.");
         }
 
         var result = new Scalar<TNumber>(left.Backend);
         left.Backend.LinearAlgebra.InnerProduct(left, right, result);
+
         return result;
     }
 

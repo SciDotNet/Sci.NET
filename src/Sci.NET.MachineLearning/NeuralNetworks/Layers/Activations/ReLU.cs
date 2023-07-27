@@ -46,6 +46,8 @@ public class ReLU<TNumber> : ILayer<TNumber>
     /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
+        Input.Dispose();
+        Output.Dispose();
         Input = input;
         Output = Input.ReLU();
 

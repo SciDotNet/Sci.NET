@@ -103,11 +103,40 @@ public static class Tensor
     /// <param name="indices">The indices to slice at.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The specified slice.</returns>
+    /// <exception cref="ArgumentException">Throws when invalid indices are specified.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Throws when the indices are out of range.</exception>
     public static ITensor<TNumber> Slice<TNumber>(ITensor<TNumber> tensor, params int[] indices)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var newShape = tensor.Shape.Slice(indices);
-        return new Tensor<TNumber>(tensor.Handle, newShape, tensor.Backend);
+        if (indices.Length > tensor.Shape.Rank)
+        {
+            throw new ArgumentException(
+                "The number of slice indices must be less than or equal to the rank of the shape.");
+        }
+
+        if (indices.Length == tensor.Shape.Rank)
+        {
+            return new Scalar<TNumber>(tensor.Handle[tensor.Shape.GetLinearIndex(indices)], tensor.Backend);
+        }
+
+        for (var i = 0; i < indices.Length; i++)
+        {
+            if (indices[i] < 0 || indices[i] >= tensor.Shape.Dimensions[i])
+            {
+                throw new ArgumentOutOfRangeException($"The index {indices[i]} is out of range for axis {i}.");
+            }
+        }
+
+        var paddedIndices = new List<int>();
+        paddedIndices.AddRange(indices);
+        paddedIndices.AddRange(Enumerable.Repeat(0, tensor.Shape.Rank - indices.Length));
+        var linearIndex = tensor.Shape.GetLinearIndex(paddedIndices.ToArray());
+        var shape = new Shape(tensor.Shape.Dimensions.Skip(indices.Length).ToArray());
+        var result = new Tensor<TNumber>(tensor.Handle, shape, tensor.Backend);
+
+        tensor.Handle.BlockCopy(result.Handle, linearIndex, 0, shape.ElementCount);
+
+        return result;
     }
 
     /// <summary>

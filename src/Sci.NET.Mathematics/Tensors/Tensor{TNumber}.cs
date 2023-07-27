@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
@@ -16,6 +17,8 @@ namespace Sci.NET.Mathematics.Tensors;
 public sealed class Tensor<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
+    private readonly Guid _id = Guid.NewGuid();
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Tensor{TNumber}"/> class.
     /// </summary>
@@ -26,6 +29,8 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Shape = new Shape(shape);
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        IsMemoryOwner = true;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -53,6 +58,8 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Handle = previousTensor.Handle;
         Backend = previousTensor.Backend;
         Shape = newShape;
+        IsMemoryOwner = false;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -66,6 +73,8 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Handle = memoryBlock;
         Shape = shape;
         Backend = backend;
+        IsMemoryOwner = false;
+        Handle.Rent(_id);
     }
 
     /// <summary>
@@ -91,10 +100,14 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <inheritdoc/>
     public IDevice Device => Backend.Device;
 
+#pragma warning disable IDE0051, RCS1213
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    private Array DebuggerDisplayObject => ToArray();
+#pragma warning restore RCS1213, IDE0051
+
     /// <inheritdoc />
 #pragma warning disable CA1043
     public ITensor<TNumber> this[params int[] indices] => Tensor.Slice(this, indices);
-
 #pragma warning restore CA1043
 
     /// <inheritdoc />
@@ -143,6 +156,8 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the instance is disposing.</param>
     private void Dispose(bool disposing)
     {
+        Handle.Release(_id);
+
         if (disposing && IsMemoryOwner)
         {
             Handle.Dispose();
