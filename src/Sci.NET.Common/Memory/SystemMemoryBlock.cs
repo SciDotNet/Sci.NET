@@ -418,7 +418,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    public unsafe void BlockCopy(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count)
+    public unsafe void BlockCopyFrom(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count)
     {
         if (IsDisposed)
         {
@@ -466,7 +466,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    public unsafe void BlockCopy(Span<byte> buffer, int srcIdx, int dstIdx, int count)
+    public unsafe void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count)
     {
         if (IsDisposed)
         {

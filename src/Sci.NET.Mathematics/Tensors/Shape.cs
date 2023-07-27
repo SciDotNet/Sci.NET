@@ -113,6 +113,12 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
+    /// Gets the range of dimensions at the specified <paramref name="range"/>.
+    /// </summary>
+    /// <param name="range">The range of dimensions to query.</param>
+    public int[] this[Range range] => Dimensions[range];
+
+    /// <summary>
     /// Equals operator.
     /// </summary>
     /// <param name="left">The left operand.</param>
@@ -273,13 +279,19 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
 
         var newRank = Rank - axes.Length;
         var newDimensions = new int[newRank];
+        var dataOffset = DataOffset;
 
         for (var i = newRank - 1; i >= 0; i--)
         {
             newDimensions[i] = Dimensions[i + axes.Length];
         }
 
-        var newDataOffset = DataOffset + axes.Select((t, i) => t * Strides[i]).Sum();
+        for (var i = 0; i < axes.Length; i++)
+        {
+            dataOffset += axes[i] * Strides[i];
+        }
+
+        var newDataOffset = DataOffset + dataOffset;
 
         return new Shape(newDimensions, newDataOffset);
     }

@@ -108,33 +108,10 @@ public static class Tensor
     public static ITensor<TNumber> Slice<TNumber>(ITensor<TNumber> tensor, params int[] indices)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (indices.Length > tensor.Shape.Rank)
-        {
-            throw new ArgumentException(
-                "The number of slice indices must be less than or equal to the rank of the shape.");
-        }
+        var shape = tensor.Shape.Slice(indices);
+        var result = new Tensor<TNumber>(new Shape(shape.Dimensions), tensor.Backend);
 
-        if (indices.Length == tensor.Shape.Rank)
-        {
-            return new Scalar<TNumber>(tensor.Handle[tensor.Shape.GetLinearIndex(indices)], tensor.Backend);
-        }
-
-        for (var i = 0; i < indices.Length; i++)
-        {
-            if (indices[i] < 0 || indices[i] >= tensor.Shape.Dimensions[i])
-            {
-                throw new ArgumentOutOfRangeException($"The index {indices[i]} is out of range for axis {i}.");
-            }
-        }
-
-        var paddedIndices = new List<int>();
-        paddedIndices.AddRange(indices);
-        paddedIndices.AddRange(Enumerable.Repeat(0, tensor.Shape.Rank - indices.Length));
-        var linearIndex = tensor.Shape.GetLinearIndex(paddedIndices.ToArray());
-        var shape = new Shape(tensor.Shape.Dimensions.Skip(indices.Length).ToArray());
-        var result = new Tensor<TNumber>(tensor.Handle, shape, tensor.Backend);
-
-        tensor.Handle.BlockCopy(result.Handle, linearIndex, 0, shape.ElementCount);
+        result.Handle.BlockCopyFrom(tensor.Handle, shape.DataOffset, 0, shape.ElementCount);
 
         return result;
     }
