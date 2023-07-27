@@ -143,7 +143,7 @@ internal class SerializationService : ISerializationService
         while (bytesRead < bytesToRead)
         {
             var bytes = stream.Read(buffer);
-            handle.BlockCopy(buffer, 0, bytesRead / Unsafe.SizeOf<TNumber>(), bytes);
+            handle.BlockCopyFrom(buffer, 0, bytesRead / Unsafe.SizeOf<TNumber>(), bytes);
             bytesRead += bytes;
         }
 

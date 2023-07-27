@@ -88,7 +88,7 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// <param name="srcIdx">The source index to start from.</param>
     /// <param name="dstIdx">The destination index to start from.</param>
     /// <param name="count">The number of elements to copy.</param>
-    public void BlockCopy(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count);
+    public void BlockCopyFrom(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count);
 
     /// <summary>
     /// Copies the contents of the specified <see cref="Span{T}"/> to the <see cref="IMemoryBlock{T}"/>.
@@ -97,5 +97,5 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// <param name="srcIdx">The source index to start from.</param>
     /// <param name="dstIdx">The destination index to start from.</param>
     /// <param name="count">The number of elements to copy.</param>
-    public void BlockCopy(Span<byte> buffer, int srcIdx, int dstIdx, int count);
+    public void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count);
 }
