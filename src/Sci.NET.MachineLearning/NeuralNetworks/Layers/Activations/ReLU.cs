@@ -22,7 +22,7 @@ public class ReLU<TNumber> : ILayer<TNumber>
     /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
     public ReLU(IDevice? device = null)
     {
-        Device = device ?? new CpuComputeDevice();
+        Device = device ?? Tensor.DefaultBackend.Device;
         Input = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
         Output = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
         Parameters = new ParameterSet<TNumber>(Device);

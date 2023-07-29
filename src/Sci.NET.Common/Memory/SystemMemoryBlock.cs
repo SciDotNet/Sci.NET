@@ -726,6 +726,26 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         return result;
     }
 
+    /// <summary>
+    /// Gets a <see cref="Vector256{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.
+    /// </summary>
+    /// <param name="i">The index to read from.</param>
+    /// <returns>A <see cref="Vector256{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.</returns>
+    public unsafe Vector256<T> GetVector256(int i)
+    {
+        return Unsafe.ReadUnaligned<Vector256<T>>(_reference + i);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Vector256{T}"/> to the <see cref="SystemMemoryBlock{T}"/> at the specified index.
+    /// </summary>
+    /// <param name="index">The index to write to.</param>
+    /// <param name="vector">The <see cref="Vector256{T}"/> to write.</param>
+    public unsafe void SetVector256(long index, Vector256<T> vector)
+    {
+        Unsafe.WriteUnaligned(_reference + index, vector);
+    }
+
     /// <param name="id"></param>
     /// <inheritdoc />
     public void Rent(Guid id)

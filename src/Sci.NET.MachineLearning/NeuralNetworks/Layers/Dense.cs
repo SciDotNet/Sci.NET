@@ -30,7 +30,7 @@ public class Dense<TNumber> : ILayer<TNumber>
     {
         InputFeatures = inputFeatures;
         OutputFeatures = outputFeatures;
-        Device = device ?? new CpuComputeDevice();
+        Device = device ?? Tensor.DefaultBackend.Device;
 
         Parameters = new ParameterSet<TNumber>(Device)
         {

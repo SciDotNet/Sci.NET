@@ -9,27 +9,30 @@ using Sci.NET.Mathematics.Tensors;
 namespace Sci.NET.MachineLearning.NeuralNetworks.Layers.Activations;
 
 /// <summary>
-/// Sigmoid activation function.
+/// A softmax activation function layer.
 /// </summary>
-/// <typeparam name="TNumber">The number type of the layer.</typeparam>
+/// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
-public class Sigmoid<TNumber> : ILayer<TNumber>
-    where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+public class Softmax<TNumber> : ILayer<TNumber>
+    where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Sigmoid{TNumber}"/> class.
+    /// Initializes a new instance of the <see cref="Softmax{TNumber}"/> class.
     /// </summary>
     /// <param name="device">The device to store the <see cref="ITensor{TNumber}"/> data on.</param>
-    public Sigmoid(IDevice? device = null)
+    public Softmax(IDevice? device = null)
     {
         Device = device ?? Tensor.DefaultBackend.Device;
+        Input = new Tensor<TNumber>(new Shape(1, 1), Device.GetTensorBackend());
+        Output = new Tensor<TNumber>(new Shape(1, 1), Device.GetTensorBackend());
         Parameters = new ParameterSet<TNumber>(Device);
-        Input = Tensor.Zeros<TNumber>(1, 1);
-        Output = Tensor.Zeros<TNumber>(1, 1);
     }
 
     /// <inheritdoc />
-    public bool IsDisposed { get; protected set; }
+    public IDevice Device { get; }
+
+    /// <inheritdoc />
+    public bool IsDisposed { get; }
 
     /// <inheritdoc />
     public ITensor<TNumber> Input { get; private set; }
@@ -41,16 +44,13 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     public ParameterSet<TNumber> Parameters { get; }
 
     /// <inheritdoc />
-    public IDevice Device { get; }
-
-    /// <inheritdoc />
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
         Input.Dispose();
         Output.Dispose();
 
         Input = input;
-        Output = input.Sigmoid();
+        Output = Input.Softmax();
 
         return Output;
     }
@@ -58,7 +58,7 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     /// <inheritdoc />
     public ITensor<TNumber> Backward(ITensor<TNumber> error)
     {
-        return error.SigmoidPrime();
+        return error.SoftmaxPrime();
     }
 
     /// <inheritdoc />
@@ -77,11 +77,15 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     }
 
     /// <summary>
-    /// Disposes of the <see cref="Sigmoid{TNumber}"/> layer.
+    /// Disposes of the managed resources used by the <see cref="Softmax{TNumber}"/>.
     /// </summary>
-    /// <param name="disposing">Whether or not the object is being disposed.</param>
+    /// <param name="disposing">Whether or not to dispose of managed resources.</param>
     protected virtual void Dispose(bool disposing)
     {
-        IsDisposed = true;
+        if (disposing)
+        {
+            Input.Dispose();
+            Output.Dispose();
+        }
     }
 }

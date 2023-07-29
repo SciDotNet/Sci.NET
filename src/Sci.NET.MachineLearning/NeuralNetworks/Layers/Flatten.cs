@@ -24,7 +24,7 @@ public class Flatten<TNumber> : ILayer<TNumber>
     public Flatten(int flattenAxis = 1, IDevice? device = null)
     {
         FlattenAxis = flattenAxis;
-        Device = device ?? new CpuComputeDevice();
+        Device = device ?? Tensor.DefaultBackend.Device;
         Parameters = new ParameterSet<TNumber>(Device);
         Input = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);
         Output = Tensor.Zeros<TNumber>(new Shape(1, 1), Device);

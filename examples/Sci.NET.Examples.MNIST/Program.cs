@@ -8,29 +8,19 @@ using Sci.NET.MachineLearning.NeuralNetworks.Layers.Activations;
 using Sci.NET.MachineLearning.NeuralNetworks.Losses;
 using Sci.NET.MachineLearning.NeuralNetworks.Optimizers;
 
-
-
 using var dataset = new MnistDataset<float>(
-    32,
-    new NormalizeByFactor<float>(1 / 255f),
-    new ClipToRange<float>(0.00001f, 0.99999f));
+    64,
+    new NormalizeByFactor<float>(1 / 128.0f));
 using var network = new Network<float>();
 
 network.AddLayer(new Flatten<float>());
-network.AddLayer(new Dense<float>(784, 384));
+network.AddLayer(new Dense<float>(784, 512));
 network.AddLayer(new ReLU<float>());
-network.AddLayer(new Dense<float>(384, 128));
+network.AddLayer(new Dense<float>(512, 256));
 network.AddLayer(new ReLU<float>());
-network.AddLayer(new Dense<float>(128, 64));
-network.AddLayer(new ReLU<float>());
-network.AddLayer(new Dense<float>(64, 32));
-network.AddLayer(new ReLU<float>());
-network.AddLayer(new Dense<float>(32, 16));
-network.AddLayer(new ReLU<float>());
-network.AddLayer(new Dense<float>(16, 10));
-network.AddLayer(new Sigmoid<float>());
+network.AddLayer(new Dense<float>(256, 10));
 
-var optimizer = new Adam<float>(network.Parameters(), 0.02f, 0.9f, 0.999f); var loss = new MeanSquaredError<float>();
+var optimizer = new Adam<float>(network.Parameters(), 0.1f, 0.9f, 0.999f); var loss = new MeanSquaredError<float>();
 
 var globalStep = 0;
 
