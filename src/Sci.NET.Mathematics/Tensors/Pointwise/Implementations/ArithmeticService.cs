@@ -85,14 +85,7 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Length != right.Length)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
-            }
-
-            var (newLeft, newRight) = _broadcastService.Broadcast(left, right);
-
-            return newLeft.Add(newRight).ToVector();
+            throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -109,14 +102,14 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Length != right.Rows)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+            if (!left.CanBroadcastTo(right.Shape))
             {
                 throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
             }
 
-            var (newLeft, newRight) = _broadcastService.Broadcast(left, right);
-
-            return newLeft.Add(newRight).ToMatrix();
+            using var leftBroadcast = left.Broadcast(right.Shape);
+            using var resultTensor = Add(leftBroadcast, right);
+            return resultTensor.ToMatrix();
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -157,14 +150,14 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Rows != right.Length)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+            if (!right.CanBroadcastTo(left.Shape))
             {
                 throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
             }
 
-            var (newLeft, newRight) = _broadcastService.Broadcast(left, right);
+            using var rightBroadcast = right.Broadcast(left.Shape).ToMatrix();
 
-            return newLeft.Add(newRight).ToMatrix();
+            return left.Add(rightBroadcast);
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -181,14 +174,7 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
-            }
-
-            var (newLeft, newRight) = _broadcastService.Broadcast(left, right);
-
-            return newLeft.Add(newRight).ToMatrix();
+            throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -250,14 +236,7 @@ internal class ArithmeticService : IArithmeticService
     {
         if (!left.Shape.Equals(right.Shape))
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
-            }
-
-            var (newLeft, newRight) = _broadcastService.Broadcast(left, right);
-
-            return newLeft.Add(newRight).ToTensor();
+            throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -739,13 +718,6 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Length != right.Length)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultVector = Multiply(broadcast, right);
-                return resultVector.ToVector();
-            }
-
             throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
         }
 
@@ -763,14 +735,14 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Length != right.Rows)
         {
-            if (_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+            if (!left.CanBroadcastTo(right.Shape))
             {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultMatrix = Multiply(broadcast, right);
-                return resultMatrix.ToMatrix();
+                throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
             }
 
-            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
+            using var leftBroadcast = left.Broadcast(right.Shape);
+
+            return leftBroadcast.Multiply(right).ToMatrix();
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -826,13 +798,6 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
-            if (_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultMatrix = Multiply(broadcast, right);
-                return resultMatrix.ToMatrix();
-            }
-
             throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
         }
 
@@ -874,27 +839,29 @@ internal class ArithmeticService : IArithmeticService
     public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+        if (!right.CanBroadcastTo(left.Shape))
         {
-            using var broadcast = left.Broadcast(right.Shape);
-            using var result = Multiply(broadcast, right);
-            return result.ToTensor();
+            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
         }
 
-        throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
+        using var rightBroadcast = right.Broadcast(left.Shape);
+        using var result = Multiply(left, rightBroadcast);
+
+        return result.ToTensor();
     }
 
     public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+        if (!right.CanBroadcastTo(left.Shape))
         {
-            using var broadcast = left.Broadcast(right.Shape);
-            using var result = Multiply(broadcast, right);
-            return result.ToTensor();
+            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
         }
 
-        throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
+        using var rightBroadcast = right.Broadcast(left.Shape);
+        using var result = Multiply(left, rightBroadcast);
+
+        return result.ToTensor();
     }
 
     public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
@@ -981,13 +948,6 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Length != right.Length)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultVector = Divide(broadcast, right);
-                return resultVector.ToVector();
-            }
-
             throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
         }
 
@@ -1006,14 +966,15 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Length != right.Rows)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+            if (!left.CanBroadcastTo(right.Shape))
             {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultMatrix = Divide(broadcast, right);
-                return resultMatrix.ToMatrix();
+                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
             }
 
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+            using var leftBroadcast = left.Broadcast(right.Shape);
+            using var resultTensor = Divide(leftBroadcast, right);
+
+            return resultTensor.ToMatrix();
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -1053,14 +1014,15 @@ internal class ArithmeticService : IArithmeticService
     public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+        if (!right.CanBroadcastTo(left.Shape))
         {
-            using var broadcast = right.Broadcast(left.Shape);
-            using var resultMatrix = Divide(left, broadcast);
-            return resultMatrix.ToMatrix();
+            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
         }
 
-        throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+        using var broadcast = right.Broadcast(left.Shape);
+        using var result = Divide(left, broadcast);
+
+        return result.ToMatrix();
     }
 
     public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
@@ -1068,13 +1030,6 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
-            {
-                using var broadcast = right.Broadcast(left.Shape);
-                using var resultMatrix = Divide(left, broadcast);
-                return resultMatrix.ToMatrix();
-            }
-
             throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
         }
 
@@ -1117,14 +1072,15 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Shape[0] != right.Length)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(right.Shape, left.Shape))
+            if (!right.CanBroadcastTo(left.Shape))
             {
-                using var broadcast = right.Broadcast(left.Shape);
-                using var resultTensor = Divide(left, broadcast);
-                return resultTensor.ToTensor();
+                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
             }
 
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+            using var broadcast = right.Broadcast(left.Shape);
+            using var resultTensor = Divide(left, broadcast);
+
+            return resultTensor.ToTensor();
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -1141,14 +1097,15 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Shape[0] != right.Rows)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(right.Shape, left.Shape))
+            if (!right.CanBroadcastTo(left.Shape))
             {
-                using var broadcast = right.Broadcast(left.Shape);
-                using var resultTensor = Divide(left, broadcast);
-                return resultTensor.ToTensor();
+                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
             }
 
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+            using var broadcast = right.Broadcast(left.Shape);
+            using var resultTensor = Divide(left, broadcast);
+
+            return resultTensor.ToTensor();
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -1165,14 +1122,15 @@ internal class ArithmeticService : IArithmeticService
     {
         if (left.Shape != right.Shape)
         {
-            if (!_broadcastService.CanBroadcastBinaryOp(left.Shape, right.Shape))
+            if (!right.CanBroadcastTo(left.Shape))
             {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultTensor = Divide(broadcast, right);
-                return resultTensor.ToTensor();
+                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
             }
 
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+            using var broadcast = right.Broadcast(left.Shape);
+            using var resultTensor = Divide(left, broadcast);
+
+            return resultTensor.ToTensor();
         }
 
         _guardService.GuardBinaryOperation(left.Device, right.Device);

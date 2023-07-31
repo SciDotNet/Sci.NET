@@ -24,6 +24,8 @@ internal class ReshapeService : IReshapeService
                 break;
         }
 
+        tensor.DetachMemory();
+
         return shape.ElementCount != tensor.Shape.ElementCount
             ? throw new ArgumentException("The number of elements in a reshape operation must not change.")
             : new Tensor<TNumber>(tensor, shape);

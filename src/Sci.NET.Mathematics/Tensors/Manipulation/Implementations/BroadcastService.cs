@@ -10,7 +10,7 @@ internal class BroadcastService : IBroadcastService
 {
     public bool CanBroadcastTo(Shape source, Shape target)
     {
-        if (source.Where(x => x != 1).SequenceEqual(target.Where(x => x != 1)))
+        if (source.SequenceEqual(target))
         {
             return true;
         }
@@ -21,7 +21,7 @@ internal class BroadcastService : IBroadcastService
         }
 
         var padDims = target.Rank - source.Rank;
-        var padShape = Enumerable.Repeat(1, padDims).Concat(target.Dimensions).ToArray();
+        var padShape = Enumerable.Repeat(1, padDims).Concat(source.Dimensions).ToArray();
 
         foreach (var (biggerDim, smallerDim) in target.Reverse().Zip(padShape.Reverse()))
         {
@@ -52,22 +52,21 @@ internal class BroadcastService : IBroadcastService
             throw new InvalidShapeException($"Cannot broadcast shapes {tensor.Shape} and {targetShape}.");
         }
 
-        var biggerShape = tensor.Shape.Dimensions.Length > targetShape.Dimensions.Length ? tensor.Shape : targetShape;
-        var padDims = biggerShape.Rank - targetShape.Rank;
-        var padShape = Enumerable.Repeat(1, padDims).Concat(tensor.Shape.Dimensions).ToArray();
+        var padDims = targetShape.Rank - tensor.Shape.Rank;
+        var padShape = Enumerable.Repeat(1, padDims).Concat(Enumerable.Repeat(0, tensor.Shape.Rank)).ToArray();
         var broadcastStrides = Enumerable.Repeat(1L, padShape.Length).ToArray();
 
-        var result = new Tensor<TNumber>(targetShape, tensor.Backend);
+        using var result = new Tensor<TNumber>(targetShape, tensor.Backend);
 
         for (var i = padShape.Length - 1; i >= 0; i--)
         {
-            broadcastStrides[i] = padShape[i] != 1 ? biggerShape.Strides[i - padDims] : 0;
+            broadcastStrides[i] = padShape[i] != 1 ? targetShape.Strides[i] : 0;
         }
 
         // TODO: We shouldn't create a new tensor here, but the old kernels dont support iterating by strides.
         tensor.Backend.Broadcasting.Broadcast(tensor, result, broadcastStrides);
 
-        return result;
+        return result.Reshape(targetShape);
     }
 
     public (ITensor<TNumber> Left, ITensor<TNumber> Right) Broadcast<TNumber>(

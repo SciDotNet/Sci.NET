@@ -167,5 +167,5 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     /// <summary>
     /// Detaches the memory from the <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    protected void DetachMemory();
+    protected internal void DetachMemory();
 }

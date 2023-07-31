@@ -46,11 +46,6 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
-    /// Gets shape of a Scalar.
-    /// </summary>
-    public static Shape Scalar => new ();
-
-    /// <summary>
     /// Gets the dimensions of the <see cref="Shape"/>.
     /// </summary>
     public int[] Dimensions { get; }
@@ -178,6 +173,15 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
+    /// Gets a new scalar <see cref="Shape"/>.
+    /// </summary>
+    /// <returns>A new scalar <see cref="Shape"/>.</returns>
+    public static Shape Scalar()
+    {
+        return new Shape();
+    }
+
+    /// <summary>
     /// Creates a new <see cref="Shape"/> with the given length.
     /// </summary>
     /// <param name="length">A vector with the given length.</param>
@@ -185,6 +189,27 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     public static Shape Vector(int length)
     {
         return new Shape(length);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Shape"/> with the given dimensions.
+    /// </summary>
+    /// <param name="rows">The number of rows.</param>
+    /// <param name="columns">The number of columns.</param>
+    /// <returns>The new <see cref="Shape"/>.</returns>
+    public static Shape Matrix(int rows, int columns)
+    {
+        return new Shape(rows, columns);
+    }
+
+    /// <summary>
+    /// Creates a new <see cref="Shape"/> with the given dimensions.
+    /// </summary>
+    /// <param name="dimensions">The dimensions of the tensor.</param>
+    /// <returns>The new <see cref="Shape"/>.</returns>
+    public static Shape Tensor(params int[] dimensions)
+    {
+        return new Shape(dimensions);
     }
 
     /// <summary>

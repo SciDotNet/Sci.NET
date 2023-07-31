@@ -3,7 +3,7 @@
 
 using Sci.NET.Mathematics.Tensors;
 
-namespace Sci.NET.Mathematics.UnitTests.Backends.Managed.Slicing;
+namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Slicing;
 
 public class SliceShould
 {
