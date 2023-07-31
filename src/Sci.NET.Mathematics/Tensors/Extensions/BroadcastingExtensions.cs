@@ -31,4 +31,20 @@ public static class BroadcastingExtensions
             .GetBroadcastingService()
             .Broadcast(tensor, targetShape);
     }
+
+    /// <summary>
+    /// Determines whether a <see cref="Shape"/> can be broadcast to another <see cref="Shape"/>.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <param name="source">The source <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="target">The target <see cref="Shape"/>.</param>
+    /// <returns>A value indicating whether the source <see cref="Shape"/> can be broadcast to the target <see cref="Shape"/>.</returns>
+    [DebuggerStepThrough]
+    public static bool CanBroadcastTo<TNumber>(this ITensor<TNumber> source, Shape target)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider.GetTensorOperationServiceProvider()
+            .GetBroadcastingService()
+            .CanBroadcastTo(source.Shape, target);
+    }
 }

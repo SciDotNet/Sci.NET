@@ -26,17 +26,13 @@ internal class ManagedBroadcastingKernels : IBroadcastingKernels
         }
         else
         {
-            LazyParallelExecutor.For(
-                0,
-                result.Shape.ElementCount,
-                ManagedTensorBackend.ParallelizationThreshold,
-                i =>
-                {
-                    var indices = result.Shape.GetIndicesFromLinearIndex(i);
-                    var sourceIndex = indices.Select((t, j) => t * strides[j]).Sum();
+            for (var i = 0; i < result.Shape.ElementCount; i++)
+            {
+                var resultDims = result.Shape.GetIndicesFromLinearIndex(i);
+                var sourceDataOffset = resultDims.Select((t, j) => t * strides[j]).Sum();
 
-                    resultHandle[i] = tensorHandle[sourceIndex];
-                });
+                resultHandle[i] = tensorHandle[sourceDataOffset];
+            }
         }
     }
 }

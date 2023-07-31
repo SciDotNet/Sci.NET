@@ -25,7 +25,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
     public Scalar(ITensorBackend? backend = null)
     {
-        Shape = Shape.Scalar;
+        Shape = Shape.Scalar();
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
@@ -39,7 +39,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
     public Scalar(TNumber value, ITensorBackend? backend = null)
     {
-        Shape = Shape.Scalar;
+        Shape = Shape.Scalar();
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
@@ -54,7 +54,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
     public Scalar(IMemoryBlock<TNumber> handle, ITensorBackend backend)
     {
-        Shape = Shape.Scalar;
+        Shape = Shape.Scalar();
         Backend = backend;
         Handle = handle;
         IsMemoryOwner = false;

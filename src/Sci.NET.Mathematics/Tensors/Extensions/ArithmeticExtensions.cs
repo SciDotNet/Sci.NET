@@ -214,8 +214,7 @@ public static class ArithmeticExtensions
     /// <returns>The sum of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
     [DebuggerStepThrough]
     public static Matrix<TNumber> Add<TNumber>(
-        this
-            Matrix<TNumber> left,
+        this Matrix<TNumber> left,
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
