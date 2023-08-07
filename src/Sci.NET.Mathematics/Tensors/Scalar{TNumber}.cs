@@ -43,8 +43,12 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         Backend = backend ?? Tensor.DefaultBackend;
         Handle = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Handle[0] = value;
         Handle.Rent(_id);
+
+        using var systemMemory = new SystemMemoryBlock<TNumber>(1);
+        systemMemory[0] = value;
+
+        Handle.CopyFromSystemMemory(systemMemory);
     }
 
     /// <summary>
@@ -79,7 +83,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     public IMemoryBlock<TNumber> Handle { get; private set; }
 
     /// <inheritdoc />
-    public ITensorBackend Backend { get; }
+    public ITensorBackend Backend { get; private set; }
 
     /// <inheritdoc />
     public bool IsMemoryOwner { get; private set; }
@@ -92,7 +96,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <summary>
     /// Gets the value of the <see cref="Scalar{TNumber}"/>.
     /// </summary>
-    public TNumber Value => Handle[0];
+    public TNumber Value => Handle.ToSystemMemory()[0];
 
 #pragma warning disable IDE0051, RCS1213
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -140,6 +144,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
 
         newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
         Handle = newHandle;
+        Backend = newBackend;
         oldHandle.Dispose();
     }
 

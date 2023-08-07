@@ -1,0 +1,102 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <RootNamespace>Sci.NET.CUDA.Redist</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cublas64_12.dll">
+            <Link>CUDA\win-x64\cublas64_12.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cublasLt64_12.dll">
+            <Link>CUDA\win-x64\cublasLt64_12.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudart64_12.dll">
+            <Link>CUDA\win-x64\cudart64_12.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn_adv_infer64_8.dll">
+            <Link>CUDA\win-x64\cudnn_adv_infer64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn_adv_train64_8.dll">
+            <Link>CUDA\win-x64\cudnn_adv_train64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn_cnn_infer64_8.dll">
+            <Link>CUDA\win-x64\cudnn_cnn_infer64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn_cnn_train64_8.dll">
+            <Link>CUDA\win-x64\cudnn_cnn_train64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn_ops_infer64_8.dll">
+            <Link>CUDA\win-x64\cudnn_ops_infer64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn_ops_train64_8.dll">
+            <Link>CUDA\win-x64\cudnn_ops_train64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cudnn64_8.dll">
+            <Link>CUDA\win-x64\cudnn64_8.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cufft64_11.dll">
+            <Link>CUDA\win-x64\cufft64_11.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cufftw64_11.dll">
+            <Link>CUDA\win-x64\cufftw64_11.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cuinj64_122.dll">
+            <Link>CUDA\win-x64\cuinj64_122.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\curand64_10.dll">
+            <Link>CUDA\win-x64\curand64_10.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cusolver64_11.dll">
+            <Link>CUDA\win-x64\cusolver64_11.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cusolverMg64_11.dll">
+            <Link>CUDA\win-x64\cusolverMg64_11.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\cusparse64_12.dll">
+            <Link>CUDA\win-x64\cusparse64_12.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\nvJitLink_120_0.dll">
+            <Link>CUDA\win-x64\nvJitLink_120_0.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\nvjpeg64_12.dll">
+            <Link>CUDA\win-x64\nvjpeg64_12.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\nvrtc64_120_0.dll">
+            <Link>CUDA\win-x64\nvrtc64_120_0.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(CUDA_PATH_V12_2)\bin\nvrtc-builtins64_122.dll">
+            <Link>CUDA\win-x64\nvrtc-builtins64_122.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="$(SolutionDir)artifacts\bin\$(Configuration)\Sci.NET.CUDA.Native.dll">
+            <Link>CUDA\win-x64\Sci.NET.CUDA.Native.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+</Project>

@@ -1,10 +1,10 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Deterministic>true</Deterministic>
         <EmitCompilerGeneratedFiles>True</EmitCompilerGeneratedFiles>
-        <CompilerGeneratedFilesOutputPath>$(SolutionDir)\obj\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+        <CompilerGeneratedFilesOutputPath>$(SolutionDir)\artifacts\obj\GeneratedFiles</CompilerGeneratedFilesOutputPath>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TestProject Condition="$(MSBuildProjectName.EndsWith('Tests'))">true</TestProject>

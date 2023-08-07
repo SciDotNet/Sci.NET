@@ -86,10 +86,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         [MethodImpl(ImplementationOptions.HotPath)]
         get
         {
-            if (IsDisposed)
-            {
-                throw new ObjectDisposedException("The memory block has been disposed.");
-            }
+            ObjectDisposedException.ThrowIf(IsDisposed, this);
 
             if (index < 0 || index >= Length)
             {
@@ -141,10 +138,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <exception cref="ObjectDisposedException">Throws when the object has already been disposed.</exception>
     public unsafe void FillBytes(long start, byte[] buffer, long bytesToCopy)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         var bufferPtr = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(buffer));
         var dataPtr = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nuint)start));
@@ -160,10 +154,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe T[] ToArray()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (Length == 0)
         {
@@ -187,10 +178,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [SuppressMessage("ReSharper", "CyclomaticComplexity", Justification = "Performance critical code.")]
     public unsafe void Fill(T value)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (!Vector.IsHardwareAccelerated)
         {
@@ -344,10 +332,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <inheritdoc />
     public unsafe void CopyFromSystemMemory(SystemMemoryBlock<T> source)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (source.Length != Length)
         {
@@ -364,15 +349,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <inheritdoc />
     public unsafe void CopyFrom(T[] array)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
-
-        if (array is null)
-        {
-            throw new ArgumentNullException(nameof(array));
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ArgumentException.ThrowIfNullOrEmpty(nameof(array));
 
         if (array.Length != Length)
         {
@@ -389,10 +367,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <inheritdoc />
     public unsafe void WriteTo(Stream stream)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         var byteLength = Length * Unsafe.SizeOf<T>();
 
@@ -420,10 +395,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <inheritdoc />
     public unsafe void BlockCopyFrom(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (handle is not SystemMemoryBlock<T> memoryBlock)
         {
@@ -468,10 +440,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <inheritdoc />
     public unsafe void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (srcIdx < 0 || srcIdx >= buffer.Length)
         {
@@ -519,10 +488,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.HotPath)]
     public IMemoryBlock<T> Copy()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         var result = new SystemMemoryBlock<T>(Length);
         CopyTo(result);
@@ -533,10 +499,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.FastPath)]
     public SystemMemoryBlock<T> ToSystemMemory()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return this;
     }
@@ -545,10 +508,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.FastPath)]
     public unsafe void CopyTo(IMemoryBlock<T> destination)
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (destination is not SystemMemoryBlock<T> systemMemoryBlock)
         {
@@ -625,10 +585,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <exception cref="ObjectDisposedException">The memory block has been disposed.</exception>
     public SystemMemoryBlockEnumerator<T> GetEnumerator()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return new SystemMemoryBlockEnumerator<T>(this);
     }
@@ -647,10 +604,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <exception cref="ObjectDisposedException">The memory block has been disposed.</exception>
     public unsafe ref T GetReference()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return ref Unsafe.AsRef<T>(_reference);
     }
@@ -662,10 +616,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <exception cref="ObjectDisposedException">The memory block has been disposed.</exception>
     public unsafe T* ToPointer()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return _reference;
     }
@@ -678,10 +629,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <exception cref="ObjectDisposedException">The memory block has been disposed.</exception>
     public unsafe Span<T> AsSpan()
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         if (Length > int.MaxValue)
         {
@@ -701,10 +649,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public unsafe SystemMemoryBlock<TOut> DangerousReinterpretCast<TOut>()
         where TOut : unmanaged
     {
-        if (IsDisposed)
-        {
-            throw new ObjectDisposedException("The memory block has been disposed.");
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         var totalBytes = Length * Unsafe.SizeOf<T>();
         var tOutSize = Unsafe.SizeOf<TOut>();

@@ -2,7 +2,6 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using Sci.NET.Mathematics.Attributes;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends;
@@ -14,224 +13,434 @@ namespace Sci.NET.Mathematics.Backends;
 public interface ITrigonometryKernels
 {
     /// <summary>
-    /// Calculates the sin of the specified <see cref="Scalar{TNumber}"/>.
+    /// Computes the element-wise sine of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the sin of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Sin<TNumber>(
-        [AssumesShape("1")] Scalar<TNumber> scalar,
-        [AssumesShape("1")] Scalar<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
-    /// Calculates the sin of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// Computes the element-wise cosine of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the sin of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    public void Sin<TNumber>(
-        [AssumesShape("i")] Tensors.Vector<TNumber> vector,
-        [AssumesShape("i")] Tensors.Vector<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
-    /// Calculates the sin of the specified <see cref="Matrix{TNumber}"/>.
+    /// Computes the element-wise tangent of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the sin of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Sin<TNumber>(
-        [AssumesShape("i,j")] Matrix<TNumber> matrix,
-        [AssumesShape("i,j")] Matrix<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Tan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
-    /// Calculates the sin of the specified <see cref="Tensor{TNumber}"/>.
+    /// Computes the element-wise sine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the sin of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Sin<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
-    /// Calculates the cosine of the specified <see cref="Scalar{TNumber}"/>.
+    /// Computes the element-wise cosine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the cos of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Cos<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
-    /// Calculates the cosine of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// Computes the element-wise tangent squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the cos of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    public void Cos<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
-    /// Calculates the cosine of the specified <see cref="Matrix{TNumber}"/>.
+    /// Computes the element-wise hyperbolic sine of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the cos of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Cos<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Calculates the cosine of the specified <see cref="Tensor{TNumber}"/>.
-    /// </summary>
-    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the cos of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Cos<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Calculates the tan of the specified <see cref="Scalar{TNumber}"/>.
-    /// </summary>
-    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the tan of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Tan<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Calculates the tan of the specified <see cref="Tensors.Vector{TNumber}"/>.
-    /// </summary>
-    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the tan of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    public void Tan<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Calculates the tan of the specified <see cref="Matrix{TNumber}"/>.
-    /// </summary>
-    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the tan of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Tan<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Calculates the tan of the specified <see cref="Tensor{TNumber}"/>.
-    /// </summary>
-    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the tan of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Tan<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
-
-    /// <summary>
-    /// Computes the hyperbolic sine of the specified <see cref="Scalar{TNumber}"/>.
-    /// </summary>
-    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the sinh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Sinh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic sine of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// Computes the element-wise hyperbolic cosine of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the sinh of.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    /// <param name="result">Stores the result of the operation.</param>
-    public void Sinh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic sine of the specified <see cref="Matrix{TNumber}"/>.
+    /// Computes the element-wise hyperbolic tangent of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the sinh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Sinh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Tanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic sine of the specified <see cref="Tensor{TNumber}"/>.
+    /// Computes the element-wise hyperbolic sine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the sinh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Sinh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic cosine of the specified <see cref="Scalar{TNumber}"/>.
+    /// Computes the element-wise hyperbolic cosine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the cosh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Cosh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic cosine of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// Computes the element-wise hyperbolic tangent squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the cosh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    public void Cosh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Tanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic cosine of the specified <see cref="Matrix{TNumber}"/>.
+    /// Computes the element-wise arcsine of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the cosh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Cosh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arccosine of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arctangent of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Atan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arcsine squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arccosine squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arctangent squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Atan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arcsine of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic cosine of the specified <see cref="Tensor{TNumber}"/>.
+    /// Computes the element-wise hyperbolic arccosine of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the cosh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Cosh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic tangent of the specified <see cref="Scalar{TNumber}"/>.
+    /// Computes the element-wise hyperbolic arctangent of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to calculate the tanh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
-    public void Tanh<TNumber>(Scalar<TNumber> scalar, Scalar<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Atanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic tangent of the specified <see cref="Tensors.Vector{TNumber}"/>.
+    /// Computes the element-wise hyperbolic arcsine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="vector">The <see cref="Tensors.Vector{TNumber}"/> to calculate the tanh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensors.Vector{TNumber}"/>.</typeparam>
-    public void Tanh<TNumber>(Tensors.Vector<TNumber> vector, Tensors.Vector<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic tangent of the specified <see cref="Matrix{TNumber}"/>.
+    /// Computes the element-wise hyperbolic arccosine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to calculate the tanh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
-    public void Tanh<TNumber>(Matrix<TNumber> matrix, Matrix<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
-    /// Computes the hyperbolic tangent of the specified <see cref="Tensor{TNumber}"/>.
+    /// Computes the element-wise hyperbolic arctangent squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to calculate the tanh of.</param>
-    /// <param name="result">Stores the result of the operation.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
-    public void Tanh<TNumber>(Tensor<TNumber> tensor, Tensor<TNumber> result)
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Atanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise cosecant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Csc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise secant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise cotangent of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise cosecant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Csc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise secant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise cotangent squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic cosecant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Csch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic secant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic cotangent of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Coth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic cosecant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Csch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic secant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic cotangent squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Coth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arccosecant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acsc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arcsecant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arccotangent of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arccosecant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acsc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arcsecant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise arccotangent squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arccosecant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acsch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arcsecant of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arccotangent of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acoth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arccosecant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acsch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arcsecant squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Asech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic arccotangent squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Acoth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 }

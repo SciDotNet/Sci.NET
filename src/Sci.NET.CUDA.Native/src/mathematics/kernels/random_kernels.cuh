@@ -1,0 +1,8 @@
+//
+// Created by reece on 02/08/2023.
+//
+
+#ifndef SCI_NET_NATIVE_RANDOM_KERNELS_CUH
+#define SCI_NET_NATIVE_RANDOM_KERNELS_CUH
+
+#endif //SCI_NET_NATIVE_RANDOM_KERNELS_CUH

@@ -69,7 +69,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public IMemoryBlock<TNumber> Handle { get; private set; }
 
     /// <inheritdoc />
-    public ITensorBackend Backend { get; }
+    public ITensorBackend Backend { get; private set; }
 
     /// <inheritdoc />
     public bool IsMemoryOwner { get; set; }
@@ -138,6 +138,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
 
         newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
         Handle = newHandle;
+        Backend = newBackend;
         oldHandle.Dispose();
     }
 

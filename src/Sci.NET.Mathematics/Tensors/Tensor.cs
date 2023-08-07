@@ -189,8 +189,7 @@ public static class Tensor
     {
         if (tensor.Shape != other.Shape)
         {
-            throw new InvalidShapeException(
-                $"The shapes of the tensors must be equal but were {tensor.Shape} and {other.Shape}.");
+            throw new InvalidShapeException($"The shapes of the tensors must be equal but were {tensor.Shape} and {other.Shape}.");
         }
 
         other.Handle.CopyTo(tensor.Handle);
@@ -220,8 +219,7 @@ public static class Tensor
         var bytesToCopy = Unsafe.SizeOf<TNumber>() * (endIndex - startIndex);
         var systemMemoryClone = tensor.Handle.ToSystemMemory();
 
-        var sourcePointer = Unsafe.AsPointer(
-            ref Unsafe.Add(ref Unsafe.AsRef<TNumber>(systemMemoryClone.ToPointer()), (nuint)startIndex));
+        var sourcePointer = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<TNumber>(systemMemoryClone.ToPointer()), (nuint)startIndex));
         var destinationPointer = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(result));
 
         Buffer.MemoryCopy(
@@ -231,5 +229,44 @@ public static class Tensor
             bytesToCopy);
 
         return result;
+    }
+
+    /// <summary>
+    /// Determines whether the <paramref name="tensor"/> is effectively a scalar, meaning that it is a scalar or has all dimensions equal to 1.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to check.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>Whether the <paramref name="tensor"/> is effectively a <see cref="Scalar{TNumber}"/>.</returns>
+    public static bool IsEffectiveScalar<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return tensor.Shape.IsScalar ||
+               tensor.Shape.Dimensions.All(x => x == 1);
+    }
+
+    /// <summary>
+    /// Determines whether the <paramref name="tensor"/> is effectively a vector, meaning that it is a vector or has exactly one dimension that is not equal to 1.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to check.</param>`
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>Whether the <paramref name="tensor"/> is effectively a <see cref="Vector{TNumber}"/>.</returns>
+    public static bool IsEffectiveVector<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return tensor.Shape.IsVector ||
+               tensor.Shape.Dimensions.Count(x => x != 1) == 1;
+    }
+
+    /// <summary>
+    /// Determines whether the <paramref name="tensor"/> is effectively a matrix, meaning that it is a matrix or has exactly two dimensions that are not equal to 1.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to check.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>Whether the <paramref name="tensor"/> is effectively a <see cref="Matrix{TNumber}"/>.</returns>
+    public static bool IsEffectiveMatrix<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return tensor.Shape.IsMatrix ||
+               tensor.Shape.Dimensions.Count(x => x != 0) == 2;
     }
 }

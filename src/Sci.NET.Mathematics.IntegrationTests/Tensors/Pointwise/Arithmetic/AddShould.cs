@@ -5,215 +5,356 @@ using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Pointwise.Arithmetic;
 
-public class AddShould
+public class AddShould : IArithmeticOperatorTests
 {
     [Fact]
-    public void ReturnExpectedResult_GivenScalarAndScalar()
+    public void ReturnExpectedResult_GivenScalarScalar()
     {
         // Arrange
-        using var left = new Scalar<int>(1);
+        using var left = new Scalar<int>(2);
         using var right = new Scalar<int>(2);
-        using var expected = new Scalar<int>(3);
+        const int expectedValue = 4;
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.Value.Should().Be(expected.Value);
+        actual
+            .Value.Should()
+            .Be(expectedValue);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenScalarAndVector()
+    public void ReturnExpectedResult_GivenScalarVector()
     {
         // Arrange
-        using var left = new Scalar<int>(1);
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4 }).ToVector();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5 }).ToVector();
+        using var left = new Scalar<int>(2);
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .ToVector();
+        var expectedValues = new int[] { 3, 4, 5, 6 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenScalarAndMatrix()
+    public void ReturnExpectedResult_GivenScalarMatrix()
     {
         // Arrange
-        using var left = new Scalar<int>(1);
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5, 6, 7 }).Reshape(2, 3).ToMatrix();
+        using var left = new Scalar<int>(2);
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        var expectedValues = new int[] { 3, 4, 5, 6 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenScalarAndTensor()
+    public void ReturnExpectedResult_GivenScalarTensor()
     {
         // Arrange
-        using var left = new Scalar<int>(1);
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3, 1);
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5, 6, 7 }).Reshape(2, 3, 1);
+        using var left = new Scalar<int>(2);
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        var expectedValues = new int[] { 3, 4, 5, 6, 7, 8, 9, 10 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenVectorAndScalar()
+    public void ReturnExpectedResult_GivenVectorScalar()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4 }).ToVector();
-        using var right = new Scalar<int>(1);
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5 }).ToVector();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .ToVector();
+        using var right = new Scalar<int>(2);
+        var expectedValues = new int[] { 3, 4, 5, 6 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenVectorAndVector()
+    public void ReturnExpectedResult_GivenVectorVector()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4 }).ToVector();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4 }).ToVector();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 4, 6, 8 }).ToVector();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .ToVector();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .ToTensor();
+        var expectedValues = new int[] { 2, 4, 6, 8 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenVectorAndMatrix()
+    public void ReturnExpectedResult_GivenVectorMatrix()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2 }).ToVector();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 6, 7, 8 }).Reshape(2, 3).ToMatrix();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2 })
+            .ToVector();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        var expectedValues = new int[] { 2, 4, 4, 6 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenBroadcastableVectorAndMatrix()
+    public void ReturnExpectedResult_GivenVectorTensor()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).ToVector();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 4, 6, 5, 7, 9 }).Reshape(2, 3).ToMatrix();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2 })
+            .ToVector();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        var expectedValues = new int[] { 2, 4, 4, 6, 6, 8, 8, 10 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenVectorAndTensor()
+    public void ReturnExpectedResult_GivenMatrixScalar()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2 }).ToVector();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3, 1);
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5, 6, 7 }).Reshape(2, 3, 1);
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        using var right = new Scalar<int>(2);
+        var expectedValues = new int[] { 3, 4, 5, 6 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenMatrixAndScalar()
+    public void ReturnExpectedResult_GivenMatrixVector()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var right = new Scalar<int>(1);
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5, 6, 7 }).Reshape(2, 3).ToMatrix();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2 })
+            .ToVector();
+        var expectedValues = new int[] { 2, 4, 4, 6 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenMatrixAndVector()
+    public void ReturnExpectedResult_GivenMatrixMatrix()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2 }).ToVector();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 6, 7, 8 }).Reshape(2, 3).ToMatrix();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        var expectedValues = new int[] { 2, 4, 6, 8 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenMatrixAndMatrix()
+    public void ReturnExpectedResult_GivenMatrixTensor()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3).ToMatrix();
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 4, 6, 8, 10, 12 }).Reshape(2, 3).ToMatrix();
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        var expectedValues = new int[] { 2, 4, 6, 6, 8, 8, 10, 12 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenMatrixAndTensor()
+    public void ReturnExpectedResult_GivenTensorScalar()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3 }).Reshape(1, 3).ToMatrix();
-        using var right = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3, 1);
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 4, 6, 5, 7, 9 }).Reshape(2, 3, 1);
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        using var right = new Scalar<int>(2);
+        var expectedValues = new int[] { 3, 4, 5, 6, 7, 8, 9, 10 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 
     [Fact]
-    public void ReturnExpectedResult_GivenTensorAndScalar()
+    public void ReturnExpectedResult_GivenTensorVector()
     {
         // Arrange
-        using var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6 }).Reshape(2, 3, 1);
-        using var right = new Scalar<int>(1);
-        using var expected = Tensor.FromArray<int>(new int[] { 2, 3, 4, 5, 6, 7 }).Reshape(2, 3, 1);
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2 })
+            .ToVector();
+        var expectedValues = new int[] { 2, 4, 4, 6, 6, 8, 8, 10 };
 
         // Act
         var actual = left.Add(right);
 
         // Assert
-        actual.ToArray().Should().BeEquivalentTo(expected.ToArray());
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
+    }
+
+    [Fact]
+    public void ReturnExpectedResult_GivenTensorMatrix()
+    {
+        // Arrange
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4 })
+            .Reshape(2, 2)
+            .ToMatrix();
+        var expectedValues = new int[] { 2, 4, 6, 8, 6, 8, 10, 12 };
+
+        // Act
+        var actual = left.Add(right);
+
+        // Assert
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
+    }
+
+    [Fact]
+    public void ReturnExpectedResult_GivenTensorTensor()
+    {
+        // Arrange
+        using var left = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        using var right = Tensor
+            .FromArray<int>(new int[] { 1, 2, 3, 4, 5, 6, 7, 8 })
+            .Reshape(2, 2, 2)
+            .ToTensor();
+        var expectedValues = new int[] { 2, 4, 6, 8, 10, 12, 14, 16 };
+
+        // Act
+        var actual = left.Add(right);
+
+        // Assert
+        actual
+            .ToArray()
+            .Should()
+            .BeEquivalentTo(expectedValues);
     }
 }
