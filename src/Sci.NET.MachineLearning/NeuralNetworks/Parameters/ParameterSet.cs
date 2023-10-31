@@ -90,7 +90,13 @@ public class ParameterSet<TNumber> : ICollection<NamedParameter<TNumber>>, ITens
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        _namedParameters.ForEach(x => x.To<TDevice>());
+        To(new TDevice());
+    }
+
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        _namedParameters.ForEach(x => x.To(device));
     }
 
     /// <inheritdoc />

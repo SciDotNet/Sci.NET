@@ -1,5 +1,5 @@
 find_package(OpenMP)
-find_package(CUDAToolkit "12" REQUIRED)
+find_package(CUDAToolkit REQUIRED)
 find_package(CUDA REQUIRED)
 find_package(Threads REQUIRED)
 

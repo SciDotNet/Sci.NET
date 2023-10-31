@@ -313,80 +313,80 @@ internal static class ArithmeticNativeMethods
         long* result,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_fp32", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorFp32(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_fp32", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorFp32(
         float* left,
         float* right,
         float* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_fp64", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorFp64(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_fp64", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorFp64(
         double* left,
         double* right,
         double* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_u8", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorU8(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_u8", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorU8(
         byte* left,
         byte* right,
         byte* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_u16", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorU16(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_u16", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorU16(
         ushort* left,
         ushort* right,
         ushort* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_u32", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorU32(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_u32", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorU32(
         uint* left,
         uint* right,
         uint* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_u64", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorU64(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_u64", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorU64(
         ulong* left,
         ulong* right,
         ulong* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_i8", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorI8(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_i8", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorI8(
         sbyte* left,
         sbyte* right,
         sbyte* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_i16", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorI16(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_i16", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorI16(
         short* left,
         short* right,
         short* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_i32", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorI32(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_i32", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorI32(
         int* left,
         int* right,
         int* result,
         long m,
         long n);
 
-    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_tensor_i64", CallingConvention = CallingConvention.Cdecl)]
-    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorTensorI64(
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "subtract_tensor_broadcast_tensor_i64", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode SubtractTensorBroadcastTensorI64(
         long* left,
         long* right,
         long* result,
@@ -478,90 +478,70 @@ internal static class ArithmeticNativeMethods
         float* left,
         float* right,
         float* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_fp64", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorFp64(
         double* left,
         double* right,
         double* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_u8", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorU8(
         byte* left,
         byte* right,
         byte* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_u16", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorU16(
         ushort* left,
         ushort* right,
         ushort* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_u32", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorU32(
         uint* left,
         uint* right,
         uint* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_u64", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorU64(
         ulong* left,
         ulong* right,
         ulong* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_i8", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorI8(
         sbyte* left,
         sbyte* right,
         sbyte* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_i16", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorI16(
         short* left,
         short* right,
         short* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_i32", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorI32(
         int* left,
         int* right,
         int* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_tensor_i64", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorTensorI64(
         long* left,
         long* right,
         long* result,
-        long m,
-        long n,
-        long p);
+        long n);
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "multiply_tensor_broadcast_tensor_fp32", CallingConvention = CallingConvention.Cdecl)]
     public static extern unsafe SdnApiStatusCode MultiplyTensorBroadcastTensorFp32(

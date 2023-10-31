@@ -109,13 +109,18 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         where TDevice : IDevice, new()
     {
         var newDevice = new TDevice();
+        To(newDevice);
+    }
 
-        if (newDevice.Name == Device.Name)
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        if (device.Name == Device.Name)
         {
             return;
         }
 
-        var newBackend = newDevice.GetTensorBackend();
+        var newBackend = device.GetTensorBackend();
         var oldHandle = Handle;
         var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
         using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);

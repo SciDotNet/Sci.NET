@@ -23,4 +23,10 @@ public interface ITensorLocalityOperations
     /// <typeparam name="TDevice">The device to move to.</typeparam>
     public void To<TDevice>()
         where TDevice : IDevice, new();
+
+    /// <summary>
+    /// Moves the tensor to the given device.
+    /// </summary>
+    /// <param name="device">The device to move to.</param>
+    public void To(IDevice device);
 }

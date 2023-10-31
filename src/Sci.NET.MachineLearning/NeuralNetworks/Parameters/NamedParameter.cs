@@ -58,8 +58,14 @@ public class NamedParameter<TNumber> : ITensorLocalityOperations, IDisposable
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        Gradient.To<TDevice>();
-        Value.To<TDevice>();
+        To(new TDevice());
+    }
+
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        Gradient.To(device);
+        Value.To(device);
     }
 
     /// <summary>

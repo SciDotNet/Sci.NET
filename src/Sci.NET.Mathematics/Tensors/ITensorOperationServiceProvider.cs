@@ -18,7 +18,7 @@ namespace Sci.NET.Mathematics.Tensors;
 [PublicAPI]
 public interface ITensorOperationServiceProvider
 {
-    #pragma warning disable CA1024
+#pragma warning disable CA1024
     /// <summary>
     /// Gets an instance of the <see cref="IMatrixMultiplicationService"/>.
     /// </summary>
@@ -130,5 +130,13 @@ public interface ITensorOperationServiceProvider
     /// <returns>An instance of the <see cref="IBroadcastService"/>.</returns>
     [DebuggerStepThrough]
     public IBroadcastService GetBroadcastingService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IVectorOperationsService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IVectorOperationsService"/>.</returns>
+    [DebuggerStepThrough]
+    public IVectorOperationsService GetVectorOperationsService();
+
 #pragma warning restore CA1024
 }

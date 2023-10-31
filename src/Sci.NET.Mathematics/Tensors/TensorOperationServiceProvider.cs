@@ -36,6 +36,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly IConcatenationService _concatenationService;
     private readonly IActivationFunctionService _activationFunctionService;
     private readonly IBroadcastService _broadcastService;
+    private readonly IVectorOperationsService _vectorOperationsService;
 
     public TensorOperationServiceProvider()
     {
@@ -55,6 +56,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _contractionService = new ContractionService(this);
         _convolutionService = new ConvolutionService(this);
         _concatenationService = new ConcatenationService(this);
+        _vectorOperationsService = new VectorOperationsService();
     }
 
     public IMatrixMultiplicationService GetMatrixMultiplicationService()
@@ -135,5 +137,10 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public IBroadcastService GetBroadcastingService()
     {
         return _broadcastService;
+    }
+
+    public IVectorOperationsService GetVectorOperationsService()
+    {
+        return _vectorOperationsService;
     }
 }
