@@ -147,8 +147,19 @@ public class CudaMemoryBlock<T> : IMemoryBlock<T>
     public void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count)
     {
         using var handle = new SystemMemoryBlock<T>(Length);
-        handle.BlockCopyFrom(buffer, srcIdx, dstIdx, count);
+        handle.BlockCopyFrom(
+            buffer,
+            srcIdx,
+            dstIdx,
+            count);
         CopyFromSystemMemory(handle);
+    }
+
+    /// <inheritdoc />
+    public void UnsafeFreeMemory()
+    {
+        ReleaseUnmanagedResources();
+        IsDisposed = true;
     }
 
     /// <inheritdoc />
@@ -162,7 +173,7 @@ public class CudaMemoryBlock<T> : IMemoryBlock<T>
     /// Releases the unmanaged resources used by the <see cref="CudaMemoryBlock{T}"/> and optionally releases the managed resources.
     /// </summary>
     /// <param name="disposing">Whether to dispose managed resources.</param>
-    protected virtual unsafe void Dispose(bool disposing)
+    protected virtual void Dispose(bool disposing)
     {
         ReleaseUnmanagedResources();
 

@@ -8,6 +8,7 @@ using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed;
 using Sci.NET.Mathematics.Tensors.Exceptions;
+using Sci.NET.Mathematics.Tensors.Random;
 
 namespace Sci.NET.Mathematics.Tensors;
 
@@ -21,6 +22,11 @@ public static class Tensor
     /// Gets the default backend for tensors.
     /// </summary>
     public static ITensorBackend DefaultBackend { get; private set; } = new ManagedTensorBackend();
+
+    /// <summary>
+    /// Gets the default random service for tensors.
+    /// </summary>
+    public static IRandomService Random { get; } = TensorServiceProvider.GetTensorOperationServiceProvider().GetRandomService();
 
     /// <summary>
     /// Sets the default backend for tensors.
@@ -111,7 +117,11 @@ public static class Tensor
         var shape = tensor.Shape.Slice(indices);
         var result = new Tensor<TNumber>(new Shape(shape.Dimensions), tensor.Backend);
 
-        result.Handle.BlockCopyFrom(tensor.Handle, shape.DataOffset, 0, shape.ElementCount);
+        result.Handle.BlockCopyFrom(
+            tensor.Handle,
+            shape.DataOffset,
+            0,
+            shape.ElementCount);
 
         return result;
     }

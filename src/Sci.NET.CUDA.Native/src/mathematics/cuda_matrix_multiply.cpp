@@ -6,14 +6,32 @@
 #include "kernels/matrix_multiply_kernels.cuh"
 
 
-static cublasHandle_t handle;
+thread_local static cublasHandle_t handle;
 
 inline cublasHandle_t get_handle() {
     if (handle == nullptr) {
         cublasCreate(&handle);
+        cublasSetMathMode(handle, CUBLAS_TENSOR_OP_MATH);
     }
 
     return handle;
+}
+
+sdnApiStatusCode matrix_multiply_bf16(bfloat16 *left,
+                                      bfloat16 *right,
+                                      bfloat16 *result,
+                                      int32_t left_rows,
+                                      int32_t left_cols,
+                                      int32_t right_cols) {
+
+    auto success = matrix_multiply_bf16_invoke(reinterpret_cast<nv_bfloat16*>(left),
+                                               reinterpret_cast<nv_bfloat16*>(right),
+                                               reinterpret_cast<nv_bfloat16*>(result),
+                                               left_rows,
+                                               left_cols,
+                                               right_cols);
+
+    return success ? sdnApiStatusCode::sdnSuccess : sdnApiStatusCode::sdnInternalError;
 }
 
 sdnApiStatusCode matrix_multiply_fp32(float *left,
@@ -26,19 +44,13 @@ sdnApiStatusCode matrix_multiply_fp32(float *left,
     float beta = 0.0f;
 
     auto status = cublasSgemm_v2(get_handle(),
-                                 CUBLAS_OP_N,
-                                 CUBLAS_OP_N,
-                                 left_rows,
-                                 right_cols,
-                                 left_cols,
+                                 CUBLAS_OP_N, CUBLAS_OP_N,
+                                 right_cols, left_rows, left_cols,
                                  &alpha,
-                                 left,
-                                 left_rows,
-                                 right,
-                                 right_cols,
+                                 right, right_cols,
+                                 left, left_cols,
                                  &beta,
-                                 result,
-                                 left_rows);
+                                 result, right_cols);
 
     return guard_cublas_status(status);
 }
@@ -53,19 +65,13 @@ sdnApiStatusCode matrix_multiply_fp64(double *left,
     double beta = 0.0f;
 
     auto status = cublasDgemm_v2(get_handle(),
-                                 CUBLAS_OP_N,
-                                 CUBLAS_OP_N,
-                                 left_rows,
-                                 right_cols,
-                                 left_cols,
+                                 CUBLAS_OP_N, CUBLAS_OP_N,
+                                 right_cols, left_rows, left_cols,
                                  &alpha,
-                                 left,
-                                 left_rows,
-                                 right,
-                                 right_cols,
+                                 right, right_cols,
+                                 left, left_cols,
                                  &beta,
-                                 result,
-                                 left_rows);
+                                 result, right_cols);
 
     return guard_cublas_status(status);
 }

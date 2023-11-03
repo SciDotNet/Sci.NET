@@ -5,6 +5,9 @@
 #ifndef SCI_NET_NATIVE_ARITHMETIC_KERNELS_CUH
 #define SCI_NET_NATIVE_ARITHMETIC_KERNELS_CUH
 
+#include <cuda_bf16.h>
+
+bool add_tensor_tensor_bf16_invoke(nv_bfloat16 *a, nv_bfloat16 *b, nv_bfloat16 *result, int64_t n);
 
 bool add_tensor_tensor_fp32_invoke(float *a, float *b, float *result, int64_t n);
 

@@ -1,12 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics", "src\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj", "{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics", "src\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj", "{C07478D5-F493-4E54-ADC6-7038CCE7F6E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Common", "src\Sci.NET.Common\Sci.NET.Common.csproj", "{B91244C2-4289-4F73-B9EF-B4A5320D08A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Common", "src\Sci.NET.Common\Sci.NET.Common.csproj", "{B91244C2-4289-4F73-B9EF-B4A5320D08A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.UnitTests", "src\Sci.NET.Mathematics.UnitTests\Sci.NET.Mathematics.UnitTests.csproj", "{0303C0C3-2070-456E-B254-3BDD710BC633}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics.UnitTests", "src\Sci.NET.Mathematics.UnitTests\Sci.NET.Mathematics.UnitTests.csproj", "{0303C0C3-2070-456E-B254-3BDD710BC633}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Common.UnitTests", "src\Sci.NET.Common.UnitTests\Sci.NET.Common.UnitTests.csproj", "{513B5B41-5218-46FD-93EA-308056B7EFF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Common.UnitTests", "src\Sci.NET.Common.UnitTests\Sci.NET.Common.UnitTests.csproj", "{513B5B41-5218-46FD-93EA-308056B7EFF3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D955EFF8-EE73-4831-B1F0-2B04345C30B0}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,31 +17,39 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\Directory.Packages.props = src\Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Images.UnitTests", "src\Sci.NET.Images.UnitTests\Sci.NET.Images.UnitTests.csproj", "{8D1D5658-335A-48B9-B8BD-8CBB81336929}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images.UnitTests", "src\Sci.NET.Images.UnitTests\Sci.NET.Images.UnitTests.csproj", "{8D1D5658-335A-48B9-B8BD-8CBB81336929}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.MachineLearning", "src\Sci.NET.MachineLearning\Sci.NET.MachineLearning.csproj", "{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.MachineLearning", "src\Sci.NET.MachineLearning\Sci.NET.MachineLearning.csproj", "{39011DE1-BE28-4FB8-B0C9-2179A40DBAAF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Datasets", "Datasets", "{A89249A7-5AAC-47CF-9E3C-869FD5524A0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST", "src\Datasets\Sci.NET.Datasets.MNIST\Sci.NET.Datasets.MNIST.csproj", "{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Datasets.MNIST", "src\Datasets\Sci.NET.Datasets.MNIST\Sci.NET.Datasets.MNIST.csproj", "{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets", "src\Sci.NET.Datasets\Sci.NET.Datasets.csproj", "{368FE95C-6C18-471A-A083-BE04EFC2768A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Datasets", "src\Sci.NET.Datasets\Sci.NET.Datasets.csproj", "{368FE95C-6C18-471A-A083-BE04EFC2768A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{16FB9E8F-939B-4A6E-8C4D-8A227B713396}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Examples.MNIST", "examples\Sci.NET.Examples.MNIST\Sci.NET.Examples.MNIST.csproj", "{A5CAD52B-2E1B-492A-B503-B4875417BBF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Examples.MNIST", "examples\Sci.NET.Examples.MNIST\Sci.NET.Examples.MNIST.csproj", "{A5CAD52B-2E1B-492A-B503-B4875417BBF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.IntegrationTests", "src\Sci.NET.Mathematics.IntegrationTests\Sci.NET.Mathematics.IntegrationTests.csproj", "{8966BABB-63D9-450C-852D-ECDA0ADDD96A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Mathematics.IntegrationTests", "src\Sci.NET.Mathematics.IntegrationTests\Sci.NET.Mathematics.IntegrationTests.csproj", "{8966BABB-63D9-450C-852D-ECDA0ADDD96A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.CUDA", "src\Sci.NET.CUDA\Sci.NET.CUDA.csproj", "{DC240F56-4BFD-4587-ACDC-C4FC48AE2966}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.CUDA", "src\Sci.NET.CUDA\Sci.NET.CUDA.csproj", "{DC240F56-4BFD-4587-ACDC-C4FC48AE2966}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.CUDA.UnitTests", "src\Sci.NET.CUDA.UnitTests\Sci.NET.CUDA.UnitTests.csproj", "{0E5F0F37-36D1-4292-AD33-48D1C570B7AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.CUDA.UnitTests", "src\Sci.NET.CUDA.UnitTests\Sci.NET.CUDA.UnitTests.csproj", "{0E5F0F37-36D1-4292-AD33-48D1C570B7AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redist", "Redist", "{3BFF44B8-1719-4CCA-AC6C-B4C137EF6F93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.CUDA.Redist-Win64", "src\Sci.NET.CUDA.Redist-Win64\Sci.NET.CUDA.Redist-Win64.csproj", "{DC63353C-7D0A-4565-A316-FA1D4777C4C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.CUDA.Redist-Win64", "src\Sci.NET.CUDA.Redist-Win64\Sci.NET.CUDA.Redist-Win64.csproj", "{DC63353C-7D0A-4565-A316-FA1D4777C4C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Examples.Random", "examples\Sci.NET.Examples.Random\Sci.NET.Examples.Random.csproj", "{694DD6CD-DBAC-42BE-AF76-8AD9ECAF6903}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{9C42CF91-D675-426F-AA37-9D0D85E46E7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.Benchmarks", "src\Sci.NET.Mathematics.Benchmarks\Sci.NET.Mathematics.Benchmarks.csproj", "{382EAC2F-E517-4CF2-88DB-27DDE3D448F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Tests.Framework", "src\Sci.NET.Tests.Framework\Sci.NET.Tests.Framework.csproj", "{7D2F834F-E1DD-4F16-A8A2-6BE6167B22E8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,10 +113,30 @@ Global
 		{DC63353C-7D0A-4565-A316-FA1D4777C4C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC63353C-7D0A-4565-A316-FA1D4777C4C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC63353C-7D0A-4565-A316-FA1D4777C4C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{694DD6CD-DBAC-42BE-AF76-8AD9ECAF6903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{694DD6CD-DBAC-42BE-AF76-8AD9ECAF6903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{694DD6CD-DBAC-42BE-AF76-8AD9ECAF6903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{694DD6CD-DBAC-42BE-AF76-8AD9ECAF6903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{382EAC2F-E517-4CF2-88DB-27DDE3D448F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{382EAC2F-E517-4CF2-88DB-27DDE3D448F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{382EAC2F-E517-4CF2-88DB-27DDE3D448F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{382EAC2F-E517-4CF2-88DB-27DDE3D448F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D2F834F-E1DD-4F16-A8A2-6BE6167B22E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D2F834F-E1DD-4F16-A8A2-6BE6167B22E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D2F834F-E1DD-4F16-A8A2-6BE6167B22E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D2F834F-E1DD-4F16-A8A2-6BE6167B22E8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D83BC41C-A036-46BE-A76D-7C9F1E05CF7F} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
 		{A5CAD52B-2E1B-492A-B503-B4875417BBF3} = {16FB9E8F-939B-4A6E-8C4D-8A227B713396}
 		{DC63353C-7D0A-4565-A316-FA1D4777C4C8} = {3BFF44B8-1719-4CCA-AC6C-B4C137EF6F93}
+		{694DD6CD-DBAC-42BE-AF76-8AD9ECAF6903} = {16FB9E8F-939B-4A6E-8C4D-8A227B713396}
+		{382EAC2F-E517-4CF2-88DB-27DDE3D448F6} = {9C42CF91-D675-426F-AA37-9D0D85E46E7C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DC5435D4-B949-4EC3-9C76-673335B11820}
 	EndGlobalSection
 EndGlobal

@@ -17,11 +17,12 @@ public class CudaTensorBackend : ITensorBackend
     /// </summary>
     public CudaTensorBackend()
     {
+        Device = new CudaComputeDevice();
         Storage = new CudaStorageKernels();
         LinearAlgebra = new CudaLinearAlgebraKernels();
-        Device = new CudaComputeDevice();
         Trigonometry = new CudaTrigonometryKernels();
         Arithmetic = new CudaArithmeticKernels();
+        Random = new CudaRandomKernels();
     }
 
     /// <inheritdoc />
@@ -34,16 +35,16 @@ public class CudaTensorBackend : ITensorBackend
     public IArithmeticKernels Arithmetic { get; }
 
     /// <inheritdoc />
-    public IPowerKernels Power { get; }
+    public IPowerKernels Power { get; } = null!;
 
     /// <inheritdoc />
     public IDevice Device { get; }
 
     /// <inheritdoc />
-    public IReductionKernels Reduction { get; }
+    public IReductionKernels Reduction { get; } = null!;
 
     /// <inheritdoc />
-    public ILinqKernels Linq { get; }
+    public ILinqKernels Linq { get; } = null!;
 
     /// <inheritdoc />
     public ITrigonometryKernels Trigonometry { get; }
@@ -52,14 +53,14 @@ public class CudaTensorBackend : ITensorBackend
     public IRandomKernels Random { get; }
 
     /// <inheritdoc />
-    public ICastingKernels Casting { get; }
+    public ICastingKernels Casting { get; } = null!;
 
     /// <inheritdoc />
-    public INeuralNetworkKernels NeuralNetworks { get; }
+    public INeuralNetworkKernels NeuralNetworks { get; } = null!;
 
     /// <inheritdoc />
-    public IActivationFunctionKernels ActivationFunctions { get; }
+    public IActivationFunctionKernels ActivationFunctions { get; } = null!;
 
     /// <inheritdoc />
-    public IBroadcastingKernels Broadcasting { get; }
+    public IBroadcastingKernels Broadcasting { get; } = null!;
 }

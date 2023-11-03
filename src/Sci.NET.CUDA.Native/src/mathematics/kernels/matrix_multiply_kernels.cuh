@@ -5,6 +5,15 @@
 #ifndef SCI_NET_NATIVE_MATRIX_MULTIPLY_KERNELS_H
 #define SCI_NET_NATIVE_MATRIX_MULTIPLY_KERNELS_H
 
+#include <cuda_bf16.h>
+
+bool matrix_multiply_bf16_invoke(nv_bfloat16 *left,
+                                 nv_bfloat16 *right,
+                                 nv_bfloat16 *result,
+                                 int32_t left_rows,
+                                 int32_t left_cols,
+                                 int32_t right_cols);
+
 bool matrix_multiply_u8_invoke(uint8_t *left,
                                uint8_t *right,
                                uint8_t *result,

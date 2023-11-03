@@ -485,6 +485,13 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
+    public unsafe void UnsafeFreeMemory()
+    {
+        ReleaseUnmanagedResources();
+        IsDisposed = true;
+    }
+
+    /// <inheritdoc />
     [MethodImpl(ImplementationOptions.HotPath)]
     public IMemoryBlock<T> Copy()
     {

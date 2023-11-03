@@ -11,6 +11,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Sci.NET.CUDA\Sci.NET.CUDA.csproj" />
       <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+      <ProjectReference Include="..\Sci.NET.Tests.Framework\Sci.NET.Tests.Framework.csproj" />
     </ItemGroup>
 
 </Project>

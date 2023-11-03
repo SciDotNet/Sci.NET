@@ -1389,6 +1389,186 @@ internal static class ArithmeticNativeApi
             .Guard();
     }
 
+    public static unsafe void MultiplyBroadcastTensorTensorFp32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorFp32(
+                (float*)left.ToPointer(),
+                (float*)right.ToPointer(),
+                (float*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorFp64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorFp64(
+                (double*)left.ToPointer(),
+                (double*)right.ToPointer(),
+                (double*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorU8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorU8(
+                (byte*)left.ToPointer(),
+                (byte*)right.ToPointer(),
+                (byte*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorU16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorU16(
+                (ushort*)left.ToPointer(),
+                (ushort*)right.ToPointer(),
+                (ushort*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorU32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorU32(
+                (uint*)left.ToPointer(),
+                (uint*)right.ToPointer(),
+                (uint*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorU64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorU64(
+                (ulong*)left.ToPointer(),
+                (ulong*)right.ToPointer(),
+                (ulong*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorI8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorI8(
+                (sbyte*)left.ToPointer(),
+                (sbyte*)right.ToPointer(),
+                (sbyte*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorI16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorI16(
+                (short*)left.ToPointer(),
+                (short*)right.ToPointer(),
+                (short*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorI32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorI32(
+                (int*)left.ToPointer(),
+                (int*)right.ToPointer(),
+                (int*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void MultiplyBroadcastTensorTensorI64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .MultiplyBroadcastTensorTensorI64(
+                (long*)left.ToPointer(),
+                (long*)right.ToPointer(),
+                (long*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
     public static unsafe void DivideTensorTensorFp32<TNumber>(
         IMemoryBlock<TNumber> left,
         IMemoryBlock<TNumber> right,
@@ -1549,6 +1729,366 @@ internal static class ArithmeticNativeApi
             .Guard();
     }
 
+    public static unsafe void DivideTensorBroadcastTensorFp32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorFp32(
+                (float*)left.ToPointer(),
+                (float*)right.ToPointer(),
+                (float*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorFp64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorFp64(
+                (double*)left.ToPointer(),
+                (double*)right.ToPointer(),
+                (double*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorU8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorU8(
+                (byte*)left.ToPointer(),
+                (byte*)right.ToPointer(),
+                (byte*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorU16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorU16(
+                (ushort*)left.ToPointer(),
+                (ushort*)right.ToPointer(),
+                (ushort*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorU32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorU32(
+                (uint*)left.ToPointer(),
+                (uint*)right.ToPointer(),
+                (uint*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorU64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorU64(
+                (ulong*)left.ToPointer(),
+                (ulong*)right.ToPointer(),
+                (ulong*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorI8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorI8(
+                (sbyte*)left.ToPointer(),
+                (sbyte*)right.ToPointer(),
+                (sbyte*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorI16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorI16(
+                (short*)left.ToPointer(),
+                (short*)right.ToPointer(),
+                (short*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorI32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorI32(
+                (int*)left.ToPointer(),
+                (int*)right.ToPointer(),
+                (int*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideTensorBroadcastTensorI64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideTensorBroadcastTensorI64(
+                (long*)left.ToPointer(),
+                (long*)right.ToPointer(),
+                (long*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorFp32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorFp32(
+                (float*)left.ToPointer(),
+                (float*)right.ToPointer(),
+                (float*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorFp64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorFp64(
+                (double*)left.ToPointer(),
+                (double*)right.ToPointer(),
+                (double*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorU8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorU8(
+                (byte*)left.ToPointer(),
+                (byte*)right.ToPointer(),
+                (byte*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorU16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorU16(
+                (ushort*)left.ToPointer(),
+                (ushort*)right.ToPointer(),
+                (ushort*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorU32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorU32(
+                (uint*)left.ToPointer(),
+                (uint*)right.ToPointer(),
+                (uint*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorU64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorU64(
+                (ulong*)left.ToPointer(),
+                (ulong*)right.ToPointer(),
+                (ulong*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorI8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorI8(
+                (sbyte*)left.ToPointer(),
+                (sbyte*)right.ToPointer(),
+                (sbyte*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorI16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorI16(
+                (short*)left.ToPointer(),
+                (short*)right.ToPointer(),
+                (short*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorI32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorI32(
+                (int*)left.ToPointer(),
+                (int*)right.ToPointer(),
+                (int*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
+    public static unsafe void DivideBroadcastTensorTensorI64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result,
+        long m,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .DivideBroadcastTensorTensorI64(
+                (long*)left.ToPointer(),
+                (long*)right.ToPointer(),
+                (long*)result.ToPointer(),
+                m,
+                n)
+            .Guard();
+    }
+
     public static unsafe void SqrtFp32<TNumber>(
         IMemoryBlock<TNumber> left,
         IMemoryBlock<TNumber> result,
@@ -1683,6 +2223,174 @@ internal static class ArithmeticNativeApi
     {
         ArithmeticNativeMethods
             .SqrtTensorI64(
+                (long*)left.ToPointer(),
+                (long*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void NegateFp32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        ArithmeticNativeMethods
+            .NegateTensorFp32(
+                (float*)left.ToPointer(),
+                (float*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void NegateFp64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        ArithmeticNativeMethods
+            .NegateTensorFp64(
+                (double*)left.ToPointer(),
+                (double*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void NegateI8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .NegateTensorI8(
+                (sbyte*)left.ToPointer(),
+                (sbyte*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void NegateI16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .NegateTensorI16(
+                (short*)left.ToPointer(),
+                (short*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void NegateI32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .NegateTensorI32(
+                (int*)left.ToPointer(),
+                (int*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void NegateI64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .NegateTensorI64(
+                (long*)left.ToPointer(),
+                (long*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void AbsFp32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        ArithmeticNativeMethods
+            .AbsTensorFp32(
+                (float*)left.ToPointer(),
+                (float*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void AbsFp64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        ArithmeticNativeMethods
+            .AbsTensorFp64(
+                (double*)left.ToPointer(),
+                (double*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void AbsI8<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .AbsTensorI8(
+                (sbyte*)left.ToPointer(),
+                (sbyte*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void AbsI16<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .AbsTensorI16(
+                (short*)left.ToPointer(),
+                (short*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void AbsI32<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .AbsTensorI32(
+                (int*)left.ToPointer(),
+                (int*)result.ToPointer(),
+                n)
+            .Guard();
+    }
+
+    public static unsafe void AbsI64<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged
+    {
+        ArithmeticNativeMethods
+            .AbsTensorI64(
                 (long*)left.ToPointer(),
                 (long*)result.ToPointer(),
                 n)

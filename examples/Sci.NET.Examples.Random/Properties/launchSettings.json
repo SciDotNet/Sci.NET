@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Sci.NET.Examples.Random": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

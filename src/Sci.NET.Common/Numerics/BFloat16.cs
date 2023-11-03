@@ -22,11 +22,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
 {
     private const ushort SignMask = 0x8000;
     private const ushort BiasedExponentMask = 0x7F80;
-    private const int BiasedExponentShift = 7;
+    private const int BiasedExponentShift = 0x07;
     private const byte ShiftedBiasedExponentMask = BiasedExponentMask >> BiasedExponentShift;
     private const ushort TrailingSignificandMask = 0x007F;
     private const byte MaxBiasedExponent = 0xFF;
-    private const byte ExponentBias = 127;
+    private const byte ExponentBias = 0x07F;
     private const ushort PositiveZeroBits = 0x0000;
     private const ushort NegativeZeroBits = 0x8000;
     private const ushort OneBits = 0x3F80;
@@ -41,7 +41,7 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     private const ushort TauBits = 0x40C9;
     private const uint RoundingBase = 0x7FFF;
     private const uint SingleBiasedExponentMask = 0x7F80_0000;
-    private const int SingleSignShift = 31;
+    private const int SingleSignShift = 0x01F;
     private const uint SingleMostSignificantSigBit = 0x400000;
 
     private readonly ushort _value;
@@ -358,7 +358,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static bool TryParse(ReadOnlySpan<char> s, NumberStyles style, IFormatProvider? provider, out BFloat16 result)
     {
-        var success = float.TryParse(s, style, provider, out var resultFloat);
+        var success = float.TryParse(
+            s,
+            style,
+            provider,
+            out var resultFloat);
 
         if (success)
         {
@@ -373,7 +377,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static bool TryParse(string? s, NumberStyles style, IFormatProvider? provider, out BFloat16 result)
     {
-        var success = float.TryParse(s, style, provider, out var resultFloat);
+        var success = float.TryParse(
+            s,
+            style,
+            provider,
+            out var resultFloat);
 
         if (success)
         {
@@ -481,8 +489,10 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static bool IsRealNumber(BFloat16 value)
     {
+#pragma warning disable CS1718 // Comparison made to same variable
         // ReSharper disable once EqualExpressionComparison
         return value == value;
+#pragma warning restore CS1718 // Comparison made to same variable
     }
 
     /// <inheritdoc />
@@ -874,7 +884,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
-        return ((float)this).TryFormat(destination, out charsWritten, format, provider);
+        return ((float)this).TryFormat(
+            destination,
+            out charsWritten,
+            format,
+            provider);
     }
 
     /// <inheritdoc />
@@ -1056,7 +1070,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
 
         unsafe
         {
-            Buffer.MemoryCopy(&single, &result, sizeof(uint), sizeof(uint));
+            Buffer.MemoryCopy(
+                &single,
+                &result,
+                sizeof(uint),
+                sizeof(uint));
         }
 
         return result;
@@ -1068,7 +1086,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
 
         unsafe
         {
-            Buffer.MemoryCopy(&singleBits, &result, sizeof(uint), sizeof(uint));
+            Buffer.MemoryCopy(
+                &singleBits,
+                &result,
+                sizeof(uint),
+                sizeof(uint));
         }
 
         return result;

@@ -3,16 +3,13 @@
 
 using System.Numerics;
 using Sci.NET.Common.Numerics;
-using Sci.NET.CUDA.Tensors;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Arithmetic;
 
-public class AddKernelShould
+public class AddKernelShould : IntegrationTestBase
 {
-    public static IEnumerable<object[]> ComputeDevices => new[] { new object[] { new CpuComputeDevice() }, new object[] { new CudaComputeDevice() } };
-
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenScalarsAndScalar(IDevice device)

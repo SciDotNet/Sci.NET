@@ -7,6 +7,15 @@
 
 #include "api.h"
 
+typedef unsigned short bfloat16;
+
+SDN_DLL_EXPORT_API matrix_multiply_bf16(bfloat16 *left,
+                                        bfloat16 *right,
+                                        bfloat16 *result,
+                                        int32_t left_rows,
+                                        int32_t left_cols,
+                                        int32_t right_cols);
+
 SDN_DLL_EXPORT_API matrix_multiply_fp32(float *left,
                                         float *right,
                                         float *result,

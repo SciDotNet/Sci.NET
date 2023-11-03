@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Runtime.InteropServices;
+using Sci.NET.Common.Numerics;
 using Sci.NET.Common.Runtime;
 
 namespace Sci.NET.CUDA.Native;
@@ -81,6 +82,15 @@ internal static class LinearAlgebraNativeMethods
         long* left,
         long* right,
         long* result,
+        int leftRows,
+        int leftColumns,
+        int rightColumns);
+
+    [DllImport(NativeMethods.NativeLibrary, EntryPoint = "matrix_multiply_bf16", CallingConvention = CallingConvention.Cdecl)]
+    public static extern unsafe SdnApiStatusCode MatrixMultiplyBf16(
+        BFloat16* left,
+        BFloat16* right,
+        BFloat16* result,
         int leftRows,
         int leftColumns,
         int rightColumns);

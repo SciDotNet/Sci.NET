@@ -5,6 +5,13 @@
 #define BLOCK_SIZE_X 16
 #define BLOCK_SIZE_Y 16
 
+__global__ void add_tensor_tensor_bf16_kernel(nv_bfloat16 *a, nv_bfloat16 *b, nv_bfloat16 *c, int64_t n) {
+    int64_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) {
+        c[i] = a[i] + b[i];
+    }
+}
+
 __global__ void add_tensor_tensor_fp32_kernel(float *a, float *b, float *c, int64_t n) {
     int64_t i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n) {
@@ -1233,6 +1240,13 @@ __global__ void sqrt_tensor_i64_kernel(int64_t *a, int64_t *result, int64_t n) {
     if (i < n) {
         result[i] = static_cast<int64_t>(sqrtf(a[i]));
     }
+}
+
+bool add_tensor_tensor_bf16_invoke(nv_bfloat16 *a, nv_bfloat16 *b, nv_bfloat16 *c, int64_t n) {
+    dim3 block_size(BLOCK_SIZE);
+    dim3 grid_size((n + block_size.x - 1) / block_size.x);
+    add_tensor_tensor_bf16_kernel<<<grid_size, block_size>>>(a, b, c, n);
+    return cudaGetLastError() == cudaSuccess;
 }
 
 bool add_tensor_tensor_fp32_invoke(float *a, float *b, float *c, int64_t n) {

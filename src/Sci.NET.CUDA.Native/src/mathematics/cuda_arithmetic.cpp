@@ -3,6 +3,11 @@
 //
 
 #include "cuda_arithmetic.h"
+#include <cuda_bf16.h>
+
+sdnApiStatusCode add_tensor_tensor_bf16(nv_bfloat16 *a, nv_bfloat16 *b, nv_bfloat16 *result, int64_t n) {
+    return add_tensor_tensor_bf16_invoke(a, b, result, n) ? sdnSuccess : sdnInternalError;
+}
 
 sdnApiStatusCode add_tensor_tensor_fp32(float *a, float *b, float *result, int64_t n) {
     return add_tensor_tensor_fp32_invoke(a, b, result, n) ? sdnSuccess : sdnInternalError;

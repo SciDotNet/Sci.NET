@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Common.Numerics;
 using Sci.NET.CUDA.Native;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Tensors;
@@ -15,6 +16,9 @@ internal class CudaLinearAlgebraKernels : ILinearAlgebraKernels
     {
         switch (TNumber.Zero)
         {
+            case BFloat16:
+                LinearAlgebraNativeApi.MatrixMultiplyBf16(left, right, result);
+                break;
             case float:
                 LinearAlgebraNativeApi.MatrixMultiplyFp32(left, right, result);
                 break;

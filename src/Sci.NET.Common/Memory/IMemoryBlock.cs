@@ -92,4 +92,9 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// <param name="dstIdx">The destination index to start from.</param>
     /// <param name="count">The number of elements to copy.</param>
     public void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count);
+
+    /// <summary>
+    /// Frees the memory associated with the <see cref="IMemoryBlock{T}"/> irrespective of the reference count.
+    /// </summary>
+    public void UnsafeFreeMemory();
 }
