@@ -5,251 +5,422 @@ using System.Diagnostics;
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
-using Sci.NET.Mathematics.Tensors.Manipulation;
 
 namespace Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 
 internal class ArithmeticService : IArithmeticService
 {
     private readonly IDeviceGuardService _guardService;
-    private readonly IBroadcastService _broadcastService;
 
     public ArithmeticService(ITensorOperationServiceProvider provider)
     {
         _guardService = provider.GetDeviceGuardService();
-        _broadcastService = provider.GetBroadcastingService();
     }
 
-    public Scalar<TNumber> Add<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
+    public Scalar<TNumber> Add<TNumber>(
+        Scalar<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
         var result = new Scalar<TNumber>(backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Add<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Add<TNumber>(
+        Scalar<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Vector<TNumber>(right.Length, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Matrix<TNumber> Add<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(
+        Scalar<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Tensor<TNumber> Add<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(
+        Scalar<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Tensor<TNumber>(right.Shape, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Add<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
+    public Vector<TNumber> Add<TNumber>(
+        Vector<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Add<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Add<TNumber>(
+        Vector<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
         if (left.Length != right.Length)
         {
-            throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
+            throw new InvalidShapeException($"Cannot add vectors of different lengths: {left.Length} and {right.Length}.");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Length);
 
         return result;
     }
 
-    public Matrix<TNumber> Add<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(
+        Vector<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Length != right.Rows)
-        {
-            if (!left.CanBroadcastTo(right.Shape))
-            {
-                throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
-            }
-
-            using var leftBroadcast = left.Broadcast(right.Shape);
-            using var resultTensor = Add(leftBroadcast, right);
-            return resultTensor.ToMatrix();
-        }
-
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
+        if (left.Length != right.Columns)
+        {
+            throw new InvalidShapeException($"Cannot add vector of length {left.Length} to matrix with {right.Columns}.");
+        }
+
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
 
         return result;
     }
 
-    public Tensor<TNumber> Add<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            return Add(left.Broadcast(right.Shape).ToTensor(), right);
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Matrix<TNumber> Add<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(
+        Vector<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
-
         var backend = left.Backend;
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Add(left, right, result);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Add<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (left.Rows != right.Length)
+        if (left.Length != right.Shape[^1])
         {
-            if (!right.CanBroadcastTo(left.Shape))
-            {
-                throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
-            }
-
-            using var rightBroadcast = right.Broadcast(left.Shape).ToMatrix();
-
-            return left.Add(rightBroadcast);
+            throw new InvalidShapeException($"Cannot add vector of length {left.Length} to tensor with shape {right.Shape}.");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+        var result = new Tensor<TNumber>(right.Shape, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
 
         return result;
     }
 
-    public Matrix<TNumber> Add<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(
+        Matrix<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.AddTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Add<TNumber>(
+        Matrix<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Columns != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot add matrix with {left.Columns} columns to vector of length {right.Length}.");
+        }
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.AddTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Length,
+            right.Length);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Add<TNumber>(
+        Matrix<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
-            throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
+            throw new InvalidShapeException($"Cannot add matrices with different shapes: {left.Shape} and {right.Shape}.");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount);
 
         return result;
     }
 
-    public Tensor<TNumber> Add<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            return Add(left.Broadcast(right.Shape).ToTensor(), right);
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(
+        Matrix<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
+        {
+            throw new InvalidShapeException($"Cannot add matrix with shape {left.Shape} to tensor with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.AddBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Shape.ElementCount,
+            left.Shape.ElementCount);
 
         return result;
     }
 
-    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(
+        Tensor<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (_broadcastService.CanBroadcastTo(right.Shape, left.Shape))
-        {
-            return Add(left, left.Broadcast(right.Shape).ToTensor());
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(right.Shape, left.Shape))
-        {
-            return Add(left, left.Broadcast(right.Shape).ToTensor());
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (!left.Shape.Equals(right.Shape))
-        {
-            throw new InvalidShapeException($"Cannot add shapes {left.Shape} and {right.Shape}.");
-        }
-
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.Arithmetic.Add(left, right, result);
+        backend.Arithmetic.AddTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    // ReSharper disable once CyclomaticComplexity
-    public ITensor<TNumber> Add<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(
+        Tensor<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^1] != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot add tensor with shape {left.Shape} to vector of length {right.Length}.");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.AddTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Length,
+            right.Length);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Add<TNumber>(
+        Tensor<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^1] != right.Columns || left.Shape[^2] != right.Rows)
+        {
+            throw new InvalidShapeException($"Cannot add tensor with shape {left.Shape} to matrix with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.AddTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Add<TNumber>(
+        Tensor<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape == right.Shape)
+        {
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.AddTensorTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount);
+
+            return result;
+        }
+
+        if (left.Shape.ElementCount > right.Shape.ElementCount)
+        {
+            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
+
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.AddTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                right.Shape.ElementCount,
+                left.Shape.ElementCount / right.Shape.ElementCount);
+
+            return result;
+        }
+        else
+        {
+            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
+
+            var result = new Tensor<TNumber>(right.Shape, backend);
+
+            backend.Arithmetic.AddTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount,
+                right.Shape.ElementCount / left.Shape.ElementCount);
+
+            return result;
+        }
+    }
+
+    public ITensor<TNumber> Add<TNumber>(
+        ITensor<TNumber> left,
+        ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (left.IsScalar())
@@ -335,239 +506,427 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
-    public Scalar<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
+    public Scalar<TNumber> Subtract<TNumber>(
+        Scalar<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Scalar<TNumber>(backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Subtract<TNumber>(
+        Scalar<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Vector<TNumber>(right.Length, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(
+        Scalar<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(
+        Scalar<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Tensor<TNumber>(right.Shape, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Subtract<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
+    public Vector<TNumber> Subtract<TNumber>(
+        Vector<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Subtract<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Subtract<TNumber>(
+        Vector<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
         if (left.Length != right.Length)
         {
-            if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-            {
-                using var broadcast = left.Broadcast(right.Shape);
-                using var resultVector = Subtract(broadcast, right);
-                return resultVector.ToVector();
-            }
-
             throw new InvalidShapeException(
-                $"The length of the left vector {left.Shape} must match the length of the right vector {right.Shape}.");
+                $"The length of the left vector ({left.Length}) " +
+                $"does not match the length of the right vector ({right.Length}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Length);
 
         return result;
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(
+        Vector<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Length != right.Rows)
-        {
-            if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-            {
-                using var broadcast = left.Broadcast(right.Shape);
-                return broadcast.ToMatrix();
-            }
-
-            throw new InvalidShapeException(
-                $"The length of the left vector {left.Shape} must match the length of the right vector {right.Shape}.");
-        }
-
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
+        if (left.Length != right.Columns)
+        {
+            throw new InvalidShapeException(
+                $"The length of the left vector ({left.Length}) " +
+                $"does not match the number of columns of the right matrix ({right.Columns}).");
+        }
+
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
 
         return result;
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            return Subtract(left.Broadcast(right.Shape).ToTensor(), right);
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Matrix<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(
+        Vector<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
-
         var backend = left.Backend;
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        if (left.Length != right.Shape[^1])
+        {
+            throw new ArgumentException(
+                $"The length of the left vector ({left.Length}) " +
+                $"does not match the last dimension of the right tensor ({right.Shape[0]}).");
+        }
+
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.SubtractBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
 
         return result;
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(
+        Matrix<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Rows != right.Length)
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.SubtractTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Subtract<TNumber>(
+        Matrix<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Columns != right.Length)
         {
             throw new InvalidShapeException(
-                $"The length of the left vector {left.Shape} must match the length of the right vector {right.Shape}.");
+                $"The number of columns of the left matrix ({left.Columns}) " +
+                $"does not match the length of the right vector ({right.Length}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            1,
+            left.Shape.ElementCount / left.Columns);
 
         return result;
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(
+        Matrix<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
             throw new InvalidShapeException(
-                $"The shape of the left matrix {left.Shape} must match the shape of the right matrix {right.Shape}.");
+                $"The shape of the left matrix ({left.Rows}, {left.Columns}) " +
+                $"does not match the shape of the right matrix ({right.Rows}, {right.Columns}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount);
 
         return result;
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            return Subtract(left.Broadcast(right.Shape).ToTensor(), right);
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(
+        Matrix<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(right.Shape, left.Shape))
-        {
-            return Subtract(left, left.Broadcast(right.Shape).ToTensor());
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(right.Shape, left.Shape))
-        {
-            return Subtract(left, left.Broadcast(right.Shape).ToTensor());
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (!left.Shape.Equals(right.Shape))
+        if (left.Columns != right.Shape[^2] || left.Rows != right.Shape[^1])
         {
             throw new InvalidShapeException(
-                $"The shape of the left tensor {left.Shape} must match the shape of the right tensor {right.Shape}.");
+                $"The shape of the left matrix ({left.Rows}, {left.Columns}) " +
+                $"does not match the last dimensions of the shape of the right tensor ({right.Shape[^2]}, {right.Shape[^1]}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
+        var result = new Tensor<TNumber>(right.Shape, backend);
 
-        backend.Arithmetic.Subtract(left, right, result);
+        backend.Arithmetic.SubtractBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            right.Shape.ElementCount / left.Shape.ElementCount);
 
         return result;
     }
 
-    public ITensor<TNumber> Subtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(
+        Tensor<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.SubtractTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Subtract<TNumber>(
+        Tensor<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^1] != right.Length)
+        {
+            throw new InvalidShapeException(
+                $"The last dimension of the left tensor ({left.Shape[^1]}) " +
+                $"does not match the length of the right vector ({right.Length}).");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.SubtractTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Length,
+            left.Shape.ElementCount / right.Length);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Subtract<TNumber>(
+        Tensor<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+
+        if (left.Shape[^1] != right.Rows || left.Shape[^2] != right.Columns)
+        {
+            throw new InvalidShapeException(
+                $"The last two dimensions of the left tensor ({left.Shape[^2]}, {left.Shape[^1]}) " +
+                $"do not match the shape of the right matrix ({right.Rows}, {right.Columns}).");
+        }
+
+        var backend = left.Backend;
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.SubtractTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Columns,
+            left.Shape.ElementCount / right.Columns);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Subtract<TNumber>(
+        Tensor<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape == right.Shape)
+        {
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.SubtractTensorTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount);
+
+            return result;
+        }
+
+        if (left.Shape.ElementCount > right.Shape.ElementCount)
+        {
+            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
+
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.SubtractTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                right.Shape.ElementCount,
+                left.Shape.ElementCount / right.Shape.ElementCount);
+
+            return result;
+        }
+        else
+        {
+            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
+
+            var result = new Tensor<TNumber>(right.Shape, backend);
+
+            backend.Arithmetic.SubtractTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount,
+                right.Shape.ElementCount / left.Shape.ElementCount);
+
+            return result;
+        }
+    }
+
+    public ITensor<TNumber> Subtract<TNumber>(
+        ITensor<TNumber> left,
+        ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (left.IsScalar())
@@ -653,493 +1012,822 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
-    public Scalar<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
+    public Scalar<TNumber> Multiply<TNumber>(
+        Scalar<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Scalar<TNumber>(backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Multiply<TNumber>(
+        Scalar<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Vector<TNumber>(right.Length, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
-
+        backend.Arithmetic.MultiplyBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
         return result;
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(
+        Scalar<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(
+        Scalar<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Tensor<TNumber>(right.Shape, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Multiply<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
+    public Vector<TNumber> Multiply<TNumber>(
+        Vector<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Multiply<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Multiply<TNumber>(
+        Vector<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
         if (left.Length != right.Length)
         {
-            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
+            throw new InvalidShapeException(
+                $"The length of the left vector ({left.Shape}) " +
+                $"does not match the length of the right vector ({right.Shape}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Length);
 
         return result;
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(
+        Vector<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Length != right.Rows)
-        {
-            if (!left.CanBroadcastTo(right.Shape))
-            {
-                throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
-            }
-
-            using var leftBroadcast = left.Broadcast(right.Shape);
-
-            return leftBroadcast.Multiply(right).ToMatrix();
-        }
-
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
+        if (left.Length != right.Columns)
+        {
+            throw new InvalidShapeException(
+                $"The length of the left vector ({left.Shape}) " +
+                $"does not match the number of rows of the right matrix ({right.Shape}).");
+        }
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Length,
+            right.Rows);
 
         return result;
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            using var broadcast = left.Broadcast(right.Shape);
-            using var result = Multiply(broadcast, right);
-            return result.ToTensor();
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(
+        Vector<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        if (left.Length != right.Shape[^1])
+        {
+            throw new InvalidShapeException($"The length of the left vector ({left.Shape}) the last dimension of the right tensor ({right.Shape}).");
+        }
 
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.MultiplyBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
         return result;
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(
+        Matrix<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            using var broadcast = left.Broadcast(right.Shape);
-            using var result = Multiply(broadcast, right);
-            return result.ToMatrix();
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (left.Rows != right.Rows || left.Columns != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
-        }
-
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        backend.Arithmetic.MultiplyTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(left.Shape, right.Shape))
-        {
-            using var broadcast = left.Broadcast(right.Shape);
-            using var result = Multiply(broadcast, right);
-            return result.ToMatrix();
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(
+        Matrix<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.Arithmetic.Multiply(left, right, result);
+        if (left.Columns != right.Length)
+        {
+            throw new InvalidShapeException(
+                $"The number of columns of the left matrix ({left.Shape}) " +
+                $"does not match the length of the right vector ({right.Shape}).");
+        }
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.MultiplyTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Length,
+            right.Length);
 
         return result;
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(
+        Matrix<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (!right.CanBroadcastTo(left.Shape))
-        {
-            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
-        }
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
 
-        using var rightBroadcast = right.Broadcast(left.Shape);
-        using var result = Multiply(left, rightBroadcast);
-
-        return result.ToTensor();
-    }
-
-    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (!right.CanBroadcastTo(left.Shape))
-        {
-            throw new InvalidShapeException($"Cannot multiply shapes {left.Shape} and {right.Shape}.");
-        }
-
-        using var rightBroadcast = right.Broadcast(left.Shape);
-        using var result = Multiply(left, rightBroadcast);
-
-        return result.ToTensor();
-    }
-
-    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
         if (left.Shape != right.Shape)
         {
             throw new InvalidShapeException(
-                $"The shape of the left tensor {left.Shape} must match the shape of the right tensor {right.Shape}.");
+                $"The shape of the left matrix ({left.Shape}) " +
+                $"does not match the shape of the right matrix ({right.Shape}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var result = new Matrix<TNumber>(left.Rows, right.Columns, backend);
 
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.Multiply(left, right, result);
-
-        return result;
-    }
-
-    public Scalar<TNumber> Divide<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.Divide(left, right, result);
+        backend.Arithmetic.MultiplyTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount);
 
         return result;
     }
 
-    public Vector<TNumber> Divide<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(
+        Matrix<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Vector<TNumber>(right.Length, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
+        {
+            throw new InvalidShapeException(
+                $"The shape of the left matrix ({left.Shape}) " +
+                $"does not match the last and second to last dimensions of the right tensor ({right.Shape}).");
+        }
 
-        return result;
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.Divide(left, right, result);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Tensor<TNumber>(right.Shape, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        backend.Arithmetic.MultiplyBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Shape.ElementCount,
+            left.Shape.ElementCount);
 
         return result;
     }
 
-    public Vector<TNumber> Divide<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(
+        Tensor<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Vector<TNumber>(left.Length, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.MultiplyTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Vector<TNumber> Divide<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(
+        Tensor<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Length != right.Length)
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^1] != right.Length)
         {
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+            throw new InvalidShapeException(
+                $"The last dimension of the left tensor ({left.Shape}) " +
+                $"does not match the length of the right vector ({right.Shape}).");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var result = new Tensor<TNumber>(left.Shape, backend);
 
-        var backend = left.Backend;
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.Divide(left, right, result);
+        backend.Arithmetic.MultiplyTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Length,
+            right.Length);
 
         return result;
     }
 
-    public Matrix<TNumber> Divide<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(
+        Tensor<TNumber> left,
+        Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Length != right.Rows)
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
         {
-            if (!left.CanBroadcastTo(right.Shape))
+            throw new InvalidShapeException(
+                $"The last two dimension of the left tensor ({left.Shape}) " +
+                $"does not match the shape of the right matrix ({right.Shape}).");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.MultiplyTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Multiply<TNumber>(
+        Tensor<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape == right.Shape)
+        {
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.MultiplyTensorTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount);
+
+            return result;
+        }
+
+        if (left.Shape.ElementCount > right.Shape.ElementCount)
+        {
+            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
             {
-                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
             }
 
-            using var leftBroadcast = left.Broadcast(right.Shape);
-            using var resultTensor = Divide(leftBroadcast, right);
+            var result = new Tensor<TNumber>(left.Shape, backend);
 
-            return resultTensor.ToMatrix();
+            backend.Arithmetic.MultiplyTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                right.Shape.ElementCount,
+                left.Shape.ElementCount / right.Shape.ElementCount);
+
+            return result;
         }
+        else
+        {
+            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
 
+            var result = new Tensor<TNumber>(right.Shape, backend);
+
+            backend.Arithmetic.MultiplyTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount,
+                right.Shape.ElementCount / left.Shape.ElementCount);
+
+            return result;
+        }
+    }
+
+    public Scalar<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Arithmetic.DivideTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            1);
+
+        return result;
+    }
+
+    public Vector<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Vector<TNumber>(right.Length, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Tensor<TNumber> Divide<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (_broadcastService.CanBroadcastTo(right.Shape, left.Shape))
-        {
-            using var broadcast = left.Broadcast(left.Shape);
-            using var result = Divide(left, broadcast);
-            return result.ToTensor();
-        }
-
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
+    public Vector<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (!right.CanBroadcastTo(left.Shape))
-        {
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
-        }
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
 
-        using var broadcast = right.Broadcast(left.Shape);
-        using var result = Divide(left, broadcast);
+        var result = new Vector<TNumber>(left.Length, backend);
 
-        return result.ToMatrix();
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Length,
+            1);
+
+        return result;
     }
 
-    public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
+    public Vector<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Length != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot divide vectors with different lengths: {left.Shape} and {right.Shape}.");
+        }
+
+        var result = new Vector<TNumber>(left.Length, backend);
+
+        backend.Arithmetic.DivideTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Length);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Length != right.Columns)
+        {
+            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by matrix with shape {right.Shape}.");
+        }
+
+        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Length != right.Shape[^1])
+        {
+            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by tensor with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Columns != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by vector with length {right.Shape}.");
+        }
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Length,
+            left.Rows);
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+
+        var backend = left.Backend;
+
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
-            throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+            throw new InvalidShapeException($"Cannot divide matrices with different shapes: {left.Shape} and {right.Shape}.");
         }
 
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        backend.Arithmetic.DivideTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Rows * left.Columns);
 
         return result;
     }
 
-    public Tensor<TNumber> Divide<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (_broadcastService.CanBroadcastTo(right.Shape, left.Shape))
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+
+        var backend = left.Backend;
+
+        if (left.Rows != right.Shape[^1] || left.Columns != right.Shape[^1])
         {
-            using var broadcast = left.Broadcast(left.Shape);
-            using var result = Divide(left, broadcast);
-            return result.ToTensor();
+            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by tensor with shape {right.Shape}.");
         }
 
-        throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right}.");
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Columns,
+            right.Shape.ElementCount / left.Columns);
+
+        return result;
     }
 
-    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
+
         var result = new Tensor<TNumber>(left.Shape, backend);
 
-        backend.Arithmetic.Divide(left, right, result);
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount,
+            1);
 
         return result;
     }
 
-    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.Shape[0] != right.Length)
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^1] != right.Length)
         {
-            if (!right.CanBroadcastTo(left.Shape))
+            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by vector with length {right.Length}.");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            left.Shape.ElementCount / right.Length,
+            right.Length);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
+        {
+            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by matrix with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Handle,
+            right.Handle,
+            result.Handle,
+            right.Shape.ElementCount,
+            left.Shape.ElementCount / right.Shape.ElementCount);
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape == right.Shape)
+        {
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.DivideTensorTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount);
+
+            return result;
+        }
+
+        if (left.Shape.ElementCount > right.Shape.ElementCount)
+        {
+            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
             {
-                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
             }
 
-            using var broadcast = right.Broadcast(left.Shape);
-            using var resultTensor = Divide(left, broadcast);
+            var result = new Tensor<TNumber>(left.Shape, backend);
 
-            return resultTensor.ToTensor();
+            backend.Arithmetic.DivideTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                right.Shape.ElementCount,
+                left.Shape.ElementCount / right.Shape.ElementCount);
+
+            return result;
         }
-
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.Divide(left, right, result);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (left.Shape[0] != right.Rows)
+        else
         {
-            if (!right.CanBroadcastTo(left.Shape))
+            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
             {
-                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
             }
 
-            using var broadcast = right.Broadcast(left.Shape);
-            using var resultTensor = Divide(left, broadcast);
+            var result = new Tensor<TNumber>(right.Shape, backend);
 
-            return resultTensor.ToTensor();
+            backend.Arithmetic.DivideTensorBroadcastTensor(
+                left.Handle,
+                right.Handle,
+                result.Handle,
+                left.Shape.ElementCount,
+                right.Shape.ElementCount / left.Shape.ElementCount);
+
+            return result;
         }
-
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.Divide(left, right, result);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (left.Shape != right.Shape)
-        {
-            if (!right.CanBroadcastTo(left.Shape))
-            {
-                throw new InvalidShapeException($"Cannot divide shapes {left.Shape} and {right.Shape}.");
-            }
-
-            using var broadcast = right.Broadcast(left.Shape);
-            using var resultTensor = Divide(left, broadcast);
-
-            return resultTensor.ToTensor();
-        }
-
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.Divide(left, right, result);
-
-        return result;
     }
 
     public Scalar<TNumber> Negate<TNumber>(Scalar<TNumber> value)
@@ -1148,7 +1836,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Scalar<TNumber>(backend);
 
-        backend.Arithmetic.Negate(value, result);
+        backend.Arithmetic.Negate(
+            value.Handle,
+            result.Handle,
+            1);
 
         return result;
     }
@@ -1159,7 +1850,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Vector<TNumber>(value.Length, backend);
 
-        backend.Arithmetic.Negate(value, result);
+        backend.Arithmetic.Negate(
+            value.Handle,
+            result.Handle,
+            value.Length);
 
         return result;
     }
@@ -1170,7 +1864,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
 
-        backend.Arithmetic.Negate(value, result);
+        backend.Arithmetic.Negate(
+            value.Handle,
+            result.Handle,
+            value.Shape.ElementCount);
 
         return result;
     }
@@ -1181,7 +1878,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend);
 
-        backend.Arithmetic.Negate(value, result);
+        backend.Arithmetic.Negate(
+            value.Handle,
+            result.Handle,
+            value.Shape.ElementCount);
 
         return result;
     }
@@ -1192,7 +1892,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Scalar<TNumber>(backend);
 
-        backend.Arithmetic.Abs(value, result);
+        backend.Arithmetic.Abs(
+            value.Handle,
+            result.Handle,
+            1);
 
         return result;
     }
@@ -1203,7 +1906,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Vector<TNumber>(value.Length, backend);
 
-        backend.Arithmetic.Abs(value, result);
+        backend.Arithmetic.Abs(
+            value.Handle,
+            result.Handle,
+            value.Length);
 
         return result;
     }
@@ -1214,7 +1920,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
 
-        backend.Arithmetic.Abs(value, result);
+        backend.Arithmetic.Abs(
+            value.Handle,
+            result.Handle,
+            value.Shape.ElementCount);
 
         return result;
     }
@@ -1225,12 +1934,17 @@ internal class ArithmeticService : IArithmeticService
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend);
 
-        backend.Arithmetic.Abs(value, result);
+        backend.Arithmetic.Abs(
+            value.Handle,
+            result.Handle,
+            value.Shape.ElementCount);
 
         return result;
     }
 
-    public ITensor<TNumber> Multiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public ITensor<TNumber> Multiply<TNumber>(
+        ITensor<TNumber> left,
+        ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (left.IsScalar())
@@ -1316,7 +2030,9 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
-    public ITensor<TNumber> Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public ITensor<TNumber> Divide<TNumber>(
+        ITensor<TNumber> left,
+        ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (left.IsScalar())
@@ -1408,7 +2124,10 @@ internal class ArithmeticService : IArithmeticService
         var backend = tensor.Backend;
         var result = new Tensor<TNumber>(tensor.Shape, backend);
 
-        backend.Arithmetic.Sqrt(tensor, result);
+        backend.Arithmetic.Sqrt(
+            tensor.Handle,
+            result.Handle,
+            tensor.Shape.ElementCount);
 
         return result;
     }

@@ -16,25 +16,6 @@ namespace Sci.NET.Mathematics.Tensors;
 public static class LinqExtensions
 {
     /// <summary>
-    /// Performs a pointwise mapping operation on a <see cref="ITensor{TNumber}"/>.
-    /// </summary>
-    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> instance to map.</param>
-    /// <param name="predicate">The function to perform on each element.</param>
-    /// <typeparam name="TTensor">The concrete <see cref="ITensor{TNumber}"/> type.</typeparam>
-    /// <typeparam name="TNumber">The concrete <typeparamref name="TNumber"/> type.</typeparam>
-    /// <returns>The mapped <typeparamref name="TTensor"/>.</returns>
-    [DebuggerStepThrough]
-    public static TTensor Map<TTensor, TNumber>(this TTensor tensor, Func<TNumber, TNumber> predicate)
-        where TTensor : class, ITensor<TNumber>
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return TensorServiceProvider
-            .GetTensorOperationServiceProvider()
-            .GetLinqService()
-            .Map(tensor, predicate);
-    }
-
-    /// <summary>
     /// Clips the values of the <see cref="ITensor{TNumber}"/> to the specified range.
     /// </summary>
     /// <param name="tensor">The the <see cref="ITensor{TNumber}"/> to operate on.</param>

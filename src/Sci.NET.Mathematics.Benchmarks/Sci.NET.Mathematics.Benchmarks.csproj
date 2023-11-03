@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" />
+      <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Sci.NET.CUDA\Sci.NET.CUDA.csproj" />
+      <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+    </ItemGroup>
+
+</Project>

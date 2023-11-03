@@ -7,17 +7,6 @@ namespace Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 
 internal class LinqService : ILinqService
 {
-    public TTensor Map<TTensor, TNumber>(TTensor tensor, Func<TNumber, TNumber> func)
-        where TTensor : class, ITensor<TNumber>
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var result = Tensor.CloneEmpty<TTensor, TNumber>(tensor);
-
-        tensor.Backend.Linq.Map<TTensor, TNumber>(tensor, result, func);
-
-        return result;
-    }
-
     public ITensor<TNumber> Clip<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {

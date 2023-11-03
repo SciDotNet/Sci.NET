@@ -65,8 +65,14 @@ public class Sigmoid<TNumber> : ILayer<TNumber>
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        Input.To<TDevice>();
-        Output.To<TDevice>();
+        To(new TDevice());
+    }
+
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        Input.To(device);
+        Output.To(device);
     }
 
     /// <inheritdoc />

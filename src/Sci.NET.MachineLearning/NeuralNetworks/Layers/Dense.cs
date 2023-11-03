@@ -111,9 +111,15 @@ public class Dense<TNumber> : ILayer<TNumber>
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        Input.To<TDevice>();
-        Output.To<TDevice>();
-        Parameters.To<TDevice>();
+        To(new TDevice());
+    }
+
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        Input.To(device);
+        Output.To(device);
+        Parameters.To(device);
     }
 
     /// <inheritdoc />

@@ -22,6 +22,6 @@ public interface IRandomKernels
     /// <param name="seed">The random seed.</param>
     /// <typeparam name="TNumber">The type of number to be generated.</typeparam>
     /// <returns>A new <see cref="ITensor{TNumber}"/> filled with random data.</returns>
-    public ITensor<TNumber> Uniform<TNumber>(Shape shape, TNumber min, TNumber max, long? seed = null)
+    public ITensor<TNumber> Uniform<TNumber>(Shape shape, TNumber min, TNumber max, int? seed = null)
         where TNumber : unmanaged, INumber<TNumber>;
 }

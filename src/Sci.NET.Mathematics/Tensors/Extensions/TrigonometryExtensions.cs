@@ -28,7 +28,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Sin(scalar);
+            .Sin(scalar)
+            .ToScalar();
     }
 
     /// <summary>
@@ -44,7 +45,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Sin(vector);
+            .Sin(vector)
+            .ToVector();
     }
 
     /// <summary>
@@ -60,7 +62,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Sin(matrix);
+            .Sin(matrix)
+            .ToMatrix();
     }
 
     /// <summary>
@@ -71,6 +74,23 @@ public static class TrigonometryExtensions
     /// <returns>The sin of the <see cref="Tensor{TNumber}"/>.</returns>
     [DebuggerStepThrough]
     public static Tensor<TNumber> Sin<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Sin(tensor)
+            .ToTensor();
+    }
+
+    /// <summary>
+    /// Calculates the sin of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the sin of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The sin of the <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Sin<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         return TensorServiceProvider
@@ -92,7 +112,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Cos(scalar);
+            .Cos(scalar)
+            .ToScalar();
     }
 
     /// <summary>
@@ -108,7 +129,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Cos(vector);
+            .Cos(vector)
+            .ToVector();
     }
 
     /// <summary>
@@ -124,7 +146,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Cos(matrix);
+            .Cos(matrix)
+            .ToMatrix();
     }
 
     /// <summary>
@@ -140,7 +163,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Cos(tensor);
+            .Cos(tensor)
+            .ToTensor();
     }
 
     /// <summary>
@@ -156,7 +180,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Tan(scalar);
+            .Tan(scalar)
+            .ToScalar();
     }
 
     /// <summary>
@@ -172,7 +197,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Tan(vector);
+            .Tan(vector)
+            .ToVector();
     }
 
     /// <summary>
@@ -188,7 +214,8 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Tan(matrix);
+            .Tan(matrix)
+            .ToMatrix();
     }
 
     /// <summary>
@@ -204,6 +231,7 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Tan(tensor);
+            .Tan(tensor)
+            .ToTensor();
     }
 }

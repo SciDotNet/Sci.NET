@@ -556,7 +556,7 @@ public interface IArithmeticService
     /// <param name="right">The right operand.</param>
     /// <typeparam name="TNumber">The type of the operands and result.</typeparam>
     /// <returns>A new <see cref="Tensor{TNumber}"/> containing the product of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
-    public Matrix<TNumber> Multiply<TNumber>(
+    public Tensor<TNumber> Multiply<TNumber>(
         Matrix<TNumber> left,
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>;

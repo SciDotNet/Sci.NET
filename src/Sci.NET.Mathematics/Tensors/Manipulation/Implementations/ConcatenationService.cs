@@ -68,7 +68,9 @@ internal class ConcatenationService : IConcatenationService
         }
     }
 
+#pragma warning disable CA1859
     private ITensor<TNumber> TypeAgnosticConcatenate<TTensor, TNumber>(ICollection<TTensor> tensors)
+#pragma warning restore CA1859
         where TTensor : ITensor<TNumber>
         where TNumber : unmanaged, INumber<TNumber>
     {

@@ -22,12 +22,6 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     public bool IsDisposed { get; }
 
     /// <summary>
-    /// Gets or sets the value at the specified index.
-    /// </summary>
-    /// <param name="index">The index to query.</param>
-    public ref T this[long index] { get; }
-
-    /// <summary>
     /// Copies the contents of the <see cref="IMemoryBlock{T}"/> to a new <see cref="IMemoryBlock{T}"/>.
     /// </summary>
     /// <returns>A copy of the current <see cref="IMemoryBlock{T}"/> instance.</returns>
@@ -98,4 +92,9 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// <param name="dstIdx">The destination index to start from.</param>
     /// <param name="count">The number of elements to copy.</param>
     public void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count);
+
+    /// <summary>
+    /// Frees the memory associated with the <see cref="IMemoryBlock{T}"/> irrespective of the reference count.
+    /// </summary>
+    public void UnsafeFreeMemory();
 }

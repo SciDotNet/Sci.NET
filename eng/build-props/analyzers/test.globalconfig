@@ -45,3 +45,9 @@ dotnet_diagnostic.CA2000.severity = none
 
 # Do not use alias
 dotnet_diagnostic.RCS1056.severity = none
+
+# Disable use jagged arrays
+dotnet_diagnostic.CA1814.severity = none
+
+# Disable braces should not share line
+dotnet_diagnostic.SA1500.severity = none

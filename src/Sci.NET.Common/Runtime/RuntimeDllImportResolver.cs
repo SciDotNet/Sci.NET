@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -32,7 +31,7 @@ public static class RuntimeDllImportResolver
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            if (TryLoadWindowsLibrary(libraryName, assemblyDirectory, out var handle))
+            if (TryLoadWindowsLibrary(libraryName, assemblyDirectory, assembly, out var handle))
             {
                 return handle;
             }
@@ -42,7 +41,7 @@ public static class RuntimeDllImportResolver
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            if (TryLoadLinuxLibrary(libraryName, assemblyDirectory, out var handle))
+            if (TryLoadLinuxLibrary(libraryName, assemblyDirectory, assembly, out var handle))
             {
                 return handle;
             }
@@ -53,118 +52,18 @@ public static class RuntimeDllImportResolver
         throw new PlatformNotSupportedException("This platform is not supported.");
     }
 
-    private static bool TryLoadLinuxLibrary(string libraryName, string assemblyDirectory, out nint o)
+    private static bool TryLoadLinuxLibrary(string libraryName, string assemblyDirectory, Assembly assembly, out nint o)
     {
-        return TryResolve($@"{assemblyDirectory}\runtimes\linux-x64\{libraryName}.so", out o) ||
-               TryResolve($@"{assemblyDirectory}\{libraryName}.so", out o) ||
-               TryResolve($@"{assemblyDirectory}\{libraryName}.so.1", out o);
+        return NativeLibrary.TryLoad($@"{assemblyDirectory}\runtimes\linux-x64\{libraryName}.so", assembly, null, out o) ||
+               NativeLibrary.TryLoad($@"{assemblyDirectory}\{libraryName}.so", assembly, null, out o) ||
+               NativeLibrary.TryLoad($@"{assemblyDirectory}\{libraryName}.so.1", assembly, null, out o);
     }
 
-    private static bool TryLoadWindowsLibrary(string libraryName, string assemblyDirectory, out nint o)
+    private static bool TryLoadWindowsLibrary(string libraryName, string assemblyDirectory, Assembly assembly, out nint o)
     {
-        return TryResolve($@"{assemblyDirectory}\CUDA\win\x64\{libraryName}.dll", out o) ||
-               TryResolve($@"{assemblyDirectory}\CUDA\win-x64\{libraryName}.dll", out o) ||
-               TryResolve($@"{assemblyDirectory}\{libraryName}.dll", out o);
-    }
-
-    private static bool TryResolve(string libraryName, out nint handle)
-    {
-        handle = nint.Zero;
-        var unsupportedPlatform = true;
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            handle = WinApi.LoadLibrary(libraryName);
-            unsupportedPlatform = false;
-
-            if (handle != nint.Zero)
-            {
-                return true;
-            }
-        }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            handle = LinuxApi.Dlopen(libraryName, LinuxApi.RtldNow);
-            unsupportedPlatform = false;
-
-            if (handle != nint.Zero)
-            {
-                return true;
-            }
-        }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            handle = DarwinApi.Dlopen(libraryName, DarwinApi.RtldNow);
-            unsupportedPlatform = false;
-
-            if (handle != nint.Zero)
-            {
-                return true;
-            }
-        }
-
-        if (!unsupportedPlatform)
-        {
-            throw new InvalidOperationException(GetLastError());
-        }
-
-        throw new PlatformNotSupportedException("This platform is not supported.");
-    }
-
-    private static string GetLastError()
-    {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            var error = Marshal.GetLastWin32Error();
-            return new Win32Exception(error).Message;
-        }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            return Marshal.PtrToStringAnsi(LinuxApi.Dlerror()) ?? string.Empty;
-        }
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            return Marshal.PtrToStringAnsi(DarwinApi.Dlerror()) ?? string.Empty;
-        }
-
-        throw new PlatformNotSupportedException("This platform is not supported.");
-    }
-
-    private static class WinApi
-    {
-        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern nint LoadLibrary(string dllName);
-    }
-
-    private static class LinuxApi
-    {
-        public const int RtldNow = 2;
-
-        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        [DllImport("libdl.so", EntryPoint = "dlopen", CharSet = CharSet.Unicode)]
-        public static extern nint Dlopen(string fileName, int flags);
-
-        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        [DllImport("libdl.so", EntryPoint = "dlerror")]
-        public static extern nint Dlerror();
-    }
-
-    private static class DarwinApi
-    {
-        public const int RtldNow = 2;
-
-        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        [DllImport("libSystem.dylib", EntryPoint = "dlopen", CharSet = CharSet.Unicode)]
-        public static extern nint Dlopen(string fileName, int flags);
-
-        [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
-        [DllImport("libSystem.dylib", EntryPoint = "dlerror")]
-        public static extern nint Dlerror();
+        return NativeLibrary.TryLoad($@"{assemblyDirectory}\CUDA\win\x64\{libraryName}.dll", assembly, null, out o) ||
+               NativeLibrary.TryLoad($@"{assemblyDirectory}\CUDA\win-x64\{libraryName}.dll", assembly, null, out o) ||
+               NativeLibrary.TryLoad($@"{assemblyDirectory}\{libraryName}.dll", assembly, null, out o);
     }
 }
 #pragma warning restore CA1060

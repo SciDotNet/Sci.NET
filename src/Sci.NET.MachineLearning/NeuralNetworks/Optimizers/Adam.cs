@@ -119,28 +119,34 @@ public class Adam<TNumber> : IOptimizer<TNumber>, IDisposable
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        _epsilon.To<TDevice>();
-        _beta1.To<TDevice>();
-        _beta2.To<TDevice>();
-        LearningRate.To<TDevice>();
-        _t.To<TDevice>();
-        _one.To<TDevice>();
-        _zero.To<TDevice>();
-        _minusOne.To<TDevice>();
+        To(new TDevice());
+    }
+
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        _epsilon.To(device);
+        _beta1.To(device);
+        _beta2.To(device);
+        LearningRate.To(device);
+        _t.To(device);
+        _one.To(device);
+        _zero.To(device);
+        _minusOne.To(device);
 
         foreach (var namedParameter in Parameters.GetAll())
         {
-            namedParameter.To<TDevice>();
+            namedParameter.To(device);
         }
 
         foreach (var m in _m)
         {
-            m.To<TDevice>();
+            m.To(device);
         }
 
         foreach (var v in _v)
         {
-            v.To<TDevice>();
+            v.To(device);
         }
     }
 

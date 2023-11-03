@@ -1,13 +1,14 @@
 <Project>
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Deterministic>true</Deterministic>
         <EmitCompilerGeneratedFiles>True</EmitCompilerGeneratedFiles>
-        <CompilerGeneratedFilesOutputPath>$(SolutionDir)\obj\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+        <CompilerGeneratedFilesOutputPath>$(SolutionDir)\artifacts\obj\GeneratedFiles</CompilerGeneratedFilesOutputPath>
         <Nullable>enable</Nullable>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TestProject Condition="$(MSBuildProjectName.EndsWith('Tests'))">true</TestProject>
+        <TestProject Condition="$(MSBuildProjectName.EndsWith('Sci.NET.Tests.Framework'))">true</TestProject>
         <DirectoryBuildPropsPath>$(MSBuildThisFileDirectory)</DirectoryBuildPropsPath>
         <OutputPath>$(SolutionDir)\Artifacts\bin\$(Configuration)\</OutputPath>
         <Configurations>Debug;Release</Configurations>
@@ -16,6 +17,9 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <RootDirectory>$(MSBuildThisFileDirectory)\..\</RootDirectory>
         <PlatformTarget>x64</PlatformTarget>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DefineConstants>$(DefineConstants);TRACE;DEBUG;NET;NET8_0;NETCOREAPP</DefineConstants>
     </PropertyGroup>
     <Choose>
         <When Condition="'$(TestProject)' == 'true'">

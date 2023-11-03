@@ -11,6 +11,8 @@ using Sci.NET.Mathematics.Tensors.NeuralNetworks;
 using Sci.NET.Mathematics.Tensors.NeuralNetworks.Implementations;
 using Sci.NET.Mathematics.Tensors.Pointwise;
 using Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
+using Sci.NET.Mathematics.Tensors.Random;
+using Sci.NET.Mathematics.Tensors.Random.Implementations;
 using Sci.NET.Mathematics.Tensors.Serialization;
 using Sci.NET.Mathematics.Tensors.Serialization.Implementations;
 using Sci.NET.Mathematics.Tensors.Trigonometry;
@@ -36,6 +38,8 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly IConcatenationService _concatenationService;
     private readonly IActivationFunctionService _activationFunctionService;
     private readonly IBroadcastService _broadcastService;
+    private readonly IVectorOperationsService _vectorOperationsService;
+    private readonly IRandomService _randomService;
 
     public TensorOperationServiceProvider()
     {
@@ -55,6 +59,8 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _contractionService = new ContractionService(this);
         _convolutionService = new ConvolutionService(this);
         _concatenationService = new ConcatenationService(this);
+        _vectorOperationsService = new VectorOperationsService();
+        _randomService = new RandomService();
     }
 
     public IMatrixMultiplicationService GetMatrixMultiplicationService()
@@ -135,5 +141,15 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public IBroadcastService GetBroadcastingService()
     {
         return _broadcastService;
+    }
+
+    public IVectorOperationsService GetVectorOperationsService()
+    {
+        return _vectorOperationsService;
+    }
+
+    public IRandomService GetRandomService()
+    {
+        return _randomService;
     }
 }

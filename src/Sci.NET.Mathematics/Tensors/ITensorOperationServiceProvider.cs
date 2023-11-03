@@ -7,6 +7,7 @@ using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.Manipulation;
 using Sci.NET.Mathematics.Tensors.NeuralNetworks;
 using Sci.NET.Mathematics.Tensors.Pointwise;
+using Sci.NET.Mathematics.Tensors.Random;
 using Sci.NET.Mathematics.Tensors.Serialization;
 using Sci.NET.Mathematics.Tensors.Trigonometry;
 
@@ -18,7 +19,7 @@ namespace Sci.NET.Mathematics.Tensors;
 [PublicAPI]
 public interface ITensorOperationServiceProvider
 {
-    #pragma warning disable CA1024
+#pragma warning disable CA1024
     /// <summary>
     /// Gets an instance of the <see cref="IMatrixMultiplicationService"/>.
     /// </summary>
@@ -130,5 +131,20 @@ public interface ITensorOperationServiceProvider
     /// <returns>An instance of the <see cref="IBroadcastService"/>.</returns>
     [DebuggerStepThrough]
     public IBroadcastService GetBroadcastingService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IVectorOperationsService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IVectorOperationsService"/>.</returns>
+    [DebuggerStepThrough]
+    public IVectorOperationsService GetVectorOperationsService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IRandomService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IRandomService"/>.</returns>
+    [DebuggerStepThrough]
+    public IRandomService GetRandomService();
+
 #pragma warning restore CA1024
 }

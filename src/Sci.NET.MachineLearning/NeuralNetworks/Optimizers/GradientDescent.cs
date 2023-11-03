@@ -60,11 +60,17 @@ public class GradientDescent<TNumber> : IOptimizer<TNumber>
     public void To<TDevice>()
         where TDevice : IDevice, new()
     {
-        LearningRate.To<TDevice>();
+        To(new TDevice());
+    }
+
+    /// <inheritdoc />
+    public void To(IDevice device)
+    {
+        LearningRate.To(device);
 
         foreach (var namedParameter in Parameters.GetAll())
         {
-            namedParameter.To<TDevice>();
+            namedParameter.To(device);
         }
     }
 }
