@@ -1,39 +1,41 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Mathematics.Backends.Devices;
+
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Pointwise.Arithmetic;
 
 public interface IArithmeticOperatorTests
 {
-    public void ReturnExpectedResult_GivenScalarScalar();
+    public void ReturnExpectedResult_GivenScalarScalar(IDevice device);
 
-    public void ReturnExpectedResult_GivenScalarVector();
+    public void ReturnExpectedResult_GivenScalarVector(IDevice device);
 
-    public void ReturnExpectedResult_GivenScalarMatrix();
+    public void ReturnExpectedResult_GivenScalarMatrix(IDevice device);
 
-    public void ReturnExpectedResult_GivenScalarTensor();
+    public void ReturnExpectedResult_GivenScalarTensor(IDevice device);
 
-    public void ReturnExpectedResult_GivenVectorScalar();
+    public void ReturnExpectedResult_GivenVectorScalar(IDevice device);
 
-    public void ReturnExpectedResult_GivenVectorVector();
+    public void ReturnExpectedResult_GivenVectorVector(IDevice device);
 
-    public void ReturnExpectedResult_GivenVectorMatrix();
+    public void ReturnExpectedResult_GivenVectorMatrix(IDevice device);
 
-    public void ReturnExpectedResult_GivenVectorTensor();
+    public void ReturnExpectedResult_GivenVectorTensor(IDevice device);
 
-    public void ReturnExpectedResult_GivenMatrixScalar();
+    public void ReturnExpectedResult_GivenMatrixScalar(IDevice device);
 
-    public void ReturnExpectedResult_GivenMatrixVector();
+    public void ReturnExpectedResult_GivenMatrixVector(IDevice device);
 
-    public void ReturnExpectedResult_GivenMatrixMatrix();
+    public void ReturnExpectedResult_GivenMatrixMatrix(IDevice device);
 
-    public void ReturnExpectedResult_GivenMatrixTensor();
+    public void ReturnExpectedResult_GivenMatrixTensor(IDevice device);
 
-    public void ReturnExpectedResult_GivenTensorScalar();
+    public void ReturnExpectedResult_GivenTensorScalar(IDevice device);
 
-    public void ReturnExpectedResult_GivenTensorVector();
+    public void ReturnExpectedResult_GivenTensorVector(IDevice device);
 
-    public void ReturnExpectedResult_GivenTensorMatrix();
+    public void ReturnExpectedResult_GivenTensorMatrix(IDevice device);
 
-    public void ReturnExpectedResult_GivenTensorTensor();
+    public void ReturnExpectedResult_GivenTensorTensor(IDevice device);
 }

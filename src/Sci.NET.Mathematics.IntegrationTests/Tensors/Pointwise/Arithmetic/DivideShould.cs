@@ -1,19 +1,24 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Pointwise.Arithmetic;
 
-public class DivideShould : IArithmeticOperatorTests
+public class DivideShould : IntegrationTestBase, IArithmeticOperatorTests
 {
-    [Fact]
-    public void ReturnExpectedResult_GivenScalarScalar()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenScalarScalar(IDevice device)
     {
         // Arrange
         using var left = new Scalar<int>(2);
         using var right = new Scalar<int>(2);
         const int expectedValue = 1;
+
+        left.To(device);
+        right.To(device);
 
         // Act
         var actual = left.Divide(right);
@@ -24,8 +29,9 @@ public class DivideShould : IArithmeticOperatorTests
             .Be(expectedValue);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenScalarVector()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenScalarVector(IDevice device)
     {
         // Arrange
         using var left = new Scalar<int>(4);
@@ -33,6 +39,9 @@ public class DivideShould : IArithmeticOperatorTests
             .FromArray<int>(new int[] { 1, 2, 4, 8 })
             .ToVector();
         var expectedValues = new int[] { 4, 2, 1, 0 };
+
+        left.To(device);
+        right.To(device);
 
         // Act
         var actual = left.Divide(right);
@@ -44,8 +53,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenScalarMatrix()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenScalarMatrix(IDevice device)
     {
         // Arrange
         using var left = new Scalar<int>(4);
@@ -55,6 +65,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToMatrix();
         var expectedValues = new int[] { 4, 2, 1, 0 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -65,8 +78,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenScalarTensor()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenScalarTensor(IDevice device)
     {
         // Arrange
         using var left = new Scalar<int>(64);
@@ -75,6 +89,9 @@ public class DivideShould : IArithmeticOperatorTests
             .Reshape(2, 2, 2);
         var expectedValues = new int[] { 64, 32, 16, 8, 4, 2, 1, 0 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -85,8 +102,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenVectorScalar()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenVectorScalar(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -95,6 +113,9 @@ public class DivideShould : IArithmeticOperatorTests
         using var right = new Scalar<int>(4);
         var expectedValues = new int[] { 0, 1, 2, 4 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -105,8 +126,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenVectorVector()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenVectorVector(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -117,6 +139,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToVector();
         var expectedValues = new int[] { 2, 2, 2, 2 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -127,8 +152,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenVectorMatrix()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenVectorMatrix(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -140,6 +166,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToMatrix();
         var expectedValues = new int[] { 128, 64, 16, 4, 16, 4, 1, 0 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -150,8 +179,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenVectorTensor()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenVectorTensor(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -163,6 +193,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToTensor();
         var expectedValues = new int[] { 256, 64, 64, 16, 16, 4, 4, 1 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -173,8 +206,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenMatrixScalar()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenMatrixScalar(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -184,6 +218,9 @@ public class DivideShould : IArithmeticOperatorTests
         using var right = new Scalar<int>(4);
         var expectedValues = new int[] { 0, 1, 2, 4 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -194,8 +231,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenMatrixVector()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenMatrixVector(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -207,6 +245,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToVector();
         var expectedValues = new int[] { 1, 1, 4, 4 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -217,8 +258,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenMatrixMatrix()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenMatrixMatrix(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -230,6 +272,9 @@ public class DivideShould : IArithmeticOperatorTests
             .Reshape(2, 2)
             .ToMatrix();
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -240,8 +285,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(new int[] { 2, 2, 2, 2 });
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenMatrixTensor()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenMatrixTensor(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -254,6 +300,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToTensor();
         var expectedValues = new int[] { 256, 64, 16, 4, 16, 4, 1, 0 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -264,8 +313,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenTensorScalar()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenTensorScalar(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -275,6 +325,9 @@ public class DivideShould : IArithmeticOperatorTests
         using var right = new Scalar<int>(4);
         var expectedValues = new int[] { 0, 1, 2, 4 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -285,8 +338,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenTensorVector()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenTensorVector(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -298,6 +352,9 @@ public class DivideShould : IArithmeticOperatorTests
             .ToVector();
         var expectedValues = new int[] { 2, 2, 8, 8, 32, 32, 128, 128 };
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -308,8 +365,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(expectedValues);
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenTensorMatrix()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenTensorMatrix(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -321,6 +379,9 @@ public class DivideShould : IArithmeticOperatorTests
             .Reshape(2, 2)
             .ToMatrix();
 
+        left.To(device);
+        right.To(device);
+
         // Act
         var actual = left.Divide(right);
 
@@ -331,8 +392,9 @@ public class DivideShould : IArithmeticOperatorTests
             .BeEquivalentTo(new int[] { 2, 2, 8, 8, 32, 32, 128, 128 });
     }
 
-    [Fact]
-    public void ReturnExpectedResult_GivenTensorTensor()
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenTensorTensor(IDevice device)
     {
         // Arrange
         using var left = Tensor
@@ -343,6 +405,9 @@ public class DivideShould : IArithmeticOperatorTests
             .FromArray<int>(new int[] { 2, 4, 8, 16 })
             .Reshape(1, 2, 2)
             .ToTensor();
+
+        left.To(device);
+        right.To(device);
 
         // Act
         var actual = left.Divide(right);

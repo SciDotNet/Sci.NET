@@ -4,6 +4,10 @@
 using Sci.NET.CUDA.Tensors;
 using Sci.NET.Mathematics.Tensors;
 
+var left = Tensor.FromArray<int>(new int[] { 1, 2, 3, 4 }).ToVector();
+var right = Tensor.FromArray<int>(new int[,] { { 1, 2, 3, 4 }, { 5, 6, 7, 8 } }).ToMatrix();
+
+var result = left.Add(right);
 
 Parallel.For(
     0,
@@ -16,4 +20,3 @@ Parallel.For(
             1,
             4);
     });
-

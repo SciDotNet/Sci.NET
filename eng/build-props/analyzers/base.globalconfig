@@ -1336,3 +1336,14 @@ dotnet_diagnostic.SX1102.severity = warning
 
 # A static field name does not begin with an underscore.
 dotnet_diagnostic.SX1103.severity = warning
+
+# Simple collection initializer
+dotnet_diagnostic.IDE0301.severity = none
+dotnet_diagnostic.IDE0305.severity = none
+dotnet_diagnostic.IDE0300.severity = none
+
+# Use primary constructor
+dotnet_diagnostic.IDE0290.severity = none
+
+# Simple collection initializer
+dotnet_diagnostic.IDE0028.severity = none
