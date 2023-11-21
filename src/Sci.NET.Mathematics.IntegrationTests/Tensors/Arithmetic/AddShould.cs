@@ -233,17 +233,17 @@ public class AddShould : IntegrationTestBase, IArithmeticTests
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenVectorAndTensor(IDevice device)
     {
-        VectorTensorTest<float>(new float[] { 1, 2, 3, 4 }, new float[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new float[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<double>(new double[] { 1, 2, 3, 4 }, new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new double[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<byte>(new byte[] { 1, 2, 3, 4 }, new byte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<sbyte>(new sbyte[] { 1, 2, 3, 4 }, new sbyte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<ushort>(new ushort[] { 1, 2, 3, 4 }, new ushort[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<short>(new short[] { 1, 2, 3, 4 }, new short[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new short[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<uint>(new uint[] { 1, 2, 3, 4 }, new uint[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<int>(new int[] { 1, 2, 3, 4 }, new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new int[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<ulong>(new ulong[] { 1, 2, 3, 4 }, new ulong[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<long>(new long[] { 1, 2, 3, 4 }, new long[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
-        VectorTensorTest<BFloat16>(new BFloat16[] { 1, 2, 3, 4 }, new BFloat16[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new BFloat16[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        VectorTensorTest<float>(new float[] { 1, 2 }, new float[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new float[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<double>(new double[] { 1, 2 }, new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new double[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<byte>(new byte[] { 1, 2 }, new byte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<sbyte>(new sbyte[] { 1, 2 }, new sbyte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<ushort>(new ushort[] { 1, 2 }, new ushort[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<short>(new short[] { 1, 2 }, new short[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new short[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<uint>(new uint[] { 1, 2 }, new uint[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<int>(new int[] { 1, 2 }, new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new int[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<ulong>(new ulong[] { 1, 2 }, new ulong[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<long>(new long[] { 1, 2 }, new long[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
+        VectorTensorTest<BFloat16>(new BFloat16[] { 1, 2 }, new BFloat16[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new BFloat16[,,] { { { 2, 4 }, { 4, 6 } }, { { 6, 8 }, { 8, 10 } } });
     }
 
     private static Array VectorTensorTest<TNumber>(TNumber[] left, TNumber[,,] right, IDevice device)
@@ -355,17 +355,17 @@ public class AddShould : IntegrationTestBase, IArithmeticTests
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenMatrixAndTensor(IDevice device)
     {
-        MatrixTensorTest(new float[,] { { 1, 2 }, { 3, 4 } }, new float[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new float[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new double[,] { { 1, 2 }, { 3, 4 } }, new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new double[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new byte[,] { { 1, 2 }, { 3, 4 } }, new byte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new sbyte[,] { { 1, 2 }, { 3, 4 } }, new sbyte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new ushort[,] { { 1, 2 }, { 3, 4 } }, new ushort[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new short[,] { { 1, 2 }, { 3, 4 } }, new short[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new short[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new uint[,] { { 1, 2 }, { 3, 4 } }, new uint[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new int[,] { { 1, 2 }, { 3, 4 } }, new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new int[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new ulong[,] { { 1, 2 }, { 3, 4 } }, new ulong[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new long[,] { { 1, 2 }, { 3, 4 } }, new long[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
-        MatrixTensorTest(new BFloat16[,] { { 1, 2 }, { 3, 4 } }, new BFloat16[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new BFloat16[,,] { { { 2, 4 }, { 6, 8 } }, { { 8, 10 }, { 12, 14 } } });
+        MatrixTensorTest(new float[,] { { 1, 2 }, { 3, 4 } }, new float[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new float[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new double[,] { { 1, 2 }, { 3, 4 } }, new double[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new double[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new byte[,] { { 1, 2 }, { 3, 4 } }, new byte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new byte[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new sbyte[,] { { 1, 2 }, { 3, 4 } }, new sbyte[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new sbyte[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new ushort[,] { { 1, 2 }, { 3, 4 } }, new ushort[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ushort[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new short[,] { { 1, 2 }, { 3, 4 } }, new short[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new short[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new uint[,] { { 1, 2 }, { 3, 4 } }, new uint[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new uint[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new int[,] { { 1, 2 }, { 3, 4 } }, new int[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new int[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new ulong[,] { { 1, 2 }, { 3, 4 } }, new ulong[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new ulong[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new long[,] { { 1, 2 }, { 3, 4 } }, new long[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new long[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
+        MatrixTensorTest(new BFloat16[,] { { 1, 2 }, { 3, 4 } }, new BFloat16[,,] { { { 1, 2 }, { 3, 4 } }, { { 5, 6 }, { 7, 8 } } }, device).Should().BeEquivalentTo(new BFloat16[,,] { { { 2, 4 }, { 6, 8 } }, { { 6, 8 }, { 10, 12 } } });
     }
 
     private static Array MatrixTensorTest<TNumber>(TNumber[,] left, TNumber[,,] right, IDevice device)
