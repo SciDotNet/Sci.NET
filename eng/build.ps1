@@ -35,9 +35,8 @@
     $DotnetInstallScript = Join-Path $EngineeringRoot "dotnet-install.ps1"
     
     # Change when .NET 8 is in GA
-    # &$DotnetInstallScript -InstallDir $DotnetInstallDir -JSonFile $GlobalJsonFile -Architecture x64 -Quality preview -Verbose
-    &$DotnetInstallScript -Channel 8.0.1xx -InstallDir ./dotnet -Verbose
-
+    &$DotnetInstallScript -InstallDir $DotnetInstallDir -JSonFile $GlobalJsonFile -Architecture x64 -Verbose
+    
     # Build cmake
     cmake -S $RepoRoot -B $CMakeBuildDirectory
 
@@ -45,14 +44,14 @@
     $vswhere = Join-Path $EngineeringRoot "vswhere.exe"
     $buildProject = Resolve-Path (Join-Path $CMakeBuildDirectory "Sci.NET.Native.sln")
     $msbuildPath = (&$vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe)
-    &$msbuildPath "`"$buildProject`"" /property:Configuration=Release
+    &$msbuildPath "`"$buildProject`"" /property:Configuration=$Configuration
 
     # Build
     &$Dotnet restore $RepoRoot\Sci.NET.sln -s https://api.nuget.org/v3/index.json
-    &$Dotnet build $RepoRoot\Sci.NET.sln -c Release
+    &$Dotnet build $RepoRoot\Sci.NET.sln -c $Configuration
     
     # Test
-    &$Dotnet test $RepoRoot\Sci.NET.sln -c Test
+    &$Dotnet test $RepoRoot\Sci.NET.sln -c $Configuration
     
     # Build Nuget packages
-    &$Dotnet pack $RepoRoot\Sci.NET.sln -o $RepoRoot\artifacts\nuget -c Release -p:PackageVersion = $PackageVersion   
+    &$Dotnet pack $RepoRoot\Sci.NET.sln -o $RepoRoot\artifacts\nuget -c $Configuration -p:PackageVersion = $PackageVersion   

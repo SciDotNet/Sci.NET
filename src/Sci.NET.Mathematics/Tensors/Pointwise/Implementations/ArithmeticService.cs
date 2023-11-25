@@ -109,8 +109,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            left.Shape.ElementCount,
-            1);
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
 
         return result;
     }
@@ -599,8 +599,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            left.Shape.ElementCount,
-            1);
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
 
         return result;
     }
@@ -726,8 +726,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            1,
-            left.Shape.ElementCount / left.Columns);
+            right.Shape.ElementCount,
+            left.Shape.ElementCount / right.Shape.ElementCount);
 
         return result;
     }
@@ -779,8 +779,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            left.Shape.ElementCount,
-            right.Shape.ElementCount / left.Shape.ElementCount);
+            right.Shape.ElementCount / left.Shape.ElementCount,
+            left.Shape.ElementCount);
 
         return result;
     }
@@ -853,8 +853,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            right.Columns,
-            left.Shape.ElementCount / right.Columns);
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
 
         return result;
     }
@@ -1104,8 +1104,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            left.Shape.ElementCount,
-            1);
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
 
         return result;
     }
@@ -1759,8 +1759,8 @@ internal class ArithmeticService : IArithmeticService
             left.Handle,
             right.Handle,
             result.Handle,
-            right.Shape.ElementCount,
-            left.Shape.ElementCount / right.Shape.ElementCount);
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
 
         return result;
     }
