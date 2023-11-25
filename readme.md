@@ -55,9 +55,12 @@ Or to build a release version:
 ## Roadmap
 
 - More comprehensive mathematics API for `Sci.NET.Mathematics`.
-- OpenCL, Vulkan and SyCL backend support.
-- Comprehensive machine learning API.
-- ONNX support.
+- More comprehensive machine learning API for `Sci.NET.MachineLearning`.
+- Better hardware acceleration using intrinsics.
+- CUDA, Vulkan and MKL backend.
+- ONNX.
+- SafeTensors.
+- More comprehensive documentation.
 
 
 ## Third Party
@@ -65,3 +68,4 @@ Or to build a release version:
 What optimizations did you make in your code? E.g. refactors, performance improvements, accessibility
 
 - [NVIDIA CUDA](https://docs.nvidia.com/cuda/eula/index.html)
+- [NVIDIA CuDNN](https://docs.nvidia.com/deeplearning/cudnn/sla/index.html)
