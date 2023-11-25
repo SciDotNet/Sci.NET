@@ -25,6 +25,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 {
     private readonly unsafe T* _reference;
     private readonly ConcurrentList<Guid> _rentals;
+    private readonly bool _cannotDispose;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SystemMemoryBlock{T}"/> class.
@@ -56,6 +57,14 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         _reference = (T*)NativeMemory.AllocZeroed(totalSize);
         Length = count;
+    }
+
+    private unsafe SystemMemoryBlock(T* reference, long length)
+    {
+        _rentals = new ConcurrentList<Guid>();
+        _reference = reference;
+        _cannotDispose = true;
+        Length = length;
     }
 
     /// <summary>
@@ -651,31 +660,13 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// </summary>
     /// <typeparam name="TOut">The output type parameter.</typeparam>
     /// <returns>A copy of this instance as a <see cref="SystemMemoryBlock{TOut}"/>.</returns>
-    /// <exception cref="InvalidOperationException">Throws when the sizes of each type are incompatible.</exception>
     /// <exception cref="ObjectDisposedException">The memory block has been disposed.</exception>
     public unsafe SystemMemoryBlock<TOut> DangerousReinterpretCast<TOut>()
         where TOut : unmanaged
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        var totalBytes = Length * Unsafe.SizeOf<T>();
-        var tOutSize = Unsafe.SizeOf<TOut>();
-
-        if (totalBytes % tOutSize != 0)
-        {
-            throw new InvalidOperationException("Cannot reinterpret cast to a type with a different size");
-        }
-
-        var resultLength = totalBytes / tOutSize;
-        var result = new SystemMemoryBlock<TOut>(resultLength);
-
-        Buffer.MemoryCopy(
-            _reference,
-            result._reference,
-            totalBytes,
-            totalBytes);
-
-        return result;
+        return new SystemMemoryBlock<TOut>((TOut*)_reference, Length);
     }
 
     /// <summary>
@@ -728,6 +719,11 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
     private unsafe void ReleaseUnmanagedResources()
     {
+        if (_cannotDispose)
+        {
+            return;
+        }
+
         NativeMemory.Free(_reference);
     }
 }
