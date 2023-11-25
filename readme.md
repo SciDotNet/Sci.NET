@@ -1,5 +1,5 @@
 
-![Logo](https://github.com/SciDotNet/Sci.NET/blob/main/eng/build-props/images/icon-large.png)
+![Logo](https://github.com/SciDotNet/Sci.NET/blob/main/eng/build-props/images/icon-small.png)
 
 
 # Sci.NET
