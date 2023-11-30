@@ -246,4 +246,14 @@ public interface IArithmeticKernels
         IMemoryBlock<TNumber> result,
         long n)
         where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Takes the square root of the elements of a <see cref="IMemoryBlock{TNumber}"/>.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
+    /// <param name="left">The right <see cref="IMemoryBlock{TNumber}"/> to take the square root of.</param>
+    /// <param name="right">The left <see cref="IMemoryBlock{TNumber}"/> to take the square root of.</param>
+    /// <param name="result">The result of the square root.</param>
+    public void SomeKernel<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, string result)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

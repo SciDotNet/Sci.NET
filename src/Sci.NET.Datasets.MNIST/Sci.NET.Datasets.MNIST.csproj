@@ -7,9 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Sci.NET.Datasets\Sci.NET.Datasets.csproj" />
-        <ProjectReference Include="..\..\Sci.NET.Images\Sci.NET.Images.csproj" />
-        <ProjectReference Include="..\..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
         <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
         <ProjectReference Include="..\Sci.NET.Datasets\Sci.NET.Datasets.csproj" />
         <ProjectReference Include="..\Sci.NET.Images\Sci.NET.Images.csproj" />

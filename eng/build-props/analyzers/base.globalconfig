@@ -1347,3 +1347,6 @@ dotnet_diagnostic.IDE0290.severity = none
 
 # Simple collection initializer
 dotnet_diagnostic.IDE0028.severity = none
+
+# Prefer static readonly fields
+dotnet_diagnostic.CA1861.severity = none

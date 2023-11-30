@@ -24,7 +24,7 @@
     <Choose>
         <When Condition="'$(TestProject)' == 'true'">
             <PropertyGroup>
-                <TargetFramework>net7.0</TargetFramework>
+                <TargetFramework>net8.0</TargetFramework>
                 <IsTestProject>true</IsTestProject>
             </PropertyGroup>
         </When>

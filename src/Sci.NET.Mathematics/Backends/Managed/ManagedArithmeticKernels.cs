@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Sci.NET.Accelerators.Attributes;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
 
@@ -301,5 +302,21 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
                     ? TNumber.CreateChecked(MathF.Sqrt(float.CreateChecked(tensorBlock[i])))
                     : TNumber.CreateChecked(Math.Sqrt(double.CreateChecked(tensorBlock[i])));
             });
+    }
+
+    [Kernel]
+    public void SomeKernel<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, string result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftBlock = (SystemMemoryBlock<TNumber>)left;
+        var rightBlock = (SystemMemoryBlock<TNumber>)right;
+
+        var n = leftBlock.Length;
+
+        LazyParallelExecutor.For(
+            0,
+            n,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => leftBlock[i] += rightBlock[i]);
     }
 }

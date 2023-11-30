@@ -110,8 +110,18 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>True</Visible>
         </None>
+        <None Include="$(IncludedCudaPath)\bin\nvrtc64_120_0.dll">
+            <Link>CUDA\win-x64\nvrtc64_120_0.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>True</Visible>
+        </None>
         <None Include="$(IncludedCudaPath)\bin\nvrtc-builtins64_121.dll">
             <Link>CUDA\win-x64\nvrtc-builtins64_121.dll</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>True</Visible>
+        </None>
+        <None Include="$(IncludedCudaPath)\nvvm\bin\nvvm64_40_0.dll">
+            <Link>CUDA\win-x64\nvvm64_40_0.dll</Link>
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <Visible>True</Visible>
         </None>
