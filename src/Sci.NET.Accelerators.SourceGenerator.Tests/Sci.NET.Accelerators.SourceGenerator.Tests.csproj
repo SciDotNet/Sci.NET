@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+
+        <RootNamespace>Sci.NET.Accelerators.SourceGenerator.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.XUnit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Sci.NET.Accelerators.SourceGenerator\Sci.NET.Accelerators.SourceGenerator.csproj"/>
+    </ItemGroup>
+
+
+</Project>

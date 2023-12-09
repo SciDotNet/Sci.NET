@@ -1157,10 +1157,4 @@ internal class CudaArithmeticKernels : IArithmeticKernels
                 throw new PlatformNotSupportedException("Unsupported type for the CUDA backend.");
         }
     }
-
-    public void SomeKernel<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, string result)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        throw new PlatformNotSupportedException();
-    }
 }

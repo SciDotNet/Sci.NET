@@ -10,19 +10,21 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
-    <PackageVersion Include="Moq" Version="4.20.69" />
+    <PackageVersion Include="Moq" Version="4.20.70" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing.XUnit" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.1.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup Label="Analyzers">
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.8.14" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.6.4" />
-    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.6.4" />
-    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.6.4" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.7.0" />
+    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.7.0" />
+    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.7.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
   <ItemGroup Label="Common">
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.0.2" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.0" />
     <PackageVersion Include="GtkSharp" Version="3.24.24.38" />
     <PackageVersion Include="Autofac" Version="6.5.0" />
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
@@ -31,6 +33,7 @@
   <ItemGroup Label="Source Generators">
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.8.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
   </ItemGroup>
   <ItemGroup Label="Web">
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.2" />

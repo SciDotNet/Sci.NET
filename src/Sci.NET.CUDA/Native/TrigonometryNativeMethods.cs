@@ -10,7 +10,7 @@ internal static class TrigonometryNativeMethods
 {
     static TrigonometryNativeMethods()
     {
-        _ = RuntimeDllImportResolver.LoadLibrary(NativeMethods.NativeLibrary, typeof(NativeMethods).Assembly);
+        _ = RuntimeDllImportResolver.LoadLibrary(NativeMethods.NativeLibrary, typeof(NativeMethods).Assembly, "CUDA");
     }
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "sin_fp32", CallingConvention = CallingConvention.Cdecl)]

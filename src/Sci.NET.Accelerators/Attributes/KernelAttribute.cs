@@ -10,4 +10,17 @@ namespace Sci.NET.Accelerators.Attributes;
 [AttributeUsage(AttributeTargets.Method, Inherited = false)]
 public sealed class KernelAttribute : Attribute
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KernelAttribute"/> class.
+    /// </summary>
+    /// <param name="outputName">The name of the kernel.</param>
+    public KernelAttribute(string? outputName = null)
+    {
+        OutputName = outputName ?? string.Empty;
+    }
+
+    /// <summary>
+    /// Gets the name of the kernel.
+    /// </summary>
+    public string OutputName { get; }
 }

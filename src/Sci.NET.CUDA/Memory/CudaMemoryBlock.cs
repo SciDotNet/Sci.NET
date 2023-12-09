@@ -42,6 +42,9 @@ public class CudaMemoryBlock<T> : IMemoryBlock<T>
     public bool IsDisposed { get; private set; }
 
     /// <inheritdoc />
+    public ref T this[long index] => throw new PlatformNotSupportedException();
+
+    /// <inheritdoc />
     public void Rent(Guid id)
     {
     }

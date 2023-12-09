@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <IncludedCudaPath>$(CUDA_PATH_V12_1)</IncludedCudaPath>
+        <AssemblyName>Sci.NET.CUDA.Redist-windows-x86-64</AssemblyName>
+        <RootNamespace>Sci.NET.CUDA.Redist-windows-x86-64</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="$(SolutionDir)\eng\CUDA\windows-x86_64\bin\**\*">
+            <Link>CUDA\windows-x86-64\bin\%(RecursiveDir)/%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>true</Visible>
+        </Content>
+        <Content Include="$(SolutionDir)\eng\CUDA\windows-x86_64\nvvm\bin\**\*">
+            <Link>CUDA\windows-x86-64\bin\%(RecursiveDir)/%(FileName)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Visible>true</Visible>
+        </Content>
+    </ItemGroup>
+
+</Project>

@@ -11,7 +11,7 @@ internal static class LinearAlgebraNativeMethods
 {
     static LinearAlgebraNativeMethods()
     {
-        _ = RuntimeDllImportResolver.LoadLibrary(NativeMethods.NativeLibrary, typeof(NativeMethods).Assembly);
+        _ = RuntimeDllImportResolver.LoadLibrary(NativeMethods.NativeLibrary, typeof(NativeMethods).Assembly, "CUDA");
     }
 
     [DllImport(NativeMethods.NativeLibrary, EntryPoint = "matrix_multiply_u8", CallingConvention = CallingConvention.Cdecl)]

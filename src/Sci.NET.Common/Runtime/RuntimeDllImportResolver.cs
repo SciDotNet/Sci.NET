@@ -21,17 +21,24 @@ public static class RuntimeDllImportResolver
     /// </summary>
     /// <param name="libraryName">The library name to look for.</param>
     /// <param name="assembly">The assembly to load to.</param>
+    /// <param name="subdirectory">The subdirectory to look for the library in.</param>
     /// <returns>A pointer to the loaded library.</returns>
     /// <exception cref="InvalidOperationException">The library failed to load.</exception>
     /// <exception cref="PlatformNotSupportedException">The current platform is not supported.</exception>
-    public static nint LoadLibrary(string libraryName, Assembly assembly)
+    public static nint LoadLibrary(string libraryName, Assembly assembly, string? subdirectory = null)
     {
         var assemblyDirectory = Path.GetDirectoryName(assembly.Location) ??
                                 throw new InvalidOperationException("The assembly directory could not be resolved.");
 
+        var searchDirectory = subdirectory is null ? assemblyDirectory : Path.Combine(assemblyDirectory, subdirectory);
+
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            if (TryLoadWindowsLibrary(libraryName, assemblyDirectory, assembly, out var handle))
+            if (TryLoadWindowsLibrary(
+                    libraryName,
+                    searchDirectory,
+                    assembly,
+                    out var handle))
             {
                 return handle;
             }
@@ -41,7 +48,11 @@ public static class RuntimeDllImportResolver
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
         {
-            if (TryLoadLinuxLibrary(libraryName, assemblyDirectory, assembly, out var handle))
+            if (TryLoadLinuxLibrary(
+                    libraryName,
+                    searchDirectory,
+                    assembly,
+                    out var handle))
             {
                 return handle;
             }
@@ -54,16 +65,45 @@ public static class RuntimeDllImportResolver
 
     private static bool TryLoadLinuxLibrary(string libraryName, string assemblyDirectory, Assembly assembly, out nint o)
     {
-        return NativeLibrary.TryLoad($@"{assemblyDirectory}\runtimes\linux-x64\{libraryName}.so", assembly, null, out o) ||
-               NativeLibrary.TryLoad($@"{assemblyDirectory}\{libraryName}.so", assembly, null, out o) ||
-               NativeLibrary.TryLoad($@"{assemblyDirectory}\{libraryName}.so.1", assembly, null, out o);
+        return NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\runtimes\linux-x64\{libraryName}.so",
+                   assembly,
+                   null,
+                   out o) ||
+               NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\{libraryName}.so",
+                   assembly,
+                   null,
+                   out o) ||
+               NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\{libraryName}.so.1",
+                   assembly,
+                   null,
+                   out o);
     }
 
     private static bool TryLoadWindowsLibrary(string libraryName, string assemblyDirectory, Assembly assembly, out nint o)
     {
-        return NativeLibrary.TryLoad($@"{assemblyDirectory}\CUDA\win\x64\{libraryName}.dll", assembly, null, out o) ||
-               NativeLibrary.TryLoad($@"{assemblyDirectory}\CUDA\win-x64\{libraryName}.dll", assembly, null, out o) ||
-               NativeLibrary.TryLoad($@"{assemblyDirectory}\{libraryName}.dll", assembly, null, out o);
+        return NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\win\x64\{libraryName}.dll",
+                   assembly,
+                   null,
+                   out o) ||
+               NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\win-x64\{libraryName}.dll",
+                   assembly,
+                   null,
+                   out o) ||
+               NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\{libraryName}.dll",
+                   assembly,
+                   null,
+                   out o) ||
+               NativeLibrary.TryLoad(
+                   $@"{assemblyDirectory}\windows-x86-64\bin\{libraryName}.dll.1",
+                   assembly,
+                   null,
+                   out o);
     }
 }
 #pragma warning restore CA1060

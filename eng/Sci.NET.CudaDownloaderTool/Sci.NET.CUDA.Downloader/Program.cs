@@ -14,10 +14,10 @@ public class Program
 {
     private const string BaseUrl = "https://developer.download.nvidia.com/compute/cuda/redist/";
     private const string IndexName = "redistrib_";
-    private const string linuxX8664 = "linux-x86_64";
-    private const string linuxPpc64le = "linux-ppc64le";
-    private const string linuxSbsa = "linux-sbsa";
-    private const string windowsX8664 = "windows-x86_64";
+    private const string LinuxX8664 = "linux-x86_64";
+    private const string LinuxPpc64Le = "linux-ppc64le";
+    private const string LinuxSbsa = "linux-sbsa";
+    private const string WindowsX8664 = "windows-x86_64";
 
     public static async Task Main(string[] args)
     {
@@ -92,24 +92,24 @@ public class Program
             });
 
         // Move files to final destination
-        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", linuxX8664)))
+        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", LinuxX8664)))
         {
-            MoveFolder(archive, Path.Combine(outputRootPath, linuxX8664));
+            MoveFolder(archive, Path.Combine(outputRootPath, LinuxX8664));
         }
 
-        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", linuxPpc64le)))
+        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", LinuxPpc64Le)))
         {
-            MoveFolder(archive, Path.Combine(outputRootPath, linuxPpc64le));
+            MoveFolder(archive, Path.Combine(outputRootPath, LinuxPpc64Le));
         }
 
-        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", linuxSbsa)))
+        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", LinuxSbsa)))
         {
-            MoveFolder(archive, Path.Combine(outputRootPath, linuxSbsa));
+            MoveFolder(archive, Path.Combine(outputRootPath, LinuxSbsa));
         }
 
-        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", windowsX8664)))
+        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", WindowsX8664)))
         {
-            MoveFolder(archive, Path.Combine(outputRootPath, windowsX8664));
+            MoveFolder(archive, Path.Combine(outputRootPath, WindowsX8664));
         }
     }
 
@@ -289,7 +289,7 @@ public class Program
         {
             dict.Add(
                 new KeyValuePair<string, DownloadTask>(
-                    linuxX8664,
+                    LinuxX8664,
                     new DownloadTask
                     {
                         Url = component.LinuxX8664.RelativePath,
@@ -299,39 +299,11 @@ public class Program
                     }));
         }
 
-        if (component.LinuxPpc64le is not null)
-        {
-            dict.Add(
-                new KeyValuePair<string, DownloadTask>(
-                    linuxPpc64le,
-                    new DownloadTask
-                    {
-                        Url = component.LinuxPpc64le.RelativePath,
-                        Name = component.Name,
-                        OutputFileName = Path.GetFileName(component.LinuxPpc64le.RelativePath),
-                        Hash = component.LinuxPpc64le.Sha256
-                    }));
-        }
-
-        if (component.LinuxSbsa is not null)
-        {
-            dict.Add(
-                new KeyValuePair<string, DownloadTask>(
-                    linuxSbsa,
-                    new DownloadTask
-                    {
-                        Url = component.LinuxSbsa.RelativePath,
-                        Name = component.Name,
-                        OutputFileName = Path.GetFileName(component.LinuxSbsa.RelativePath),
-                        Hash = component.LinuxSbsa.Sha256
-                    }));
-        }
-
         if (component.WindowsX8664 is not null)
         {
             dict.Add(
                 new KeyValuePair<string, DownloadTask>(
-                    windowsX8664,
+                    WindowsX8664,
                     new DownloadTask
                     {
                         Url = component.WindowsX8664.RelativePath,

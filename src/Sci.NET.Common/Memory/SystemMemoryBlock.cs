@@ -689,14 +689,12 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         Unsafe.WriteUnaligned(_reference + index, vector);
     }
 
-    /// <param name="id"></param>
     /// <inheritdoc />
     public void Rent(Guid id)
     {
         _rentals.Add(id);
     }
 
-    /// <param name="id"></param>
     /// <inheritdoc />
     public void Release(Guid id)
     {

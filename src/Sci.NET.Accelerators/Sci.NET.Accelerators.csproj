@@ -7,4 +7,8 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
+    </ItemGroup>
+
 </Project>
