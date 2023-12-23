@@ -3,6 +3,7 @@
 
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.IR.Nodes;
+using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Transformers;
 
@@ -13,7 +14,7 @@ namespace Sci.NET.Accelerators.IR.Transformers;
 public class ComparisonTransformer : BaseTransformer
 {
     /// <inheritdoc />
-    public override void Transform(ControlFlowGraph graph, DisassembledMethod context)
+    public override void Transform(MsilControlFlowGraph graph, DisassembledMethod context)
     {
         for (var index = 0; index < graph.Nodes.Count; index++)
         {
@@ -24,7 +25,7 @@ public class ComparisonTransformer : BaseTransformer
                 var left = graph.Nodes[index - 2];
                 var right = graph.Nodes[index - 1];
                 var comparison = graph.Nodes[index];
-                var removedNodes = new List<IControlFlowGraphNode> { left, right, comparison };
+                var removedNodes = new List<IMsilControlFlowGraphNode> { left, right, comparison };
 
                 context.Instructions.RemoveAt(index);
                 context.Instructions.RemoveAt(index - 1);

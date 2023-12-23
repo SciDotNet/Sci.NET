@@ -14,7 +14,7 @@ public sealed class BasicBlock : IEquatable<BasicBlock>
     /// <summary>
     /// Gets the instructions of the basic block.
     /// </summary>
-    public IList<IControlFlowGraphNode> Instructions { get; init; } = new List<IControlFlowGraphNode>();
+    public IList<ControlFlowGraphNode> Instructions { get; init; } = new List<ControlFlowGraphNode>();
 
     /// <summary>
     /// Gets the next basic blocks which can be reached from this basic block.

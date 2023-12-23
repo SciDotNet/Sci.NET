@@ -4,6 +4,7 @@
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
 using Sci.NET.Accelerators.IR.Nodes;
+using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Transformers;
 
@@ -14,7 +15,7 @@ namespace Sci.NET.Accelerators.IR.Transformers;
 public class CallTransformer : BaseTransformer
 {
     /// <inheritdoc />
-    public override void Transform(ControlFlowGraph graph, DisassembledMethod context)
+    public override void Transform(MsilControlFlowGraph graph, DisassembledMethod context)
     {
         for (var i = 0; i < graph.Nodes.Count; i++)
         {
@@ -23,7 +24,7 @@ public class CallTransformer : BaseTransformer
             if (instruction.Instruction.OpCode is OpCodeTypes.Call or OpCodeTypes.Callvirt or OpCodeTypes.Calli)
             {
                 var (removed, replacement) = ExtractMethodCall(graph, instruction, i);
-                var removedNodesArray = removed as IControlFlowGraphNode[] ?? removed.ToArray();
+                var removedNodesArray = removed as IMsilControlFlowGraphNode[] ?? removed.ToArray();
 
                 Reconnect(graph, removedNodesArray, replacement);
 
@@ -32,7 +33,7 @@ public class CallTransformer : BaseTransformer
         }
     }
 
-    private static (IEnumerable<IControlFlowGraphNode> Removed, IControlFlowGraphNode Replacement) ExtractMethodCall(ControlFlowGraph graph, IControlFlowGraphNode instruction, int i)
+    private static (IEnumerable<IMsilControlFlowGraphNode> Removed, IMsilControlFlowGraphNode Replacement) ExtractMethodCall(MsilControlFlowGraph graph, IMsilControlFlowGraphNode instruction, int i)
     {
         var target = instruction.Instruction.Operand is MethodOperand operand ? operand : throw new InvalidOperationException("The operand is not a method operand.");
         var popCount = target.MethodBase?.GetParameters().Length ?? throw new InvalidOperationException("The method operand does not have a method base.");
@@ -48,7 +49,7 @@ public class CallTransformer : BaseTransformer
             }
         }
 
-        var removedNodes = new List<IControlFlowGraphNode>();
+        var removedNodes = new List<IMsilControlFlowGraphNode>();
 
         var callNode = new MethodCallNode(
             target.MethodBase,
@@ -67,7 +68,7 @@ public class CallTransformer : BaseTransformer
         return (removedNodes, callNode);
     }
 
-    private static bool IsLoadingArgument(IControlFlowGraphNode previousInstruction)
+    private static bool IsLoadingArgument(IMsilControlFlowGraphNode previousInstruction)
     {
         return previousInstruction.Instruction.PushBehaviour
             is PushBehaviour.Push1

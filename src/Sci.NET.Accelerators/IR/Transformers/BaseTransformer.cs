@@ -2,8 +2,9 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.IR.Rewriter;
 
-namespace Sci.NET.Accelerators.IR;
+namespace Sci.NET.Accelerators.IR.Transformers;
 
 /// <summary>
 /// Represents a transformer.
@@ -12,10 +13,10 @@ namespace Sci.NET.Accelerators.IR;
 public abstract class BaseTransformer : ITransformer
 {
     /// <inheritdoc />
-    public abstract void Transform(ControlFlowGraph graph, DisassembledMethod context);
+    public abstract void Transform(MsilControlFlowGraph graph, DisassembledMethod context);
 
     /// <inheritdoc />
-    public virtual void Reconnect(ControlFlowGraph graph, IList<IControlFlowGraphNode> removed, IControlFlowGraphNode replacement)
+    public virtual void Reconnect(MsilControlFlowGraph graph, IList<IMsilControlFlowGraphNode> removed, IMsilControlFlowGraphNode replacement)
     {
         for (var index = 0; index < graph.Nodes.Count; index++)
         {

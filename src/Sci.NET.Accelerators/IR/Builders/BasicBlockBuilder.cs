@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Accelerators.IR.Rewriter;
+
 namespace Sci.NET.Accelerators.IR.Builders;
 
 /// <summary>
@@ -13,12 +15,13 @@ public static class BasicBlockBuilder
     /// Creates basic blocks from the instructions.
     /// </summary>
     /// <param name="graph">The control flow graph.</param>
+    /// <param name="ssaInstructions">The SSA instructions.</param>
     /// <returns>The basic blocks.</returns>
-    public static IReadOnlyList<BasicBlock> CreateBasicBlocks(ControlFlowGraph graph)
+    public static IReadOnlyList<BasicBlock> CreateBasicBlocks(MsilControlFlowGraph graph, ICollection<SsaInstruction> ssaInstructions)
     {
         var basicBlocks = new List<BasicBlock>();
 
-        ConstructBasicBlocks(graph, basicBlocks);
+        ConstructBasicBlocks(graph, basicBlocks, ssaInstructions.ToList());
         ConnectBasicBlocks(basicBlocks);
         DetectLoops(basicBlocks);
 
@@ -36,9 +39,9 @@ public static class BasicBlockBuilder
         }
     }
 
-    private static void ConstructBasicBlocks(ControlFlowGraph graph, List<BasicBlock> basicBlocks)
+    private static void ConstructBasicBlocks(MsilControlFlowGraph graph, List<BasicBlock> basicBlocks, IList<SsaInstruction> ssaInstructions)
     {
-        var currentNodes = new List<IControlFlowGraphNode>();
+        var currentNodes = new List<ControlFlowGraphNode>();
 
         foreach (var node in graph.Nodes)
         {
@@ -46,21 +49,23 @@ public static class BasicBlockBuilder
             {
                 var basicBlock = new BasicBlock { StartOffset = currentNodes[0].Instruction.Offset, EndOffset = currentNodes[^1].Instruction.Offset, Instructions = currentNodes };
                 basicBlocks.Add(basicBlock);
-                currentNodes = new List<IControlFlowGraphNode>();
-                currentNodes.Add(node);
+                currentNodes = new List<ControlFlowGraphNode>
+                {
+                    new () { Instruction = ssaInstructions[node.Instruction.Index], IsLeader = node.IsLeader, IsTerminator = node.IsTerminator, NextInstructions = node.NextInstructions.Select(x => ssaInstructions[x.Index]).ToList() }
+                };
                 continue;
             }
 
             if (node.IsTerminator && currentNodes.Count != 0)
             {
-                currentNodes.Add(node);
+                currentNodes.Add(new ControlFlowGraphNode { Instruction = ssaInstructions[node.Instruction.Index], IsLeader = node.IsLeader, IsTerminator = node.IsTerminator, NextInstructions = node.NextInstructions.Select(x => ssaInstructions[x.Index]).ToList() });
                 var basicBlock = new BasicBlock { StartOffset = currentNodes[0].Instruction.Offset, EndOffset = currentNodes[^1].Instruction.Offset, Instructions = currentNodes };
                 basicBlocks.Add(basicBlock);
-                currentNodes = new List<IControlFlowGraphNode>();
+                currentNodes = new List<ControlFlowGraphNode>();
                 continue;
             }
 
-            currentNodes.Add(node);
+            currentNodes.Add(new ControlFlowGraphNode { Instruction = ssaInstructions[node.Instruction.Index], IsLeader = node.IsLeader, IsTerminator = node.IsTerminator, NextInstructions = node.NextInstructions.Select(x => ssaInstructions[x.Index]).ToList() });
         }
 
         if (currentNodes.Count != 0)

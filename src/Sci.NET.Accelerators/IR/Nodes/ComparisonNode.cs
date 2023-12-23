@@ -4,6 +4,7 @@
 using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Nodes;
 
@@ -11,7 +12,7 @@ namespace Sci.NET.Accelerators.IR.Nodes;
 /// Represents a comparison node.
 /// </summary>
 [PublicAPI]
-public class ComparisonNode : IControlFlowGraphNode
+public class ComparisonNode : IMsilControlFlowGraphNode
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ComparisonNode"/> class.
@@ -21,10 +22,10 @@ public class ComparisonNode : IControlFlowGraphNode
     /// <param name="comparison">The comparison.</param>
     /// <param name="replacingNodes">The nodes to replace.</param>
     public ComparisonNode(
-        IControlFlowGraphNode leftOperand,
-        IControlFlowGraphNode rightOperand,
-        IControlFlowGraphNode comparison,
-        IEnumerable<IControlFlowGraphNode> replacingNodes)
+        IMsilControlFlowGraphNode leftOperand,
+        IMsilControlFlowGraphNode rightOperand,
+        IMsilControlFlowGraphNode comparison,
+        IEnumerable<IMsilControlFlowGraphNode> replacingNodes)
     {
         var controlFlowGraphNodes = replacingNodes.ToList();
 
@@ -53,17 +54,17 @@ public class ComparisonNode : IControlFlowGraphNode
     /// <summary>
     /// Gets the right operand.
     /// </summary>
-    public IControlFlowGraphNode LeftOperand { get; }
+    public IMsilControlFlowGraphNode LeftOperand { get; }
 
     /// <summary>
     /// Gets the left operand.
     /// </summary>
-    public IControlFlowGraphNode RightOperand { get; }
+    public IMsilControlFlowGraphNode RightOperand { get; }
 
     /// <summary>
     /// Gets the comparison.
     /// </summary>
-    public IControlFlowGraphNode Comparison { get; }
+    public IMsilControlFlowGraphNode Comparison { get; }
 
     /// <inheritdoc />
     public Instruction<IOperand> Instruction { get; }

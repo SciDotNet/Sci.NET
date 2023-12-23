@@ -3,13 +3,13 @@
 
 using Sci.NET.Accelerators.Disassembly;
 
-namespace Sci.NET.Accelerators.IR;
+namespace Sci.NET.Accelerators.IR.Rewriter;
 
 /// <summary>
 /// Represents a control flow graph node.
 /// </summary>
 [PublicAPI]
-public interface IControlFlowGraphNode
+public interface IMsilControlFlowGraphNode
 {
     /// <summary>
     /// Gets the instruction.

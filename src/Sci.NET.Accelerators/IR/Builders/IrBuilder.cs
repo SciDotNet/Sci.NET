@@ -3,7 +3,6 @@
 
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.IR.Rewriter;
-using Sci.NET.Accelerators.IR.Transformers;
 
 namespace Sci.NET.Accelerators.IR.Builders;
 
@@ -13,8 +12,6 @@ namespace Sci.NET.Accelerators.IR.Builders;
 [PublicAPI]
 public static class IrBuilder
 {
-    private static readonly IReadOnlyCollection<ITransformer> InstructionTransformers = new List<ITransformer> { new CallTransformer(), new ComparisonTransformer() };
-
     /// <summary>
     /// Builds the IR from the disassembled method.
     /// </summary>
@@ -22,17 +19,12 @@ public static class IrBuilder
     /// <returns>The IR.</returns>
     public static IReadOnlyList<BasicBlock> Build(DisassembledMethod method)
     {
-        var cfg = ControlFlowGraph.Create(method.Instructions);
+        var cfg = MsilControlFlowGraph.Create(method.Instructions);
         var executor = new SymbolicExecutor(cfg, method);
         var ssaMethod = executor.Execute();
 
         _ = ssaMethod.ToString();
 
-        foreach (var transformer in InstructionTransformers)
-        {
-            transformer.Transform(cfg, method);
-        }
-
-        return BasicBlockBuilder.CreateBasicBlocks(cfg);
+        return BasicBlockBuilder.CreateBasicBlocks(cfg, ssaMethod.Instructions);
     }
 }

@@ -19,7 +19,7 @@ public class SymbolicExecutor
     private static readonly Type[] TypePrecedenceArithmetic = [typeof(double), typeof(float), typeof(ulong), typeof(long), typeof(uint), typeof(int), typeof(ushort), typeof(short), typeof(byte), typeof(sbyte)];
 #pragma warning restore SA1009, SA1010
 
-    private readonly ControlFlowGraph _cfg;
+    private readonly MsilControlFlowGraph _cfg;
     private readonly DisassembledMethod _disassembledMethod;
     private readonly LocalVariableSsaVariable[] _localVariableSsaVariables;
     private readonly ArgumentSsaVariable[] _argumentSsaVariables;
@@ -31,7 +31,7 @@ public class SymbolicExecutor
     /// </summary>
     /// <param name="cfg">The control flow graph.</param>
     /// <param name="disassembledMethod">The disassembled method.</param>
-    public SymbolicExecutor(ControlFlowGraph cfg, DisassembledMethod disassembledMethod)
+    public SymbolicExecutor(MsilControlFlowGraph cfg, DisassembledMethod disassembledMethod)
     {
         _cfg = cfg;
         _disassembledMethod = disassembledMethod;
@@ -183,7 +183,7 @@ public class SymbolicExecutor
         return popCount;
     }
 
-    private List<ISsaVariable> ExtractOperands(IControlFlowGraphNode node)
+    private List<ISsaVariable> ExtractOperands(IMsilControlFlowGraphNode node)
     {
         var operands = new List<ISsaVariable>();
 #pragma warning disable IDE0010
@@ -213,7 +213,7 @@ public class SymbolicExecutor
         return operands;
     }
 
-    private int GetPopCount(IControlFlowGraphNode node)
+    private int GetPopCount(IMsilControlFlowGraphNode node)
     {
         return node.Instruction.PopBehaviour switch
         {
@@ -230,7 +230,7 @@ public class SymbolicExecutor
         };
     }
 
-    private ISsaVariable GetResult(IControlFlowGraphNode node, List<ISsaVariable> operands)
+    private ISsaVariable GetResult(IMsilControlFlowGraphNode node, List<ISsaVariable> operands)
     {
 #pragma warning disable IDE0072
         return node.Instruction.OpCode switch

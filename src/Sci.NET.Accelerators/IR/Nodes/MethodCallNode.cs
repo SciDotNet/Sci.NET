@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Nodes;
 
@@ -12,14 +13,14 @@ namespace Sci.NET.Accelerators.IR.Nodes;
 /// Represents a method call node.
 /// </summary>
 [PublicAPI]
-public class MethodCallNode : IControlFlowGraphNode
+public class MethodCallNode : IMsilControlFlowGraphNode
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MethodCallNode"/> class.
     /// </summary>
     /// <param name="method">The method being called.</param>
     /// <param name="replacingNodes">The nodes to replace.</param>
-    public MethodCallNode(MethodBase method, IEnumerable<IControlFlowGraphNode> replacingNodes)
+    public MethodCallNode(MethodBase method, IEnumerable<IMsilControlFlowGraphNode> replacingNodes)
     {
         var controlFlowGraphNodes = replacingNodes.ToList();
 

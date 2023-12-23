@@ -5,15 +5,15 @@ using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
 
-namespace Sci.NET.Accelerators.IR;
+namespace Sci.NET.Accelerators.IR.Rewriter;
 
 /// <summary>
 /// Represents a control flow graph.
 /// </summary>
 [PublicAPI]
-public sealed class ControlFlowGraph
+public sealed class MsilControlFlowGraph
 {
-    private ControlFlowGraph(List<IControlFlowGraphNode> nodes, List<Instruction<IOperand>> leaders)
+    private MsilControlFlowGraph(List<IMsilControlFlowGraphNode> nodes, List<Instruction<IOperand>> leaders)
     {
         Nodes = nodes;
         Leaders = leaders;
@@ -27,16 +27,16 @@ public sealed class ControlFlowGraph
     /// <summary>
     /// Gets the nodes of the control flow graph.
     /// </summary>
-    public IList<IControlFlowGraphNode> Nodes { get; }
+    public IList<IMsilControlFlowGraphNode> Nodes { get; }
 
     /// <summary>
     /// Creates a control flow graph from the instructions.
     /// </summary>
     /// <param name="instructions">The instructions.</param>
     /// <returns>The control flow graph.</returns>
-    public static ControlFlowGraph Create(IList<Instruction<IOperand>> instructions)
+    public static MsilControlFlowGraph Create(IList<Instruction<IOperand>> instructions)
     {
-        var nodes = new List<ControlFlowGraphNode>();
+        var nodes = new List<MsilControlFlowGraphNode>();
         var instructionsList = instructions.ToList();
         var leaders = new List<Instruction<IOperand>> { instructionsList[0] };
         var terminators = instructionsList.Where(x => x.FlowControl is FlowControl.Branch or FlowControl.Cond_Branch).ToList();
@@ -86,7 +86,7 @@ public sealed class ControlFlowGraph
                     break;
             }
 
-            nodes.Add(new ControlFlowGraphNode(instruction, nextInstructions));
+            nodes.Add(new MsilControlFlowGraphNode(instruction, nextInstructions));
         }
 
         foreach (var leader in leaders)
@@ -99,6 +99,6 @@ public sealed class ControlFlowGraph
             nodes.First(x => x.Instruction.Offset == terminator.Offset).IsTerminator = true;
         }
 
-        return new ControlFlowGraph([..nodes], leaders);
+        return new MsilControlFlowGraph([..nodes], leaders);
     }
 }

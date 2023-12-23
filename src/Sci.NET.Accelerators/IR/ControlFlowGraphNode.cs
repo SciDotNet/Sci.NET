@@ -2,7 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Globalization;
-using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR;
 
@@ -10,38 +10,26 @@ namespace Sci.NET.Accelerators.IR;
 /// Represents a control flow graph node.
 /// </summary>
 [PublicAPI]
-public class ControlFlowGraphNode : IControlFlowGraphNode
+public class ControlFlowGraphNode
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControlFlowGraphNode"/> class.
+    /// Gets the instruction of the control flow graph node.
     /// </summary>
-    /// <param name="instruction">The instruction.</param>
-    public ControlFlowGraphNode(Instruction<IOperand> instruction)
-    {
-        Instruction = instruction;
-    }
+    public SsaInstruction Instruction { get; init; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ControlFlowGraphNode"/> class.
+    /// Gets the next instructions of the control flow graph node.
     /// </summary>
-    /// <param name="instruction">The instruction.</param>
-    /// <param name="nextInstructions">The next instructions.</param>
-    public ControlFlowGraphNode(Instruction<IOperand> instruction, IEnumerable<Instruction<IOperand>> nextInstructions)
-    {
-        Instruction = instruction;
-        NextInstructions = nextInstructions.ToList();
-    }
+    public IList<SsaInstruction> NextInstructions { get; init; } = new List<SsaInstruction>();
 
-    /// <inheritdoc />
-    public Instruction<IOperand> Instruction { get; }
-
-    /// <inheritdoc />
-    public IList<Instruction<IOperand>> NextInstructions { get; } = new List<Instruction<IOperand>>();
-
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets or sets a value indicating whether this node is a leader.
+    /// </summary>
     public bool IsLeader { get; set; }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets or sets a value indicating whether this node is a terminator.
+    /// </summary>
     public bool IsTerminator { get; set; }
 
     /// <inheritdoc />
