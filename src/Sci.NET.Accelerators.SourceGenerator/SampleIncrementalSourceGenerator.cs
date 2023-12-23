@@ -86,7 +86,7 @@ public class SampleIncrementalSourceGenerator : IIncrementalGenerator
                     SyntaxFactory.Identifier("Invoke" + methodDeclarationSyntax.Identifier.Text))
                 .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
                 .WithParameterList(translationContext.ParameterListSyntax)
-                .WithBody(translationContext.BlockSyntax);
+                .WithBody(translationContext.EntryBlockSyntax);
 
             // context.AddSource(methodDeclarationSyntax.Identifier.Text, methodDeclaration.NormalizeWhitespace().ToFullString());
         }

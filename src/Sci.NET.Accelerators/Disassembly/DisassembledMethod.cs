@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
-using Sci.NET.Accelerators.Disassembly.Instructions;
 
 namespace Sci.NET.Accelerators.Disassembly;
 
@@ -38,7 +37,7 @@ public class DisassembledMethod
     /// <summary>
     /// Gets the parameters.
     /// </summary>
-    public required IList<Type> Parameters { get; init; }
+    public required IList<ParameterInfo> Parameters { get; init; }
 
     /// <summary>
     /// Gets the local variables.
@@ -48,7 +47,7 @@ public class DisassembledMethod
     /// <summary>
     /// Gets the instructions.
     /// </summary>
-    public required IReadOnlyList<Instruction<IOperand>> Instructions { get; init; }
+    public required IList<Instruction<IOperand>> Instructions { get; init; }
 
     /// <summary>
     /// Gets the type generic arguments.
@@ -64,6 +63,11 @@ public class DisassembledMethod
     /// Gets the reflected method base.
     /// </summary>
     public required MethodBase ReflectedMethodBase { get; init; }
+
+    /// <summary>
+    /// Gets the return type.
+    /// </summary>
+    public required Type ReturnType { get; init; }
 
     /// <inheritdoc />
     public override string ToString()
@@ -104,7 +108,7 @@ public class DisassembledMethod
                 .Append("IL_")
                 .Append(ins.Offset.ToString("x4"))
                 .Append(' ')
-                .Append(ins.OpCode.Name)
+                .Append(ins.Name)
                 .Append(' ')
                 .Append(ins.Operand)
                 .AppendLine();

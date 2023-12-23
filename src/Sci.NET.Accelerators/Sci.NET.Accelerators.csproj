@@ -5,10 +5,27 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <TransformOnBuild>true</TransformOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
+        <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj"/>
+        <PackageReference Include="T4.Build" PrivateAssets="All"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="Disassembly\IlInstructionProvider.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>IlInstructionProvider.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Disassembly\IlInstructionProvider.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>IlInstructionProvider.tt</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

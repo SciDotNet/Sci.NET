@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.IR.Builders;
-using Sci.NET.Accelerators.Metadata;
+using Sci.NET.Accelerators.UnitTests.Extensions;
 using Sci.NET.Common.Memory;
 
 namespace Sci.NET.Accelerators.UnitTests.Disassembly;
@@ -23,7 +23,7 @@ public class DisassemblerTests
         var disassembler = new Disassembler(method);
         var disassembledMethod = disassembler.Disassemble();
 
-        var basicBlocks = BasicBlockBuilder.CreateBasicBlocks(disassembledMethod.Instructions.ToList());
+        var irBuilder = IrBuilder.Build(disassembledMethod);
     }
 
     [Fact]
@@ -35,57 +35,47 @@ public class DisassemblerTests
         var disassembler = new Disassembler(method);
         var disassembledMethod = disassembler.Disassemble();
 
-        var builder = IrBuilder.Build(disassembledMethod);
+        var irBuilder = IrBuilder.Build(disassembledMethod);
+
+        var str = irBuilder.ConvertToString();
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Test method.")]
     private static void TestMethod<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        LoopMetadata.StartBoundaryCondition();
-
         for (var i = 0L; i < left.Length; i++)
         {
-            LoopMetadata.EndBoundaryCondition();
-            LoopMetadata.Start();
-            LoopMetadata.StartBoundaryCondition();
-
             for (var j = 0L; j < right.Length; j++)
             {
-                LoopMetadata.EndBoundaryCondition();
-                LoopMetadata.Start();
-
                 result[i] = left[i] + right[j];
-
-                LoopMetadata.End();
             }
-
-            LoopMetadata.End();
         }
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Test method.")]
-    private static void TestMethodFloatExplicit(IMemoryBlock<float> left, IMemoryBlock<float> right, IMemoryBlock<float> result)
+    private static void TestMethodFloatExplicit(
+        IMemoryBlock<float> left,
+        IMemoryBlock<float> right,
+        IMemoryBlock<float> result,
+        int m,
+        int n,
+        int o)
     {
-        LoopMetadata.StartBoundaryCondition();
-
-        for (var i = 0L; i < left.Length; i++)
+        for (int i = 0; i < m; i++)
         {
-            LoopMetadata.EndBoundaryCondition();
-            LoopMetadata.Start();
-            LoopMetadata.StartBoundaryCondition();
-
-            for (var j = 0L; j < right.Length; j++)
+            for (int j = 0; j < n; j++)
             {
-                LoopMetadata.EndBoundaryCondition();
-                LoopMetadata.Start();
+                var sum = 0.0f;
 
-                result[i] = left[i] + right[j];
+                for (var k = 0; k < o; k++)
+                {
+                    sum += left[(i * m) + k] *
+                           right[(k * k) + j];
+                }
 
-                LoopMetadata.End();
+                result[(i * n) + j] = sum;
             }
-
-            LoopMetadata.End();
         }
     }
 }

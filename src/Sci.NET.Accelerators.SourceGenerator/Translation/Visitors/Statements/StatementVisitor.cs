@@ -14,6 +14,7 @@ internal class StatementVisitor : ITranslationVisitor<StatementSyntax>
             BlockSyntax blockSyntax => new BlockSyntaxVisitor().Visit(blockSyntax, context),
             ForStatementSyntax forStatementSyntax => new ForStatementSyntaxVisitor().Visit(forStatementSyntax, context),
             ExpressionStatementSyntax expressionStatementSyntax => new ExpressionStatementSyntaxVisitor().Visit(expressionStatementSyntax, context),
+            IfStatementSyntax ifStatementSyntax => new IfStatementSyntaxVisitor().Visit(ifStatementSyntax, context),
             _ => syntaxNode
         };
     }

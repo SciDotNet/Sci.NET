@@ -13,7 +13,7 @@ internal static class MethodTranslator
     public static void Translate(TranslationContext translationContext)
     {
         translationContext.ParameterListSyntax = ValidateAndModifyParameters(translationContext);
-        translationContext.BlockSyntax = ModifyMethodBlock(translationContext);
+        translationContext.EntryBlockSyntax = ModifyMethodBlock(translationContext);
     }
 
     private static BlockSyntax ModifyMethodBlock(TranslationContext translationContext)
@@ -24,8 +24,7 @@ internal static class MethodTranslator
             return SyntaxFactory.Block();
         }
 
-        var blockVisitor = new BlockSyntaxVisitor();
-        return blockVisitor.Visit(translationContext.MethodDeclarationSyntax.Body, translationContext);
+        return new BlockSyntaxVisitor().Visit(translationContext.MethodDeclarationSyntax.Body, translationContext);
     }
 
     private static ParameterListSyntax ValidateAndModifyParameters(TranslationContext translationContext)

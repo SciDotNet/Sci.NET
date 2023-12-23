@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.Reflection.Emit;
-using Sci.NET.Accelerators.Disassembly.Instructions;
-
 namespace Sci.NET.Accelerators.IR.Builders;
 
 /// <summary>
@@ -15,80 +12,70 @@ public static class BasicBlockBuilder
     /// <summary>
     /// Creates basic blocks from the instructions.
     /// </summary>
-    /// <param name="instructions">The instructions.</param>
-    /// <returns>The basic blocks extracted from the instructions.</returns>
-    /// <exception cref="InvalidOperationException">Invalid terminator instruction.</exception>
-    public static IReadOnlyList<BasicBlock> CreateBasicBlocks(IReadOnlyList<Instruction<IOperand>> instructions)
+    /// <param name="graph">The control flow graph.</param>
+    /// <returns>The basic blocks.</returns>
+    public static IReadOnlyList<BasicBlock> CreateBasicBlocks(ControlFlowGraph graph)
     {
         var basicBlocks = new List<BasicBlock>();
-        var blockEndTargets = new Dictionary<BasicBlock, List<int>>();
-        var branchTargets = GetBranchTargets(instructions, basicBlocks, blockEndTargets);
 
-        foreach (var block in blockEndTargets)
-        {
-            foreach (var target in block.Value)
-            {
-                if (branchTargets.TryGetValue(target, out var targetBlock))
-                {
-                    block.Key.NextBlocks.Add(targetBlock);
-                }
-            }
-        }
-
-        for (var i = 0; i < basicBlocks.Count - 1; i++)
-        {
-            var current = basicBlocks[i];
-            var next = basicBlocks[i + 1];
-
-            if (current.NextBlocks.Count == 0 || current.Instructions[^1].IsConditionalBranch)
-            {
-                current.NextBlocks.Add(next);
-            }
-        }
+        ConstructBasicBlocks(graph, basicBlocks);
+        ConnectBasicBlocks(basicBlocks);
+        DetectLoops(basicBlocks);
 
         return basicBlocks;
     }
 
-    private static Dictionary<int, BasicBlock> GetBranchTargets(
-        IReadOnlyList<Instruction<IOperand>> instructions,
-        List<BasicBlock> basicBlocks,
-        Dictionary<BasicBlock, List<int>> blockEndTargets)
+    private static void ConnectBasicBlocks(List<BasicBlock> basicBlocks)
     {
-        var branchTargets = new Dictionary<int, BasicBlock>();
-        BasicBlock? currentBlock = null;
-
-        foreach (var instruction in instructions)
+        foreach (var basicBlock in basicBlocks)
         {
-            if (currentBlock is null || branchTargets.ContainsKey(instruction.Offset))
+            foreach (var targetBlock in basicBlock.Instructions[^1].NextInstructions.Select(target => basicBlocks.First(x => x.Instructions[0].Instruction.Offset == target.Offset)))
             {
-                currentBlock = new BasicBlock { StartOffset = instruction.Offset };
-                basicBlocks.Add(currentBlock);
-                branchTargets[instruction.Offset] = currentBlock;
+                basicBlock.NextBlocks.Add(targetBlock);
             }
+        }
+    }
 
-            currentBlock.Instructions.Add(instruction);
+    private static void ConstructBasicBlocks(ControlFlowGraph graph, List<BasicBlock> basicBlocks)
+    {
+        var currentNodes = new List<IControlFlowGraphNode>();
 
-            if (!instruction.IsTerminator)
+        foreach (var node in graph.Nodes)
+        {
+            if (node.IsLeader && currentNodes.Count != 0)
             {
+                var basicBlock = new BasicBlock { StartOffset = currentNodes[0].Instruction.Offset, EndOffset = currentNodes[^1].Instruction.Offset, Instructions = currentNodes };
+                basicBlocks.Add(basicBlock);
+                currentNodes = new List<IControlFlowGraphNode>();
+                currentNodes.Add(node);
                 continue;
             }
 
-            if (instruction.OpCode.FlowControl == FlowControl.Return)
+            if (node.IsTerminator && currentNodes.Count != 0)
             {
+                currentNodes.Add(node);
+                var basicBlock = new BasicBlock { StartOffset = currentNodes[0].Instruction.Offset, EndOffset = currentNodes[^1].Instruction.Offset, Instructions = currentNodes };
+                basicBlocks.Add(basicBlock);
+                currentNodes = new List<IControlFlowGraphNode>();
                 continue;
             }
 
-            blockEndTargets[currentBlock] = new List<int>(instruction.GetBranchTargets());
-
-            currentBlock.EndOffset = instruction.Offset;
-            currentBlock = null;
+            currentNodes.Add(node);
         }
 
-        if (currentBlock?.Instructions.Count > 0)
+        if (currentNodes.Count != 0)
         {
-            currentBlock.EndOffset = currentBlock.Instructions[^1].Offset;
+            var basicBlock = new BasicBlock { StartOffset = currentNodes[0].Instruction.Offset, EndOffset = currentNodes[^1].Instruction.Offset, Instructions = currentNodes };
+            basicBlocks.Add(basicBlock);
         }
+    }
 
-        return branchTargets;
+    private static void DetectLoops(List<BasicBlock> basicBlocks)
+    {
+        foreach (var block in basicBlocks
+                     .Where(block => block.NextBlocks.Any(x => x.StartOffset < block.StartOffset)))
+        {
+            block.IsLoop = true;
+        }
     }
 }
