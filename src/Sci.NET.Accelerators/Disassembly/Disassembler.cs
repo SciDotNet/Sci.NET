@@ -76,13 +76,13 @@ public class Disassembler
     private static Instruction<IOperand> ConvertLdArgMacro(Instruction<IOperand> instruction)
     {
 #pragma warning disable IDE0072
-        return instruction.OpCode switch
+        return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Ldarg_0 => instruction with { OpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 0 } },
-            OpCodeTypes.Ldarg_1 => instruction with { OpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 1 } },
-            OpCodeTypes.Ldarg_2 => instruction with { OpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 2 } },
-            OpCodeTypes.Ldarg_3 => instruction with { OpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 3 } },
+            OpCodeTypes.Ldarg_0 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 0 } },
+            OpCodeTypes.Ldarg_1 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 1 } },
+            OpCodeTypes.Ldarg_2 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 2 } },
+            OpCodeTypes.Ldarg_3 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new InlineIntOperand { Value = 3 } },
             _ => instruction
         };
     }
@@ -90,13 +90,13 @@ public class Disassembler
     private static Instruction<IOperand> ConvertLdLocMacro(Instruction<IOperand> instruction)
     {
 #pragma warning disable IDE0072
-        return instruction.OpCode switch
+        return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Ldloc_0 => instruction with { OpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 0 } },
-            OpCodeTypes.Ldloc_1 => instruction with { OpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 1 } },
-            OpCodeTypes.Ldloc_2 => instruction with { OpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 2 } },
-            OpCodeTypes.Ldloc_3 => instruction with { OpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 3 } },
+            OpCodeTypes.Ldloc_0 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 0 } },
+            OpCodeTypes.Ldloc_1 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 1 } },
+            OpCodeTypes.Ldloc_2 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 2 } },
+            OpCodeTypes.Ldloc_3 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new InlineIntOperand { Value = 3 } },
             _ => instruction
         };
     }
@@ -104,13 +104,13 @@ public class Disassembler
     private static Instruction<IOperand> ConvertStLocMacro(Instruction<IOperand> instruction)
     {
 #pragma warning disable IDE0072
-        return instruction.OpCode switch
+        return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Stloc_0 => instruction with { OpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 0 } },
-            OpCodeTypes.Stloc_1 => instruction with { OpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 1 } },
-            OpCodeTypes.Stloc_2 => instruction with { OpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 2 } },
-            OpCodeTypes.Stloc_3 => instruction with { OpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 3 } },
+            OpCodeTypes.Stloc_0 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 0 } },
+            OpCodeTypes.Stloc_1 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 1 } },
+            OpCodeTypes.Stloc_2 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 2 } },
+            OpCodeTypes.Stloc_3 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new InlineIntOperand { Value = 3 } },
             _ => instruction
         };
     }
@@ -118,19 +118,19 @@ public class Disassembler
     private static Instruction<IOperand> ConvertLdcI4Macro(Instruction<IOperand> instruction)
     {
 #pragma warning disable IDE0072
-        return instruction.OpCode switch
+        return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Ldc_I4_0 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 0 } },
-            OpCodeTypes.Ldc_I4_1 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 1 } },
-            OpCodeTypes.Ldc_I4_2 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 2 } },
-            OpCodeTypes.Ldc_I4_3 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 3 } },
-            OpCodeTypes.Ldc_I4_4 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 4 } },
-            OpCodeTypes.Ldc_I4_5 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 5 } },
-            OpCodeTypes.Ldc_I4_6 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 6 } },
-            OpCodeTypes.Ldc_I4_7 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 7 } },
-            OpCodeTypes.Ldc_I4_8 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 8 } },
-            OpCodeTypes.Ldc_I4_M1 => instruction with { OpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = -1 } },
+            OpCodeTypes.Ldc_I4_0 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 0 } },
+            OpCodeTypes.Ldc_I4_1 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 1 } },
+            OpCodeTypes.Ldc_I4_2 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 2 } },
+            OpCodeTypes.Ldc_I4_3 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 3 } },
+            OpCodeTypes.Ldc_I4_4 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 4 } },
+            OpCodeTypes.Ldc_I4_5 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 5 } },
+            OpCodeTypes.Ldc_I4_6 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 6 } },
+            OpCodeTypes.Ldc_I4_7 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 7 } },
+            OpCodeTypes.Ldc_I4_8 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = 8 } },
+            OpCodeTypes.Ldc_I4_M1 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new InlineIntOperand { Value = -1 } },
             _ => instruction
         };
     }
@@ -202,7 +202,7 @@ public class Disassembler
             case OperandType.InlineBrTarget:
                 return new BranchTargetOperand { OperandType = instruction.OperandType, Target = _blobReader.ReadInt32() + _blobReader.Offset };
             case OperandType.ShortInlineI:
-                if (instruction.OpCode == OpCodeTypes.Ldc_I4_S)
+                if (instruction.IlOpCode == OpCodeTypes.Ldc_I4_S)
                 {
                     return new InlineSbyteOperand { Value = _blobReader.ReadSByte() };
                 }
@@ -217,9 +217,9 @@ public class Disassembler
             case OperandType.InlineI8:
                 return new InlineLongOperand { Value = _blobReader.ReadInt64() };
             case OperandType.ShortInlineVar:
-                return new InlineVarOperand { Value = _methodBody.LocalVariables[_blobReader.ReadByte()], OperandType = OperandType.ShortInlineVar };
+                return ResolveInlineVarOperand(instruction, _blobReader.ReadByte());
             case OperandType.InlineVar:
-                return new InlineVarOperand { Value = _methodBody.LocalVariables[_blobReader.ReadUInt16()], OperandType = OperandType.InlineVar };
+                return ResolveInlineVarOperand(instruction, _blobReader.ReadInt16());
             case OperandType.InlineSig:
                 return new MemberInfoOperand { Value = _module.ResolveMember(_blobReader.ReadInt32()), OperandType = OperandType.InlineSig };
             case OperandType.InlineString:
@@ -237,5 +237,23 @@ public class Disassembler
             default:
                 throw new NotSupportedException();
         }
+    }
+
+    private InlineVarOperand ResolveInlineVarOperand(Instruction<IOperand> instruction, int index)
+    {
+        var isArgument = instruction.IlOpCode is OpCodeTypes.Ldarg
+            or OpCodeTypes.Ldarg_0
+            or OpCodeTypes.Ldarg_1
+            or OpCodeTypes.Ldarg_2
+            or OpCodeTypes.Ldarg_3
+            or OpCodeTypes.Ldarg_S
+            or OpCodeTypes.Ldarga
+            or OpCodeTypes.Ldarga_S
+            or OpCodeTypes.Starg
+            or OpCodeTypes.Starg_S;
+
+        return isArgument
+            ? new InlineVarOperand { Value = _parameters[index].ParameterType, Index = index, OperandType = OperandType.ShortInlineVar }
+            : new InlineVarOperand { Value = _methodBody.LocalVariables[index].LocalType, Index = index, OperandType = OperandType.ShortInlineVar };
     }
 }

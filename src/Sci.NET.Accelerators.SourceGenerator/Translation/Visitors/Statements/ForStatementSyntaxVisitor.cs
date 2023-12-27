@@ -35,7 +35,7 @@ internal class ForStatementSyntaxVisitor : ITranslationVisitor<ForStatementSynta
                 SyntaxFactory.InvocationExpression(
                     SyntaxFactory.MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
-                        SyntaxFactory.IdentifierName("Sci"),
+                        SyntaxFactory.IdentifierName("LoopMetadata"),
                         SyntaxFactory.IdentifierName("BeginLoop")),
                     SyntaxFactory.ArgumentList(
                         SyntaxFactory.SeparatedList(

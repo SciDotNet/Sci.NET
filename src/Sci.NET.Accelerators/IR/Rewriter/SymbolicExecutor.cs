@@ -3,6 +3,7 @@
 
 using System.Reflection;
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Cfg;
 using Sci.NET.Accelerators.Disassembly.Operands;
 using Sci.NET.Accelerators.IR.Rewriter.Variables;
 
@@ -90,12 +91,13 @@ public class SymbolicExecutor
                 new SsaInstruction
                 {
                     Operands = operands,
-                    OpCode = node.Instruction.OpCode,
+                    IlOpCode = node.Instruction.IlOpCode,
                     Result = result,
                     IsLeader = node.IsLeader,
                     IsTerminator = node.IsTerminator,
                     Offset = node.Instruction.Offset,
-                    NextInstructionIndices = node.NextInstructions.Select(x => x.Index).ToList()
+                    NextInstructionIndices = node.NextInstructions.Select(x => x.Index).ToList(),
+                    MsilInstruction = node.Instruction
                 });
         }
 
@@ -187,7 +189,7 @@ public class SymbolicExecutor
     {
         var operands = new List<ISsaVariable>();
 #pragma warning disable IDE0010
-        switch (node.Instruction.OpCode)
+        switch (node.Instruction.IlOpCode)
 #pragma warning restore IDE0010
         {
             case OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Instruction.Operand is InlineIntOperand index:
@@ -221,9 +223,9 @@ public class SymbolicExecutor
             PopBehaviour.Pop1 or PopBehaviour.Popi or PopBehaviour.Popref => 1,
             PopBehaviour.Pop1_pop1 or PopBehaviour.Popi_popi or PopBehaviour.Popi_popi8 or PopBehaviour.Popi_popr4 or PopBehaviour.Popi_popr8 or PopBehaviour.Popref_pop1 or PopBehaviour.Popi_pop1 or PopBehaviour.Popref_popi => 2,
             PopBehaviour.Popi_popi_popi or PopBehaviour.Popref_popi_popi or PopBehaviour.Popref_popi_popi8 or PopBehaviour.Popref_popi_popr4 or PopBehaviour.Popref_popi_popr8 or PopBehaviour.Popref_popi_popref or PopBehaviour.Popref_popi_pop1 => 3,
-            PopBehaviour.Varpop when node.Instruction.OpCode is OpCodeTypes.Ret && _stack.Count == 1 => 1,
-            PopBehaviour.Varpop when node.Instruction.OpCode is OpCodeTypes.Ret && _stack.Count == 0 && _disassembledMethod.ReturnType == typeof(void) => 0,
-            PopBehaviour.Varpop when node.Instruction.OpCode is OpCodeTypes.Ret && _stack.Count > 0 => throw new InvalidOperationException("The stack is not empty."),
+            PopBehaviour.Varpop when node.Instruction.IlOpCode is OpCodeTypes.Ret && _stack.Count == 1 => 1,
+            PopBehaviour.Varpop when node.Instruction.IlOpCode is OpCodeTypes.Ret && _stack.Count == 0 && _disassembledMethod.ReturnType == typeof(void) => 0,
+            PopBehaviour.Varpop when node.Instruction.IlOpCode is OpCodeTypes.Ret && _stack.Count > 0 => throw new InvalidOperationException("The stack is not empty."),
             PopBehaviour.Varpop when node.Instruction.Operand is MethodOperand operand => GetMethodCallPopBehaviour(operand),
             PopBehaviour.Varpop => throw new NotSupportedException("Varpop is not supported."),
             _ => throw new InvalidOperationException("The pop behaviour is not supported.")
@@ -233,22 +235,22 @@ public class SymbolicExecutor
     private ISsaVariable GetResult(IMsilControlFlowGraphNode node, List<ISsaVariable> operands)
     {
 #pragma warning disable IDE0072
-        return node.Instruction.OpCode switch
+        return node.Instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Nop => new VoidSsaVariable(),
-            OpCodeTypes.Break => new VoidSsaVariable(),
+            OpCodeTypes.Nop => default(VoidSsaVariable),
+            OpCodeTypes.Break => default(VoidSsaVariable),
             OpCodeTypes.Ldnull => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldc_I4 or OpCodeTypes.Ldc_I4_S => _nameGenerator.GetNextTemp(typeof(int)),
             OpCodeTypes.Ldc_I8 => _nameGenerator.GetNextTemp(typeof(long)),
             OpCodeTypes.Ldc_R4 => _nameGenerator.GetNextTemp(typeof(float)),
             OpCodeTypes.Ldc_R8 => _nameGenerator.GetNextTemp(typeof(double)),
             OpCodeTypes.Dup => operands[0],
-            OpCodeTypes.Pop => new VoidSsaVariable(),
-            OpCodeTypes.Jmp => new VoidSsaVariable(),
+            OpCodeTypes.Pop => _stack.Peek(),
+            OpCodeTypes.Jmp => default(VoidSsaVariable),
             OpCodeTypes.Call or OpCodeTypes.Callvirt => GetMethodCallReturnType(node.Instruction.Operand is MethodOperand operand ? operand : default),
             OpCodeTypes.Calli => GetMethodCallReturnType(node.Instruction.Operand is MethodOperand operand ? operand : default),
-            OpCodeTypes.Ret => new VoidSsaVariable(),
+            OpCodeTypes.Ret => default(VoidSsaVariable),
             OpCodeTypes.Br_S
                 or OpCodeTypes.Brfalse_S
                 or OpCodeTypes.Brtrue_S
@@ -262,8 +264,8 @@ public class SymbolicExecutor
                 or OpCodeTypes.Bgt_Un_S
                 or OpCodeTypes.Ble_Un_S
                 or OpCodeTypes.Blt_Un_S
-                or OpCodeTypes.Leave_S => new VoidSsaVariable(),
-            OpCodeTypes.Br
+                or OpCodeTypes.Leave_S
+                or OpCodeTypes.Br
                 or OpCodeTypes.Brfalse
                 or OpCodeTypes.Brtrue
                 or OpCodeTypes.Beq
@@ -275,8 +277,8 @@ public class SymbolicExecutor
                 or OpCodeTypes.Bge_Un
                 or OpCodeTypes.Bgt_Un
                 or OpCodeTypes.Ble_Un
-                or OpCodeTypes.Blt_Un => new VoidSsaVariable(),
-            OpCodeTypes.Switch => new VoidSsaVariable(),
+                or OpCodeTypes.Blt_Un => default(VoidSsaVariable),
+            OpCodeTypes.Switch => default(VoidSsaVariable),
             OpCodeTypes.Ldind_I1 => _nameGenerator.GetNextTemp(typeof(sbyte)),
             OpCodeTypes.Ldind_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
             OpCodeTypes.Ldind_I2 => _nameGenerator.GetNextTemp(typeof(short)),
@@ -288,13 +290,13 @@ public class SymbolicExecutor
             OpCodeTypes.Ldind_R4 => _nameGenerator.GetNextTemp(typeof(float)),
             OpCodeTypes.Ldind_R8 => _nameGenerator.GetNextTemp(typeof(double)),
             OpCodeTypes.Ldind_Ref => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Stind_Ref => new VoidSsaVariable(),
-            OpCodeTypes.Stind_I1 => new VoidSsaVariable(),
-            OpCodeTypes.Stind_I2 => new VoidSsaVariable(),
-            OpCodeTypes.Stind_I4 => new VoidSsaVariable(),
-            OpCodeTypes.Stind_I8 => new VoidSsaVariable(),
-            OpCodeTypes.Stind_R4 => new VoidSsaVariable(),
-            OpCodeTypes.Stind_R8 => new VoidSsaVariable(),
+            OpCodeTypes.Stind_Ref => default(VoidSsaVariable),
+            OpCodeTypes.Stind_I1 => default(VoidSsaVariable),
+            OpCodeTypes.Stind_I2 => default(VoidSsaVariable),
+            OpCodeTypes.Stind_I4 => default(VoidSsaVariable),
+            OpCodeTypes.Stind_I8 => default(VoidSsaVariable),
+            OpCodeTypes.Stind_R4 => default(VoidSsaVariable),
+            OpCodeTypes.Stind_R8 => default(VoidSsaVariable),
             OpCodeTypes.Add => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Sub => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Mul => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
@@ -318,7 +320,8 @@ public class SymbolicExecutor
             OpCodeTypes.Conv_R8 => _nameGenerator.GetNextTemp(typeof(double)),
             OpCodeTypes.Conv_U4 => _nameGenerator.GetNextTemp(typeof(uint)),
             OpCodeTypes.Conv_U8 => _nameGenerator.GetNextTemp(typeof(ulong)),
-            OpCodeTypes.Cpobj => new VoidSsaVariable(),
+            OpCodeTypes.Cpobj => default(VoidSsaVariable),
+            OpCodeTypes.Ldobj when node.Instruction.Operand is TypeOperand typeOperand => _nameGenerator.GetNextTemp(typeOperand.Value),
             OpCodeTypes.Ldobj => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldstr => _nameGenerator.GetNextTemp(typeof(string)),
             OpCodeTypes.Newobj => GetMethodCallReturnType(node.Instruction.Operand is MethodOperand operand ? operand : default),
@@ -326,14 +329,14 @@ public class SymbolicExecutor
             OpCodeTypes.Isinst => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Conv_R_Un => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Unbox => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Throw => new VoidSsaVariable(),
+            OpCodeTypes.Throw => default(VoidSsaVariable),
             OpCodeTypes.Ldfld => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldflda => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Stfld => new VoidSsaVariable(),
+            OpCodeTypes.Stfld => default(VoidSsaVariable),
             OpCodeTypes.Ldsfld => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldsflda => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Stsfld => new VoidSsaVariable(),
-            OpCodeTypes.Stobj => new VoidSsaVariable(),
+            OpCodeTypes.Stsfld => default(VoidSsaVariable),
+            OpCodeTypes.Stobj => default(VoidSsaVariable),
             OpCodeTypes.Conv_Ovf_I1_Un => _nameGenerator.GetNextTemp(typeof(sbyte)),
             OpCodeTypes.Conv_Ovf_I2_Un => _nameGenerator.GetNextTemp(typeof(short)),
             OpCodeTypes.Conv_Ovf_I4_Un => _nameGenerator.GetNextTemp(typeof(int)),
@@ -342,8 +345,10 @@ public class SymbolicExecutor
             OpCodeTypes.Conv_Ovf_U2_Un => _nameGenerator.GetNextTemp(typeof(ushort)),
             OpCodeTypes.Conv_Ovf_U4_Un => _nameGenerator.GetNextTemp(typeof(uint)),
             OpCodeTypes.Conv_Ovf_U8_Un => _nameGenerator.GetNextTemp(typeof(ulong)),
-            OpCodeTypes.Conv_Ovf_I_Un => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_Ovf_U_Un => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_Ovf_I_Un when node.Instruction.Operand is TypeOperand type => _nameGenerator.GetNextTemp(type.Value),
+            OpCodeTypes.Conv_Ovf_I_Un => throw new InvalidOperationException("The type operand is not valid."),
+            OpCodeTypes.Conv_Ovf_U_Un when node.Instruction.Operand is TypeOperand type => _nameGenerator.GetNextTemp(type.Value),
+            OpCodeTypes.Conv_Ovf_U_Un => throw new InvalidOperationException("The type operand is not valid."),
             OpCodeTypes.Box => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Newarr => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldlen => _nameGenerator.GetNextTemp(typeof(nint)),
@@ -355,20 +360,21 @@ public class SymbolicExecutor
             OpCodeTypes.Ldelem_I4 => _nameGenerator.GetNextTemp(typeof(int)),
             OpCodeTypes.Ldelem_U4 => _nameGenerator.GetNextTemp(typeof(uint)),
             OpCodeTypes.Ldelem_I8 => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Ldelem_I => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldelem_I when node.Instruction.Operand is TypeOperand typeOperand => _nameGenerator.GetNextTemp(typeOperand.Value),
+            OpCodeTypes.Ldelem_I => throw new InvalidOperationException("The type operand is not valid."),
             OpCodeTypes.Ldelem_R4 => _nameGenerator.GetNextTemp(typeof(float)),
             OpCodeTypes.Ldelem_R8 => _nameGenerator.GetNextTemp(typeof(double)),
             OpCodeTypes.Ldelem_Ref => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Stelem_I => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_I1 => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_I2 => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_I4 => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_I8 => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_R4 => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_R8 => new VoidSsaVariable(),
-            OpCodeTypes.Stelem_Ref => new VoidSsaVariable(),
+            OpCodeTypes.Stelem_I => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_I1 => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_I2 => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_I4 => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_I8 => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_R4 => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_R8 => default(VoidSsaVariable),
+            OpCodeTypes.Stelem_Ref => default(VoidSsaVariable),
             OpCodeTypes.Ldelem => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Stelem => new VoidSsaVariable(),
+            OpCodeTypes.Stelem => default(VoidSsaVariable),
             OpCodeTypes.Unbox_Any => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Conv_Ovf_I1 => _nameGenerator.GetNextTemp(typeof(sbyte)),
             OpCodeTypes.Conv_Ovf_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
@@ -384,35 +390,38 @@ public class SymbolicExecutor
             OpCodeTypes.Ldtoken => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Conv_U2 => _nameGenerator.GetNextTemp(typeof(ushort)),
             OpCodeTypes.Conv_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
+            OpCodeTypes.Conv_I when node.Instruction.Operand is TypeOperand typeOperand => _nameGenerator.GetNextTemp(typeOperand.Value),
             OpCodeTypes.Conv_I => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_Ovf_I => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_Ovf_U => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_Ovf_I when node.Instruction.Operand is TypeOperand typeOperand => _nameGenerator.GetNextTemp(typeOperand.Value),
+            OpCodeTypes.Conv_Ovf_I => throw new InvalidOperationException("The type operand is not valid."),
+            OpCodeTypes.Conv_Ovf_U when node.Instruction.Operand is TypeOperand typeOperand => _nameGenerator.GetNextTemp(typeOperand.Value),
+            OpCodeTypes.Conv_Ovf_U => throw new InvalidOperationException("The type operand is not valid."),
             OpCodeTypes.Add_Ovf => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Add_Ovf_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Mul_Ovf => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Mul_Ovf_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Sub_Ovf => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Sub_Ovf_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Endfinally => new VoidSsaVariable(),
-            OpCodeTypes.Leave => new VoidSsaVariable(),
-            OpCodeTypes.Stind_I => new VoidSsaVariable(),
+            OpCodeTypes.Endfinally => default(VoidSsaVariable),
+            OpCodeTypes.Leave => default(VoidSsaVariable),
+            OpCodeTypes.Stind_I => default(VoidSsaVariable),
             OpCodeTypes.Conv_U => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Arglist => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ceq => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Cgt => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Cgt_Un => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Clt => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Clt_Un => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ceq => _nameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Cgt => _nameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Cgt_Un => _nameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Clt => _nameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Clt_Un => _nameGenerator.GetNextTemp(typeof(bool)),
             OpCodeTypes.Ldftn => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldvirtftn => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Instruction.Operand is InlineIntOperand operand => _nameGenerator.GetNextTemp(_argumentSsaVariables[operand.Value].Type),
-            OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Instruction.Operand is InlineVarOperand operand => _nameGenerator.GetNextTemp(operand.Value.LocalType),
+            OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Instruction.Operand is InlineIntOperand operand => _argumentSsaVariables[operand.Value],
+            OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Instruction.Operand is InlineVarOperand operand => _nameGenerator.GetNextTemp(operand.Value),
             OpCodeTypes.Ldarga => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Starg => new VoidSsaVariable(),
-            OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Instruction.Operand is InlineIntOperand operand => _nameGenerator.GetNextTemp(_localVariableSsaVariables[operand.Value].Type),
-            OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Instruction.Operand is InlineVarOperand operand => _nameGenerator.GetNextTemp(operand.Value.LocalType),
+            OpCodeTypes.Starg => default(VoidSsaVariable),
+            OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Instruction.Operand is InlineIntOperand operand => _localVariableSsaVariables[operand.Value],
+            OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Instruction.Operand is InlineVarOperand operand => _nameGenerator.GetNextTemp(operand.Value),
             OpCodeTypes.Ldloca => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Stloc or OpCodeTypes.Stloc_S => new VoidSsaVariable(),
+            OpCodeTypes.Stloc or OpCodeTypes.Stloc_S => default(VoidSsaVariable),
             OpCodeTypes.Localloc => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Endfilter => _nameGenerator.GetNextTemp(typeof(nint)),
         };
@@ -427,6 +436,6 @@ public class SymbolicExecutor
             return new TempSsaVariable(_nameGenerator.NextLocalName(), methodInfo.ReturnType);
         }
 
-        return new VoidSsaVariable();
+        return default(VoidSsaVariable);
     }
 }

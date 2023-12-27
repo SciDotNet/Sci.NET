@@ -70,6 +70,7 @@ public class SampleIncrementalSourceGenerator : IIncrementalGenerator
     /// <param name="context">Source generation context used to add source files.</param>
     /// <param name="compilation">Compilation used to provide access to the Semantic Model.</param>
     /// <param name="methodDeclarations">Nodes annotated with the [Kernel] attribute that trigger the generate action.</param>
+    /// <exception cref="InvalidOperationException">Thrown when the parent class is not found.</exception>
     private static void TranslateAndGenerateCode(
         SourceProductionContext context,
         Compilation compilation,
@@ -80,13 +81,25 @@ public class SampleIncrementalSourceGenerator : IIncrementalGenerator
             var translationContext = new TranslationContext(methodDeclarationSyntax, context, compilation);
             MethodTranslator.Translate(translationContext);
 
-            _ = SyntaxFactory
-                .MethodDeclaration(
-                    SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
-                    SyntaxFactory.Identifier("Invoke" + methodDeclarationSyntax.Identifier.Text))
-                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-                .WithParameterList(translationContext.ParameterListSyntax)
-                .WithBody(translationContext.EntryBlockSyntax);
+            var methodDeclaration = SyntaxFactory
+                .FileScopedNamespaceDeclaration(SyntaxFactory.IdentifierName(translationContext.ContainingClass.ContainingNamespace.ToDisplayString()))
+                .WithMembers(
+                [
+                    SyntaxFactory
+                        .ClassDeclaration(translationContext.ContainingClass.Name)
+                        .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)))
+                        .WithMembers(
+                            new SyntaxList<MemberDeclarationSyntax>(
+                                SyntaxFactory
+                                    .MethodDeclaration(
+                                        SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword)),
+                                        SyntaxFactory.Identifier("Invoke" + methodDeclarationSyntax.Identifier.Text))
+                                    .WithTypeParameterList(translationContext.MethodDeclarationSyntax.TypeParameterList)
+                                    .WithConstraintClauses(translationContext.MethodDeclarationSyntax.ConstraintClauses)
+                                    .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.UnsafeKeyword)))
+                                    .WithParameterList(translationContext.ParameterListSyntax)
+                                    .WithBody(translationContext.EntryBlockSyntax)))
+                ]);
 
             // context.AddSource(methodDeclarationSyntax.Identifier.Text, methodDeclaration.NormalizeWhitespace().ToFullString());
         }

@@ -36,6 +36,14 @@ public static class TranslationDiagnostics
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor MissingContainingClass = new (
+        id: "SCI0004",
+        title: new LocalizableResourceString(nameof(Resources.SCI0004Title), Resources.ResourceManager, typeof(Resources)),
+        messageFormat: new LocalizableResourceString(nameof(Resources.SCI0004MessageFormat), Resources.ResourceManager, typeof(Resources)),
+        category: "Translation",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
     /// <summary>
     /// Reports a missing body for a method.
     /// </summary>
@@ -67,5 +75,16 @@ public static class TranslationDiagnostics
     {
         var diagnostic = Diagnostic.Create(UnsupportedParameterType, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText);
         context.ReportDiagnostic(diagnostic);
+    }
+
+    /// <summary>
+    /// Reports a missing containing class.
+    /// </summary>
+    /// <param name="translationContextSourceProductionContext">The translation context source production context.</param>
+    /// <param name="translationContextMethodDeclarationSyntax">The translation context method declaration syntax.</param>
+    public static void ReportMissingContainingClass(SourceProductionContext translationContextSourceProductionContext, MethodDeclarationSyntax translationContextMethodDeclarationSyntax)
+    {
+        var diagnostic = Diagnostic.Create(MissingContainingClass, translationContextMethodDeclarationSyntax.Identifier.GetLocation(), translationContextMethodDeclarationSyntax.Identifier.ValueText);
+        translationContextSourceProductionContext.ReportDiagnostic(diagnostic);
     }
 }

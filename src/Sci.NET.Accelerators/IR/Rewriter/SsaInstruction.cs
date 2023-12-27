@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.IR.Rewriter.Variables;
 using Sci.NET.Common.Comparison;
@@ -11,42 +12,48 @@ namespace Sci.NET.Accelerators.IR.Rewriter;
 /// Represents a symbol.
 /// </summary>
 [PublicAPI]
+[SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1206:Declaration keywords should follow order", Justification = "StyleCop doesnt support required members yet.")]
 public readonly struct SsaInstruction : IValueEquatable<SsaInstruction>
 {
     /// <summary>
     /// Gets the operands of the symbol.
     /// </summary>
-    public IEnumerable<ISsaVariable> Operands { get; init; }
+    public required IEnumerable<ISsaVariable> Operands { get; init; }
 
     /// <summary>
     /// Gets the instruction of the symbol.
     /// </summary>
-    public OpCodeTypes OpCode { get; init; }
+    public required Instruction<IOperand> MsilInstruction { get; init; }
+
+    /// <summary>
+    /// Gets the instruction of the symbol.
+    /// </summary>
+    public required OpCodeTypes IlOpCode { get; init; }
 
     /// <summary>
     /// Gets the result of the symbol.
     /// </summary>
-    public ISsaVariable Result { get; init; }
+    public required ISsaVariable Result { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether the symbol is a leader.
     /// </summary>
-    public bool IsLeader { get; init; }
+    public required bool IsLeader { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether the symbol is a terminator.
     /// </summary>
-    public bool IsTerminator { get; init; }
+    public required bool IsTerminator { get; init; }
 
     /// <summary>
     /// Gets the offset of the symbol.
     /// </summary>
-    public int Offset { get; init; }
+    public required int Offset { get; init; }
 
     /// <summary>
     /// Gets the indices of the next instructions.
     /// </summary>
-    public ICollection<int> NextInstructionIndices { get; init; }
+    public required ICollection<int> NextInstructionIndices { get; init; }
 
     /// <inheritdoc />
     public static bool operator ==(SsaInstruction left, SsaInstruction right)
@@ -69,13 +76,13 @@ public readonly struct SsaInstruction : IValueEquatable<SsaInstruction>
     /// <inheritdoc cref="IValueEquatable{T}.Equals(T)" />
     public bool Equals(SsaInstruction other)
     {
-        return Operands.Equals(other.Operands) && OpCode.Equals(other.OpCode);
+        return Operands.Equals(other.Operands) && IlOpCode.Equals(other.IlOpCode);
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.GetHashCode" />
     public override int GetHashCode()
     {
-        return HashCode.Combine(Operands, OpCode);
+        return HashCode.Combine(Operands, IlOpCode);
     }
 
     /// <inheritdoc />
@@ -83,9 +90,9 @@ public readonly struct SsaInstruction : IValueEquatable<SsaInstruction>
     {
         if (Result is null or VoidSsaVariable)
         {
-            return $"{OpCode} {string.Join(", ", Operands)}";
+            return $"{IlOpCode} {string.Join(", ", Operands)}";
         }
 
-        return $"{Result} = {OpCode} {string.Join(", ", Operands)}";
+        return $"{Result} = {IlOpCode} {string.Join(", ", Operands)}";
     }
 }

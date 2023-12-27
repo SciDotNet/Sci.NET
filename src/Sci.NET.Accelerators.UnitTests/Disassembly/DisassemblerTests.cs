@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Sci.NET.Accelerators.Attributes;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.IR.Builders;
 using Sci.NET.Accelerators.UnitTests.Extensions;
@@ -40,6 +41,7 @@ public class DisassemblerTests
         var str = irBuilder.ConvertToString();
     }
 
+    [Kernel]
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Test method.")]
     private static void TestMethod<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
@@ -53,11 +55,12 @@ public class DisassemblerTests
         }
     }
 
+    [Kernel]
     [SuppressMessage("ReSharper", "UnusedMember.Local", Justification = "Test method.")]
-    private static void TestMethodFloatExplicit(
-        IMemoryBlock<float> left,
-        IMemoryBlock<float> right,
-        IMemoryBlock<float> result,
+    private static unsafe void TestMethodFloatExplicit(
+        float* left,
+        float* right,
+        float* result,
         int m,
         int n,
         int o)

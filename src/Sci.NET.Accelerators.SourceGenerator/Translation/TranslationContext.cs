@@ -17,4 +17,6 @@ internal class TranslationContext(MethodDeclarationSyntax methodDeclarationSynta
     public ParameterListSyntax ParameterListSyntax { get; set; }
 
     public BlockSyntax EntryBlockSyntax { get; set; }
+
+    public INamedTypeSymbol ContainingClass { get; set; }
 }

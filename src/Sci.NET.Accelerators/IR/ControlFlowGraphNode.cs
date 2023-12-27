@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Globalization;
+using System.Reflection.Emit;
 using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR;
@@ -31,6 +32,11 @@ public class ControlFlowGraphNode
     /// Gets or sets a value indicating whether this node is a terminator.
     /// </summary>
     public bool IsTerminator { get; set; }
+
+    /// <summary>
+    /// Gets a value indicating whether this node is a conditional branch.
+    /// </summary>
+    public bool IsConditionalBranch => Instruction.MsilInstruction.FlowControl == FlowControl.Cond_Branch;
 
     /// <inheritdoc />
     public override string ToString()

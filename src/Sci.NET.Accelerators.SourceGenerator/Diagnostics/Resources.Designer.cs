@@ -112,5 +112,23 @@ namespace Sci.NET.Accelerators.SourceGenerator.Diagnostics {
                 return ResourceManager.GetString("SCI0003Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The containing class for method &apos;{0}&apos; could not be resolved.
+        /// </summary>
+        internal static string SCI0004MessageFormat {
+            get {
+                return ResourceManager.GetString("SCI0004MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing containing class.
+        /// </summary>
+        internal static string SCI0004Title {
+            get {
+                return ResourceManager.GetString("SCI0004Title", resourceCulture);
+            }
+        }
     }
 }

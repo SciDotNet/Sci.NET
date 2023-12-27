@@ -14,6 +14,19 @@ internal static class MethodTranslator
     {
         translationContext.ParameterListSyntax = ValidateAndModifyParameters(translationContext);
         translationContext.EntryBlockSyntax = ModifyMethodBlock(translationContext);
+
+        var containingClass = translationContext
+            .Compilation
+            .GetSemanticModel(translationContext.MethodDeclarationSyntax.SyntaxTree)
+            .GetDeclaredSymbol(translationContext.MethodDeclarationSyntax)
+            ?.ContainingType;
+
+        if (containingClass is null)
+        {
+            TranslationDiagnostics.ReportMissingContainingClass(translationContext.SourceProductionContext, translationContext.MethodDeclarationSyntax);
+        }
+
+        translationContext.ContainingClass = containingClass;
     }
 
     private static BlockSyntax ModifyMethodBlock(TranslationContext translationContext)

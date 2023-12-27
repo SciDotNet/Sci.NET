@@ -2,7 +2,6 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using System.Reflection.Emit;
 using Sci.NET.Common.Comparison;
 
@@ -21,7 +20,12 @@ public readonly struct InlineVarOperand : IOperand, IValueEquatable<InlineVarOpe
     /// <summary>
     /// Gets the value of the operand.
     /// </summary>
-    public required LocalVariableInfo Value { get; init; }
+    public required Type Value { get; init; }
+
+    /// <summary>
+    /// Gets the index of the operand.
+    /// </summary>
+    public required int Index { get; init; }
 
     /// <inheritdoc />
     public static bool operator ==(InlineVarOperand left, InlineVarOperand right)

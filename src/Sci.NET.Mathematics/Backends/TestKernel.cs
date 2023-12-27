@@ -10,7 +10,7 @@ namespace Sci.NET.Mathematics.Backends;
 /// A test kernel.
 /// </summary>
 [PublicAPI]
-public static class TestKernel
+public class TestKernel
 {
     /// <summary>
     /// A test kernel method.
@@ -19,7 +19,9 @@ public static class TestKernel
     /// <param name="right">The right operand.</param>
     /// <param name="result">The result.</param>
     [Kernel]
-    public static void TestKernelMethod(IMemoryBlock<float> left, IMemoryBlock<float> right, IMemoryBlock<float> result)
+#pragma warning disable CA1822
+    public void TestKernelMethod(IMemoryBlock<float> left, IMemoryBlock<float> right, IMemoryBlock<float> result)
+#pragma warning restore CA1822
     {
         for (var i = 0; i < left.Length; i++)
         {

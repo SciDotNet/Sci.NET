@@ -20,7 +20,7 @@ public readonly struct TypeOperand : IOperand, IValueEquatable<TypeOperand>
     /// <summary>
     /// Gets the operand value.
     /// </summary>
-    public required Type? Value { get; init; }
+    public required Type Value { get; init; }
 
     /// <inheritdoc />
     public static bool operator ==(TypeOperand left, TypeOperand right)

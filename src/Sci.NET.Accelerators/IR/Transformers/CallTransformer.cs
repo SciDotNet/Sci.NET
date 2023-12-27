@@ -2,9 +2,9 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Cfg;
 using Sci.NET.Accelerators.Disassembly.Operands;
 using Sci.NET.Accelerators.IR.Nodes;
-using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Transformers;
 
@@ -21,7 +21,7 @@ public class CallTransformer : BaseTransformer
         {
             var instruction = graph.Nodes[i];
 
-            if (instruction.Instruction.OpCode is OpCodeTypes.Call or OpCodeTypes.Callvirt or OpCodeTypes.Calli)
+            if (instruction.Instruction.IlOpCode is OpCodeTypes.Call or OpCodeTypes.Callvirt or OpCodeTypes.Calli)
             {
                 var (removed, replacement) = ExtractMethodCall(graph, instruction, i);
                 var removedNodesArray = removed as IMsilControlFlowGraphNode[] ?? removed.ToArray();

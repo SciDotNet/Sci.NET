@@ -2,10 +2,9 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Reflection.Emit;
-using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
 
-namespace Sci.NET.Accelerators.IR.Rewriter;
+namespace Sci.NET.Accelerators.Disassembly.Cfg;
 
 /// <summary>
 /// Represents a control flow graph.

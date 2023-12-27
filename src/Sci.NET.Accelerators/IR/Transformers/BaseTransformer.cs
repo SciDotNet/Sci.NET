@@ -2,7 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Accelerators.Disassembly;
-using Sci.NET.Accelerators.IR.Rewriter;
+using Sci.NET.Accelerators.Disassembly.Cfg;
 
 namespace Sci.NET.Accelerators.IR.Transformers;
 

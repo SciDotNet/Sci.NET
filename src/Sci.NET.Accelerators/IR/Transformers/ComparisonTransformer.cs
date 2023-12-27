@@ -2,8 +2,8 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Cfg;
 using Sci.NET.Accelerators.IR.Nodes;
-using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Transformers;
 
@@ -20,7 +20,7 @@ public class ComparisonTransformer : BaseTransformer
         {
             var instruction = graph.Nodes[index];
 
-            if (instruction.Instruction.OpCode is OpCodeTypes.Clt or OpCodeTypes.Clt_Un or OpCodeTypes.Cgt or OpCodeTypes.Cgt_Un or OpCodeTypes.Ceq)
+            if (instruction.Instruction.IlOpCode is OpCodeTypes.Clt or OpCodeTypes.Clt_Un or OpCodeTypes.Cgt or OpCodeTypes.Cgt_Un or OpCodeTypes.Ceq)
             {
                 var left = graph.Nodes[index - 2];
                 var right = graph.Nodes[index - 1];

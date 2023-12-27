@@ -3,8 +3,8 @@
 
 using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Cfg;
 using Sci.NET.Accelerators.Disassembly.Operands;
-using Sci.NET.Accelerators.IR.Rewriter;
 
 namespace Sci.NET.Accelerators.IR.Nodes;
 
@@ -35,7 +35,7 @@ public class ComparisonNode : IMsilControlFlowGraphNode
         Instruction = new Instruction<IOperand>
         {
             Operand = default(NoOperand),
-            OpCode = OpCodeTypes.Nop,
+            IlOpCode = OpCodeTypes.Nop,
             Offset = controlFlowGraphNodes[0].Instruction.Offset,
             Size = controlFlowGraphNodes.Sum(x => x.Instruction.Size),
             Name = "Comparison",

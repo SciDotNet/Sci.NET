@@ -27,7 +27,7 @@ public readonly struct Instruction<TOperand> : IValueEquatable<Instruction<TOper
     [SetsRequiredMembers]
     public Instruction(OpCode opcode, int offset, int size, int index)
     {
-        OpCode = opcode.Type();
+        IlOpCode = opcode.Type();
         PopBehaviour = (PopBehaviour)opcode.StackBehaviourPop;
         PushBehaviour = (PushBehaviour)opcode.StackBehaviourPush;
         FlowControl = opcode.FlowControl;
@@ -48,7 +48,7 @@ public readonly struct Instruction<TOperand> : IValueEquatable<Instruction<TOper
     /// <summary>
     /// Gets the instruction opcode.
     /// </summary>
-    public required OpCodeTypes OpCode { get; init; }
+    public required OpCodeTypes IlOpCode { get; init; }
 
     /// <summary>
     /// Gets the instruction pop behaviour.
@@ -163,7 +163,7 @@ public readonly struct Instruction<TOperand> : IValueEquatable<Instruction<TOper
     /// <inheritdoc cref="IValueEquatable{T}.Equals(T)" />
     public bool Equals(Instruction<TOperand> other)
     {
-        return OpCode.Equals(other.OpCode) &&
+        return IlOpCode.Equals(other.IlOpCode) &&
                Offset == other.Offset &&
                Size == other.Size &&
                Operand.Equals(other.Operand);
@@ -179,7 +179,7 @@ public readonly struct Instruction<TOperand> : IValueEquatable<Instruction<TOper
     public override int GetHashCode()
     {
         return HashCode.Combine(
-            OpCode,
+            IlOpCode,
             Offset,
             Size,
             Operand);
@@ -188,6 +188,6 @@ public readonly struct Instruction<TOperand> : IValueEquatable<Instruction<TOper
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"IL_{Offset:x4} {OpCode} {Operand}";
+        return $"IL_{Offset:x4} {IlOpCode} {Operand}";
     }
 }

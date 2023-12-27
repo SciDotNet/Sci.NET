@@ -36,4 +36,10 @@
     <data name="SCI0003MessageFormat" xml:space="preserve">
         <value>The parameter '{0}' has an unsupported type for kernel methods</value>
     </data>
+    <data name="SCI0004Title" xml:space="preserve">
+        <value>Missing containing class</value>
+    </data>
+    <data name="SCI0004MessageFormat" xml:space="preserve">
+        <value>The containing class for method '{0}' could not be resolved</value>
+    </data>
 </root>
