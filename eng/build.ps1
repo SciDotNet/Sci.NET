@@ -30,7 +30,7 @@
 
     # Build CUDA Download Tool
     &$Dotnet build $EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CudaDownloaderTool.sln
-    &$Dotnet build $EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CUDA.Downloader\bin\Debug\net8.0\Sci.NET.CUDA.Downloader.exe 12.3.1 $EngineeringRoot\CUDA\
+    &$EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CUDA.Downloader\bin\Debug\net8.0\Sci.NET.CUDA.Downloader.exe 12.3.1 $EngineeringRoot\CUDA\
     
     # Restore
     &$Dotnet restore $RepoRoot\Sci.NET.sln -s https://api.nuget.org/v3/index.json

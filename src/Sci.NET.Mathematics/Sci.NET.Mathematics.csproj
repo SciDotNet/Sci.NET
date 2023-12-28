@@ -7,11 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.Accelerators.SourceGenerator\Sci.NET.Accelerators.SourceGenerator.csproj">
-          <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-          <OutputItemType>Analyzer</OutputItemType>
-          <PrivateAssets>all</PrivateAssets>
-      </ProjectReference>
       <ProjectReference Include="..\Sci.NET.Accelerators\Sci.NET.Accelerators.csproj" />
       <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
     </ItemGroup>

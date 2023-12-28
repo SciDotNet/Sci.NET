@@ -97,16 +97,6 @@ public class Program
             MoveFolder(archive, Path.Combine(outputRootPath, LinuxX8664));
         }
 
-        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", LinuxPpc64Le)))
-        {
-            MoveFolder(archive, Path.Combine(outputRootPath, LinuxPpc64Le));
-        }
-
-        foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", LinuxSbsa)))
-        {
-            MoveFolder(archive, Path.Combine(outputRootPath, LinuxSbsa));
-        }
-
         foreach (var archive in Directory.EnumerateDirectories(Path.Combine(Environment.CurrentDirectory, "Extracted", WindowsX8664)))
         {
             MoveFolder(archive, Path.Combine(outputRootPath, WindowsX8664));
