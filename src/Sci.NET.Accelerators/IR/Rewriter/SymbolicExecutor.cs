@@ -82,7 +82,7 @@ public class SymbolicExecutor
 
             var result = GetResult(node, operands);
 
-            if (result is not VoidSsaVariable)
+            if (result.Type != typeof(void))
             {
                 _stack.Push(result);
             }
@@ -434,6 +434,11 @@ public class SymbolicExecutor
         if (method is MethodInfo methodInfo)
         {
             return new TempSsaVariable(_nameGenerator.NextLocalName(), methodInfo.ReturnType);
+        }
+
+        if (method is ConstructorInfo constructorInfo)
+        {
+            return new TempSsaVariable(_nameGenerator.NextLocalName(), constructorInfo.DeclaringType ?? throw new InvalidOperationException("The constructor does not have a declaring type."));
         }
 
         return default(VoidSsaVariable);

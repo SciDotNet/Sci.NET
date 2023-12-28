@@ -40,4 +40,20 @@ public static class LoopMetadata
     {
         // Method intentionally left empty.
     }
+
+    /// <summary>
+    /// Marks the start of a vectorized loop.
+    /// </summary>
+    public static void BeginVectorizedLoop()
+    {
+        // Method intentionally left empty.
+    }
+
+    /// <summary>
+    /// Marks the end of a vectorized loop.
+    /// </summary>
+    public static void EndVectorizedLoop()
+    {
+        // Method intentionally left empty.
+    }
 }

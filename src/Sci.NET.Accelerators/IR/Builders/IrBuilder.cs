@@ -23,10 +23,7 @@ public static class IrBuilder
         var cfg = MsilControlFlowGraph.Create(method.Instructions);
         var executor = new SymbolicExecutor(cfg, method);
         var ssaMethod = executor.Execute();
-        var basicBlocks = BasicBlockBuilder.CreateBasicBlocks(cfg, ssaMethod.Instructions);
 
-        LoopDetector.Detect(new BasicBlockCollection(basicBlocks));
-
-        return basicBlocks;
+        return BasicBlockBuilder.CreateBasicBlocks(cfg, ssaMethod.Instructions);
     }
 }

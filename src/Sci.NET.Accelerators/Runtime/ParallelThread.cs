@@ -19,5 +19,5 @@ public static class ParallelThread
     /// <summary>
     /// Gets the block index.
     /// </summary>
-    public static Dim3 BlockIdx { get; }
+    public static Dim3 BlockDim { get; }
 }
