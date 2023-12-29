@@ -27,4 +27,4 @@ jobs:
     - name: Build
       shell: pwsh
       run: |
-        .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ steps.gitversion.outputs.GitVersion_FullSemVer }}
+        .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }}
