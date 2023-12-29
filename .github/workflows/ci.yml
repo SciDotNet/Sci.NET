@@ -15,7 +15,7 @@ on:
 
 jobs:
   checkout:
-    runs-on: windows-latest
+    runs-on: windows-latest-l
     steps:
     - uses: actions/checkout@v3
       with: 
