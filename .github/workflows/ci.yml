@@ -14,7 +14,7 @@ on:
       - '**/*'
 
 jobs:
-  checkout:
+  Build:
     runs-on: windows-latest-l
     steps:
     - uses: actions/checkout@v3
