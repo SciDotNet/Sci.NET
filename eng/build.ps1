@@ -47,5 +47,7 @@
     if ($BuildNugetPackages)
     {
         # Build Nuget packages
-        &$Dotnet pack Resolve-Path($RepoRoot\Sci.NET.sln) -o Resolve-Path($RepoRoot\artifacts\nuget) -c $Configuration -p:PackageVersion = $PackageVersion   
+        $SolutionPath = Resolve-Path -Path "$RepoRoot\Sci.NET.sln"
+        $NugetPath = Resolve-Path -Path "$RepoRoot\artifacts\nuget\"
+        &$Dotnet pack $SolutionPath -o $NugetPath -c $Configuration -p:PackageVersion = $PackageVersion
     }
