@@ -32,11 +32,29 @@ public interface ISerializationService
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Saves a <see cref="ITensor{TNumber}"/> to a stream.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="stream">The stream to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Save<TNumber>(ITensor<TNumber> tensor, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Loads a <see cref="ITensor{TNumber}"/> from a file.
     /// </summary>
     /// <param name="path">The path to the file to load from.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
     public ITensor<TNumber> Load<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Loads a <see cref="ITensor{TNumber}"/> from a stream.
+    /// </summary>
+    /// <param name="stream">The stream to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Load<TNumber>(Stream stream)
         where TNumber : unmanaged, INumber<TNumber>;
 }

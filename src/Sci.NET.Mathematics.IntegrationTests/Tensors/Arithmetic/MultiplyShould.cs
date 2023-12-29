@@ -124,7 +124,7 @@ public class MultiplyShould : IntegrationTestBase, IArithmeticTests
         where TNumber : unmanaged, INumber<TNumber>
     {
         using var leftScalar = new Scalar<TNumber>(left);
-        using var rightTensor = Tensor.FromArray<TNumber>(right);
+        using var rightTensor = Tensor.FromArray<TNumber>(right).ToTensor();
 
         leftScalar.To(device);
         rightTensor.To(device);
@@ -402,7 +402,7 @@ public class MultiplyShould : IntegrationTestBase, IArithmeticTests
     private static Array TensorScalarTest<TNumber>(TNumber[,,] left, TNumber right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var leftTensor = Tensor.FromArray<TNumber>(left);
+        using var leftTensor = Tensor.FromArray<TNumber>(left).ToTensor();
         using var rightScalar = new Scalar<TNumber>(right);
 
         leftTensor.To(device);
@@ -433,7 +433,7 @@ public class MultiplyShould : IntegrationTestBase, IArithmeticTests
     private static Array TensorVectorTest<TNumber>(TNumber[,,] left, TNumber[] right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var leftTensor = Tensor.FromArray<TNumber>(left);
+        using var leftTensor = Tensor.FromArray<TNumber>(left).ToTensor();
         using var rightVector = Tensor.FromArray<TNumber>(right).ToVector();
 
         leftTensor.To(device);
@@ -464,7 +464,7 @@ public class MultiplyShould : IntegrationTestBase, IArithmeticTests
     private static Array TensorMatrixTest<TNumber>(TNumber[,,] left, TNumber[,] right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var leftTensor = Tensor.FromArray<TNumber>(left);
+        using var leftTensor = Tensor.FromArray<TNumber>(left).ToTensor();
         using var rightMatrix = Tensor.FromArray<TNumber>(right).ToMatrix();
 
         leftTensor.To(device);
@@ -495,8 +495,8 @@ public class MultiplyShould : IntegrationTestBase, IArithmeticTests
     private static Array TensorTensorTest<TNumber>(TNumber[,,] left, TNumber[,,] right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var leftTensor = Tensor.FromArray<TNumber>(left);
-        using var rightTensor = Tensor.FromArray<TNumber>(right);
+        using var leftTensor = Tensor.FromArray<TNumber>(left).ToTensor();
+        using var rightTensor = Tensor.FromArray<TNumber>(right).ToTensor();
 
         leftTensor.To(device);
         rightTensor.To(device);

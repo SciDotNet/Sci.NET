@@ -49,4 +49,20 @@ public static class SerializationExtensions
             .GetSerializationService()
             .Save(tensor, path);
     }
+
+    /// <summary>
+    /// Saves a <see cref="ITensor{TNumber}"/> to a file.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="stream">The stream to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    [DebuggerStepThrough]
+    public static void Save<TNumber>(this ITensor<TNumber> tensor, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .Save(tensor, stream);
+    }
 }

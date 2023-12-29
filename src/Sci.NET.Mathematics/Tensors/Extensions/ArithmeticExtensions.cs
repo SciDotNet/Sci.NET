@@ -1345,6 +1345,22 @@ public static class ArithmeticExtensions
     }
 
     /// <summary>
+    /// Finds the negation of the <paramref name="tensor"/> <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to negate.</param>
+    /// <typeparam name="TNumber">The number type of the <paramref name="tensor"/> and result.</typeparam>
+    /// <returns>The negation of the <paramref name="tensor"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Negate<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Negate(tensor.ToTensor());
+    }
+
+    /// <summary>
     /// Finds the absolute value of the <paramref name="scalar"/> <see cref="Scalar{TNumber}"/>.
     /// </summary>
     /// <param name="scalar">The <see cref="Scalar{TNumber}"/> to find the absolute value of.</param>

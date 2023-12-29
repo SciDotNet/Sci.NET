@@ -7,5 +7,5 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors;
 
 public abstract class IntegrationTestBase
 {
-    public static IEnumerable<object[]> ComputeDevices => new[] { new object[] { new CpuComputeDevice() } };
+    public static TheoryData<IDevice> ComputeDevices => new () { new CpuComputeDevice() };
 }

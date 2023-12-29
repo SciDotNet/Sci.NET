@@ -535,6 +535,20 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     }
 
     /// <inheritdoc />
+    public static BFloat16 CreateChecked<TOther>(TOther value)
+        where TOther : INumberBase<TOther>
+    {
+        return float.CreateChecked(value);
+    }
+
+    /// <inheritdoc />
+    public static BFloat16 CreateSaturating<TOther>(TOther value)
+        where TOther : INumberBase<TOther>
+    {
+        return float.CreateSaturating(value);
+    }
+
+    /// <inheritdoc />
     public static bool TryConvertFromChecked<TOther>(TOther value, out BFloat16 result)
         where TOther : INumberBase<TOther>
     {

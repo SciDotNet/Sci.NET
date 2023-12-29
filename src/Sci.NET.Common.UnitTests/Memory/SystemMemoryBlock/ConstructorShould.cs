@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using Sut = Sci.NET.Common.Memory.SystemMemoryBlock<int>;
+using Sci.NET.Common.Memory;
 
 namespace Sci.NET.Common.UnitTests.Memory.SystemMemoryBlock;
 
@@ -11,7 +11,7 @@ public class ConstructorShould
     public unsafe void AllocateMemory_GivenDataLength()
     {
         // Arrange & Act
-        var block = new Sut(10);
+        var block = new SystemMemoryBlock<int>(10);
 
         // Assert
         block.Length.Should().Be(10);
@@ -28,7 +28,7 @@ public class ConstructorShould
     public unsafe void AllocateMemory_WhenCalledWithZeroLength()
     {
         // Arrange & Act
-        var block = new Sut(0);
+        var block = new SystemMemoryBlock<int>(0);
 
         // Assert
         block.Length.Should().Be(0);
@@ -43,7 +43,7 @@ public class ConstructorShould
         var data = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
         // Act
-        var block = new Sut(data);
+        var block = new SystemMemoryBlock<int>(data);
 
         // Assert
         block.Length.Should().Be(10);

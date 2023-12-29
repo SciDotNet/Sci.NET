@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Accelerators.UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.CUDA.Redist-linux-x86-64", "src\Sci.NET.CUDA.Redist-linux-x86-64\Sci.NET.CUDA.Redist-linux-x86-64.csproj", "{90B3B147-B1B6-4F8B-A4C3-AB2FA7816564}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.UnitTests", "src\Sci.NET.Datasets.UnitTests\Sci.NET.Datasets.UnitTests.csproj", "{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,6 +140,10 @@ Global
 		{90B3B147-B1B6-4F8B-A4C3-AB2FA7816564}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B3B147-B1B6-4F8B-A4C3-AB2FA7816564}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90B3B147-B1B6-4F8B-A4C3-AB2FA7816564}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
