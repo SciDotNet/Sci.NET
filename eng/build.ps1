@@ -4,7 +4,7 @@
         [string]$DotnetInstallDir = "$PSScriptRoot\dotnet",
         [string]$EngineeringRoot = "$PSScriptRoot",
         [string]$RepoRoot = "$PSScriptRoot\..",
-        [string]$CudaVersion = "",
+        [string]$CudaVersion = "12.3.1",
         [string]$PackageVersion = "0.0.0",
         [bool]$CleanBuild = $false,
         [bool]$RunTests = $true,
