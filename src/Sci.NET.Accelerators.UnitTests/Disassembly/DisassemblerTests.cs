@@ -18,7 +18,7 @@ public class DisassemblerTests
     public void Disassembler_Constructor_ThrowsOnNullMethodFloat()
     {
         var method = typeof(DisassemblerTests).GetMethod(nameof(TestMethodFloatExplicit), BindingFlags.NonPublic | BindingFlags.Static);
-        RuntimeHelpers.PrepareMethod(method.MethodHandle);
+        RuntimeHelpers.PrepareMethod(method?.MethodHandle ?? throw new InvalidOperationException("Method handle is null."));
 
         var disassembler = new Disassembler(method);
         var disassembledMethod = disassembler.Disassemble();

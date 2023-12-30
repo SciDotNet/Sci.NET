@@ -23,7 +23,7 @@ public static class ImageBlobDatasetStore
     {
         var rootPath = Path.GetDirectoryName(blobPath);
         var fileTableName = $"{Path.GetFileNameWithoutExtension(blobPath)}.bin";
-        var fileTablePath = Path.Combine(rootPath, fileTableName);
+        var fileTablePath = Path.Combine(rootPath!, fileTableName);
 
         if (File.Exists(fileTableName))
         {

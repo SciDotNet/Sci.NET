@@ -30,7 +30,7 @@ public class ImageBlobDatasetStore<TTensor> : IDatasetStore<ITensor<TTensor>>
     {
         var rootPath = Path.GetDirectoryName(blobPath);
         var fileTableName = $"{Path.GetFileNameWithoutExtension(blobPath)}.bin";
-        var fileTablePath = Path.Combine(rootPath, fileTableName);
+        var fileTablePath = Path.Combine(rootPath!, fileTableName);
 
         _blobPath = blobPath;
         _fileTablePath = fileTablePath;

@@ -12,10 +12,10 @@ public class Method
     /// <summary>
     /// Gets the parameters of the method.
     /// </summary>
-    public ICollection<Parameter> Parameters { get; init; }
+    public ICollection<Parameter> Parameters { get; init; } = new List<Parameter>();
 
     /// <summary>
     /// Gets the local variables of the method.
     /// </summary>
-    public ICollection<LocalVariable> LocalVariables { get; init; }
+    public ICollection<LocalVariable> LocalVariables { get; init; } = new List<LocalVariable>();
 }
