@@ -32,5 +32,10 @@ jobs:
       shell: pwsh
       run: |
         .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }}
-    - name: Push generated package to GitHub registry
-      run: dotnet nuget push ./artifacts/bin/release/*.nupkg --skip-duplicate --no-symbols true -k ${{ secrets.NUGET_API_KEY }} --source https://nuget.pkg.github.com/scidotnet/index.json
+    - name: Push NuGet packages
+      shell: pwsh
+      run: |
+        $packages = Get-ChildItem -Path ./artifacts/bin/release/ -Filter *.nupkg
+        foreach ($package in $packages) {
+            dotnet nuget push $package.FullName --no-symbols true -k ${{ secrets.NUGET_API_KEY }} --source https://nuget.pkg.github.com/SciDotNet/index.json
+        }
