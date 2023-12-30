@@ -28,7 +28,13 @@ jobs:
       uses: gittools/actions/gitversion/execute@v0
       with:
         useConfigFile: true
+    - name: Authenticate NuGet
+      shell: pwsh
+      run: |
+        dotnet nuget add source --username scidotnet --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/scidotnet/index.json"
     - name: Build
       shell: pwsh
       run: |
         .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }}
+    - name: Push generated package to GitHub registry
+      run: dotnet nuget push ./artifacts/bin/release/*.nupkg --skip-duplicate --no-symbols true
