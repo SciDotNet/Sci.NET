@@ -44,6 +44,9 @@
             <PropertyGroup>
                 <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>
             </PropertyGroup>
+            <ItemGroup>
+                <None Include="readme.md" Pack="true" PackagePath="\"/>
+            </ItemGroup>
         </Otherwise>
     </Choose>
     <ItemGroup>
@@ -56,10 +59,7 @@
         <PackageReference Include="JetBrains.Annotations"/>
     </ItemGroup>
     <ItemGroup>
-        <None Include="$(RootDirectory)eng/build-props/images/icon-small.png">
-            <Pack>True</Pack>
-            <Link>icon-small.png</Link>
-        </None>
+        <None Include="$(RootDirectory)eng/build-props/images/icon-small.png" Pack="true" Link="icon-small.png" PackagePath="\"/>
     </ItemGroup>
     <Import Project="$(RootDirectory)eng/build-props/AddAnalyzers.props"/>
     <Import Project="$(RootDirectory)eng/build-props/AddCommonTestNugetPackages.props"/>

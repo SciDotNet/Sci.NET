@@ -10,5 +10,7 @@
       <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
       <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
-
+    
+    <ItemGroup>
+    </ItemGroup>
 </Project>
