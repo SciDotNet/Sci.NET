@@ -37,6 +37,10 @@
                 <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
                 <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
                 <IsPackable>true</IsPackable>
+                <PackageIcon>icon-small.png</PackageIcon>
+                <PackageProjectUrl>https://github.com/SciDotNet/Sci.NET/</PackageProjectUrl>
+                <PackageLicenseUrl>https://github.com/SciDotNet/Sci.NET/blob/main/LICENSE</PackageLicenseUrl>
+                <RepositoryUrl>https://github.com/SciDotNet/Sci.NET/</RepositoryUrl>
             </PropertyGroup>
             <PropertyGroup>
                 <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>

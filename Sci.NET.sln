@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		eng\build-props\AddAnalyzers.props = eng\build-props\AddAnalyzers.props
 		eng\build-props\AddCommonTestNugetPackages.props = eng\build-props\AddCommonTestNugetPackages.props
 		eng\build-props\MakeInternalsVisibleToTestProjects.props = eng\build-props\MakeInternalsVisibleToTestProjects.props
+		NuGet.config = NuGet.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}"
