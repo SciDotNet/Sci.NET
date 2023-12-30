@@ -48,6 +48,9 @@ dotnet_diagnostic.NU5125.severity = none
 # Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = warning
 
+# Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CS8509.severity = none
+
 # Use explicit type instead of var
 dotnet_diagnostic.IDE0008.severity = none
 
