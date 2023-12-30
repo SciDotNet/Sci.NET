@@ -14,7 +14,7 @@ internal static class NativeMethods
 
     static NativeMethods()
     {
-        _ = RuntimeDllImportResolver.LoadLibrary(NativeLibrary, typeof(NativeMethods).Assembly);
+        _ = RuntimeDllImportResolver.LoadLibrary(NativeLibrary, typeof(NativeMethods).Assembly, "CUDA");
     }
 
     [DllImport(NativeLibrary, EntryPoint = "allocate_memory", CallingConvention = CallingConvention.Cdecl)]

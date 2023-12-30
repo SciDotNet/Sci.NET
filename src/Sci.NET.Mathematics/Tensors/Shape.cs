@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// Represents the shape of an N-dimensional array.
 /// </summary>
 [PublicAPI]
-public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
+public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Shape"/> class.
@@ -138,41 +138,6 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
-    /// Determines whether the given <paramref name="left"/> and <paramref name="right"/> shapes
-    /// should be broadcast and if so, returns the new shapes.
-    /// </summary>
-    /// <param name="left">The shape of the left operand.</param>
-    /// <param name="right">The shape of the right operand.</param>
-    /// <param name="newLeft">The new shape of the left operand.</param>
-    /// <param name="newRight">The new shape of the right operand.</param>
-    /// <returns>A value indicating whether the <paramref name="left"/> and <paramref name="right"/> shapes
-    /// should be broadcast.</returns>
-    public static bool ShouldBroadcastBinaryOp(
-        Shape left,
-        Shape right,
-        out Shape? newLeft,
-        out Shape? newRight)
-    {
-        var shouldBroadcast = false;
-
-        newLeft = null;
-        newRight = null;
-
-        if (left.Any(x => x == 1))
-        {
-            newLeft = new Shape(right.Dimensions.Where(x => x != 1).ToArray());
-            shouldBroadcast = true;
-        }
-
-        if (right.Any(x => x == 1))
-        {
-            newRight = new Shape(left.Dimensions.Where(x => x != 1).ToArray());
-        }
-
-        return shouldBroadcast;
-    }
-
-    /// <summary>
     /// Gets a new scalar <see cref="Shape"/>.
     /// </summary>
     /// <returns>A new scalar <see cref="Shape"/>.</returns>
@@ -285,8 +250,7 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     {
         if (axes.Length > Rank)
         {
-            throw new ArgumentException(
-                "The number of slice indices must be less than or equal to the rank of the shape.");
+            throw new ArgumentException("The number of slice indices must be less than or equal to the rank of the shape.");
         }
 
         if (axes.Length == Rank)
@@ -352,17 +316,17 @@ public class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <inheritdoc />
+    public override bool Equals(object? obj)
+    {
+        return obj is Shape shape && Equals(shape);
+    }
+
+    /// <inheritdoc />
     public IEnumerator<int> GetEnumerator()
     {
         return Dimensions.LongLength == 0
             ? Enumerable.Empty<int>().GetEnumerator()
             : ((IEnumerable<int>)Dimensions).GetEnumerator();
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object? obj)
-    {
-        return obj is Shape shape && Equals(shape);
     }
 
     /// <inheritdoc />

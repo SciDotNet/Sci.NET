@@ -22,6 +22,12 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     public bool IsDisposed { get; }
 
     /// <summary>
+    /// Gets or sets the element at the specified index.
+    /// </summary>
+    /// <param name="index">The index of the element to get or set.</param>
+    public ref T this[long index] { get; }
+
+    /// <summary>
     /// Copies the contents of the <see cref="IMemoryBlock{T}"/> to a new <see cref="IMemoryBlock{T}"/>.
     /// </summary>
     /// <returns>A copy of the current <see cref="IMemoryBlock{T}"/> instance.</returns>

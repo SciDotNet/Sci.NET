@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
@@ -1834,12 +1835,20 @@ internal class ArithmeticService : IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = value.Backend;
+
+        if (!CanNegate<TNumber>())
+        {
+            var newMemoryBlock = value.Handle.Copy();
+
+            return new Scalar<TNumber>(newMemoryBlock, backend);
+        }
+
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.Negate(
             value.Handle,
             result.Handle,
-            1);
+            value.Shape.ElementCount);
 
         return result;
     }
@@ -1848,12 +1857,20 @@ internal class ArithmeticService : IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = value.Backend;
+
+        if (!CanNegate<TNumber>())
+        {
+            var newMemoryBlock = value.Handle.Copy();
+
+            return new Vector<TNumber>(value.Length, newMemoryBlock, backend);
+        }
+
         var result = new Vector<TNumber>(value.Length, backend);
 
         backend.Arithmetic.Negate(
             value.Handle,
             result.Handle,
-            value.Length);
+            value.Shape.ElementCount);
 
         return result;
     }
@@ -1862,6 +1879,14 @@ internal class ArithmeticService : IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = value.Backend;
+
+        if (!CanNegate<TNumber>())
+        {
+            var newMemoryBlock = value.Handle.Copy();
+
+            return new Matrix<TNumber>(value.Rows, value.Columns, newMemoryBlock, backend);
+        }
+
         var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
 
         backend.Arithmetic.Negate(
@@ -1876,6 +1901,14 @@ internal class ArithmeticService : IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = value.Backend;
+
+        if (!CanNegate<TNumber>())
+        {
+            var newMemoryBlock = value.Handle.Copy();
+
+            return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend);
+        }
+
         var result = new Tensor<TNumber>(value.Shape, backend);
 
         backend.Arithmetic.Negate(
@@ -2130,5 +2163,14 @@ internal class ArithmeticService : IArithmeticService
             tensor.Shape.ElementCount);
 
         return result;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool CanNegate<TNumber>()
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var difference = TNumber.CreateSaturating(-1);
+
+        return TNumber.Min(TNumber.Zero, difference) != TNumber.Zero;
     }
 }

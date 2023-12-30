@@ -3,7 +3,6 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
@@ -99,7 +98,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
             if (index < 0 || index >= Length)
             {
-                throw new ArgumentOutOfRangeException(nameof(index));
+                throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be non-negative and less than {Length}.");
             }
 
             return ref Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)index);
@@ -189,151 +188,9 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        if (!Vector.IsHardwareAccelerated)
+        for (var i = 0; i < Length; i++)
         {
-            goto CannotVectorize;
-        }
-
-        if (Unsafe.SizeOf<T>() > Vector<T>.Count)
-        {
-            goto CannotVectorize;
-        }
-
-        if (!BitOperations.IsPow2(sizeof(T)))
-        {
-            goto CannotVectorize;
-        }
-
-        if (Length >= Vector<T>.Count / Unsafe.SizeOf<T>())
-        {
-            var tmp = value;
-            Vector<byte> vector;
-
-            if (Unsafe.SizeOf<T>() == 1)
-            {
-                vector = new Vector<byte>(Unsafe.As<T, byte>(ref tmp));
-            }
-            else if (Unsafe.SizeOf<T>() == 2)
-            {
-                vector = (Vector<byte>)new Vector<ushort>(Unsafe.As<T, ushort>(ref tmp));
-            }
-            else if (Unsafe.SizeOf<T>() == 4)
-            {
-                vector = (typeof(T) == typeof(float))
-                    ? (Vector<byte>)new Vector<float>((float)(object)tmp)
-                    : (Vector<byte>)new Vector<uint>(Unsafe.As<T, uint>(ref tmp));
-            }
-            else if (Unsafe.SizeOf<T>() == 8)
-            {
-                vector = (typeof(T) == typeof(double))
-                    ? (Vector<byte>)new Vector<double>((double)(object)tmp)
-                    : (Vector<byte>)new Vector<ulong>(Unsafe.As<T, ulong>(ref tmp));
-            }
-            else if (Unsafe.SizeOf<T>() == 16)
-            {
-                var vec128 = Unsafe.As<T, Vector128<byte>>(ref tmp);
-
-                switch (Vector<byte>.Count)
-                {
-                    case 16:
-                        vector = vec128.AsVector();
-                        break;
-                    case 32:
-                        vector = Vector256.Create(vec128, vec128).AsVector();
-                        break;
-                    default:
-                        goto CannotVectorize;
-                }
-            }
-            else if (Unsafe.SizeOf<T>() == 32)
-            {
-                if (Vector<byte>.Count == 32)
-                {
-                    vector = Unsafe.As<T, Vector256<byte>>(ref tmp).AsVector();
-                }
-                else
-                {
-                    goto CannotVectorize;
-                }
-            }
-            else
-            {
-                goto CannotVectorize;
-            }
-
-            ref var refData = ref Unsafe.As<T, byte>(ref Unsafe.AsRef<T>(_reference));
-            var totalByteLength = (nuint)(Length * Unsafe.SizeOf<T>());
-            var stopLoopAtOffset = totalByteLength & (nuint)(2 * -Vector<byte>.Count);
-            var offset = (nuint)0;
-
-            if (Length >= (uint)(2 * Vector<byte>.Count / Unsafe.SizeOf<T>()))
-            {
-                do
-                {
-                    Unsafe.WriteUnaligned(ref Unsafe.AddByteOffset(ref refData, offset), vector);
-
-                    Unsafe.WriteUnaligned(
-                        ref Unsafe.AddByteOffset(ref refData, offset + (nuint)Vector<byte>.Count),
-                        vector);
-                    offset += (uint)(2 * Vector<byte>.Count);
-                }
-                while (offset < stopLoopAtOffset);
-            }
-
-            if ((totalByteLength & (nuint)Vector<byte>.Count) != 0)
-            {
-                Unsafe.WriteUnaligned(ref Unsafe.AddByteOffset(ref refData, offset), vector);
-            }
-
-            Unsafe.WriteUnaligned(
-                ref Unsafe.AddByteOffset(ref refData, totalByteLength - (nuint)Vector<byte>.Count),
-                vector);
-            return;
-        }
-
-        CannotVectorize:
-        long i = 0;
-
-        if (Length >= 8)
-        {
-            var stopLoopAtOffset = Length & ~7;
-
-            do
-            {
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 0) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 1) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 2) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 3) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 4) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 5) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 6) = value;
-                Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 7) = value;
-            }
-            while ((i += 8) < stopLoopAtOffset);
-        }
-
-        // Write next 4 elements if needed
-        if ((Length & 4) != 0)
-        {
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 0) = value;
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 1) = value;
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 2) = value;
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 3) = value;
-            i += 4;
-        }
-
-        // Write next 2 elements if needed
-        if ((Length & 2) != 0)
-        {
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 0) = value;
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 1) = value;
-            i += 2;
-        }
-
-        // Write final element if needed
-        if ((Length & 1) != 0)
-        {
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)(i * Unsafe.SizeOf<T>()) + 0) = value;
+            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)i) = value;
         }
     }
 #pragma warning restore CA1502 // Avoid excessive complexity
@@ -689,14 +546,12 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         Unsafe.WriteUnaligned(_reference + index, vector);
     }
 
-    /// <param name="id"></param>
     /// <inheritdoc />
     public void Rent(Guid id)
     {
         _rentals.Add(id);
     }
 
-    /// <param name="id"></param>
     /// <inheritdoc />
     public void Release(Guid id)
     {

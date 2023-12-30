@@ -14,8 +14,8 @@ on:
       - '**/*'
 
 jobs:
-  checkout:
-    runs-on: ubuntu-latest
+  Build:
+    runs-on: windows-latest-l
     steps:
     - uses: actions/checkout@v3
       with: 
@@ -32,3 +32,10 @@ jobs:
       shell: pwsh
       run: |
         .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }}
+    - name: Push NuGet packages
+      shell: pwsh
+      run: |
+        $packages = Get-ChildItem -Path ./artifacts/bin/release/ -Filter *.nupkg
+        foreach ($package in $packages) {
+            dotnet nuget push $package.FullName --no-symbols true -k ${{ secrets.NUGET_API_KEY }} --source https://nuget.pkg.github.com/SciDotNet/index.json
+        }

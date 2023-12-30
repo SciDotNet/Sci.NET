@@ -2,14 +2,13 @@
 
     <PropertyGroup>
         <ImplicitUsings>enable</ImplicitUsings>
-        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.CUDA.Redist-Win64\Sci.NET.CUDA.Redist-Win64.csproj" />
+      <ProjectReference Include="..\Sci.NET.CUDA.Redist-windows-x86-64\Sci.NET.CUDA.Redist-windows-x86-64.csproj" />
       <ProjectReference Include="..\Sci.NET.CUDA\Sci.NET.CUDA.csproj" />
       <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
       <ProjectReference Include="..\Sci.NET.Tests.Framework\Sci.NET.Tests.Framework.csproj" />

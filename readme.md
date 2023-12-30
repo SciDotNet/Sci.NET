@@ -69,3 +69,4 @@ What optimizations did you make in your code? E.g. refactors, performance improv
 
 - [NVIDIA CUDA](https://docs.nvidia.com/cuda/eula/index.html)
 - [NVIDIA CuDNN](https://docs.nvidia.com/deeplearning/cudnn/sla/index.html)
+- [ImageSharp](https://github.com/SixLabors/ImageSharp)

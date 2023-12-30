@@ -60,7 +60,7 @@ internal class ManagedCastingKernels : ICastingKernels
 
         LazyParallelExecutor.For(
             0,
-            resultMemoryBlock.Length,
+            inputMemoryBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold / 2,
             i => resultMemoryBlock[i] = TOut.CreateChecked(inputMemoryBlock[i]));
     }

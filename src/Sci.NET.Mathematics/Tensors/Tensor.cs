@@ -160,6 +160,21 @@ public static class Tensor
     }
 
     /// <summary>
+    /// Loads a tensor from the specified buffer.
+    /// </summary>
+    /// <param name="stream">The buffer to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> LoadFromBuffer<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .Load<TNumber>(stream);
+    }
+
+    /// <summary>
     /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with zeros..
     /// </summary>
     /// <param name="dimensions">The dimensions of the <see cref="ITensor{TNumber}"/>.</param>

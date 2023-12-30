@@ -24,7 +24,7 @@
     <Choose>
         <When Condition="'$(TestProject)' == 'true'">
             <PropertyGroup>
-                <TargetFramework>net7.0</TargetFramework>
+                <TargetFramework>net8.0</TargetFramework>
                 <IsTestProject>true</IsTestProject>
             </PropertyGroup>
         </When>
@@ -37,10 +37,16 @@
                 <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
                 <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
                 <IsPackable>true</IsPackable>
+                <PackageIcon>icon-small.png</PackageIcon>
+                <PackageProjectUrl>https://github.com/SciDotNet/Sci.NET/</PackageProjectUrl>
+                <RepositoryUrl>https://github.com/SciDotNet/Sci.NET/</RepositoryUrl>
             </PropertyGroup>
             <PropertyGroup>
                 <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>
             </PropertyGroup>
+            <ItemGroup>
+                <None Include="readme.md" Pack="true" PackagePath="\"/>
+            </ItemGroup>
         </Otherwise>
     </Choose>
     <ItemGroup>
@@ -53,10 +59,7 @@
         <PackageReference Include="JetBrains.Annotations"/>
     </ItemGroup>
     <ItemGroup>
-        <None Include="$(RootDirectory)eng/build-props/images/icon-small.png">
-            <Pack>True</Pack>
-            <Link>icon-small.png</Link>
-        </None>
+        <None Include="$(RootDirectory)eng/build-props/images/icon-small.png" Pack="true" Link="icon-small.png" PackagePath="\"/>
     </ItemGroup>
     <Import Project="$(RootDirectory)eng/build-props/AddAnalyzers.props"/>
     <Import Project="$(RootDirectory)eng/build-props/AddCommonTestNugetPackages.props"/>

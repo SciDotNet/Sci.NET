@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using Sut = Sci.NET.Common.Memory.SystemMemoryBlock<int>;
+using Sci.NET.Common.Memory;
 
 namespace Sci.NET.Common.UnitTests.Memory.SystemMemoryBlock;
 
@@ -15,7 +15,7 @@ public class ToArrayShould
     public void ToArray_WhenCalled_ShouldCopyData(int[] data)
     {
         // Arrange
-        var source = new Sut(data);
+        var source = new SystemMemoryBlock<int>(data);
 
         // Act
         var result = source.ToArray();
