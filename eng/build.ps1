@@ -48,6 +48,16 @@
     {
         # Build Nuget packages
         $SolutionPath = Resolve-Path -Path "$RepoRoot\Sci.NET.sln"
-        $NugetPath = Resolve-Path -Path "$RepoRoot\artifacts\nuget\"
-        &$Dotnet pack $SolutionPath -o $NugetPath -c $Configuration -p:PackageVersion = $PackageVersion
+        $NugetPath = Resolve-Path -Path "$RepoRoot\artifacts\nuget"
+
+        if (Test-Path $NugetPath)
+        {
+            # Maybe delete?
+        }
+        else
+        {
+            New-Item -ItemType Directory -Force -Path $NugetPath
+        }
+
+        &$Dotnet pack $SolutionPath -c $Configuration -p:PackageVersion=$PackageVersion
     }
