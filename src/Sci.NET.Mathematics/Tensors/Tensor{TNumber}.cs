@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
@@ -102,6 +103,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
 
 #pragma warning disable IDE0051, RCS1213
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    [ExcludeFromCodeCoverage]
     private Array DebuggerDisplayObject => ToArray();
 #pragma warning restore RCS1213, IDE0051
 
