@@ -77,7 +77,7 @@ internal class SerializationService : ISerializationService
         stream.Write(shapeEnd);
         stream.Write(paddingRef);
 
-        tensor.Handle.WriteTo(stream);
+        tensor.Memory.WriteTo(stream);
 
         stream.Flush();
         stream.Close();
@@ -97,7 +97,7 @@ internal class SerializationService : ISerializationService
         using var dataBuffer = new MemoryStream();
         using var gzipCompressor = new GZipStream(dataBuffer, CompressionMode.Compress, true);
 
-        tensor.Handle.WriteTo(gzipCompressor);
+        tensor.Memory.WriteTo(gzipCompressor);
 
         var rank = tensor.Shape.Rank;
         var shape = tensor.Shape.Dimensions;
@@ -154,7 +154,7 @@ internal class SerializationService : ISerializationService
 
         var bytesToRead = stream.ReadValue<int>();
         var tensor = new Tensor<TNumber>(new Shape(shape));
-        var handle = tensor.Handle;
+        var handle = tensor.Memory;
         var bufferSize = tensor.Shape.ElementCount <= int.MaxValue ? (int)tensor.Shape.ElementCount : int.MaxValue;
         var buffer = new Span<byte>(new byte[bufferSize * Unsafe.SizeOf<TNumber>()]);
         var bytesRead = 0;

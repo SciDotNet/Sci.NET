@@ -24,6 +24,17 @@ public static class GenericMath
     }
 
     /// <summary>
+    /// Determines if the number type is signed.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type to test.</typeparam>
+    /// <returns><c>true</c> if the number is a signed type, else, <c>false</c>.</returns>
+    public static bool IsSigned<TNumber>()
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return unchecked(TNumber.Zero - TNumber.One) < TNumber.Zero;
+    }
+
+    /// <summary>
     /// Gets the machine epsilon for the specified number type.
     /// </summary>
     /// <typeparam name="TNumber">The number type to get the epsilon for.</typeparam>

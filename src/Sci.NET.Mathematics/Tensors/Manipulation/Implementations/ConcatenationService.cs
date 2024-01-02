@@ -91,7 +91,7 @@ internal class ConcatenationService : IConcatenationService
 
         for (var i = 0; i < tensors.Count; i++)
         {
-            result.Handle.BlockCopyFrom(tensors.ElementAt(i).Handle, 0, i * shape.ElementCount, shape.ElementCount);
+            result.Memory.BlockCopyFrom(tensors.ElementAt(i).Memory, 0, i * shape.ElementCount, shape.ElementCount);
         }
 
         return result;

@@ -13,9 +13,9 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
     public void MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Handle;
-        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -40,9 +40,9 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
     public void InnerProduct<TNumber>(Tensors.Vector<TNumber> left, Tensors.Vector<TNumber> right, Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Handle;
-        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
+        var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,

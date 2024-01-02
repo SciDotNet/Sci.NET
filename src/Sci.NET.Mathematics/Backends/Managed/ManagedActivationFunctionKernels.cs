@@ -13,8 +13,8 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     public void Sigmoid<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Handle;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Handle;
+        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
+        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -26,8 +26,8 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     public void SigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Handle;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Handle;
+        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
+        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -43,8 +43,8 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     public void ReLU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Handle;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Handle;
+        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
+        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -56,8 +56,8 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     public void ReLUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Handle;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Handle;
+        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
+        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,

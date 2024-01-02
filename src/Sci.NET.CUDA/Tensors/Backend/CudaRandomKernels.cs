@@ -21,7 +21,7 @@ internal class CudaRandomKernels : IRandomKernels
             case float:
                 RandomNativeApi
                     .UniformFp32(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, float>(),
                         max.ReinterpretCast<TNumber, float>(),
                         shape.ElementCount,
@@ -30,7 +30,7 @@ internal class CudaRandomKernels : IRandomKernels
             case double:
                 RandomNativeApi
                     .UniformFp64(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, double>(),
                         max.ReinterpretCast<TNumber, double>(),
                         shape.ElementCount,
@@ -39,7 +39,7 @@ internal class CudaRandomKernels : IRandomKernels
             case byte:
                 RandomNativeApi
                     .UniformUInt8(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, byte>(),
                         max.ReinterpretCast<TNumber, byte>(),
                         shape.ElementCount,
@@ -48,7 +48,7 @@ internal class CudaRandomKernels : IRandomKernels
             case ushort:
                 RandomNativeApi
                     .UniformUInt16(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, ushort>(),
                         max.ReinterpretCast<TNumber, ushort>(),
                         shape.ElementCount,
@@ -57,7 +57,7 @@ internal class CudaRandomKernels : IRandomKernels
             case uint:
                 RandomNativeApi
                     .UniformUInt32(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, uint>(),
                         max.ReinterpretCast<TNumber, uint>(),
                         shape.ElementCount,
@@ -66,7 +66,7 @@ internal class CudaRandomKernels : IRandomKernels
             case ulong:
                 RandomNativeApi
                     .UniformUInt64(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, ulong>(),
                         max.ReinterpretCast<TNumber, ulong>(),
                         shape.ElementCount,
@@ -75,7 +75,7 @@ internal class CudaRandomKernels : IRandomKernels
             case sbyte:
                 RandomNativeApi
                     .UniformInt8(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, sbyte>(),
                         max.ReinterpretCast<TNumber, sbyte>(),
                         shape.ElementCount,
@@ -84,7 +84,7 @@ internal class CudaRandomKernels : IRandomKernels
             case short:
                 RandomNativeApi
                     .UniformInt16(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, short>(),
                         max.ReinterpretCast<TNumber, short>(),
                         shape.ElementCount,
@@ -93,7 +93,7 @@ internal class CudaRandomKernels : IRandomKernels
             case int:
                 RandomNativeApi
                     .UniformInt32(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, int>(),
                         max.ReinterpretCast<TNumber, int>(),
                         shape.ElementCount,
@@ -102,7 +102,7 @@ internal class CudaRandomKernels : IRandomKernels
             case long:
                 RandomNativeApi
                     .UniformInt64(
-                        tensor.Handle,
+                        tensor.Memory,
                         min.ReinterpretCast<TNumber, long>(),
                         max.ReinterpretCast<TNumber, long>(),
                         shape.ElementCount,

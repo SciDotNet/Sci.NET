@@ -13,8 +13,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SinFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -23,8 +23,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SinFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -33,8 +33,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CosFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -43,8 +43,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CosFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -53,8 +53,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.TanFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -63,8 +63,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.TanFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -73,8 +73,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sin2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -83,8 +83,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sin2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -93,8 +93,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Cos2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -103,8 +103,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Cos2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -113,8 +113,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Tan2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -123,8 +123,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Tan2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -133,8 +133,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SinhFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -143,8 +143,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SinhFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -153,8 +153,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CoshFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -163,8 +163,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CoshFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -173,8 +173,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.TanhFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -183,8 +183,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.TanhFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -193,8 +193,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sinh2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -203,8 +203,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sinh2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -213,8 +213,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Cosh2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -223,8 +223,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Cosh2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -233,8 +233,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Tanh2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -243,8 +243,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Tanh2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -253,8 +253,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsinFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -263,8 +263,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsinFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -273,8 +273,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcosFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -283,8 +283,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcosFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -293,8 +293,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AtanFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -303,8 +303,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AtanFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -313,8 +313,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asin2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -323,8 +323,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asin2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -333,8 +333,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acos2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -343,8 +343,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acos2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -353,8 +353,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Atan2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -363,8 +363,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Atan2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -373,8 +373,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsinhFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -383,8 +383,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsinhFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -393,8 +393,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcoshFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -403,8 +403,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcoshFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -413,8 +413,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AtanhFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -423,8 +423,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AtanhFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -433,8 +433,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asinh2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -443,8 +443,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asinh2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -453,8 +453,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acosh2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -463,8 +463,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acosh2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -473,8 +473,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Atanh2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -483,8 +483,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Atanh2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -493,8 +493,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CscFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -503,8 +503,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CscFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -513,8 +513,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SecFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -523,8 +523,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SecFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -533,8 +533,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CotFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -543,8 +543,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CotFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -553,8 +553,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Csc2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -563,8 +563,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Csc2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -573,8 +573,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sec2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -583,8 +583,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sec2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -593,8 +593,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Cot2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -603,8 +603,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Cot2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -613,8 +613,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CschFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -623,8 +623,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CschFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -633,8 +633,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SechFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -643,8 +643,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.SechFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -653,8 +653,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CothFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -663,8 +663,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.CothFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -673,8 +673,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Csch2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -683,8 +683,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Csch2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -693,8 +693,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sech2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -703,8 +703,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Sech2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -713,8 +713,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Coth2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -723,8 +723,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Coth2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -733,8 +733,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcscFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -743,8 +743,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcscFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -753,8 +753,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsecFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -763,8 +763,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsecFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -773,8 +773,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcotFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -783,8 +783,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcotFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -793,8 +793,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acsc2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -803,8 +803,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acsc2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -813,8 +813,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asec2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -823,8 +823,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asec2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -833,8 +833,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acot2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -843,8 +843,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acot2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -853,8 +853,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcscchFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -863,8 +863,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcscchFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -873,8 +873,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsechFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -883,8 +883,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AsechFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -893,8 +893,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcothFp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -903,8 +903,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.AcothFp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -913,8 +913,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acscch2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -923,8 +923,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acscch2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -933,8 +933,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asech2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -943,8 +943,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Asech2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -953,8 +953,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acoth2Fp32(
-                (float*)tensor.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)tensor.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }
@@ -963,8 +963,8 @@ internal static class TrigonometryNativeApi
         where TNumber : unmanaged, INumber<TNumber>
     {
         TrigonometryNativeMethods.Acoth2Fp64(
-                (double*)tensor.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)tensor.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 tensor.Shape.ElementCount)
             .Guard();
     }

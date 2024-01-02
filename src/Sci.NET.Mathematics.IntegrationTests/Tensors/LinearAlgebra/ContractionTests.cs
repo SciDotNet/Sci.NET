@@ -19,11 +19,7 @@ public class ContractionTests : IntegrationTestBase
         left.To(device);
         right.To(device);
 
-        var result = left.TensorDot(right, new int[] { 1, 2 }, new int[] { 1, 2 });
-
-        var str = result.ToArray().ToString();
-
-        str.Should().Be("123");
+        var result = left.Contract(right, new int[] { 1, 2 }, new int[] { 1, 2 });
 
         result
             .Should()

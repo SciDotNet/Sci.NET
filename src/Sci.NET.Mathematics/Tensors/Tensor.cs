@@ -117,8 +117,8 @@ public static class Tensor
         var shape = tensor.Shape.Slice(indices);
         var result = new Tensor<TNumber>(new Shape(shape.Dimensions), tensor.Backend);
 
-        result.Handle.BlockCopyFrom(
-            tensor.Handle,
+        result.Memory.BlockCopyFrom(
+            tensor.Memory,
             shape.DataOffset,
             0,
             shape.ElementCount);
@@ -217,7 +217,7 @@ public static class Tensor
             throw new InvalidShapeException($"The shapes of the tensors must be equal but were {tensor.Shape} and {other.Shape}.");
         }
 
-        other.Handle.CopyTo(tensor.Handle);
+        other.Memory.CopyTo(tensor.Memory);
         return tensor;
     }
 
@@ -242,7 +242,7 @@ public static class Tensor
         var startIndex = tensor.Shape.DataOffset;
         var endIndex = startIndex + tensor.Shape.ElementCount;
         var bytesToCopy = Unsafe.SizeOf<TNumber>() * (endIndex - startIndex);
-        var systemMemoryClone = tensor.Handle.ToSystemMemory();
+        var systemMemoryClone = tensor.Memory.ToSystemMemory();
 
         var sourcePointer = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<TNumber>(systemMemoryClone.ToPointer()), (nuint)startIndex));
         var destinationPointer = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(result));

@@ -29,9 +29,9 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     {
         Shape = new Shape(shape);
         Backend = backend ?? Tensor.DefaultBackend;
-        Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -56,11 +56,11 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
             throw new ArgumentException("The new shape must have the same number of elements as the previous tensor.");
         }
 
-        Handle = previousTensor.Handle;
+        Memory = previousTensor.Memory;
         Backend = previousTensor.Backend;
         Shape = newShape;
         IsMemoryOwner = false;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -71,11 +71,11 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <param name="backend">The <see cref="ITensorBackend"/> instance which the <see cref="ITensor{TNumber}"/> uses.</param>
     public Tensor(IMemoryBlock<TNumber> memoryBlock, Shape shape, ITensorBackend backend)
     {
-        Handle = memoryBlock;
+        Memory = memoryBlock;
         Shape = shape;
         Backend = backend;
         IsMemoryOwner = false;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     public Shape Shape { get; }
 
     /// <inheritdoc />
-    public IMemoryBlock<TNumber> Handle { get; private set; }
+    public IMemoryBlock<TNumber> Memory { get; private set; }
 
     /// <inheritdoc />
     public ITensorBackend Backend { get; private set; }
@@ -141,12 +141,12 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         }
 
         var newBackend = device.GetTensorBackend();
-        var oldHandle = Handle;
+        var oldHandle = Memory;
         var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
         using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
 
-        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
-        Handle = newHandle;
+        newHandle.CopyFromSystemMemory(Memory.ToSystemMemory());
+        Memory = newHandle;
         Backend = newBackend;
         oldHandle.Dispose();
     }
@@ -164,11 +164,11 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the instance is disposing.</param>
     private void Dispose(bool disposing)
     {
-        Handle.Release(_id);
+        Memory.Release(_id);
 
         if (disposing && IsMemoryOwner)
         {
-            Handle.Dispose();
+            Memory.Dispose();
         }
     }
 }

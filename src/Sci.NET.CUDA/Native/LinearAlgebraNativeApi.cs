@@ -15,9 +15,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyU8(
-                (byte*)left.Handle.ToPointer(),
-                (byte*)right.Handle.ToPointer(),
-                (byte*)result.Handle.ToPointer(),
+                (byte*)left.Memory.ToPointer(),
+                (byte*)right.Memory.ToPointer(),
+                (byte*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -29,9 +29,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyU16(
-                (ushort*)left.Handle.ToPointer(),
-                (ushort*)right.Handle.ToPointer(),
-                (ushort*)result.Handle.ToPointer(),
+                (ushort*)left.Memory.ToPointer(),
+                (ushort*)right.Memory.ToPointer(),
+                (ushort*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -43,9 +43,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyU32(
-                (uint*)left.Handle.ToPointer(),
-                (uint*)right.Handle.ToPointer(),
-                (uint*)result.Handle.ToPointer(),
+                (uint*)left.Memory.ToPointer(),
+                (uint*)right.Memory.ToPointer(),
+                (uint*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -57,9 +57,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyU64(
-                (ulong*)left.Handle.ToPointer(),
-                (ulong*)right.Handle.ToPointer(),
-                (ulong*)result.Handle.ToPointer(),
+                (ulong*)left.Memory.ToPointer(),
+                (ulong*)right.Memory.ToPointer(),
+                (ulong*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -71,9 +71,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyI8(
-                (sbyte*)left.Handle.ToPointer(),
-                (sbyte*)right.Handle.ToPointer(),
-                (sbyte*)result.Handle.ToPointer(),
+                (sbyte*)left.Memory.ToPointer(),
+                (sbyte*)right.Memory.ToPointer(),
+                (sbyte*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -85,9 +85,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyI16(
-                (short*)left.Handle.ToPointer(),
-                (short*)right.Handle.ToPointer(),
-                (short*)result.Handle.ToPointer(),
+                (short*)left.Memory.ToPointer(),
+                (short*)right.Memory.ToPointer(),
+                (short*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -99,9 +99,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyI32(
-                (int*)left.Handle.ToPointer(),
-                (int*)right.Handle.ToPointer(),
-                (int*)result.Handle.ToPointer(),
+                (int*)left.Memory.ToPointer(),
+                (int*)right.Memory.ToPointer(),
+                (int*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -113,9 +113,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyI64(
-                (long*)left.Handle.ToPointer(),
-                (long*)right.Handle.ToPointer(),
-                (long*)result.Handle.ToPointer(),
+                (long*)left.Memory.ToPointer(),
+                (long*)right.Memory.ToPointer(),
+                (long*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -127,9 +127,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyBf16(
-                (BFloat16*)left.Handle.ToPointer(),
-                (BFloat16*)right.Handle.ToPointer(),
-                (BFloat16*)result.Handle.ToPointer(),
+                (BFloat16*)left.Memory.ToPointer(),
+                (BFloat16*)right.Memory.ToPointer(),
+                (BFloat16*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -141,9 +141,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyFp32(
-                (float*)left.Handle.ToPointer(),
-                (float*)right.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)left.Memory.ToPointer(),
+                (float*)right.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -155,9 +155,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .MatrixMultiplyFp64(
-                (double*)left.Handle.ToPointer(),
-                (double*)right.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)left.Memory.ToPointer(),
+                (double*)right.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 left.Rows,
                 left.Columns,
                 right.Columns)
@@ -172,9 +172,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductFp32(
-                (float*)left.Handle.ToPointer(),
-                (float*)right.Handle.ToPointer(),
-                (float*)result.Handle.ToPointer(),
+                (float*)left.Memory.ToPointer(),
+                (float*)right.Memory.ToPointer(),
+                (float*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -187,9 +187,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductFp64(
-                (double*)left.Handle.ToPointer(),
-                (double*)right.Handle.ToPointer(),
-                (double*)result.Handle.ToPointer(),
+                (double*)left.Memory.ToPointer(),
+                (double*)right.Memory.ToPointer(),
+                (double*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -202,9 +202,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductU8(
-                (byte*)left.Handle.ToPointer(),
-                (byte*)right.Handle.ToPointer(),
-                (byte*)result.Handle.ToPointer(),
+                (byte*)left.Memory.ToPointer(),
+                (byte*)right.Memory.ToPointer(),
+                (byte*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -217,9 +217,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductU16(
-                (ushort*)left.Handle.ToPointer(),
-                (ushort*)right.Handle.ToPointer(),
-                (ushort*)result.Handle.ToPointer(),
+                (ushort*)left.Memory.ToPointer(),
+                (ushort*)right.Memory.ToPointer(),
+                (ushort*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -232,9 +232,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductU32(
-                (uint*)left.Handle.ToPointer(),
-                (uint*)right.Handle.ToPointer(),
-                (uint*)result.Handle.ToPointer(),
+                (uint*)left.Memory.ToPointer(),
+                (uint*)right.Memory.ToPointer(),
+                (uint*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -247,9 +247,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductU64(
-                (ulong*)left.Handle.ToPointer(),
-                (ulong*)right.Handle.ToPointer(),
-                (ulong*)result.Handle.ToPointer(),
+                (ulong*)left.Memory.ToPointer(),
+                (ulong*)right.Memory.ToPointer(),
+                (ulong*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -262,9 +262,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductI8(
-                (sbyte*)left.Handle.ToPointer(),
-                (sbyte*)right.Handle.ToPointer(),
-                (sbyte*)result.Handle.ToPointer(),
+                (sbyte*)left.Memory.ToPointer(),
+                (sbyte*)right.Memory.ToPointer(),
+                (sbyte*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -277,9 +277,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductI16(
-                (short*)left.Handle.ToPointer(),
-                (short*)right.Handle.ToPointer(),
-                (short*)result.Handle.ToPointer(),
+                (short*)left.Memory.ToPointer(),
+                (short*)right.Memory.ToPointer(),
+                (short*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -292,9 +292,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductI32(
-                (int*)left.Handle.ToPointer(),
-                (int*)right.Handle.ToPointer(),
-                (int*)result.Handle.ToPointer(),
+                (int*)left.Memory.ToPointer(),
+                (int*)right.Memory.ToPointer(),
+                (int*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }
@@ -307,9 +307,9 @@ internal static class LinearAlgebraNativeApi
     {
         LinearAlgebraNativeMethods
             .InnerProductI64(
-                (long*)left.Handle.ToPointer(),
-                (long*)right.Handle.ToPointer(),
-                (long*)result.Handle.ToPointer(),
+                (long*)left.Memory.ToPointer(),
+                (long*)right.Memory.ToPointer(),
+                (long*)result.Memory.ToPointer(),
                 left.Length)
             .Guard();
     }

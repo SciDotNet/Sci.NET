@@ -27,9 +27,9 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     {
         Shape = Shape.Scalar();
         Backend = backend ?? Tensor.DefaultBackend;
-        Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -41,14 +41,14 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     {
         Shape = Shape.Scalar();
         Backend = backend ?? Tensor.DefaultBackend;
-        Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
 
         using var systemMemory = new SystemMemoryBlock<TNumber>(1);
         systemMemory[0] = value;
 
-        Handle.CopyFromSystemMemory(systemMemory);
+        Memory.CopyFromSystemMemory(systemMemory);
     }
 
     /// <summary>
@@ -60,9 +60,9 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     {
         Shape = Shape.Scalar();
         Backend = backend;
-        Handle = handle;
+        Memory = handle;
         IsMemoryOwner = false;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -80,7 +80,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     public Shape Shape { get; }
 
     /// <inheritdoc />
-    public IMemoryBlock<TNumber> Handle { get; private set; }
+    public IMemoryBlock<TNumber> Memory { get; private set; }
 
     /// <inheritdoc />
     public ITensorBackend Backend { get; private set; }
@@ -96,7 +96,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <summary>
     /// Gets the value of the <see cref="Scalar{TNumber}"/>.
     /// </summary>
-    public TNumber Value => Handle.ToSystemMemory()[0];
+    public TNumber Value => Memory.ToSystemMemory()[0];
 
 #pragma warning disable IDE0051, RCS1213
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
@@ -143,12 +143,12 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         }
 
         var newBackend = device.GetTensorBackend();
-        var oldHandle = Handle;
+        var oldHandle = Memory;
         var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
         using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
 
-        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
-        Handle = newHandle;
+        newHandle.CopyFromSystemMemory(Memory.ToSystemMemory());
+        Memory = newHandle;
         Backend = newBackend;
         oldHandle.Dispose();
     }
@@ -166,11 +166,11 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
     private void Dispose(bool disposing)
     {
-        Handle.Release(_id);
+        Memory.Release(_id);
 
         if (disposing && IsMemoryOwner)
         {
-            Handle.Dispose();
+            Memory.Dispose();
         }
     }
 }

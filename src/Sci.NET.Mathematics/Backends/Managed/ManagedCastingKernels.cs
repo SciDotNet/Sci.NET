@@ -14,8 +14,8 @@ internal class ManagedCastingKernels : ICastingKernels
         where TIn : unmanaged, INumber<TIn>
         where TOut : unmanaged, INumber<TOut>
     {
-        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Handle;
+        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
         resultMemoryBlock[0] = TOut.CreateChecked(inputMemoryBlock[0]);
     }
@@ -24,8 +24,8 @@ internal class ManagedCastingKernels : ICastingKernels
         where TIn : unmanaged, INumber<TIn>
         where TOut : unmanaged, INumber<TOut>
     {
-        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Handle;
+        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -38,8 +38,8 @@ internal class ManagedCastingKernels : ICastingKernels
         where TIn : unmanaged, INumber<TIn>
         where TOut : unmanaged, INumber<TOut>
     {
-        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Handle;
+        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -55,8 +55,8 @@ internal class ManagedCastingKernels : ICastingKernels
         where TIn : unmanaged, INumber<TIn>
         where TOut : unmanaged, INumber<TOut>
     {
-        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Handle;
+        var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
         LazyParallelExecutor.For(
             0,

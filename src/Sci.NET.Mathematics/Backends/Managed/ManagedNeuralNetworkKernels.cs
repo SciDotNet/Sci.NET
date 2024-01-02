@@ -31,9 +31,9 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
         var outChannels = result.Shape[1];
         var outHeight = result.Shape[2];
         var outWidth = result.Shape[3];
-        var inputMemory = (SystemMemoryBlock<TNumber>)input.Handle;
-        var kernelMemory = (SystemMemoryBlock<TNumber>)kernels.Handle;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Handle;
+        var inputMemory = (SystemMemoryBlock<TNumber>)input.Memory;
+        var kernelMemory = (SystemMemoryBlock<TNumber>)kernels.Memory;
+        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -112,11 +112,11 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
         var kernelWidth = kernels.Shape.Dimensions[3];
         var outHeight = dOutput.Shape.Dimensions[2];
         var outWidth = dOutput.Shape.Dimensions[3];
-        var inputMemory = (SystemMemoryBlock<TNumber>)input.Handle;
-        var kernelMemory = (SystemMemoryBlock<TNumber>)kernels.Handle;
-        var dOutputMemory = (SystemMemoryBlock<TNumber>)dOutput.Handle;
-        var dInputMemory = (SystemMemoryBlock<TNumber>)dInput.Handle;
-        var dKernelMemory = (SystemMemoryBlock<TNumber>)dKernel.Handle;
+        var inputMemory = (SystemMemoryBlock<TNumber>)input.Memory;
+        var kernelMemory = (SystemMemoryBlock<TNumber>)kernels.Memory;
+        var dOutputMemory = (SystemMemoryBlock<TNumber>)dOutput.Memory;
+        var dInputMemory = (SystemMemoryBlock<TNumber>)dInput.Memory;
+        var dKernelMemory = (SystemMemoryBlock<TNumber>)dKernel.Memory;
 
         LazyParallelExecutor.For(
             0,

@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Operands;
 using Sci.NET.Accelerators.IR.Rewriter.Variables;
 using Sci.NET.Common.Comparison;
 
