@@ -29,6 +29,6 @@ public class InnerProductShould
         _sut.LinearAlgebra.InnerProduct(left, right, result);
 
         // Assert
-        result.Handle.ToSystemMemory()[0].Should().Be(expected);
+        result.Memory.ToSystemMemory()[0].Should().Be(expected);
     }
 }

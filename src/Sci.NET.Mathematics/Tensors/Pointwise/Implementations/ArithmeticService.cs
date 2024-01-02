@@ -3,7 +3,7 @@
 
 using System.Diagnostics;
 using System.Numerics;
-using System.Runtime.CompilerServices;
+using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
@@ -28,9 +28,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.AddTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             1);
 
         return result;
@@ -47,9 +47,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(right.Length, backend);
 
         backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -67,9 +67,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -87,9 +87,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -107,9 +107,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -132,9 +132,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.AddTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Length);
 
         return result;
@@ -156,9 +156,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
 
@@ -181,9 +181,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
 
@@ -201,9 +201,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -226,9 +226,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Length,
             right.Length);
 
@@ -251,9 +251,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.AddTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount);
 
         return result;
@@ -275,9 +275,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Shape.ElementCount,
             left.Shape.ElementCount);
 
@@ -295,9 +295,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -320,9 +320,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Length,
             right.Length);
 
@@ -345,9 +345,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -367,9 +367,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.AddTensorTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount);
 
             return result;
@@ -388,9 +388,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.AddTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
@@ -409,9 +409,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(right.Shape, backend);
 
             backend.Arithmetic.AddTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
@@ -518,9 +518,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.SubtractTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             1);
 
         return result;
@@ -537,9 +537,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(right.Length, backend);
 
         backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -557,9 +557,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -577,9 +577,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -597,9 +597,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -624,9 +624,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.SubtractTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Length);
 
         return result;
@@ -650,9 +650,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
 
@@ -677,9 +677,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
 
@@ -697,9 +697,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -724,9 +724,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             left.Shape.ElementCount / right.Shape.ElementCount);
 
@@ -751,9 +751,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.SubtractTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount);
 
         return result;
@@ -777,9 +777,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Shape.ElementCount,
             left.Shape.ElementCount);
 
@@ -797,9 +797,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -824,9 +824,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Length,
             left.Shape.ElementCount / right.Length);
 
@@ -851,9 +851,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -873,9 +873,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.SubtractTensorTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount);
 
             return result;
@@ -894,9 +894,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.SubtractTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
@@ -915,9 +915,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(right.Shape, backend);
 
             backend.Arithmetic.SubtractTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
@@ -1024,9 +1024,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.MultiplyTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             1);
 
         return result;
@@ -1043,9 +1043,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(right.Length, backend);
 
         backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
         return result;
@@ -1062,9 +1062,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -1082,9 +1082,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -1102,9 +1102,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -1129,9 +1129,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.MultiplyTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Length);
 
         return result;
@@ -1155,9 +1155,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Length,
             right.Rows);
 
@@ -1180,9 +1180,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
         return result;
@@ -1199,9 +1199,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -1226,9 +1226,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Length,
             right.Length);
 
@@ -1253,9 +1253,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, right.Columns, backend);
 
         backend.Arithmetic.MultiplyTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount);
 
         return result;
@@ -1279,9 +1279,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Shape.ElementCount,
             left.Shape.ElementCount);
 
@@ -1299,9 +1299,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -1326,9 +1326,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Length,
             right.Length);
 
@@ -1353,9 +1353,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -1375,9 +1375,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.MultiplyTensorTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount);
 
             return result;
@@ -1396,9 +1396,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.MultiplyTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
@@ -1417,9 +1417,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(right.Shape, backend);
 
             backend.Arithmetic.MultiplyTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
@@ -1438,9 +1438,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.DivideTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             1);
 
         return result;
@@ -1457,9 +1457,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(right.Length, backend);
 
         backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -1477,9 +1477,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -1497,9 +1497,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount,
             1);
 
@@ -1517,9 +1517,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Length,
             1);
 
@@ -1542,9 +1542,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(left.Length, backend);
 
         backend.Arithmetic.DivideTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Length);
 
         return result;
@@ -1566,9 +1566,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
 
         backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
 
@@ -1591,9 +1591,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
 
@@ -1611,9 +1611,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -1636,9 +1636,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             right.Length,
             left.Rows);
 
@@ -1662,9 +1662,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
 
         backend.Arithmetic.DivideTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Rows * left.Columns);
 
         return result;
@@ -1687,9 +1687,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(right.Shape, backend);
 
         backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Columns,
             right.Shape.ElementCount / left.Columns);
 
@@ -1707,9 +1707,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount,
             1);
 
@@ -1732,9 +1732,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Length,
             right.Length);
 
@@ -1757,9 +1757,9 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(left.Shape, backend);
 
         backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Handle,
-            right.Handle,
-            result.Handle,
+            left.Memory,
+            right.Memory,
+            result.Memory,
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
@@ -1779,9 +1779,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.DivideTensorTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount);
 
             return result;
@@ -1800,9 +1800,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(left.Shape, backend);
 
             backend.Arithmetic.DivideTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
@@ -1821,9 +1821,9 @@ internal class ArithmeticService : IArithmeticService
             var result = new Tensor<TNumber>(right.Shape, backend);
 
             backend.Arithmetic.DivideTensorBroadcastTensor(
-                left.Handle,
-                right.Handle,
-                result.Handle,
+                left.Memory,
+                right.Memory,
+                result.Memory,
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
@@ -1836,9 +1836,9 @@ internal class ArithmeticService : IArithmeticService
     {
         var backend = value.Backend;
 
-        if (!CanNegate<TNumber>())
+        if (!GenericMath.IsSigned<TNumber>())
         {
-            var newMemoryBlock = value.Handle.Copy();
+            var newMemoryBlock = value.Memory.Copy();
 
             return new Scalar<TNumber>(newMemoryBlock, backend);
         }
@@ -1846,8 +1846,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.Negate(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Shape.ElementCount);
 
         return result;
@@ -1858,9 +1858,9 @@ internal class ArithmeticService : IArithmeticService
     {
         var backend = value.Backend;
 
-        if (!CanNegate<TNumber>())
+        if (!GenericMath.IsSigned<TNumber>())
         {
-            var newMemoryBlock = value.Handle.Copy();
+            var newMemoryBlock = value.Memory.Copy();
 
             return new Vector<TNumber>(value.Length, newMemoryBlock, backend);
         }
@@ -1868,8 +1868,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(value.Length, backend);
 
         backend.Arithmetic.Negate(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Shape.ElementCount);
 
         return result;
@@ -1880,9 +1880,9 @@ internal class ArithmeticService : IArithmeticService
     {
         var backend = value.Backend;
 
-        if (!CanNegate<TNumber>())
+        if (!GenericMath.IsSigned<TNumber>())
         {
-            var newMemoryBlock = value.Handle.Copy();
+            var newMemoryBlock = value.Memory.Copy();
 
             return new Matrix<TNumber>(value.Rows, value.Columns, newMemoryBlock, backend);
         }
@@ -1890,8 +1890,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
 
         backend.Arithmetic.Negate(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Shape.ElementCount);
 
         return result;
@@ -1902,9 +1902,9 @@ internal class ArithmeticService : IArithmeticService
     {
         var backend = value.Backend;
 
-        if (!CanNegate<TNumber>())
+        if (!GenericMath.IsSigned<TNumber>())
         {
-            var newMemoryBlock = value.Handle.Copy();
+            var newMemoryBlock = value.Memory.Copy();
 
             return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend);
         }
@@ -1912,8 +1912,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(value.Shape, backend);
 
         backend.Arithmetic.Negate(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Shape.ElementCount);
 
         return result;
@@ -1926,8 +1926,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Scalar<TNumber>(backend);
 
         backend.Arithmetic.Abs(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             1);
 
         return result;
@@ -1940,8 +1940,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Vector<TNumber>(value.Length, backend);
 
         backend.Arithmetic.Abs(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Length);
 
         return result;
@@ -1954,8 +1954,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
 
         backend.Arithmetic.Abs(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Shape.ElementCount);
 
         return result;
@@ -1968,8 +1968,8 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(value.Shape, backend);
 
         backend.Arithmetic.Abs(
-            value.Handle,
-            result.Handle,
+            value.Memory,
+            result.Memory,
             value.Shape.ElementCount);
 
         return result;
@@ -2158,19 +2158,10 @@ internal class ArithmeticService : IArithmeticService
         var result = new Tensor<TNumber>(tensor.Shape, backend);
 
         backend.Arithmetic.Sqrt(
-            tensor.Handle,
-            result.Handle,
+            tensor.Memory,
+            result.Memory,
             tensor.Shape.ElementCount);
 
         return result;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool CanNegate<TNumber>()
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var difference = TNumber.CreateSaturating(-1);
-
-        return TNumber.Min(TNumber.Zero, difference) != TNumber.Zero;
     }
 }

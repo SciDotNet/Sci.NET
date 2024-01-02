@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;
+using Sci.NET.Accelerators.Disassembly.Operands;
 
 namespace Sci.NET.Accelerators.Disassembly;
 

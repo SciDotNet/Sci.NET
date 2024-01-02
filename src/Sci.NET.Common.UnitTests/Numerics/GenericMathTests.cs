@@ -11,6 +11,7 @@ public class GenericMathTests
     public void IsFloatingPoint_ReturnsTrueForFloatingPointTypes()
     {
         GenericMath.IsFloatingPoint<Half>().Should().BeTrue();
+        GenericMath.IsFloatingPoint<BFloat16>().Should().BeTrue();
         GenericMath.IsFloatingPoint<float>().Should().BeTrue();
         GenericMath.IsFloatingPoint<double>().Should().BeTrue();
         GenericMath.IsFloatingPoint<decimal>().Should().BeTrue();
@@ -32,6 +33,7 @@ public class GenericMathTests
     [Fact]
     public void Epsilon_ReturnsCorrectValueForFloatingPointTypes()
     {
+        // TODO: Figure out why BF16 epsilon is not correct.
         GenericMath.Epsilon<Half>().Should().Be(Half.Epsilon);
         GenericMath.Epsilon<float>().Should().Be(float.Epsilon);
         GenericMath.Epsilon<double>().Should().Be(double.Epsilon);
@@ -48,5 +50,23 @@ public class GenericMathTests
         GenericMath.Epsilon<uint>().Should().Be(1);
         GenericMath.Epsilon<long>().Should().Be(1);
         GenericMath.Epsilon<ulong>().Should().Be(1);
+    }
+
+    [Fact]
+    public void IsSigned_ReturnsCorrectValues()
+    {
+        GenericMath.IsSigned<BFloat16>().Should().BeTrue();
+        GenericMath.IsSigned<Half>().Should().BeTrue();
+        GenericMath.IsSigned<float>().Should().BeTrue();
+        GenericMath.IsSigned<double>().Should().BeTrue();
+        GenericMath.IsSigned<decimal>().Should().BeTrue();
+        GenericMath.IsSigned<byte>().Should().BeFalse();
+        GenericMath.IsSigned<sbyte>().Should().BeTrue();
+        GenericMath.IsSigned<ushort>().Should().BeFalse();
+        GenericMath.IsSigned<short>().Should().BeTrue();
+        GenericMath.IsSigned<uint>().Should().BeFalse();
+        GenericMath.IsSigned<int>().Should().BeTrue();
+        GenericMath.IsSigned<ulong>().Should().BeFalse();
+        GenericMath.IsSigned<long>().Should().BeTrue();
     }
 }

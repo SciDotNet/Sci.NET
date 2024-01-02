@@ -31,6 +31,7 @@ public class ManagedTensorBackend : ITensorBackend
         NeuralNetworks = new ManagedNeuralNetworkKernels();
         ActivationFunctions = new ManagedActivationFunctionKernels();
         Broadcasting = new ManagedBroadcastingKernels();
+        Permutation = new ManagedPermutationKernels();
     }
 
     /// <summary>
@@ -76,4 +77,7 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public IBroadcastingKernels Broadcasting { get; }
+
+    /// <inheritdoc />
+    public IPermutationKernels Permutation { get; }
 }

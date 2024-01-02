@@ -30,9 +30,9 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     {
         Shape = new Shape(rows, columns);
         Backend = backend ?? Tensor.DefaultBackend;
-        Handle = Backend.Storage.Allocate<TNumber>(Shape);
+        Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -46,9 +46,9 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     {
         Shape = new Shape(rows, columns);
         Backend = backend;
-        Handle = handle;
+        Memory = handle;
         IsMemoryOwner = false;
-        Handle.Rent(_id);
+        Memory.Rent(_id);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public Shape Shape { get; }
 
     /// <inheritdoc />
-    public IMemoryBlock<TNumber> Handle { get; private set; }
+    public IMemoryBlock<TNumber> Memory { get; private set; }
 
     /// <inheritdoc />
     public ITensorBackend Backend { get; private set; }
@@ -137,12 +137,12 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         }
 
         var newBackend = device.GetTensorBackend();
-        var oldHandle = Handle;
+        var oldHandle = Memory;
         var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
         using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
 
-        newHandle.CopyFromSystemMemory(Handle.ToSystemMemory());
-        Handle = newHandle;
+        newHandle.CopyFromSystemMemory(Memory.ToSystemMemory());
+        Memory = newHandle;
         Backend = newBackend;
         oldHandle.Dispose();
     }
@@ -160,11 +160,11 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
     private void Dispose(bool disposing)
     {
-        Handle.Release(_id);
+        Memory.Release(_id);
 
         if (disposing && IsMemoryOwner)
         {
-            Handle.Dispose();
+            Memory.Dispose();
         }
     }
 }

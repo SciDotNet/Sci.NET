@@ -1,11 +1,23 @@
 
-![Logo](https://github.com/SciDotNet/Sci.NET/blob/main/eng/build-props/images/icon-small.png)
+![Logo](https://github.com/SciDotNet/Sci.NET/blob/main/eng/build-props/images/icon-small.png=100x100)
 
 
 # Sci.NET
 
-Sci.NET is a scientific computing library for .NET with a familiar API similar to NumPy and PyTorch.
+Sci.NET is a scientific computing library for .NET with a familiar API similar to NumPy and PyTorch. Currently, the library is in early development and is not ready for production use. 
 
+Currently, only the managed CPU backend is working which is used as a proof of concept and regression testing for other backends.
+
+The subset of working features include:
+* Most Tensor Operations (Arithmetic, Trigonometry, etc.)
+* Most Tensor Transformations (Reshape, Transpose, Permute, etc.)
+* Most Contraction aliases (Contract, Dot Product, Matrix Multiply, Inner Product)
+
+Known to be broken:
+* Serialization
+* Most of the Machine Learning API
+
+The library is designed to be extensible, easy to use and hardware agnostic with a focus on performance and heterogeneous computing.
 
 ## License
 
@@ -14,22 +26,19 @@ Sci.NET is a scientific computing library for .NET with a familiar API similar t
 **Some packages include third-party components with specific licensing requirements**
 
 ## Requirements
-
+### Base Requirements
 - .NET 8 SDK
-- C++ Compiler (built with MSVC)
-- CUDA 12.1
-- CUDNN
-- OpenMP
-- CMake
+### Development Requirements
+- CUDA 12.3
 
 
 ## Packages
 
 There are a number of packages offered with Sci.NET. The base package is the `Sci.NET.Mathematics` package.
 
-To use CUDA, you must also install the `Sci.NET.Mathematics.CUDA` package and the `Sci.NET.CUDA.Redist-*platform*` package for your architecture and operating system.
+Work has been started on the CUDA backend, but is not yet ready. There will be redistributable packages for CUDA for Windows and Linux. 
 
-The `Sci.NET.CUDA.Redist-*platform*` packages include the CUDA Runtime and CuDNN. *See third-party licences*.
+The `Sci.NET.CUDA.Redist-*platform*` packages include the CUDA Runtime. *See third-party licences*.
 ## Build Locally
 
 Setup your environment with the build scripts:
@@ -49,24 +58,23 @@ Or to build a release version:
 ```
 ## Documentation
 
-[Documentation](https://linktodocumentation)
+[Documentation](http://docs.scidotnet.org/) (Not yet available, depends on the build pipeline)
 
 
 ## Roadmap
-
-- More comprehensive mathematics API for `Sci.NET.Mathematics`.
+- Working build pipeline.
+- Full testing of `Sci.NET.Mathematics`.
 - More comprehensive machine learning API for `Sci.NET.MachineLearning`.
 - Better hardware acceleration using intrinsics.
 - CUDA, Vulkan and MKL backend.
-- ONNX.
-- SafeTensors.
 - More comprehensive documentation.
+- Better support for datasets.
+
+Far in the future
+- Native image processing library.
 
 
 ## Third Party
 
-What optimizations did you make in your code? E.g. refactors, performance improvements, accessibility
-
 - [NVIDIA CUDA](https://docs.nvidia.com/cuda/eula/index.html)
-- [NVIDIA CuDNN](https://docs.nvidia.com/deeplearning/cudnn/sla/index.html)
 - [ImageSharp](https://github.com/SixLabors/ImageSharp)

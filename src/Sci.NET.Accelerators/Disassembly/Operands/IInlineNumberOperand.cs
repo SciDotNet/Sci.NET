@@ -3,7 +3,7 @@
 
 using System.Numerics;
 
-namespace Sci.NET.Accelerators.Disassembly;
+namespace Sci.NET.Accelerators.Disassembly.Operands;
 
 /// <summary>
 /// Represents an operand with a number value.

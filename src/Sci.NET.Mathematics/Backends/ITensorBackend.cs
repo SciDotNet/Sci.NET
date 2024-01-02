@@ -75,4 +75,9 @@ public interface ITensorBackend
     /// Gets the <see cref="IBroadcastingKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public IBroadcastingKernels Broadcasting { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IPermutationKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public IPermutationKernels Permutation { get; }
 }

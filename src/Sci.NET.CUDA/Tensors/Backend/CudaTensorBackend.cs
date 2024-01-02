@@ -63,4 +63,7 @@ public class CudaTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public IBroadcastingKernels Broadcasting { get; } = null!;
+
+    /// <inheritdoc />
+    public IPermutationKernels Permutation { get; } = null!;
 }

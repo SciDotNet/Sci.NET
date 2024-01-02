@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.Buffers;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
@@ -23,9 +22,9 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     public Shape Shape { get; }
 
     /// <summary>
-    /// Gets the handle to the memory of the <see cref="ITensor{TNumber}"/>.
+    /// Gets the memory of the <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    public IMemoryBlock<TNumber> Handle { get; }
+    public IMemoryBlock<TNumber> Memory { get; }
 
     /// <summary>
     /// Gets the backend of the <see cref="ITensor{TNumber}"/>.
@@ -76,7 +75,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 
         DetachMemory();
 
-        return new Scalar<TNumber>(Handle, Backend);
+        return new Scalar<TNumber>(Memory, Backend);
     }
 
     /// <summary>
@@ -95,7 +94,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 
         DetachMemory();
 
-        return new Vector<TNumber>(Shape.Dimensions[0], Handle, Backend);
+        return new Vector<TNumber>(Shape.Dimensions[0], Memory, Backend);
     }
 
     /// <summary>
@@ -114,7 +113,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 
         DetachMemory();
 
-        return new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Handle, Backend);
+        return new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Memory, Backend);
     }
 
     /// <summary>

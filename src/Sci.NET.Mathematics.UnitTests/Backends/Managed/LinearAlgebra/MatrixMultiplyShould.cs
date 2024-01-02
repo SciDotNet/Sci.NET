@@ -36,7 +36,7 @@ public class MatrixMultiplyShould
 
         // Act
         _sut.LinearAlgebra.MatrixMultiply(a, b, result);
-        var resultArray = result.Handle.ToArray();
+        var resultArray = result.Memory.ToArray();
 
         // Assert
         resultArray.Should().BeEquivalentTo(expected);

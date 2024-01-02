@@ -13,8 +13,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -26,8 +26,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Cos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -39,8 +39,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Tan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -52,8 +52,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -69,8 +69,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -86,8 +86,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -103,8 +103,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -116,8 +116,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Cosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -129,8 +129,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Tanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -142,8 +142,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -159,8 +159,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Cosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -176,8 +176,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Tanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -193,8 +193,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -206,8 +206,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -219,8 +219,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Atan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -232,8 +232,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -249,8 +249,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -266,8 +266,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Atan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -283,8 +283,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asinh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -296,8 +296,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acosh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -309,8 +309,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Atanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -322,8 +322,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -339,8 +339,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acosh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -356,8 +356,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Atanh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -373,8 +373,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Csc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -386,8 +386,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -399,8 +399,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Cot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -412,8 +412,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Csc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -429,8 +429,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -446,8 +446,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Cot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -463,8 +463,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Csch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -476,8 +476,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -489,8 +489,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Coth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -502,8 +502,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Csch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -519,8 +519,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Sech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -536,8 +536,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Coth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -553,8 +553,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acsc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -566,8 +566,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -579,8 +579,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -592,8 +592,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acsc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -609,8 +609,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -626,8 +626,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -643,8 +643,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acsch<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -656,8 +656,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asech<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -669,8 +669,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acoth<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -682,8 +682,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acsch2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -699,8 +699,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Asech2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -716,8 +716,8 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     public void Acoth2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,

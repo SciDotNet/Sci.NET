@@ -47,7 +47,7 @@ internal class CastingService : ICastingService
     {
         if (typeof(TIn) == typeof(TOut))
         {
-            var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Handle;
+            var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
             var newMemoryBlock = inputMemoryBlock
                 .Copy()
                 .ToSystemMemory()

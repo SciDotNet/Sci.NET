@@ -13,8 +13,8 @@ internal class ManagedLinqKernels : ILinqKernels
     public void Clip<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,

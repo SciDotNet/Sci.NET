@@ -896,6 +896,12 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     }
 
     /// <inheritdoc />
+    public override string ToString()
+    {
+        return ((float)this).ToString(CultureInfo.CurrentCulture);
+    }
+
+    /// <inheritdoc />
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {
         return ((float)this).TryFormat(

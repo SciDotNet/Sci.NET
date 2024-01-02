@@ -15,7 +15,7 @@ internal class ManagedRandomKernels : IRandomKernels
         var tensor = new Tensor<TNumber>(shape, ManagedTensorBackend.Instance);
 
         Prng.Uniform(
-            tensor.Handle,
+            tensor.Memory,
             min,
             max,
             seed);

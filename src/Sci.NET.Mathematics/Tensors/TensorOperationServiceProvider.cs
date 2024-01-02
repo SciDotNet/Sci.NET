@@ -52,10 +52,10 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _serializationService = new SerializationService();
         _castingService = new CastingService();
         _activationFunctionService = new ActivationFunctionService();
+        _permutationService = new PermutationService();
         _powerService = new PowerService(this);
         _matrixMultiplicationService = new MatrixMultiplicationService(this);
         _arithmeticService = new ArithmeticService(this);
-        _permutationService = new PermutationService(this);
         _contractionService = new ContractionService(this);
         _convolutionService = new ConvolutionService(this);
         _concatenationService = new ConcatenationService(this);

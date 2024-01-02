@@ -3,7 +3,7 @@
 
 using System.Reflection.Emit;
 
-namespace Sci.NET.Accelerators.Disassembly;
+namespace Sci.NET.Accelerators.Disassembly.Operands;
 
 /// <summary>
 /// Represents an operand.
