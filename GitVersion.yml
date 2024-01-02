@@ -1,5 +1,18 @@
-mode: ContinuousDelivery
-branches: {}
+mode: Mainline
+
+branches:
+  feature:
+    regex: feature?[/-]
+    mode: ContinuousDeployment
+    increment: Minor
+    tag: ''
+    source-branches: ['master', 'release', 'hotfix', 'support', 'develop']
+  pull-request:
+    increment: Patch
+    tag: pr-version # Static tag for pull requests
+    source-branches: ['master', 'release', 'hotfix', 'support', 'develop', 'feature']
+
 ignore:
   sha: []
+
 merge-message-formats: {}
