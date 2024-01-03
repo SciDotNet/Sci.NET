@@ -1,1 +1,0 @@
-﻿## Sci.NET.Accelerators

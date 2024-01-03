@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Sci.NET.Accelerators\Sci.NET.Accelerators.csproj" />
       <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
     </ItemGroup>
 
