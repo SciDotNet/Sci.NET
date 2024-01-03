@@ -20,6 +20,9 @@
     # Install dotnet
     &$DotnetInstallScript -InstallDir $DotnetInstallDir -JSonFile $GlobalJsonFile -Architecture x64 -Verbose
 
+    # Set Repo Root
+    $SolutionPath = Resolve-Path $RepoRoot\Sci.NET.sln
+
     # Install dotnet 
     &$Dotnet tool update -g docfx
 
@@ -29,15 +32,15 @@
     }
 
     # Restore
-    &$Dotnet restore $RepoRoot\Sci.NET.sln -s https://api.nuget.org/v3/index.json
+    &$Dotnet restore $SolutionPath -s https://api.nuget.org/v3/index.json
     
     # Build
-    &$Dotnet build $RepoRoot\Sci.NET.sln -c $Configuration
+    &$Dotnet build $SolutionPath -c $Configuration
 
     if ($RunTests)
     {
         # Test
-        &$Dotnet test $RepoRoot\Sci.NET.sln -c $Configuration   
+        &$Dotnet test $SolutionPath -c $Configuration   
     }    
     
     if ($BuildNugetPackages)
