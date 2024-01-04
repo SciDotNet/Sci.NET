@@ -201,6 +201,64 @@ public static class Tensor
     }
 
     /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with ones.
+    /// </summary>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with ones.</returns>
+    public static ITensor<TNumber> Ones<TNumber>(Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(shape);
+
+        result.Memory.Fill(TNumber.One);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with ones.
+    /// </summary>
+    /// <param name="dimensions">The dimensions of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given dimensions and filled with ones.</returns>
+    public static ITensor<TNumber> Ones<TNumber>(params int[] dimensions)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Ones<TNumber>(new Shape(dimensions));
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with the specified value.
+    /// </summary>
+    /// <param name="value">The value to fill the <see cref="ITensor{TNumber}"/> with.</param>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with the specified value.</returns>
+    public static ITensor<TNumber> FillWith<TNumber>(TNumber value, Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(shape);
+
+        result.Memory.Fill(value);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with the specified value.
+    /// </summary>
+    /// <param name="value">The value to fill the <see cref="ITensor{TNumber}"/> with.</param>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with the specified value.</returns>
+    public static ITensor<TNumber> FillWith<TNumber>(TNumber value, params int[] shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return FillWith(value, new Shape(shape));
+    }
+
+    /// <summary>
     /// Overwrites the values of the <paramref name="tensor"/> with the values of the <paramref name="other"/> tensor.
     /// This should only be used on rare occasions where referential integrity is required (I.E weights in a neural network).
     /// </summary>

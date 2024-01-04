@@ -35,7 +35,7 @@ public class Dense<TNumber> : ILayer<TNumber>
         Parameters = new ParameterSet<TNumber>(Device)
         {
             { WeightsParameterName, new Shape(inputFeatures, outputFeatures) },
-            { BiasesParameterName, new Shape(1, outputFeatures) }
+            { BiasesParameterName, new Shape(outputFeatures) }
         };
 
         Input = Tensor.Zeros<TNumber>(1, 1);
@@ -77,8 +77,8 @@ public class Dense<TNumber> : ILayer<TNumber>
         if (input.Shape[1] != InputFeatures)
         {
             throw new InvalidShapeException(
-                $"Input shape {input.Shape} does not match expected" +
-                $"shape {new int[] { input.Shape[0], InputFeatures }}.");
+                $"Input shape {input.Shape} does not match expected shape" +
+                $" {new int[] { input.Shape[0], InputFeatures }}.");
         }
 #pragma warning restore SA1013
 
@@ -102,7 +102,7 @@ public class Dense<TNumber> : ILayer<TNumber>
         var weights = Parameters[WeightsParameterName].Value;
 
         Parameters[WeightsParameterName].SetGradient(Input.Transpose().Dot(error));
-        Parameters[BiasesParameterName].SetGradient(error.Sum(new int[] { 0 }, keepDims: true));
+        Parameters[BiasesParameterName].SetGradient(error.Sum([0], keepDims: true));
 
         return weights.Dot(error.Transpose()).Transpose();
     }
