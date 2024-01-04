@@ -1,6 +1,6 @@
 
 ![Logo](https://github.com/SciDotNet/Sci.NET/blob/main/eng/build-props/images/icon-small.png=100x100)
-
+[![.NET](https://github.com/SciDotNet/Sci.NET/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SciDotNet/Sci.NET/actions/workflows/ci.yml)
 
 # Sci.NET
 
