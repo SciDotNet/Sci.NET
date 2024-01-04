@@ -55,7 +55,9 @@ public class Network<TNumber> : IDisposable
     /// <returns>The output of the <see cref="Network{TNumber}"/>.</returns>
     public ITensor<TNumber> Forward(ITensor<TNumber> input)
     {
+        _input.Dispose();
         _input = input;
+
         var result = input;
 
         foreach (var layer in _layers)
