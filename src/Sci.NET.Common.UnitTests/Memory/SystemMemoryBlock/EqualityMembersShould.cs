@@ -80,7 +80,7 @@ public class EqualityMembersShould
     }
 
     [Fact]
-    public void ReturnFalse_WhenLeftDisposed()
+    public void ThrowsException_WhenLeftDisposed()
     {
         // Arrange
         var block1 = new SystemMemoryBlock<int>(10);
@@ -89,10 +89,10 @@ public class EqualityMembersShould
         block1.Dispose();
 
         // Act
-        var result = block1.Equals(block2);
+        var act = () => block1.Equals(block2);
 
         // Assert
-        result.Should().BeFalse();
+        act.Should().Throw<ObjectDisposedException>();
     }
 
     [Fact]
@@ -105,9 +105,9 @@ public class EqualityMembersShould
         block2.Dispose();
 
         // Act
-        var result = block1.Equals(block2);
+        var act = () => block1.Equals(block2);
 
         // Assert
-        result.Should().BeFalse();
+        act.Should().Throw<ObjectDisposedException>();
     }
 }

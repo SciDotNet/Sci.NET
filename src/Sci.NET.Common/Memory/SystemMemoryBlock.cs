@@ -113,10 +113,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <returns>A value indicating whether the two operands are equal.</returns>
     public static bool operator ==(SystemMemoryBlock<T> left, SystemMemoryBlock<T> right)
     {
-        if (left.IsDisposed || right.IsDisposed)
-        {
-            return false;
-        }
+        ObjectDisposedException.ThrowIf(left.IsDisposed, left);
+        ObjectDisposedException.ThrowIf(right.IsDisposed, right);
 
         return left.Equals(right);
     }
@@ -129,10 +127,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <returns>A value indicating whether the two operands are equal.</returns>
     public static bool operator !=(SystemMemoryBlock<T> left, SystemMemoryBlock<T> right)
     {
-        if (left.IsDisposed || right.IsDisposed)
-        {
-            return true;
-        }
+        ObjectDisposedException.ThrowIf(left.IsDisposed, left);
+        ObjectDisposedException.ThrowIf(right.IsDisposed, right);
 
         return !left.Equals(right);
     }
@@ -351,7 +347,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <inheritdoc />
-    public unsafe void UnsafeFreeMemory()
+    public void UnsafeFreeMemory()
     {
         ReleaseUnmanagedResources();
         IsDisposed = true;
@@ -404,10 +400,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.HotPath)]
     public override bool Equals(object? obj)
     {
-        if (IsDisposed)
-        {
-            return false;
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return obj is SystemMemoryBlock<T> other && Equals(other);
     }
@@ -416,10 +409,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     [MethodImpl(ImplementationOptions.HotPath)]
     public unsafe bool Equals(SystemMemoryBlock<T>? other)
     {
-        if (IsDisposed)
-        {
-            return false;
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ObjectDisposedException.ThrowIf(other?.IsDisposed ?? false, other ?? this);
 
         return other is not null && _reference == other._reference && Length == other.Length;
     }
@@ -441,10 +432,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// </returns>
     public override unsafe string ToString()
     {
-        if (IsDisposed)
-        {
-            return "SystemMemoryBlock disposed.";
-        }
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return typeof(T) == typeof(char)
             ? new string(new ReadOnlySpan<char>(_reference, checked((int)Length)))
@@ -531,8 +519,19 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// </summary>
     /// <param name="i">The index to read from.</param>
     /// <returns>A <see cref="Vector256{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The specified index was out of range.</exception>
     public unsafe Vector256<T> GetVector256(int i)
     {
+        if (i < 0 || i >= Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(i), $"Index was {i} but must be non-negative and less than {Length}.");
+        }
+
+        if (i + Vector256<T>.Count > Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(i), $"Index was {i} but must be less than {Length - Vector256<T>.Count}.");
+        }
+
         return Unsafe.ReadUnaligned<Vector256<T>>(_reference + i);
     }
 
@@ -541,8 +540,19 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// </summary>
     /// <param name="index">The index to write to.</param>
     /// <param name="vector">The <see cref="Vector256{T}"/> to write.</param>
+    /// <exception cref="ArgumentOutOfRangeException">The specified index was out of range.</exception>
     public unsafe void SetVector256(long index, Vector256<T> vector)
     {
+        if (index < 0 || index >= Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be non-negative and less than {Length}.");
+        }
+
+        if (index + Vector256<T>.Count > Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be less than {Length - Vector256<T>.Count}.");
+        }
+
         Unsafe.WriteUnaligned(_reference + index, vector);
     }
 

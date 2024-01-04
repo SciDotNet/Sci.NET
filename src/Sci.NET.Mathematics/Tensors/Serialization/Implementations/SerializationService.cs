@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.IO.Compression;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,7 +13,6 @@ namespace Sci.NET.Mathematics.Tensors.Serialization.Implementations;
 internal class SerializationService : ISerializationService
 {
     private const string SerializerVersion = "Sci.NET v0.2";
-    private const byte CompressionIdentifier = 0x01;
 
     [PreviewFeature]
     [MethodImpl(ImplementationOptions.AggressiveOptimization)]
@@ -83,28 +81,14 @@ internal class SerializationService : ISerializationService
         stream.Close();
     }
 
-    public void Save<TNumber>(ITensor<TNumber> tensor, string path)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        using var stream = File.OpenWrite(path);
-
-        Save(tensor, stream);
-    }
-
     public void Save<TNumber>(ITensor<TNumber> tensor, Stream stream)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var dataBuffer = new MemoryStream();
-        using var gzipCompressor = new GZipStream(dataBuffer, CompressionMode.Compress, true);
-
-        tensor.Memory.WriteTo(gzipCompressor);
-
         var rank = tensor.Shape.Rank;
         var shape = tensor.Shape.Dimensions;
         var typeBytes = GetDataType<TNumber>();
 
         stream.WriteString(SerializerVersion);
-        stream.WriteValue(CompressionIdentifier);
         stream.WriteValue(rank);
         stream.WriteValue(Unsafe.SizeOf<TNumber>());
         stream.WriteString(typeBytes);
@@ -114,28 +98,28 @@ internal class SerializationService : ISerializationService
             stream.WriteValue(shape[i]);
         }
 
-        stream.WriteValue(dataBuffer.Length);
-        dataBuffer.Position = 0;
-        dataBuffer.CopyTo(stream);
+        tensor.Memory.WriteTo(stream);
 
         stream.Flush();
         stream.Close();
+    }
+
+    public void Save<TNumber>(ITensor<TNumber> tensor, string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenWrite(path);
+
+        Save(tensor, stream);
     }
 
     public ITensor<TNumber> Load<TNumber>(Stream stream)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var version = stream.ReadString();
-        var compression = stream.ReadValue<byte>();
         var rank = stream.ReadValue<int>();
         var bytesPerElement = stream.ReadValue<int>();
         var type = stream.ReadString();
         var shape = new int[rank];
-
-        if (compression != CompressionIdentifier)
-        {
-            throw new NotSupportedException("The tensor was created with a different compression scheme.");
-        }
 
         for (var i = 0; i < rank; i++)
         {
@@ -152,17 +136,16 @@ internal class SerializationService : ISerializationService
             throw new InvalidDataException("The data type of the tensor does not match the data type of the serializer.");
         }
 
-        var bytesToRead = stream.ReadValue<int>();
         var tensor = new Tensor<TNumber>(new Shape(shape));
         var handle = tensor.Memory;
         var bufferSize = tensor.Shape.ElementCount <= int.MaxValue ? (int)tensor.Shape.ElementCount : int.MaxValue;
-        var buffer = new Span<byte>(new byte[bufferSize * Unsafe.SizeOf<TNumber>()]);
+        var buffer = new Span<byte>(new byte[bufferSize]);
         var bytesRead = 0;
-        using var gzipDecompressor = new GZipStream(stream, CompressionMode.Decompress, true);
+        var bytesToRead = Unsafe.SizeOf<TNumber>() * tensor.Shape.ElementCount;
 
         while (bytesRead < bytesToRead)
         {
-            var bytes = gzipDecompressor.Read(buffer);
+            var bytes = stream.Read(buffer);
             handle.BlockCopyFrom(
                 buffer,
                 0,

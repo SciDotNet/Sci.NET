@@ -12,4 +12,8 @@
       <ProjectReference Include="..\Sci.NET.Tests.Framework\Sci.NET.Tests.Framework.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="JetBrains.dotMemoryUnit" />
+    </ItemGroup>
+
 </Project>
