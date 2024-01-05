@@ -5,7 +5,7 @@ branches:
     regex: ^main$
     increment: Minor
     is-mainline: true
-    tag: ''
+    tag: 'alpha'
   develop:
     regex: ^develop$
     increment: Patch
