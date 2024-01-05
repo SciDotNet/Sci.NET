@@ -160,6 +160,51 @@ public static class Tensor
     }
 
     /// <summary>
+    /// Loads a tensor from the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> Load<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .Load<TNumber>(stream);
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> LoadCompressed<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .LoadCompressed<TNumber>(stream);
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified file.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <param name="file">The path to load the tensor from.</param>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> LoadCompressed<TNumber>(string file)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .LoadCompressed<TNumber>(file);
+    }
+
+    /// <summary>
     /// Loads a tensor from the specified buffer.
     /// </summary>
     /// <param name="stream">The buffer to load the tensor from.</param>

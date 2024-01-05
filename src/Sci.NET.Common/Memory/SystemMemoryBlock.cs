@@ -311,7 +311,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
                 "Source index must be within the bounds of the source buffer.");
         }
 
-        if (dstIdx < 0 || dstIdx >= Length)
+        if (dstIdx < 0 || dstIdx >= Length * Unsafe.SizeOf<T>())
         {
             throw new ArgumentOutOfRangeException(
                 nameof(dstIdx),
@@ -325,24 +325,22 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
                 "The number of elements to copy must be within the bounds of the source buffer.");
         }
 
-        if (dstIdx + count > Length)
+        if (dstIdx + count > Length * Unsafe.SizeOf<T>())
         {
             throw new ArgumentOutOfRangeException(
                 nameof(count),
                 "The number of elements to copy must be within the bounds of the destination block.");
         }
 
-        var byteCount = count * Unsafe.SizeOf<T>();
-        var byteOffset = srcIdx * Unsafe.SizeOf<T>();
-        var byteDestination = _reference + dstIdx;
+        var byteDestination = (byte*)ToPointer() + dstIdx;
 
         fixed (byte* byteSource = buffer)
         {
             Buffer.MemoryCopy(
-                byteSource + byteOffset,
+                byteSource + srcIdx,
                 byteDestination,
-                byteCount,
-                byteCount);
+                count,
+                count);
         }
     }
 
