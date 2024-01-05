@@ -1,16 +1,28 @@
-mode: Mainline
+mode: ContinuousDelivery
 
 branches:
-  feature:
-    regex: feature?[/-]
-    mode: ContinuousDeployment
+  main:
+    regex: ^main$
     increment: Minor
+    is-mainline: true
     tag: ''
-    source-branches: ['main', 'release', 'hotfix', 'support', 'develop']
-  pull-request:
+  develop:
+    regex: ^develop$
     increment: Patch
-    tag: pr-version # Static tag for pull requests
-    source-branches: ['main', 'release', 'hotfix', 'support', 'develop', 'feature']
+    tag: 'dev'
+  feature:
+    regex: ^features?[/-]
+    tag: 'useBranchName'
+    increment: Inherit
+    is-mainline: false
+  release:
+    regex: ^releases?[/-]
+    tag: 'rc'
+    increment: Inherit
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    tag: 'hotfix'
+    increment: Patch
 
 ignore:
   sha: []
