@@ -14,7 +14,6 @@ The subset of working features include:
 * Most Contraction aliases (Contract, Dot Product, Matrix Multiply, Inner Product)
 
 Known to be broken:
-* Serialization
 * Most of the Machine Learning API
 
 The library is designed to be extensible, easy to use and hardware agnostic with a focus on performance and heterogeneous computing.

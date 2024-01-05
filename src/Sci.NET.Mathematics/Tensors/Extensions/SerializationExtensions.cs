@@ -41,6 +41,7 @@ public static class SerializationExtensions
     /// <param name="path">The path for the file.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     [DebuggerStepThrough]
+    [PreviewFeature]
     public static void Save<TNumber>(this ITensor<TNumber> tensor, string path)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -57,6 +58,7 @@ public static class SerializationExtensions
     /// <param name="stream">The stream to save to.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     [DebuggerStepThrough]
+    [PreviewFeature]
     public static void Save<TNumber>(this ITensor<TNumber> tensor, Stream stream)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -64,5 +66,20 @@ public static class SerializationExtensions
             .GetTensorOperationServiceProvider()
             .GetSerializationService()
             .Save(tensor, stream);
+    }
+
+    /// <summary>
+    /// Compresses and saves a <see cref="ITensor{TNumber}"/> to a file.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="file">The path for the file.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public static void SaveCompressed<TNumber>(this ITensor<TNumber> tensor, string file)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .SaveCompressed(tensor, file);
     }
 }

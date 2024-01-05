@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.UnitTests", "src\Sci.NET.Datasets.UnitTests\Sci.NET.Datasets.UnitTests.csproj", "{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST.UnitTests", "src\Sci.NET.Datasets.MNIST.UnitTests\Sci.NET.Datasets.MNIST.UnitTests.csproj", "{65AB4E90-4DAE-4D15-9296-231644FD57DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,12 +95,17 @@ Global
 		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC950BC4-28A6-4B80-A6E0-8C6A57E36E09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65AB4E90-4DAE-4D15-9296-231644FD57DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65AB4E90-4DAE-4D15-9296-231644FD57DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65AB4E90-4DAE-4D15-9296-231644FD57DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65AB4E90-4DAE-4D15-9296-231644FD57DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
+		{65AB4E90-4DAE-4D15-9296-231644FD57DE} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC5435D4-B949-4EC3-9C76-673335B11820}
