@@ -14,6 +14,14 @@ jobs:
         name: Checkout
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0
+        with:
+          versionSpec: '5.x'
+      - name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0
+        with:
+          useConfigFile: true
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v4.0.0
       - name: Set up DotCover
@@ -50,7 +58,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"SciDotNet_Sci.NET" /o:"scidotnet" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.dotcover.reportsPaths=dotCover.Output.html
-          dotnet build -–no-incremental
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"SciDotNet_Sci.NET" /o:"scidotnet" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.dotcover.reportsPaths="dotCover.Output.html" /v:"${{ env.GitVersion_FullSemVer }}"
+          dotnet build
           dotnet dotcover test --dcReportType=HTML
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
