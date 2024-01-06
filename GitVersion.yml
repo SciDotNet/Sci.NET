@@ -10,6 +10,7 @@ branches:
     regex: ^develop$
     increment: Patch
     tag: 'dev'
+    is-mainline: false
   feature:
     regex: ^features?[/-]
     tag: 'useBranchName'

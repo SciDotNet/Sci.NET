@@ -261,6 +261,186 @@ public class ScalarTrigShould : IntegrationTestBase
         InvokeTest<BFloat16>(-1.0f, device, x => x.Tanh2()).Should().Be(0.58203125f);
     }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForAsin(IDevice device)
+    {
+        // Asin(0) = 0
+        InvokeTest<float>(0.0f, device, x => x.Asin()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.Asin()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.Asin()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Asin(1) = π/2
+        InvokeTest<float>(1.0f, device, x => x.Asin()).Should().BeApproximately(float.Pi / 2.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.Asin()).Should().BeApproximately(double.Pi / 2.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.Asin()).Should().BeApproximately(BFloat16.Pi / 2.0f, 1e-3f);
+
+        // Asin(-1) = -π/2
+        InvokeTest<float>(-1.0f, device, x => x.Asin()).Should().BeApproximately(-float.Pi / 2.0f, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.Asin()).Should().BeApproximately(-double.Pi / 2.0, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.Asin()).Should().BeApproximately(-BFloat16.Pi / 2.0f, 1e-3f);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForAcos(IDevice device)
+    {
+        // Acos(0) = π/2
+        InvokeTest<float>(0.0f, device, x => x.Acos()).Should().BeApproximately(float.Pi / 2.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.Acos()).Should().BeApproximately(double.Pi / 2.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.Acos()).Should().BeApproximately(BFloat16.Pi / 2.0f, 1e-3f);
+
+        // Acos(1) = 0
+        InvokeTest<float>(1.0f, device, x => x.Acos()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.Acos()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.Acos()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Acos(-1) = π
+        InvokeTest<float>(-1.0f, device, x => x.Acos()).Should().BeApproximately(float.Pi, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.Acos()).Should().BeApproximately(double.Pi, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.Acos()).Should().BeApproximately(BFloat16.Pi, 1e-3f);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForAtan(IDevice device)
+    {
+        // Atan(0) = 0
+        InvokeTest<float>(0.0f, device, x => x.Atan()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.Atan()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.Atan()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Atan(1) = π/4
+        InvokeTest<float>(1.0f, device, x => x.Atan()).Should().BeApproximately(float.Pi / 4.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.Atan()).Should().BeApproximately(double.Pi / 4.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.Atan()).Should().BeApproximately(BFloat16.Pi / 4.0f, 1e-3f);
+
+        // Atan(-1) = -π/4
+        InvokeTest<float>(-1.0f, device, x => x.Atan()).Should().BeApproximately(-float.Pi / 4.0f, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.Atan()).Should().BeApproximately(-double.Pi / 4.0, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.Atan()).Should().BeApproximately(-BFloat16.Pi / 4.0f, 1e-3f);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForASinh(IDevice device)
+    {
+        // Asinh(0) = 0
+        InvokeTest<float>(0.0f, device, x => x.ASinh()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ASinh()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ASinh()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Asinh(1) = 0.88137358701954302523260932497979
+        InvokeTest<float>(1.0f, device, x => x.ASinh()).Should().BeApproximately(0.88137358701954302523260932497979f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ASinh()).Should().BeApproximately(0.88137358701954302523260932497979, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ASinh()).Should().BeApproximately(0.88137358701954302523260932497979f, 1e-3f);
+
+        // Asinh(-1) = -0.88137358701954302523260932497979
+        InvokeTest<float>(-1.0f, device, x => x.ASinh()).Should().BeApproximately(-0.88137358701954302523260932497979f, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.ASinh()).Should().BeApproximately(-0.88137358701954302523260932497979, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ASinh()).Should().BeApproximately(-0.88137358701954302523260932497979f, 1e-3f);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForACosh(IDevice device)
+    {
+        // Acosh(1) = 0
+        InvokeTest<float>(1.0f, device, x => x.ACosh()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ACosh()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ACosh()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Acosh(2) = 1.31695789692481670862504634730797
+        InvokeTest<float>(2.0f, device, x => x.ACosh()).Should().BeApproximately(1.31695789692481670862504634730797f, 1e-6f);
+        InvokeTest<double>(2.0, device, x => x.ACosh()).Should().BeApproximately(1.31695789692481670862504634730797, 1e-6);
+        InvokeTest<BFloat16>(2.0f, device, x => x.ACosh()).Should().BeApproximately(1.31695789692481670862504634730797f, 1e-3f);
+
+        // Acosh(-1) = NaN
+        InvokeTest<float>(-1.0f, device, x => x.ACosh()).Should().Be(float.NaN);
+        InvokeTest<double>(-1.0, device, x => x.ACosh()).Should().Be(double.NaN);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ACosh()).Should().Be(BFloat16.NaN);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForATanh(IDevice device)
+    {
+        // Atanh(0) = 0
+        InvokeTest<float>(0.0f, device, x => x.ATanh()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ATanh()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ATanh()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Atanh(0.5) = 0.54930614433405484569762261846126
+        InvokeTest<float>(0.5f, device, x => x.ATanh()).Should().BeApproximately(0.54930614433405484569762261846126f, 1e-6f);
+        InvokeTest<double>(0.5, device, x => x.ATanh()).Should().BeApproximately(0.54930614433405484569762261846126, 1e-6);
+        InvokeTest<BFloat16>(0.5f, device, x => x.ATanh()).Should().BeApproximately(0.54930614433405484569762261846126f, 1e-3f);
+
+        // Atanh(-0.5) = -0.54930614433405484569762261846126
+        InvokeTest<float>(-0.5f, device, x => x.ATanh()).Should().BeApproximately(-0.54930614433405484569762261846126f, 1e-6f);
+        InvokeTest<double>(-0.5, device, x => x.ATanh()).Should().BeApproximately(-0.54930614433405484569762261846126, 1e-6);
+        InvokeTest<BFloat16>(-0.5f, device, x => x.ATanh()).Should().BeApproximately(-0.54930614433405484569762261846126f, 1e-3f);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForASinh2(IDevice device)
+    {
+        // Asinh2(0) = 0
+        InvokeTest<float>(0.0f, device, x => x.ASinh2()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ASinh2()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ASinh2()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Asinh2(1) = 0.7768193999
+        InvokeTest<float>(1.0f, device, x => x.ASinh2()).Should().BeApproximately(0.7768193999f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ASinh2()).Should().BeApproximately(0.7768193999, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ASinh2()).Should().BeApproximately(0.78125f, 1e-5f);
+
+        // Asinh2(-1) = 0.7768193999
+        InvokeTest<float>(-1.0f, device, x => x.ASinh2()).Should().BeApproximately(0.7768193999f, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.ASinh2()).Should().BeApproximately(0.7768193999, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ASinh2()).Should().BeApproximately(0.78125f, 1e-5f);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForACosh2(IDevice device)
+    {
+        // Acosh2(1) = 0
+        InvokeTest<float>(1.0f, device, x => x.ACosh2()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ACosh2()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ACosh2()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Acosh2(2) = 1.734378102
+        InvokeTest<float>(2.0f, device, x => x.ACosh2()).Should().BeApproximately(1.734378102f, 1e-6f);
+        InvokeTest<double>(2.0, device, x => x.ACosh2()).Should().BeApproximately(1.734378102, 1e-6);
+        InvokeTest<BFloat16>(2.0f, device, x => x.ACosh2()).Should().BeApproximately(1.7421875f, 1e-3f);
+
+        // Acosh2(-1) = NaN
+        InvokeTest<float>(-1.0f, device, x => x.ACosh2()).Should().Be(float.NaN);
+        InvokeTest<double>(-1.0, device, x => x.ACosh2()).Should().Be(double.NaN);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ACosh2()).Should().Be(BFloat16.NaN);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_ForATanh2(IDevice device)
+    {
+        // Atanh2(0) = 0
+        InvokeTest<float>(0.0f, device, x => x.ATanh2()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ATanh2()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ATanh2()).Should().BeApproximately(0.0f, 1e-3f);
+
+        // Atanh2(0.5) = 0.3017372402
+        InvokeTest<float>(0.5f, device, x => x.ATanh2()).Should().BeApproximately(0.3017372402f, 1e-6f);
+        InvokeTest<double>(0.5, device, x => x.ATanh2()).Should().BeApproximately(0.3017372402, 1e-6);
+        InvokeTest<BFloat16>(0.5f, device, x => x.ATanh2()).Should().BeApproximately(0.30273438f, 1e-3f);
+
+        // Atanh2(-0.5) = 0.3017372402
+        InvokeTest<float>(-0.5f, device, x => x.ATanh2()).Should().BeApproximately(0.3017372402f, 1e-6f);
+        InvokeTest<double>(-0.5, device, x => x.ATanh2()).Should().BeApproximately(0.3017372402, 1e-6);
+        InvokeTest<BFloat16>(-0.5f, device, x => x.ATanh2()).Should().BeApproximately(0.30273438f, 1e-3f);
+    }
+
     private static TNumber InvokeTest<TNumber>(TNumber value, IDevice device, Func<Scalar<TNumber>, Scalar<TNumber>> function)
         where TNumber : unmanaged, ITrigonometricFunctions<TNumber>, INumber<TNumber>
     {

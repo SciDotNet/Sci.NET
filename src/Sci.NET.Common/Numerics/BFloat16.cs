@@ -3,6 +3,7 @@
 
 using System.Buffers.Binary;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -30,9 +31,10 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     private const ushort PositiveZeroBits = 0x0000;
     private const ushort NegativeZeroBits = 0x8000;
     private const ushort OneBits = 0x3F80;
+    private const ushort NegativeOneBits = 0xBF80;
     private const ushort PositiveInfinityBits = 0x7F80;
     private const ushort NegativeInfinityBits = 0xFF80;
-    private const ushort PositiveQNaNBits = 0x7FC1;
+    private const ushort NaNBits = 0x7FC1;
     private const ushort MinValueBits = 0xFF7F;
     private const ushort MaxValueBits = 0x7F7F;
     private const ushort EpsilonBits = 0x0080;
@@ -52,25 +54,28 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     }
 
     /// <inheritdoc />
-    public static BFloat16 One => new (OneBits);
-
-    /// <inheritdoc />
     public static int Radix => 2;
 
     /// <inheritdoc />
     public static BFloat16 Zero => new (PositiveZeroBits);
 
     /// <inheritdoc />
+    public static BFloat16 NegativeZero => new (NegativeZeroBits);
+
+    /// <inheritdoc />
+    public static BFloat16 One => new (OneBits);
+
+    /// <inheritdoc />
+    public static BFloat16 NegativeOne => new (NegativeOneBits);
+
+    /// <inheritdoc />
     public static BFloat16 Epsilon => new (EpsilonBits);
 
     /// <inheritdoc />
-    public static BFloat16 NaN => new (PositiveQNaNBits);
+    public static BFloat16 NaN => new (NaNBits);
 
     /// <inheritdoc />
     public static BFloat16 NegativeInfinity => new (NegativeInfinityBits);
-
-    /// <inheritdoc />
-    public static BFloat16 NegativeZero => new (NegativeZeroBits);
 
     /// <inheritdoc />
     public static BFloat16 PositiveInfinity => new (PositiveInfinityBits);
@@ -96,10 +101,8 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static BFloat16 MultiplicativeIdentity => new (OneBits);
 
-    /// <inheritdoc />
-    public static BFloat16 NegativeOne => new (NegativeZeroBits);
-
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    [ExcludeFromCodeCoverage]
     private float DebuggerDisplay => (float)this;
 
     /// <summary>
@@ -1058,7 +1061,7 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public bool Equals(BFloat16 other)
     {
-        return _value == other._value || AreZero(this, other) || (IsNaN(this) && IsNaN(other));
+        return AreZero(this, other) || (!(IsNaN(this) || IsNaN(other)) && _value == other._value);
     }
 
     /// <inheritdoc />
