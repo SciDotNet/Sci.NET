@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Buffers.Binary;
@@ -162,6 +162,11 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static bool operator ==(BFloat16 left, BFloat16 right)
     {
+        if (IsNaN(left) && IsNaN(right))
+        {
+            return true;
+        }
+
         if (IsNaN(left) || IsNaN(right))
         {
             return false;
@@ -1061,7 +1066,7 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public bool Equals(BFloat16 other)
     {
-        return AreZero(this, other) || (!(IsNaN(this) || IsNaN(other)) && _value == other._value);
+        return AreZero(this, other) || (IsNaN(this) && IsNaN(other)) || _value == other._value;
     }
 
     /// <inheritdoc />
