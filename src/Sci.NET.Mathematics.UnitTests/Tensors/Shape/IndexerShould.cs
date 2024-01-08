@@ -49,4 +49,15 @@ public class IndexerShould
         shape[1].Should().Be(4);
         shape[2].Should().Be(5);
     }
+
+    [Fact]
+    public void ReturnCorrectValue_GivenRange()
+    {
+        // Arrange
+        var shape = new Sut(3, 4, 5);
+
+        // Act & Assert
+        shape[0..2].Should().BeEquivalentTo(new int[] { 3, 4 });
+        shape[1..3].Should().BeEquivalentTo(new int[] { 4, 5 });
+    }
 }

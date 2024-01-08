@@ -13,8 +13,26 @@ namespace Sci.NET.Mathematics.Tensors;
 /// <summary>
 /// Provides extension methods for <see cref="Vector{TNumber}"/> operations.
 /// </summary>
+[PublicAPI]
 public static class VectorOperationExtensions
 {
+    /// <summary>
+    /// Computes the cosine similarity between two <see cref="Vector{TNumber}"/>s.
+    /// </summary>
+    /// <param name="left">The left <see cref="Vector{TNumber}"/>.</param>
+    /// <param name="right">The right <see cref="Vector{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>s.</typeparam>
+    /// <returns>The cosine similarity between the two <see cref="Vector{TNumber}"/>s.</returns>
+    [DebuggerStepThrough]
+    public static Scalar<TNumber> CosineSimilarity<TNumber>(this Vector<TNumber> left, Vector<TNumber> right)
+        where TNumber : unmanaged, IFloatingPoint<TNumber>, IRootFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetVectorOperationsService()
+            .CosineSimilarity(left, right);
+    }
+
     /// <summary>
     /// Computes the cosine distance between two <see cref="Vector{TNumber}"/>s.
     /// </summary>

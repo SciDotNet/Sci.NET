@@ -33,7 +33,7 @@ public class BFloat16Assertions : NumericAssertions<BFloat16, BFloat16Assertions
     {
         _ = Execute
             .Assertion
-            .ForCondition(Subject?.CompareTo(expected) == 0)
+            .ForCondition(Subject?.Equals(expected) ?? false)
             .BecauseOf(because, becauseArgs)
             .FailWith("Expected {context:value} to be approximately {0}{reason}, but found {1}.", expected, Subject);
 
