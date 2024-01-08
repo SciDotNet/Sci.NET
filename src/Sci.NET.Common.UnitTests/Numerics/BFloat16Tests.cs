@@ -183,7 +183,7 @@ public class BFloat16Tests
     [InlineData(-2.0f, -1.0f, false)]
     [InlineData(float.PositiveInfinity, float.PositiveInfinity, true)]
     [InlineData(float.NegativeInfinity, float.NegativeInfinity, true)]
-    [InlineData(float.NaN, float.NaN, false)]
+    [InlineData(float.NaN, float.NaN, true)]
 #pragma warning restore xUnit1025
     public void EqualsAndEqualityOperator_ReturnsExpectedResult(BFloat16 left, BFloat16 right, bool expected)
     {

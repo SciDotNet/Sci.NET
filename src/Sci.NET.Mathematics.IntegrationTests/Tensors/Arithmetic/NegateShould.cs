@@ -114,7 +114,7 @@ public class NegateShould : IntegrationTestBase
     private static Array NegateTensorTest<TNumber>(TNumber[,,] numbers, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensor = Tensor.FromArray<TNumber>(numbers);
+        var tensor = Tensor.FromArray<TNumber>(numbers).ToTensor();
         tensor.To(device);
 
         var result = tensor.Negate();
