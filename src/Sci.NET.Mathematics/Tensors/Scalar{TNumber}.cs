@@ -114,11 +114,23 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     public Scalar<TNumber> this[int index] => Tensor.Slice(this, index).ToScalar();
 #pragma warning restore CA2000, CA1043
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Scalar<TNumber> operator +(Scalar<TNumber> left, Scalar<TNumber> right)
     {
         return left.Add(right);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Scalar<TNumber> operator +(Scalar<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -127,21 +139,45 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         return left.Add(rightScalar);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Vector<TNumber> operator +(Scalar<TNumber> left, Vector<TNumber> right)
     {
         return left.Add(right);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Matrix<TNumber> operator +(Scalar<TNumber> left, Matrix<TNumber> right)
     {
         return right.Add(left);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Tensor<TNumber> operator +(Scalar<TNumber> left, Tensor<TNumber> right)
     {
         return right.Add(left);
     }
 
+    /// <summary>
+    /// Subtracts the left operand from the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Scalar<TNumber> operator -(Scalar<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -150,26 +186,56 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         return left.Subtract(rightScalar);
     }
 
+    /// <summary>
+    /// Subtracts the left operand from the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Scalar<TNumber> operator -(Scalar<TNumber> left, Scalar<TNumber> right)
     {
         return left.Subtract(right);
     }
 
+    /// <summary>
+    /// Subtracts the left operand from the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Vector<TNumber> operator -(Scalar<TNumber> left, Vector<TNumber> right)
     {
         return right.Subtract(left);
     }
 
+    /// <summary>
+    /// Subtracts the left operand from the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Matrix<TNumber> operator -(Scalar<TNumber> left, Matrix<TNumber> right)
     {
         return right.Subtract(left);
     }
 
+    /// <summary>
+    /// Subtracts the left operand from the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Tensor<TNumber> operator -(Scalar<TNumber> left, Tensor<TNumber> right)
     {
         return right.Subtract(left);
     }
 
+    /// <summary>
+    /// Multiplies the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Scalar<TNumber> operator *(Scalar<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -178,26 +244,56 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         return left.Multiply(rightScalar);
     }
 
+    /// <summary>
+    /// Multiplies the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Scalar<TNumber> operator *(Scalar<TNumber> left, Scalar<TNumber> right)
     {
         return left.Multiply(right);
     }
 
+    /// <summary>
+    /// Multiplies the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Vector<TNumber> operator *(Scalar<TNumber> left, Vector<TNumber> right)
     {
         return left.Multiply(right);
     }
 
+    /// <summary>
+    /// Multiplies the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Matrix<TNumber> operator *(Scalar<TNumber> left, Matrix<TNumber> right)
     {
         return right.Multiply(left);
     }
 
+    /// <summary>
+    /// Multiplies the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Tensor<TNumber> operator *(Scalar<TNumber> left, Tensor<TNumber> right)
     {
         return right.Multiply(left);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Scalar<TNumber> operator /(Scalar<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -206,21 +302,45 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         return left.Divide(rightScalar);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Scalar<TNumber> operator /(Scalar<TNumber> left, Scalar<TNumber> right)
     {
         return left.Divide(right);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Vector<TNumber> operator /(Scalar<TNumber> left, Vector<TNumber> right)
     {
         return right.Divide(left);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Matrix<TNumber> operator /(Scalar<TNumber> left, Matrix<TNumber> right)
     {
         return right.Divide(left);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Tensor<TNumber> operator /(Scalar<TNumber> left, Tensor<TNumber> right)
     {
         return right.Divide(left);

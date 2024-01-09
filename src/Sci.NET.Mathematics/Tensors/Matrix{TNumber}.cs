@@ -108,6 +108,12 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
 
 #pragma warning restore CA2000, CA1043
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Matrix<TNumber> operator +(Matrix<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -116,26 +122,56 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         return left.Add(rightScalar);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Matrix<TNumber> operator +(Matrix<TNumber> left, Scalar<TNumber> right)
     {
         return left.Add(right);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Matrix<TNumber> operator +(Matrix<TNumber> left, Vector<TNumber> right)
     {
         return left.Add(right);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Matrix<TNumber> operator +(Matrix<TNumber> left, Matrix<TNumber> right)
     {
         return left.Add(right);
     }
 
+    /// <summary>
+    /// Adds the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the addition.</returns>
     public static Tensor<TNumber> operator +(Matrix<TNumber> left, Tensor<TNumber> right)
     {
         return left.Add(right);
     }
 
+    /// <summary>
+    /// Subtracts the left operands from the right.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Matrix<TNumber> operator -(Matrix<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -144,26 +180,56 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         return left.Subtract(rightScalar);
     }
 
+    /// <summary>
+    /// Subtracts the left operands from the right.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Matrix<TNumber> operator -(Matrix<TNumber> left, Scalar<TNumber> right)
     {
         return left.Subtract(right);
     }
 
+    /// <summary>
+    /// Subtracts the left operands from the right.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Matrix<TNumber> operator -(Matrix<TNumber> left, Vector<TNumber> right)
     {
         return left.Subtract(right);
     }
 
+    /// <summary>
+    /// Subtracts the left operands from the right.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Matrix<TNumber> operator -(Matrix<TNumber> left, Matrix<TNumber> right)
     {
         return left.Subtract(right);
     }
 
+    /// <summary>
+    /// Subtracts the left operands from the right.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the subtraction.</returns>
     public static Tensor<TNumber> operator -(Matrix<TNumber> left, Tensor<TNumber> right)
     {
         return left.Subtract(right);
     }
 
+    /// <summary>
+    /// Multiplies the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Matrix<TNumber> operator *(Matrix<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -172,26 +238,56 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         return left.Multiply(rightScalar);
     }
 
+    /// <summary>
+    /// Multiplies the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Matrix<TNumber> operator *(Matrix<TNumber> left, Scalar<TNumber> right)
     {
         return left.Multiply(right);
     }
 
+    /// <summary>
+    /// Multiplies the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Matrix<TNumber> operator *(Matrix<TNumber> left, Vector<TNumber> right)
     {
         return left.Multiply(right);
     }
 
+    /// <summary>
+    /// Multiplies the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Matrix<TNumber> operator *(Matrix<TNumber> left, Matrix<TNumber> right)
     {
         return left.Multiply(right);
     }
 
+    /// <summary>
+    /// Multiplies the left and right operands.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the multiplication.</returns>
     public static Tensor<TNumber> operator *(Matrix<TNumber> left, Tensor<TNumber> right)
     {
         return left.Multiply(right);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Matrix<TNumber> operator /(Matrix<TNumber> left, TNumber right)
     {
         using var rightScalar = new Scalar<TNumber>(right);
@@ -200,21 +296,45 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         return left.Divide(rightScalar);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Matrix<TNumber> operator /(Matrix<TNumber> left, Scalar<TNumber> right)
     {
         return left.Divide(right);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Matrix<TNumber> operator /(Matrix<TNumber> left, Vector<TNumber> right)
     {
         return left.Divide(right);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Matrix<TNumber> operator /(Matrix<TNumber> left, Matrix<TNumber> right)
     {
         return left.Divide(right);
     }
 
+    /// <summary>
+    /// Divides the left operand by the right operand.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <returns>The result of the division.</returns>
     public static Tensor<TNumber> operator /(Matrix<TNumber> left, Tensor<TNumber> right)
     {
         return left.Divide(right);
