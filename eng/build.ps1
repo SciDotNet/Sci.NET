@@ -45,6 +45,4 @@
     
     if ($BuildNugetPackages)
     {
-        # Build Nuget packages
-        &$Dotnet pack $SolutionPath -c $Configuration -p:PackageVersion=$PackageVersion
     }
