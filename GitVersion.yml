@@ -3,27 +3,44 @@ mode: ContinuousDelivery
 branches:
   main:
     regex: ^main$
-    increment: Minor
-    is-mainline: true
-    tag: 'alpha'
-  develop:
-    regex: ^develop$
+    tag: ''
     increment: Patch
-    tag: 'dev'
-    is-mainline: false
+    is-mainline: true
+    tracks-release-branches: false
+    is-release-branch: true
+    source-branches: ['feature', 'hotfix', 'support', 'develop']
   feature:
     regex: ^features?[/-]
-    tag: 'useBranchName'
-    increment: Inherit
+    tag: 'feature'
+    increment: Minor
     is-mainline: false
-  release:
-    regex: ^releases?[/-]
-    tag: 'rc'
-    increment: Inherit
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['develop', 'main', 'support', 'hotfix']
   hotfix:
     regex: ^hotfix(es)?[/-]
     tag: 'hotfix'
     increment: Patch
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['main']
+  support:
+    regex: ^support[/-]
+    tag: ''
+    increment: Patch
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['main']
+  develop:
+    regex: ^develop$
+    tag: 'alpha'
+    increment: Patch
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['main', 'feature', 'support', 'hotfix']
 
 ignore:
   sha: []

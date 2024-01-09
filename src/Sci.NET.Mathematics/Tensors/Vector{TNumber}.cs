@@ -78,7 +78,7 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
 
 #pragma warning disable IDE0051, RCS1213
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    private Array DebuggerDisplayObject => ToArray();
+    private Array DebuggerDisplayObject => Shape.ElementCount < 10000 ? ToArray() : new[] { "The vector too big to view" };
 #pragma warning restore RCS1213, IDE0051
 
     /// <inheritdoc />
@@ -91,6 +91,73 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     /// <param name="index">The index of the scalar to get.</param>
     public Scalar<TNumber> this[int index] => Tensor.Slice(this, index).ToScalar();
 #pragma warning restore CA2000, CA1043
+
+    public static Vector<TNumber> operator +(Vector<TNumber> left, TNumber right)
+    {
+        using var rightScalar = new Scalar<TNumber>(right);
+
+        rightScalar.To(left.Device);
+
+        return left.Add(rightScalar);
+    }
+
+    public static Vector<TNumber> operator +(Vector<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Vector<TNumber> operator +(Vector<TNumber> left, Vector<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Matrix<TNumber> operator +(Vector<TNumber> left, Matrix<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Tensor<TNumber> operator +(Vector<TNumber> left, Tensor<TNumber> right)
+    {
+        return left.Add(right);
+    }
+
+    public static Vector<TNumber> operator -(Vector<TNumber> left, TNumber right)
+    {
+        using var rightScalar = new Scalar<TNumber>(right);
+
+        rightScalar.To(left.Device);
+
+        return left.Subtract(rightScalar);
+    }
+
+    public static Vector<TNumber> operator -(Vector<TNumber> left, Scalar<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Vector<TNumber> operator -(Vector<TNumber> left, Vector<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Matrix<TNumber> operator -(Vector<TNumber> left, Matrix<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Tensor<TNumber> operator -(Vector<TNumber> left, Tensor<TNumber> right)
+    {
+        return left.Subtract(right);
+    }
+
+    public static Vector<TNumber> operator *(Vector<TNumber> left, TNumber right)
+    {
+        using var rightScalar = new Scalar<TNumber>(right);
+
+        rightScalar.To(left.Device);
+
+        return left.Multiply(rightScalar);
+    }
 
     /// <inheritdoc />
     public Array ToArray()

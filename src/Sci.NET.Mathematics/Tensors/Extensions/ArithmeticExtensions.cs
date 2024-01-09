@@ -471,6 +471,25 @@ public static class ArithmeticExtensions
     }
 
     /// <summary>
+    /// Finds the difference between the <paramref name="right"/> <see cref="Tensors.Vector{TNumber}"/> and <paramref name="left"/> <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
+    /// <returns>The difference of the <paramref name="right"/> and <paramref name="left"/> operands.</returns>
+    [DebuggerStepThrough]
+    public static Tensor<TNumber> Subtract<TNumber>(
+        this Vector<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Subtract(left, right);
+    }
+
+    /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Matrix{TNumber}"/> and <paramref name="left"/> <see cref="Scalar{TNumber}"/>.
     /// </summary>
     /// <param name="left">The left operand.</param>
