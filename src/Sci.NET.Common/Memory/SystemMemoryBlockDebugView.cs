@@ -12,9 +12,9 @@ internal class SystemMemoryBlockDebugView<T>
 {
     public SystemMemoryBlockDebugView(IMemoryBlock<T> block)
     {
-        Items = block.ToArray();
+        Items = block.Length < 10000 ? block.ToArray() : new[] { "Too many items to display" };
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    public T[] Items { get; }
+    public Array Items { get; }
 }
