@@ -31,7 +31,7 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
+            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
     public void Pow<TNumber>(Matrix<TNumber> value, Scalar<TNumber> power, Matrix<TNumber> result)
@@ -45,7 +45,7 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
+            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
     public void Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power, Tensor<TNumber> result)
@@ -59,7 +59,7 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
+            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
     public void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
