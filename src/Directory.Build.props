@@ -17,6 +17,7 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <RootDirectory>$(MSBuildThisFileDirectory)\..\</RootDirectory>
         <PlatformTarget>x64</PlatformTarget>
+        <IncludeGlobalUsings>true</IncludeGlobalUsings>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>$(DefineConstants);TRACE;DEBUG;NET;NET8_0;NETCOREAPP</DefineConstants>
@@ -49,7 +50,7 @@
             </ItemGroup>
         </Otherwise>
     </Choose>
-    <ItemGroup>
+    <ItemGroup Condition="'$(IncludeGlobalUsings)' == 'true'">
         <Compile Include="$(RootDirectory)src/common/BaseGlobalUsings.cs" Link="base.globalusings.cs"/>
     </ItemGroup>
     <ItemGroup Condition="'$(TestProject)' == 'true'">

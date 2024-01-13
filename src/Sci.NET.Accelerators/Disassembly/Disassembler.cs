@@ -159,6 +159,10 @@ public class Disassembler
                     index);
                 instruction = instruction with { Operand = operand };
             }
+            else
+            {
+                instruction = instruction with { Operand = default(NoOperand), OperandType = OperandType.InlineNone };
+            }
 
             instruction = ExpandMacro(instruction);
             instructions.Add(instruction);

@@ -1,13 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project>
+    <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
+
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
         <IsPackable>true</IsPackable>
-        <IncludedCudaPath>$(CUDA_PATH_V12_1)</IncludedCudaPath>
-        <AssemblyName>Sci.NET.CUDA.Redist-windows-x86-64</AssemblyName>
-        <RootNamespace>Sci.NET.CUDA.Redist-windows-x86-64</RootNamespace>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IncludeGlobalUsings>false</IncludeGlobalUsings>
     </PropertyGroup>
 
     <ItemGroup>

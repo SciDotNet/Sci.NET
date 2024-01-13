@@ -1,10 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project>
+    <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), Directory.Build.props))\Directory.Build.props" />
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <RootNamespace>Sci.NET.CUDA.Redist_linux_x86_64</RootNamespace>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <IncludeGlobalUsings>false</IncludeGlobalUsings>
     </PropertyGroup>
     <ItemGroup>
         <Content Include="$(SolutionDir)\eng\CUDA\linux-x86_64\bin\**\*">
