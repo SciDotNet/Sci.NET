@@ -11,4 +11,26 @@
       <ProjectReference Include="..\Sci.NET.Common\Sci.NET.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Tensors\Extensions\TrigExtensions.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>TrigExtensions.cs</LastGenOutput>
+      </None>
+      <None Update="Tensors\Extensions\TrigonometryExtensions.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>TrigonometryExtensions.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Tensors\Extensions\TrigExtensions.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>TrigExtensions.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Tensors\Extensions\TrigonometryExtensions.cs">
+        <DependentUpon>TrigonometryExtensions.tt</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

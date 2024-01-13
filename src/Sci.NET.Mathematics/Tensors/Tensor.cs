@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -117,8 +117,8 @@ public static class Tensor
         var shape = tensor.Shape.Slice(indices);
         var result = new Tensor<TNumber>(new Shape(shape.Dimensions), tensor.Backend);
 
-        result.Handle.BlockCopyFrom(
-            tensor.Handle,
+        result.Memory.BlockCopyFrom(
+            tensor.Memory,
             shape.DataOffset,
             0,
             shape.ElementCount);
@@ -157,6 +157,51 @@ public static class Tensor
             .GetTensorOperationServiceProvider()
             .GetSerializationService()
             .Load<TNumber>(path);
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> Load<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .Load<TNumber>(stream);
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified stream.
+    /// </summary>
+    /// <param name="stream">The stream to load the tensor from.</param>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> LoadCompressed<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .LoadCompressed<TNumber>(stream);
+    }
+
+    /// <summary>
+    /// Loads a tensor from the specified file.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <param name="file">The path to load the tensor from.</param>
+    /// <returns>The loaded tensor.</returns>
+    public static ITensor<TNumber> LoadCompressed<TNumber>(string file)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .LoadCompressed<TNumber>(file);
     }
 
     /// <summary>
@@ -201,6 +246,64 @@ public static class Tensor
     }
 
     /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with ones.
+    /// </summary>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with ones.</returns>
+    public static ITensor<TNumber> Ones<TNumber>(Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(shape);
+
+        result.Memory.Fill(TNumber.One);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with ones.
+    /// </summary>
+    /// <param name="dimensions">The dimensions of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given dimensions and filled with ones.</returns>
+    public static ITensor<TNumber> Ones<TNumber>(params int[] dimensions)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Ones<TNumber>(new Shape(dimensions));
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with the specified value.
+    /// </summary>
+    /// <param name="value">The value to fill the <see cref="ITensor{TNumber}"/> with.</param>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with the specified value.</returns>
+    public static ITensor<TNumber> FillWith<TNumber>(TNumber value, Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(shape);
+
+        result.Memory.Fill(value);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Creates a <see cref="ITensor{TNumber}"/> with the specified dimensions which is filled with the specified value.
+    /// </summary>
+    /// <param name="value">The value to fill the <see cref="ITensor{TNumber}"/> with.</param>
+    /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A <see cref="ITensor{TNumber}"/> with the given <paramref name="shape"/> and filled with the specified value.</returns>
+    public static ITensor<TNumber> FillWith<TNumber>(TNumber value, params int[] shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return FillWith(value, new Shape(shape));
+    }
+
+    /// <summary>
     /// Overwrites the values of the <paramref name="tensor"/> with the values of the <paramref name="other"/> tensor.
     /// This should only be used on rare occasions where referential integrity is required (I.E weights in a neural network).
     /// </summary>
@@ -217,7 +320,7 @@ public static class Tensor
             throw new InvalidShapeException($"The shapes of the tensors must be equal but were {tensor.Shape} and {other.Shape}.");
         }
 
-        other.Handle.CopyTo(tensor.Handle);
+        other.Memory.CopyTo(tensor.Memory);
         return tensor;
     }
 
@@ -242,7 +345,7 @@ public static class Tensor
         var startIndex = tensor.Shape.DataOffset;
         var endIndex = startIndex + tensor.Shape.ElementCount;
         var bytesToCopy = Unsafe.SizeOf<TNumber>() * (endIndex - startIndex);
-        var systemMemoryClone = tensor.Handle.ToSystemMemory();
+        var systemMemoryClone = tensor.Memory.ToSystemMemory();
 
         var sourcePointer = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<TNumber>(systemMemoryClone.ToPointer()), (nuint)startIndex));
         var destinationPointer = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(result));

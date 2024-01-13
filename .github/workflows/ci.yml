@@ -15,7 +15,7 @@ on:
 
 jobs:
   Build:
-    runs-on: windows-latest-l
+    runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
       with: 
@@ -28,6 +28,12 @@ jobs:
       uses: gittools/actions/gitversion/execute@v0
       with:
         useConfigFile: true
+    - name: Create and push tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a "${{ env.GitVersion_FullSemVer }}" -m "V.${{ env.GitVersion_FullSemVer }}"
+        git push origin "${{ env.GitVersion_FullSemVer }}"
     - name: Build
       shell: pwsh
       run: |

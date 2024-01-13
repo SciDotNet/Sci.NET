@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -80,7 +80,7 @@ public class EqualityMembersShould
     }
 
     [Fact]
-    public void ReturnFalse_WhenLeftDisposed()
+    public void ThrowsException_WhenLeftDisposed()
     {
         // Arrange
         var block1 = new SystemMemoryBlock<int>(10);
@@ -89,10 +89,10 @@ public class EqualityMembersShould
         block1.Dispose();
 
         // Act
-        var result = block1.Equals(block2);
+        var act = () => block1.Equals(block2);
 
         // Assert
-        result.Should().BeFalse();
+        act.Should().Throw<ObjectDisposedException>();
     }
 
     [Fact]
@@ -105,9 +105,9 @@ public class EqualityMembersShould
         block2.Dispose();
 
         // Act
-        var result = block1.Equals(block2);
+        var act = () => block1.Equals(block2);
 
         // Assert
-        result.Should().BeFalse();
+        act.Should().Throw<ObjectDisposedException>();
     }
 }

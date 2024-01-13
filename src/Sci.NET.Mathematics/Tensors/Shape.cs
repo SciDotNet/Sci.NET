@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Sci.NET.Common.Performance;
 
@@ -362,6 +363,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <inheritdoc/>
+    [ExcludeFromCodeCoverage]
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();

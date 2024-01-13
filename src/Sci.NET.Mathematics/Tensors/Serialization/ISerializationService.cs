@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -41,6 +41,24 @@ public interface ISerializationService
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Saves a compressed <see cref="ITensor{TNumber}"/> to a file.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="path">The path to the file to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void SaveCompressed<TNumber>(ITensor<TNumber> tensor, string path)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Saves a compressed <see cref="ITensor{TNumber}"/> to a stream.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="stream">The stream to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void SaveCompressed<TNumber>(ITensor<TNumber> tensor, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Loads a <see cref="ITensor{TNumber}"/> from a file.
     /// </summary>
     /// <param name="path">The path to the file to load from.</param>
@@ -56,5 +74,23 @@ public interface ISerializationService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
     public ITensor<TNumber> Load<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Loads a compressed <see cref="ITensor{TNumber}"/> from a file.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <param name="path">The path to the file to load from.</param>
+    /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> LoadCompressed<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Loads a compressed <see cref="ITensor{TNumber}"/> from a file.
+    /// </summary>
+    /// <param name="stream">The stream to load from.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> LoadCompressed<TNumber>(Stream stream)
         where TNumber : unmanaged, INumber<TNumber>;
 }

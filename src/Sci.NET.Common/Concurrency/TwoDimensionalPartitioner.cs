@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Sci.NET.Common.Concurrency;
 
@@ -9,6 +10,7 @@ namespace Sci.NET.Common.Concurrency;
 /// A class for a 2D thread partitioner for nested for loops.
 /// </summary>
 [PublicAPI]
+[ExcludeFromCodeCoverage]
 public class TwoDimensionalPartitioner : Partitioner<Tuple<long, long>>
 {
     private readonly long _iFromInclusive;

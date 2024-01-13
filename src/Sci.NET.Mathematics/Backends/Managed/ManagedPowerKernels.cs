@@ -13,9 +13,9 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Pow<TNumber>(Scalar<TNumber> value, Scalar<TNumber> power, Scalar<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var powerBlock = (SystemMemoryBlock<TNumber>)power.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         resultBlock[0] = TNumber.Pow(valueBlock[0], powerBlock[0]);
     }
@@ -23,50 +23,50 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Pow<TNumber>(Tensors.Vector<TNumber> value, Scalar<TNumber> power, Tensors.Vector<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var powerBlock = (SystemMemoryBlock<TNumber>)power.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
+            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
     public void Pow<TNumber>(Matrix<TNumber> value, Scalar<TNumber> power, Matrix<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var powerBlock = (SystemMemoryBlock<TNumber>)power.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
+            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
     public void Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power, Tensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var powerBlock = (SystemMemoryBlock<TNumber>)power.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[0], powerBlock[i]));
+            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
     public void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         resultBlock[0] = TNumber.Abs(valueBlock[0] * valueBlock[0]);
     }
@@ -74,8 +74,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Square<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -87,8 +87,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Square<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -100,8 +100,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Square<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -113,8 +113,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Exp<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         resultBlock[0] = TNumber.Exp(valueBlock[0]);
     }
@@ -122,8 +122,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Exp<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -135,8 +135,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Exp<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -148,8 +148,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Exp<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,
@@ -161,8 +161,8 @@ internal class ManagedPowerKernels : IPowerKernels
     public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
     {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Handle;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
         LazyParallelExecutor.For(
             0,

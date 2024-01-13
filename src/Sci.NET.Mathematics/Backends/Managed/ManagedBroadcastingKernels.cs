@@ -13,8 +13,8 @@ internal class ManagedBroadcastingKernels : IBroadcastingKernels
     public void Broadcast<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long[] strides)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensorHandle = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultHandle = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorHandle = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultHandle = (SystemMemoryBlock<TNumber>)result.Memory;
 
         if (tensor.Shape.IsScalar)
         {

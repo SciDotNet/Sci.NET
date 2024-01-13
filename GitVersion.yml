@@ -1,5 +1,48 @@
-mode: ContinuousDelivery
-branches: {}
+mode: Mainline
+
+branches:
+  main:
+    regex: ^main$
+    tag: ''
+    increment: Patch
+    is-mainline: true
+    tracks-release-branches: false
+    is-release-branch: true
+    source-branches: ['feature', 'hotfix', 'support', 'develop']
+  feature:
+    regex: ^features?[/-]
+    tag: 'feature'
+    increment: Minor
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['develop', 'main', 'support', 'hotfix']
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    tag: 'hotfix'
+    increment: Patch
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['main']
+  support:
+    regex: ^support[/-]
+    tag: ''
+    increment: Patch
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['main']
+  develop:
+    regex: ^develop$
+    tag: 'alpha'
+    increment: Patch
+    is-mainline: false
+    tracks-release-branches: true
+    is-release-branch: false
+    source-branches: ['main', 'feature', 'support', 'hotfix']
+
 ignore:
   sha: []
+
 merge-message-formats: {}

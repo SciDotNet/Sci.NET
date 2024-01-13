@@ -7,13 +7,6 @@ namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 internal class PermutationService : IPermutationService
 {
-    private readonly IReshapeService _reshapeService;
-
-    public PermutationService(ITensorOperationServiceProvider provider)
-    {
-        _reshapeService = provider.GetReshapeService();
-    }
-
     public ITensor<TNumber> Permute<TNumber>(ITensor<TNumber> tensor, int[] permutation)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -36,6 +29,10 @@ internal class PermutationService : IPermutationService
             permutedShape[i] = tensor.Shape[permutation[i]];
         }
 
-        return _reshapeService.Reshape(tensor, new Shape(permutedShape));
+        var result = new Tensor<TNumber>(new Shape(permutedShape), tensor.Backend);
+
+        result.Backend.Permutation.Permute(tensor, result, permutation);
+
+        return result;
     }
 }

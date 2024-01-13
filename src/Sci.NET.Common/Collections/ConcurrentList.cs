@@ -1,6 +1,12 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
+using Sci.NET.Common.Concurrency;
+#pragma warning disable RCS1056
+using ReaderWriterLock = Sci.NET.Common.Concurrency.ReaderWriterLock;
+#pragma warning restore RCS1056
+
 namespace Sci.NET.Common.Collections;
 
 /// <summary>
@@ -10,25 +16,28 @@ namespace Sci.NET.Common.Collections;
 [PublicAPI]
 public class ConcurrentList<T>
 {
-    private readonly ReaderWriterLock _lock;
+    private readonly IReaderWriterLock _lock;
     private readonly List<T> _list;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcurrentList{T}"/> class.
     /// </summary>
-    public ConcurrentList()
+    /// <param name="capacity">The initial capacity of the list.</param>
+    [ExcludeFromCodeCoverage]
+    public ConcurrentList(int capacity = 0)
     {
         _lock = new ReaderWriterLock();
-        _list = new List<T>();
+        _list = new List<T>(capacity);
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcurrentList{T}"/> class.
     /// </summary>
+    /// <param name="readerWriterLock">The reader-writer lock to use for thread safety.</param>
     /// <param name="capacity">The initial capacity of the list.</param>
-    public ConcurrentList(int capacity)
+    public ConcurrentList(IReaderWriterLock readerWriterLock, int capacity = 0)
     {
-        _lock = new ReaderWriterLock();
+        _lock = readerWriterLock;
         _list = new List<T>(capacity);
     }
 

@@ -94,9 +94,9 @@ public interface IMemoryBlock<T> : IReferenceCounted, IDisposable
     /// Copies the contents of the specified <see cref="Span{T}"/> to the <see cref="IMemoryBlock{T}"/>.
     /// </summary>
     /// <param name="buffer">The buffer to copy from.</param>
-    /// <param name="srcIdx">The source index to start from.</param>
-    /// <param name="dstIdx">The destination index to start from.</param>
-    /// <param name="count">The number of elements to copy.</param>
+    /// <param name="srcIdx">The source index to start from in bytes.</param>
+    /// <param name="dstIdx">The destination index to start from in bytes.</param>
+    /// <param name="count">The number of bytes to copy.</param>
     public void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count);
 
     /// <summary>

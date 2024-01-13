@@ -73,7 +73,7 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
             .ForCondition(tensorElements => AreEquivalentElements(tensorElements, shape))
-            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", shape, Subject.Shape);
+            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", shape, Subject.ToArray());
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
     }

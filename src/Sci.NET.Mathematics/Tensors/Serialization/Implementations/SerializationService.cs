@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.IO.Compression;
@@ -77,28 +77,15 @@ internal class SerializationService : ISerializationService
         stream.Write(shapeEnd);
         stream.Write(paddingRef);
 
-        tensor.Handle.WriteTo(stream);
+        tensor.Memory.WriteTo(stream);
 
         stream.Flush();
         stream.Close();
     }
 
-    public void Save<TNumber>(ITensor<TNumber> tensor, string path)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        using var stream = File.OpenWrite(path);
-
-        Save(tensor, stream);
-    }
-
     public void Save<TNumber>(ITensor<TNumber> tensor, Stream stream)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        using var dataBuffer = new MemoryStream();
-        using var gzipCompressor = new GZipStream(dataBuffer, CompressionMode.Compress, true);
-
-        tensor.Handle.WriteTo(gzipCompressor);
-
         var rank = tensor.Shape.Rank;
         var shape = tensor.Shape.Dimensions;
         var typeBytes = GetDataType<TNumber>();
@@ -114,12 +101,34 @@ internal class SerializationService : ISerializationService
             stream.WriteValue(shape[i]);
         }
 
-        stream.WriteValue(dataBuffer.Length);
-        dataBuffer.Position = 0;
-        dataBuffer.CopyTo(stream);
+        tensor.Memory.WriteTo(stream);
 
         stream.Flush();
         stream.Close();
+    }
+
+    public void Save<TNumber>(ITensor<TNumber> tensor, string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenWrite(path);
+
+        Save(tensor, stream);
+    }
+
+    public void SaveCompressed<TNumber>(ITensor<TNumber> tensor, string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenWrite(path);
+
+        SaveCompressed(tensor, stream);
+    }
+
+    public void SaveCompressed<TNumber>(ITensor<TNumber> tensor, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var compressedStream = new GZipStream(stream, CompressionMode.Compress, true);
+
+        Save(tensor, compressedStream);
     }
 
     public ITensor<TNumber> Load<TNumber>(Stream stream)
@@ -154,20 +163,21 @@ internal class SerializationService : ISerializationService
 
         var bytesToRead = stream.ReadValue<int>();
         var tensor = new Tensor<TNumber>(new Shape(shape));
-        var handle = tensor.Handle;
+        var handle = tensor.Memory;
         var bufferSize = tensor.Shape.ElementCount <= int.MaxValue ? (int)tensor.Shape.ElementCount : int.MaxValue;
         var buffer = new Span<byte>(new byte[bufferSize * Unsafe.SizeOf<TNumber>()]);
         var bytesRead = 0;
-        using var gzipDecompressor = new GZipStream(stream, CompressionMode.Decompress, true);
 
-        while (bytesRead < bytesToRead)
+        while (stream.CanRead && bytesRead < handle.Length * Unsafe.SizeOf<TNumber>())
         {
-            var bytes = gzipDecompressor.Read(buffer);
+            var bytes = stream.Read(buffer);
+
             handle.BlockCopyFrom(
                 buffer,
                 0,
-                bytesRead / Unsafe.SizeOf<TNumber>(),
+                bytesRead,
                 bytes);
+
             bytesRead += bytes;
         }
 
@@ -180,6 +190,22 @@ internal class SerializationService : ISerializationService
         using var stream = File.OpenRead(path);
 
         return Load<TNumber>(stream);
+    }
+
+    public ITensor<TNumber> LoadCompressed<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenRead(path);
+
+        return LoadCompressed<TNumber>(stream);
+    }
+
+    public ITensor<TNumber> LoadCompressed<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var compressedStream = new GZipStream(stream, CompressionMode.Decompress);
+
+        return Load<TNumber>(compressedStream);
     }
 
     // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
@@ -202,6 +228,7 @@ internal class SerializationService : ISerializationService
         };
     }
 
+    // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
     private static string GetDataType<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {

@@ -10,7 +10,7 @@ namespace Sci.NET.Mathematics.Backends;
 /// An interface for <see cref="ITensor{TNumber}"/> locality operations.
 /// </summary>
 [PublicAPI]
-public interface ITensorLocalityOperations
+public interface ITensorLocalityOperations : IDisposable
 {
     /// <summary>
     /// Gets the device the data is stored on.

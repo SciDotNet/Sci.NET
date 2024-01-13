@@ -14,7 +14,7 @@ internal class ManagedReductionKernels : IReductionKernels
         where TNumber : unmanaged, INumber<TNumber>
     {
         var elementCount = tensor.Shape.ElementCount;
-        var tensorMemory = (SystemMemoryBlock<TNumber>)tensor.Handle;
+        var tensorMemory = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var maxDegreeOfParallelism = Environment.ProcessorCount;
         var partitionSize = (int)Math.Ceiling((double)elementCount / maxDegreeOfParallelism);
         var partialSums = new TNumber[maxDegreeOfParallelism];
@@ -44,14 +44,14 @@ internal class ManagedReductionKernels : IReductionKernels
             sum += partialSums[i];
         }
 
-        ((SystemMemoryBlock<TNumber>)result.Handle)[0] = sum;
+        ((SystemMemoryBlock<TNumber>)result.Memory)[0] = sum;
     }
 
     public void ReduceAddAllKeepDims<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
         var count = tensor.Shape.ElementCount;
         var tensorShape = tensor.Shape;
         var resultShape = result.Shape;
@@ -75,8 +75,8 @@ internal class ManagedReductionKernels : IReductionKernels
     public void ReduceAddAxis<TNumber>(ITensor<TNumber> tensor, int[] axes, Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
         var tensorShape = tensor.Shape;
         var resultShape = result.Shape;
         var maxDegreeOfParallelism = Environment.ProcessorCount;
@@ -133,8 +133,8 @@ internal class ManagedReductionKernels : IReductionKernels
     public void ReduceAddAxisKeepDims<TNumber>(ITensor<TNumber> tensor, int[] axes, Tensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Handle;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Handle;
+        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
         var tensorShape = tensor.Shape;
         var resultShape = result.Shape;
 

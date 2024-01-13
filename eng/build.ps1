@@ -20,6 +20,11 @@
     # Install dotnet
     &$DotnetInstallScript -InstallDir $DotnetInstallDir -JSonFile $GlobalJsonFile -Architecture x64 -Verbose
 
+    # Set Repo Root
+    $SolutionPath = Resolve-Path $RepoRoot\Sci.NET.sln
+
+    &$Dotnet build $EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CudaDownloaderTool.sln
+    &$EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CUDA.Downloader\bin\Debug\net8.0\Sci.NET.CUDA.Downloader.exe 12.3.1 $EngineeringRoot\CUDA\
     # Install dotnet 
     &$Dotnet tool update -g docfx
 
@@ -28,24 +33,18 @@
         &$Dotnet clean
     }
 
-    # Build CUDA Download Tool
-    &$Dotnet build $EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CudaDownloaderTool.sln
-    &$EngineeringRoot\Sci.NET.CudaDownloaderTool\Sci.NET.CUDA.Downloader\bin\Debug\net8.0\Sci.NET.CUDA.Downloader.exe 12.3.1 $EngineeringRoot\CUDA\
-    
     # Restore
-    &$Dotnet restore $RepoRoot\Sci.NET.sln -s https://api.nuget.org/v3/index.json
+    &$Dotnet restore $SolutionPath -s https://api.nuget.org/v3/index.json
     
     # Build
-    &$Dotnet build $RepoRoot\Sci.NET.sln -c $Configuration
+    &$Dotnet build $SolutionPath -c $Configuration
 
     if ($RunTests)
     {
         # Test
-        &$Dotnet test $RepoRoot\Sci.NET.sln -c $Configuration   
+        &$Dotnet test $SolutionPath -c $Configuration   
     }    
     
     if ($BuildNugetPackages)
     {
-        # Build Nuget packages
-        &$Dotnet pack $SolutionPath -c $Configuration -p:PackageVersion=$PackageVersion
     }
