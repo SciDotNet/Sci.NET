@@ -2164,13 +2164,4 @@ internal class ArithmeticService : IArithmeticService
 
         return result;
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool CanNegate<TNumber>()
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var difference = TNumber.CreateSaturating(-1);
-
-        return TNumber.Min(TNumber.Zero, difference) != TNumber.Zero;
-    }
 }
