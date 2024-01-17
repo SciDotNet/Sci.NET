@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Tests.Framework", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST", "src\Sci.NET.Datasets.MNIST\Sci.NET.Datasets.MNIST.csproj", "{D4667540-9853-415C-A9A4-AF24C4A8CA14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Accelerators", "src\Sci.NET.Accelerators\Sci.NET.Accelerators.csproj", "{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
