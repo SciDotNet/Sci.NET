@@ -3,6 +3,7 @@
 
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.VectorOperations;
 

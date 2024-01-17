@@ -5,6 +5,7 @@ using JetBrains.dotMemoryUnit;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Tests.Framework.Assertions;
+using Sci.NET.Tests.Framework.Integration;
 using Xunit.Abstractions;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;

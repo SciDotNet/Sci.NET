@@ -21,9 +21,8 @@ public static class IrBuilder
     public static IReadOnlyList<BasicBlock> Build(DisassembledMethod method)
     {
         var cfg = MsilControlFlowGraph.Create(method.Instructions);
-        var executor = new SymbolicExecutor(cfg, method);
-        var ssaMethod = executor.Execute();
-
+        var executor = new SsaTransformer(cfg, method);
+        var ssaMethod = executor.Transform();
         return BasicBlockBuilder.CreateBasicBlocks(cfg, ssaMethod.Instructions);
     }
 }

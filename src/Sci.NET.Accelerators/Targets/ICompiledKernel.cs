@@ -7,7 +7,7 @@ namespace Sci.NET.Accelerators.Targets;
 /// Represents a kernel target.
 /// </summary>
 [PublicAPI]
-public interface IKernelTarget
+public interface ICompiledKernel
 {
     /// <summary>
     /// Executes the kernel.

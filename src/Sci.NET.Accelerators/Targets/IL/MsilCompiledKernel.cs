@@ -7,7 +7,7 @@ namespace Sci.NET.Accelerators.Targets.IL;
 /// Represents a kernel target for MSIL.
 /// </summary>
 [PublicAPI]
-public class MsilKernelTarget : IKernelTarget
+public class MsilCompiledKernel : ICompiledKernel
 {
     /// <inheritdoc />
     public void Execute()

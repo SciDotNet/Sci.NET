@@ -93,6 +93,6 @@ public readonly struct SsaInstruction : IValueEquatable<SsaInstruction>
             return $"{IlOpCode} {string.Join(", ", Operands)}";
         }
 
-        return $"{Result} = {IlOpCode} {string.Join(", ", Operands)}";
+        return $"%{Result} = {IlOpCode} {string.Join(", ", Operands)}";
     }
 }

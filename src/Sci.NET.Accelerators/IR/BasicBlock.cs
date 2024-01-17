@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Text;
+
 namespace Sci.NET.Accelerators.IR;
 
 /// <summary>
@@ -76,6 +78,21 @@ public sealed class BasicBlock : IEquatable<BasicBlock>
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        return HashCode.Combine(_blockId);
+        return _blockId.GetHashCode();
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+
+        _ = sb.Append("BasicBlock: ").Append(StartOffset).Append(" -> ").Append(EndOffset).AppendLine(":");
+
+        foreach (var instruction in Instructions)
+        {
+            _ = sb.Append("  ").AppendLine(instruction.ToString());
+        }
+
+        return sb.ToString();
     }
 }

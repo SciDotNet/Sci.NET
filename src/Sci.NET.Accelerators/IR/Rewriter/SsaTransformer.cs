@@ -13,7 +13,7 @@ namespace Sci.NET.Accelerators.IR.Rewriter;
 /// Represents a new symbolic executor.
 /// </summary>
 [PublicAPI]
-public class SymbolicExecutor
+public class SsaTransformer
 {
 #pragma warning disable SA1010, SA1009
     private static readonly Type[] TypePrecedenceBitManipulation = [typeof(ulong), typeof(long), typeof(uint), typeof(int), typeof(ushort), typeof(short), typeof(byte), typeof(sbyte)];
@@ -28,11 +28,11 @@ public class SymbolicExecutor
     private readonly Stack<ISsaVariable> _stack;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SymbolicExecutor"/> class.
+    /// Initializes a new instance of the <see cref="SsaTransformer"/> class.
     /// </summary>
     /// <param name="cfg">The control flow graph.</param>
     /// <param name="disassembledMethod">The disassembled method.</param>
-    public SymbolicExecutor(MsilControlFlowGraph cfg, DisassembledMethod disassembledMethod)
+    public SsaTransformer(MsilControlFlowGraph cfg, DisassembledMethod disassembledMethod)
     {
         _cfg = cfg;
         _disassembledMethod = disassembledMethod;
@@ -49,15 +49,15 @@ public class SymbolicExecutor
 
         for (var index = 0; index < disassembledMethod.Parameters.Count; index++)
         {
-            _argumentSsaVariables[index] = new ArgumentSsaVariable(index, $"arg_{index}", disassembledMethod.Parameters[index].ParameterType);
+            _argumentSsaVariables[index] = new ArgumentSsaVariable(index, $"arg_{disassembledMethod.Parameters[index].Name}", disassembledMethod.Parameters[index].ParameterType);
         }
     }
 
     /// <summary>
-    /// Executes the symbolic execution.
+    /// Transforms the method into SSA form.
     /// </summary>
-    /// <returns>The symbols.</returns>
-    public SsaMethod Execute()
+    /// <returns>The SSA form of the method.</returns>
+    public SsaMethodBody Transform()
     {
         var symbols = new List<SsaInstruction>();
 
@@ -101,7 +101,7 @@ public class SymbolicExecutor
                 });
         }
 
-        return new SsaMethod(symbols);
+        return new SsaMethodBody(symbols);
     }
 
     private static Type GetResultTypeFromBitManipulationOperation(IEnumerable<ISsaVariable> operands)
@@ -167,7 +167,7 @@ public class SymbolicExecutor
         var popCount = methodInfo.GetParameters().Length;
 
 #pragma warning disable IDE0010
-        switch (methodInfo.CallingConvention)
+        switch (methodInfo.CallingConvention & (CallingConventions.VarArgs | CallingConventions.HasThis))
 #pragma warning restore IDE0010
         {
             case CallingConventions.VarArgs:
@@ -175,11 +175,6 @@ public class SymbolicExecutor
             case CallingConventions.HasThis:
                 popCount++;
                 break;
-        }
-
-        if (methodInfo.ReturnType != typeof(void))
-        {
-            popCount++;
         }
 
         return popCount;
@@ -420,7 +415,7 @@ public class SymbolicExecutor
             OpCodeTypes.Starg => default(VoidSsaVariable),
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Instruction.Operand is InlineIntOperand operand => _localVariableSsaVariables[operand.Value],
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Instruction.Operand is InlineVarOperand operand => _nameGenerator.GetNextTemp(operand.Value),
-            OpCodeTypes.Ldloca => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stloc or OpCodeTypes.Stloc_S => default(VoidSsaVariable),
             OpCodeTypes.Localloc => _nameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Endfilter => _nameGenerator.GetNextTemp(typeof(nint)),
