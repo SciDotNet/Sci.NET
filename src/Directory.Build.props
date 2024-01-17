@@ -45,7 +45,6 @@
                 <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>
             </PropertyGroup>
             <ItemGroup>
-                <None Include="readme.md" Pack="true" PackagePath="\"/>
             </ItemGroup>
         </Otherwise>
     </Choose>

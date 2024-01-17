@@ -3,9 +3,15 @@
 
 using Sci.NET.Mathematics.Backends.Devices;
 
-namespace Sci.NET.Mathematics.IntegrationTests.Tensors;
+namespace Sci.NET.Tests.Framework.Integration;
 
+/// <summary>
+/// Base class for integration tests.
+/// </summary>
 public abstract class IntegrationTestBase
 {
+    /// <summary>
+    /// Gets the devices to use for integration tests.
+    /// </summary>
     public static TheoryData<IDevice> ComputeDevices => new () { new CpuComputeDevice() };
 }

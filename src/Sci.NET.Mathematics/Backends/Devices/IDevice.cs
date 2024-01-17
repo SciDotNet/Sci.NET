@@ -20,6 +20,11 @@ public interface IDevice : IEquatable<IDevice>
     public string Name { get; }
 
     /// <summary>
+    /// Gets the <see cref="ITensorStorageKernels"/> of the device.
+    /// </summary>
+    public ITensorStorageKernels Storage { get; }
+
+    /// <summary>
     /// Gets the category of the device.
     /// </summary>
     public DeviceCategory Category { get; }

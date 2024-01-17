@@ -499,6 +499,30 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <summary>
+    /// Gets a <see cref="Span{T}"/> to the <see cref="SystemMemoryBlock{T}"/> at the specified index with the specified length.
+    /// </summary>
+    /// <param name="index">The index to start the span at.</param>
+    /// <param name="length">The length of the span.</param>
+    /// <returns>A span to this instance.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The specified index was out of range.</exception>
+    public unsafe Span<T> AsSpan(long index, int length)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+
+        if (index < 0 || index >= Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be non-negative and less than {Length}.");
+        }
+
+        if (index + length > Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length), $"Length was {length} but must be non-negative and less than {Length - index}.");
+        }
+
+        return new Span<T>(_reference + index, length);
+    }
+
+    /// <summary>
     /// Reinterprets the <see cref="SystemMemoryBlock{T}"/> as a <see cref="SystemMemoryBlock{TOut}"/>.
     /// </summary>
     /// <typeparam name="TOut">The output type parameter.</typeparam>

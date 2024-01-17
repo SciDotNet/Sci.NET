@@ -21,6 +21,7 @@ public class CpuComputeDevice : IDevice
     {
         Id = Instance.Id;
         Name = Instance.Name;
+        Storage = Instance.Storage;
     }
 
     /// <summary>
@@ -32,6 +33,7 @@ public class CpuComputeDevice : IDevice
     {
         Name = name;
         Id = id;
+        Storage = new ManagedStorageKernels();
     }
 
     /// <inheritdoc />
@@ -39,6 +41,9 @@ public class CpuComputeDevice : IDevice
 
     /// <inheritdoc />
     public string Name { get; }
+
+    /// <inheritdoc />
+    public ITensorStorageKernels Storage { get; }
 
     /// <inheritdoc />
     public DeviceCategory Category => DeviceCategory.Cpu;

@@ -17,6 +17,8 @@ public class TwoDimensionalPartitioner : Partitioner<Tuple<long, long>>
     private readonly long _iToExclusive;
     private readonly long _jFromInclusive;
     private readonly long _jToExclusive;
+    private readonly long _iIncrement;
+    private readonly long _jIncrement;
     private readonly int _numProcessors;
 
     /// <summary>
@@ -26,16 +28,22 @@ public class TwoDimensionalPartitioner : Partitioner<Tuple<long, long>>
     /// <param name="iToExclusive">The index to iterate to (exclusive) for outer loop.</param>
     /// <param name="jFromInclusive">The index to start from (inclusive) for the inner loop.</param>
     /// <param name="jToExclusive">The index to iterate to (exclusive) for inner loop.</param>
+    /// <param name="iIncrement">The increment to use for the outer loop.</param>
+    /// <param name="jIncrement">The increment to use for the inner loop.</param>
     public TwoDimensionalPartitioner(
         long iFromInclusive,
         long iToExclusive,
         long jFromInclusive,
-        long jToExclusive)
+        long jToExclusive,
+        long iIncrement = 1,
+        long jIncrement = 1)
     {
         _iFromInclusive = iFromInclusive;
         _iToExclusive = iToExclusive;
         _jFromInclusive = jFromInclusive;
         _jToExclusive = jToExclusive;
+        _iIncrement = iIncrement;
+        _jIncrement = jIncrement;
         _numProcessors = Environment.ProcessorCount;
     }
 
@@ -57,7 +65,7 @@ public class TwoDimensionalPartitioner : Partitioner<Tuple<long, long>>
             var jStart = _jFromInclusive + (p * jChunkSize);
             var jEnd = p == partitionCount - 1 ? _jToExclusive : jStart + jChunkSize;
 
-            partitions.Add(GetChunkEnumerator(iStart, iEnd, jStart, jEnd));
+            partitions.Add(GetChunkEnumerator(iStart, iEnd, jStart, jEnd, _iIncrement, _jIncrement));
         }
 
         return partitions;
@@ -75,11 +83,11 @@ public class TwoDimensionalPartitioner : Partitioner<Tuple<long, long>>
         }
     }
 
-    private static IEnumerator<Tuple<long, long>> GetChunkEnumerator(long iStart, long iEnd, long jStart, long jEnd)
+    private static IEnumerator<Tuple<long, long>> GetChunkEnumerator(long iStart, long iEnd, long jStart, long jEnd, long iIncrement, long jIncrement)
     {
-        for (var i = iStart; i < iEnd; i++)
+        for (var i = iStart; i < iEnd; i += iIncrement)
         {
-            for (var j = jStart; j < jEnd; j++)
+            for (var j = jStart; j < jEnd; j += jIncrement)
             {
                 yield return Tuple.Create(i, j);
             }
