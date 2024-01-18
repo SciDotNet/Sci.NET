@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Accelerators", "src\Sci.NET.Accelerators\Sci.NET.Accelerators.csproj", "{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Accelerators.UnitTests", "src\Sci.NET.Accelerators.UnitTests\Sci.NET.Accelerators.UnitTests.csproj", "{83054C92-5B36-4BF0-A5C2-E05D68E3F078}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21C48A66-9AD2-4E2A-B8B8-B700B8AAC03E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83054C92-5B36-4BF0-A5C2-E05D68E3F078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83054C92-5B36-4BF0-A5C2-E05D68E3F078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83054C92-5B36-4BF0-A5C2-E05D68E3F078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83054C92-5B36-4BF0-A5C2-E05D68E3F078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Immutable;
-using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -17,28 +15,18 @@ namespace Sci.NET.Accelerators.Disassembly;
 [PublicAPI]
 public class MsilDisassembler
 {
-    private readonly MethodBody _methodBody;
-    private readonly MethodBase _methodBase;
-    private readonly Module _module;
-    private readonly ParameterInfo[] _parameters;
-    private readonly Type[] _typeGenericArguments;
-    private readonly Type[] _methodGenericArguments;
+    private readonly MsilMethodMetadata _methodMetadata;
     private readonly byte[] _ilBytes;
     private BlobReader _blobReader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MsilDisassembler"/> class.
     /// </summary>
-    /// <param name="methodBase">The method to disassemble.</param>
-    public unsafe MsilDisassembler(MethodBase methodBase)
+    /// <param name="metadata">The method to disassemble.</param>
+    public unsafe MsilDisassembler(MsilMethodMetadata metadata)
     {
-        _methodBase = methodBase;
-        _methodBody = methodBase.GetMethodBody() ?? throw new ArgumentException("Method body is null.", nameof(methodBase));
-        _module = methodBase.Module;
-        _parameters = methodBase.GetParameters();
-        _typeGenericArguments = methodBase.DeclaringType?.GetGenericArguments() ?? Array.Empty<Type>();
-        _methodGenericArguments = methodBase.IsGenericMethod ? methodBase.GetGenericArguments() : Array.Empty<Type>();
-        _ilBytes = _methodBody.GetILAsByteArray() ?? throw new ArgumentException("Method body is null.", nameof(methodBase));
+        _methodMetadata = metadata;
+        _ilBytes = metadata.MethodBody.GetILAsByteArray() ?? throw new ArgumentException("Method body is null.", nameof(metadata));
         _blobReader = new BlobReader((byte*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(_ilBytes)), _ilBytes.Length);
     }
 
@@ -50,17 +38,8 @@ public class MsilDisassembler
     {
         return new DisassembledMsilMethod
         {
-            MaxStack = _methodBody.MaxStackSize,
-            CodeSize = _ilBytes.Length,
-            InitLocals = _methodBody.InitLocals,
-            LocalVariablesSignatureToken = _methodBody.LocalSignatureMetadataToken,
-            Variables = _methodBody.LocalVariables.ToImmutableList(),
-            Instructions = ReadInstructions().ToList(),
-            TypeGenericArguments = _typeGenericArguments.ToList(),
-            MethodGenericArguments = _methodGenericArguments.ToList(),
-            Parameters = _parameters.ToList(),
-            ReflectedMethodBase = _methodBase,
-            ReturnType = _methodBase is MethodInfo methodInfo ? methodInfo.ReturnType : typeof(void)
+            Metadata = _methodMetadata,
+            Instructions = ReadInstructions().ToList()
         };
     }
 
@@ -226,18 +205,18 @@ public class MsilDisassembler
             case OperandType.InlineVar:
                 return ResolveInlineVarOperand(instruction, _blobReader.ReadInt16());
             case OperandType.InlineSig:
-                return new MemberInfoOperand { Value = _module.ResolveMember(_blobReader.ReadInt32()), OperandType = OperandType.InlineSig };
+                return new MemberInfoOperand { Value = _methodMetadata.Module.ResolveMember(_blobReader.ReadInt32()), OperandType = OperandType.InlineSig };
             case OperandType.InlineString:
-                return new MsilInlineStringOperand { Value = _module.ResolveString(_blobReader.ReadInt32()) };
+                return new MsilInlineStringOperand { Value = _methodMetadata.Module.ResolveString(_blobReader.ReadInt32()) };
             case OperandType.InlineTok:
-                return new MemberInfoOperand { Value = _module.ResolveMember(_blobReader.ReadInt32(), _typeGenericArguments, _methodGenericArguments), OperandType = OperandType.InlineTok };
+                return new MemberInfoOperand { Value = _methodMetadata.Module.ResolveMember(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray()), OperandType = OperandType.InlineTok };
             case OperandType.InlineType:
-                return new MsilTypeOperand { Value = _module.ResolveType(_blobReader.ReadInt32(), _typeGenericArguments, _methodGenericArguments), OperandType = OperandType.InlineType };
+                return new MsilTypeOperand { Value = _methodMetadata.Module.ResolveType(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray()), OperandType = OperandType.InlineType };
             case OperandType.InlineMethod:
-                var methodBase = _module.ResolveMethod(_blobReader.ReadInt32(), _typeGenericArguments, _methodGenericArguments);
+                var methodBase = _methodMetadata.Module.ResolveMethod(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray());
                 return new MsilMethodOperand { OperandType = instruction.OperandType, MethodBase = methodBase };
             case OperandType.InlineField:
-                var field = _module.ResolveField(_blobReader.ReadInt32(), _typeGenericArguments, _methodGenericArguments);
+                var field = _methodMetadata.Module.ResolveField(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray());
                 return new MsilFieldOperand { OperandType = instruction.OperandType, FieldInfo = field };
             default:
                 throw new NotSupportedException();
@@ -258,7 +237,7 @@ public class MsilDisassembler
             or OpCodeTypes.Starg_S;
 
         return isArgument
-            ? new MsilInlineVarOperand { Value = _parameters[index].ParameterType, Index = index, OperandType = OperandType.InlineVar }
-            : new MsilInlineVarOperand { Value = _methodBody.LocalVariables[index].LocalType, Index = index, OperandType = OperandType.InlineVar };
+            ? new MsilInlineVarOperand { Value = _methodMetadata.Parameters[index].ParameterType, Index = index, OperandType = OperandType.InlineVar }
+            : new MsilInlineVarOperand { Value = _methodMetadata.Variables[index].LocalType, Index = index, OperandType = OperandType.InlineVar };
     }
 }

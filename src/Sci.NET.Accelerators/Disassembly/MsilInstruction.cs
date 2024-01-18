@@ -35,7 +35,6 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
         Size = size;
         OperandType = opcode.OperandType;
         Name = opcode.Name ?? string.Empty;
-        IsMacro = opcode.OpCodeType == OpCodeType.Macro;
         Operand = default!;
         Index = index;
     }
@@ -69,11 +68,6 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
     /// Gets the operand type.
     /// </summary>
     public required OperandType OperandType { get; init; }
-
-    /// <summary>
-    /// Gets a value indicating whether the instruction is a macro.
-    /// </summary>
-    public required bool IsMacro { get; init; }
 
     /// <summary>
     /// Gets the instruction offset.
