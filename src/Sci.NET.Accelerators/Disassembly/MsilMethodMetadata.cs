@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.SymbolStore;
 using System.Reflection;
+using Sci.NET.Accelerators.Disassembly.Pdb;
 
 namespace Sci.NET.Accelerators.Disassembly;
 
@@ -22,6 +23,7 @@ public class MsilMethodMetadata
     [SetsRequiredMembers]
     public MsilMethodMetadata(MethodBase methodBase)
     {
+        var reader = PdbSymbolProvider.ReadPdbFile(methodBase.Module.Assembly);
         MethodBase = methodBase;
         MethodBody = methodBase.GetMethodBody() ?? throw new InvalidOperationException("Method body is null.");
         ReturnType = methodBase is MethodInfo methodInfo ? methodInfo.ReturnType : typeof(void);
@@ -30,7 +32,7 @@ public class MsilMethodMetadata
         LocalVariablesSignatureToken = new SymbolToken(MethodBody.LocalSignatureMetadataToken);
         InitLocals = MethodBody.InitLocals;
         Parameters = methodBase.GetParameters().ToArray();
-        Variables = MethodBody.LocalVariables.ToArray();
+        Variables = reader.GetMethodVariables(methodBase);
         TypeGenericArguments = methodBase.DeclaringType?.GetGenericArguments().ToArray() ?? Array.Empty<Type>();
         MethodGenericArguments = methodBase.GetGenericArguments().ToArray();
         Module = methodBase.Module;
@@ -71,7 +73,7 @@ public class MsilMethodMetadata
     /// <summary>
     /// Gets the local variables.
     /// </summary>
-    public required LocalVariableInfo[] Variables { get; init; }
+    public required LocalVariable[] Variables { get; init; }
 
     /// <summary>
     /// Gets the type generic arguments.

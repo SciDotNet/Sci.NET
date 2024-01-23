@@ -238,6 +238,6 @@ public class MsilDisassembler
 
         return isArgument
             ? new MsilInlineVarOperand { Value = _methodMetadata.Parameters[index].ParameterType, Index = index, OperandType = OperandType.InlineVar }
-            : new MsilInlineVarOperand { Value = _methodMetadata.Variables[index].LocalType, Index = index, OperandType = OperandType.InlineVar };
+            : new MsilInlineVarOperand { Value = _methodMetadata.Variables[index].Type, Index = index, OperandType = OperandType.InlineVar };
     }
 }

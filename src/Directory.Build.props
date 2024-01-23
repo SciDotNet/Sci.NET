@@ -48,6 +48,11 @@
             </ItemGroup>
         </Otherwise>
     </Choose>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DebugType>full</DebugType>
+    </PropertyGroup>
+
     <ItemGroup>
         <Compile Include="$(RootDirectory)src/common/BaseGlobalUsings.cs" Link="base.globalusings.cs"/>
     </ItemGroup>

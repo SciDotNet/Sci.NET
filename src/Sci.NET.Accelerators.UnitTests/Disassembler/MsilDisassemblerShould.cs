@@ -22,14 +22,12 @@ public class MsilDisassemblerShould
         var rightParameterMock = new Mock<ParameterInfo>();
         var resultParameterMock = new Mock<ParameterInfo>();
         var lengthParameterMock = new Mock<ParameterInfo>();
-        var iVariableMock = new Mock<LocalVariableInfo>();
-        var boolVariableMock = new Mock<LocalVariableInfo>();
         var methodBodyBytes = new byte[]
         {
             0x00, 0x16, 0x0A, 0x2B, 0x1C, 0x00, 0x04, 0x06, 0xD3, 0x1A, 0x5A, 0x58, 0x02, 0x06, 0xD3, 0x1A, 0x5A, 0x58, 0x4E, 0x03, 0x06, 0xD3, 0x1A, 0x5A, 0x58, 0x4E, 0x58, 0x56, 0x00, 0x06, 0x17, 0x58, 0x0A, 0x06, 0x6A, 0x05, 0xFE, 0x04, 0x0B, 0x07, 0x2D, 0xDB, 0x2A
         };
 
-        var variables = new List<LocalVariableInfo> { iVariableMock.Object, boolVariableMock.Object };
+        var variables = new List<LocalVariable> { new () { Index = 0, Name = "i", Type = typeof(long) }, new () { Index = 1, Name = "v_1", Type = typeof(bool) } };
         var parameters = new List<ParameterInfo> { leftParameterMock.Object, rightParameterMock.Object, resultParameterMock.Object, lengthParameterMock.Object };
 
         methodBaseMock
@@ -40,7 +38,24 @@ public class MsilDisassemblerShould
             .Setup(x => x.GetILAsByteArray())
             .Returns(methodBodyBytes);
 
+        leftParameterMock.Setup(x => x.Name).Returns("left");
+        leftParameterMock.Setup(x => x.ParameterType).Returns(typeof(float*));
+        leftParameterMock.Setup(x => x.Position).Returns(0);
+
+        rightParameterMock.Setup(x => x.Name).Returns("right");
+        rightParameterMock.Setup(x => x.ParameterType).Returns(typeof(float*));
+        rightParameterMock.Setup(x => x.Position).Returns(1);
+
+        resultParameterMock.Setup(x => x.Name).Returns("result");
+        resultParameterMock.Setup(x => x.ParameterType).Returns(typeof(float*));
+        resultParameterMock.Setup(x => x.Position).Returns(2);
+
+        lengthParameterMock.Setup(x => x.Name).Returns("length");
+        lengthParameterMock.Setup(x => x.ParameterType).Returns(typeof(long));
+        lengthParameterMock.Setup(x => x.Position).Returns(3);
+
         methodBaseMock.Setup(x => x.ReturnType).Returns(typeof(void));
+        methodBaseMock.Setup(x => x.Name).Returns("Add");
 
         var metadata = new MsilMethodMetadata
         {
