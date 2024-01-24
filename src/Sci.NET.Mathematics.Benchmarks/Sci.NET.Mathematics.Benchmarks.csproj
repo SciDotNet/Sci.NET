@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" />
+      <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+    </ItemGroup>
+</Project>

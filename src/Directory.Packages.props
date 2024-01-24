@@ -1,7 +1,7 @@
 <Project>
   <ItemGroup Label="Test">
-    <PackageVersion Include="BenchmarkDotNet" Version="0.13.10" />
-    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.10" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.12" />
     <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="System.Management" Version="8.0.0" />
