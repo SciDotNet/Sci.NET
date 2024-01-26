@@ -4,7 +4,7 @@
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
-namespace Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
+namespace Sci.NET.Mathematics.Tensors.Reduction.Implementations;
 
 internal class ReductionService : IReductionService
 {
