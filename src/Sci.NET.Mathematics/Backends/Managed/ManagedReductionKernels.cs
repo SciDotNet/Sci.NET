@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
+using Sci.NET.Common.Performance;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -13,62 +15,22 @@ internal class ManagedReductionKernels : IReductionKernels
     public void ReduceAddAll<TNumber>(ITensor<TNumber> tensor, Scalar<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var elementCount = tensor.Shape.ElementCount;
-        var tensorMemory = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var maxDegreeOfParallelism = Environment.ProcessorCount;
-        var partitionSize = (int)Math.Ceiling((double)elementCount / maxDegreeOfParallelism);
-        var partialSums = new TNumber[maxDegreeOfParallelism];
-
-        LazyParallelExecutor.For(
-            0,
-            maxDegreeOfParallelism,
-            maxDegreeOfParallelism,
-            i =>
-            {
-                var start = i * partitionSize;
-                var end = Math.Min(start + partitionSize, (int)elementCount);
-                var sum = default(TNumber);
-
-                for (var j = start; j < end; j++)
-                {
-                    sum += tensorMemory[j];
-                }
-
-                partialSums[i] = sum;
-            });
-
-        var sum = TNumber.Zero;
-
-        for (var i = 0; i < maxDegreeOfParallelism; i++)
-        {
-            sum += partialSums[i];
-        }
-
-        ((SystemMemoryBlock<TNumber>)result.Memory)[0] = sum;
-    }
-
-    public void ReduceAddAllKeepDims<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
         var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var count = tensor.Shape.ElementCount;
-        var tensorShape = tensor.Shape;
-        var resultShape = result.Shape;
 
-        var strides = new long[tensorShape.Rank];
-
-        for (long i = tensorShape.Rank - 1, stride = 1; i >= 0; i--)
+        if (tensor.Shape.ElementCount < ManagedTensorBackend.ParallelizationThreshold)
         {
-            strides[i] = stride;
-            stride *= tensorShape.Dimensions[i];
+            ReduceAddAllSequential(tensor, tensorMemoryBlock, resultMemoryBlock);
+            return;
         }
 
-        for (var i = 0; i < count; i++)
+        if (VectorGuard.CanVectorize<TNumber>())
         {
-            var indices = resultShape.GetIndicesFromLinearIndex(i);
-            var tensorIndex = GetTensorIndex(indices, strides);
-            resultMemoryBlock[i] = tensorMemoryBlock[tensorIndex];
+            ReduceAddAllParallelSimd(tensor, tensorMemoryBlock, resultMemoryBlock);
+        }
+        else
+        {
+            ReduceAddAllParallel(tensor, tensorMemoryBlock, resultMemoryBlock);
         }
     }
 
@@ -79,101 +41,177 @@ internal class ManagedReductionKernels : IReductionKernels
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
         var tensorShape = tensor.Shape;
         var resultShape = result.Shape;
-        var maxDegreeOfParallelism = Environment.ProcessorCount;
 
-        _ = Parallel.ForEach(
-            axes,
-            axis =>
+        _ = LazyParallelExecutor.For(
+            0,
+            result.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
             {
-                var axisSize = tensorShape[axis];
-                var partialSums = new TNumber[maxDegreeOfParallelism];
+                var resultIndices = resultShape.GetIndicesFromLinearIndex(i);
+                var tensorIndices = new int[tensorShape.Rank];
 
-                for (var i = 0; i < maxDegreeOfParallelism; i++)
+                var resultIndex = 0;
+
+                for (var tensorIndex = 0; tensorIndex < tensorShape.Rank; tensorIndex++)
                 {
-                    partialSums[i] = TNumber.Zero;
-                }
-
-                var partitionSize = (int)Math.Ceiling((double)axisSize / maxDegreeOfParallelism);
-
-                LazyParallelExecutor.For(
-                    0,
-                    maxDegreeOfParallelism,
-                    maxDegreeOfParallelism,
-                    i =>
+                    if (!axes.Contains(tensorIndex))
                     {
-                        var start = (int)i * partitionSize;
-                        var end = Math.Min(start + partitionSize, axisSize);
-                        var sum = TNumber.Zero;
-
-                        for (var j = start; j < end; j++)
-                        {
-                            var tensorIndices = new int[tensorShape.Rank];
-                            tensorIndices[axis] = j;
-
-                            var tensorIndex = tensorShape.GetLinearIndex(tensorIndices);
-                            sum += tensorMemoryBlock[tensorIndex];
-                        }
-
-                        partialSums[i] = sum;
-                    });
-
-                var totalSum = TNumber.Zero;
-
-                for (var i = 0; i < maxDegreeOfParallelism; i++)
-                {
-                    totalSum += partialSums[i];
+                        tensorIndices[tensorIndex] = resultIndices[resultIndex++];
+                    }
                 }
 
-                var resultIndices = new int[resultShape.Rank];
-                resultIndices[axis] = 0;
-                resultMemoryBlock[resultShape.GetLinearIndex(resultIndices)] = totalSum;
+                var sum = TNumber.Zero;
+
+                foreach (var index in GetAxisIndices(tensorShape, axes))
+                {
+                    for (var axisIndex = 0; axisIndex < axes.Length; axisIndex++)
+                    {
+                        tensorIndices[axes[axisIndex]] = index[axisIndex];
+                    }
+
+                    sum += tensorMemoryBlock[tensorShape.GetLinearIndex(tensorIndices)];
+                }
+
+                resultMemoryBlock[i] = sum;
             });
     }
 
-    public void ReduceAddAxisKeepDims<TNumber>(ITensor<TNumber> tensor, int[] axes, Tensor<TNumber> result)
+    private static IEnumerable<int[]> GetAxisIndices(Shape shape, int[] axes)
+    {
+        var currentIndices = new int[axes.Length];
+        var maxIndices = axes.Select(axis => shape[axis]).ToArray();
+        return EnumerateIndices(currentIndices, maxIndices, 0);
+    }
+
+    private static IEnumerable<int[]> EnumerateIndices(int[] current, int[] max, int dim)
+    {
+        if (dim == current.Length)
+        {
+            yield return (int[])current.Clone();
+        }
+        else
+        {
+            for (current[dim] = 0; current[dim] < max[dim]; current[dim]++)
+            {
+                foreach (var indices in EnumerateIndices(current, max, dim + 1))
+                {
+                    yield return indices;
+                }
+            }
+        }
+    }
+
+    private static void ReduceAddAllSequential<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
-        var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var tensorShape = tensor.Shape;
-        var resultShape = result.Shape;
+        if (VectorGuard.CanVectorize<TNumber>())
+        {
+            ReduceAddAllSequentialSimd(tensor, tensorMemoryBlock, resultMemoryBlock);
+        }
+        else
+        {
+            var sum = TNumber.Zero;
 
-        var tensorIndices = new int[tensorShape.Rank];
-        var resultIndices = new int[resultShape.Rank];
-
-        _ = Parallel.ForEach(
-            axes,
-            axis =>
+            for (var i = 0; i < tensor.Shape.ElementCount; i++)
             {
-                var axisSize = tensorShape[axis];
+                sum += tensorMemoryBlock[i];
+            }
 
-                for (var i = 0; i < tensorShape.Rank; i++)
-                {
-                    tensorIndices[i] = 0;
-                }
-
-                for (var i = 0; i < resultShape.Rank; i++)
-                {
-                    resultIndices[i] = 0;
-                }
-
-                for (var i = 0; i < axisSize; i++)
-                {
-                    tensorIndices[axis] = i;
-                    resultIndices[axis] = 0;
-
-                    var tensorIndex = tensorShape.GetLinearIndex(tensorIndices);
-                    var resultIndex = resultShape.GetLinearIndex(resultIndices);
-
-                    resultMemoryBlock[resultIndex] += tensorMemoryBlock[tensorIndex];
-                }
-            });
+            resultMemoryBlock[0] = sum;
+        }
     }
 
-    private static int GetTensorIndex(IEnumerable<int> indices, IReadOnlyList<long> strides)
+    private static void ReduceAddAllSequentialSimd<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
+        where TNumber : unmanaged, INumber<TNumber>
     {
-        var index = indices.Select((t, i) => strides[i] * t).Sum();
+        var sum = TNumber.Zero;
+        var vectorSum = System.Numerics.Vector<TNumber>.Zero;
+        var vectorLength = System.Numerics.Vector<TNumber>.Count;
+        var i = 0L;
 
-        return (int)index;
+        if (tensor.Shape.ElementCount >= vectorLength)
+        {
+            for (; i < tensor.Shape.ElementCount - vectorLength; i += vectorLength)
+            {
+                var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked(i);
+                vectorSum += vector;
+            }
+        }
+
+        for (; i < tensor.Shape.ElementCount; i++)
+        {
+            sum += tensorMemoryBlock[i];
+        }
+
+        for (var j = 0; j < vectorLength; j++)
+        {
+            sum += vectorSum[j];
+        }
+
+        resultMemoryBlock[0] = sum;
+    }
+
+    private static void ReduceAddAllParallel<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var sums = new TNumber[Environment.ProcessorCount];
+
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            1,
+            i => sums[Environment.CurrentManagedThreadId % sums.Length] += tensorMemoryBlock[i]);
+
+        resultMemoryBlock[0] = sums.Aggregate(TNumber.Zero, (current, partialVectorSum) => current + partialVectorSum);
+    }
+
+    private static void ReduceAddAllParallelSimd<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var vectorLength = System.Numerics.Vector<TNumber>.Count;
+        var partialSums = new ConcurrentDictionary<int, System.Numerics.Vector<TNumber>>();
+
+        for (var index = 0; index < partialSums.Count; index++)
+        {
+            partialSums[index] = System.Numerics.Vector<TNumber>.Zero;
+        }
+
+        var done = 0L;
+
+        if (tensor.Shape.ElementCount >= vectorLength)
+        {
+            done = LazyParallelExecutor.For(
+                0,
+                tensor.Shape.ElementCount,
+                1,
+                vectorLength,
+                i =>
+                {
+                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked(i);
+
+                    _ = partialSums.AddOrUpdate(
+                        Environment.CurrentManagedThreadId,
+                        vector,
+                        (_, sum) => sum + vector);
+                });
+        }
+
+        var finalSum = TNumber.Zero;
+
+        for (var i = done * vectorLength; i < tensor.Shape.ElementCount; i++)
+        {
+            finalSum = tensorMemoryBlock[i];
+        }
+
+        foreach (var partialVectorSum in partialSums.Values)
+        {
+            for (var j = 0; j < vectorLength; j++)
+            {
+                finalSum += partialVectorSum[j];
+            }
+        }
+
+        resultMemoryBlock[0] = finalSum;
     }
 }

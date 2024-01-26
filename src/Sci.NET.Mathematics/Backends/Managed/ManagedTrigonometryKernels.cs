@@ -16,7 +16,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -29,7 +29,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -42,7 +42,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -55,7 +55,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -72,7 +72,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -89,7 +89,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -106,7 +106,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -119,7 +119,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -132,7 +132,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -145,7 +145,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -162,7 +162,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -179,7 +179,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -196,7 +196,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -209,7 +209,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -222,7 +222,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -235,7 +235,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -252,7 +252,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -269,7 +269,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -286,7 +286,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -299,7 +299,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -312,7 +312,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -325,7 +325,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -342,7 +342,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -359,7 +359,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -376,7 +376,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -389,7 +389,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -402,7 +402,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -415,7 +415,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -432,7 +432,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -449,7 +449,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -466,7 +466,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -479,7 +479,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -492,7 +492,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -505,7 +505,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -522,7 +522,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -539,7 +539,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -556,7 +556,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -569,7 +569,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -582,7 +582,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -595,7 +595,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -612,7 +612,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -629,7 +629,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -646,7 +646,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -659,7 +659,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -672,7 +672,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -685,7 +685,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -702,7 +702,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -719,7 +719,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,

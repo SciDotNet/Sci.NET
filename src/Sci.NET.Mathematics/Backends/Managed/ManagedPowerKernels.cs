@@ -27,7 +27,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -41,7 +41,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -55,7 +55,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -77,7 +77,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -90,7 +90,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -103,7 +103,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -125,7 +125,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -138,7 +138,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -151,7 +151,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -164,7 +164,7 @@ internal class ManagedPowerKernels : IPowerKernels
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,

@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
@@ -555,6 +556,28 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
 
         return Unsafe.ReadUnaligned<Vector256<T>>(_reference + i);
+    }
+
+    /// <summary>
+    /// Gets a <see cref="Vector{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index. This method does not perform bounds checking.
+    /// </summary>
+    /// <param name="i">The index to read from.</param>
+    /// <returns>A <see cref="Vector{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.</returns>
+    public unsafe Vector<T> UnsafeGetVectorUnchecked(long i)
+    {
+        var span = new Span<T>(_reference + i, Vector<T>.Count);
+
+        return new Vector<T>(span);
+    }
+
+    /// <summary>
+    /// Writes a <see cref="Vector{T}"/> to the <see cref="SystemMemoryBlock{T}"/> at the specified index. This method does not perform bounds checking.
+    /// </summary>
+    /// <param name="vector">The <see cref="Vector{T}"/> to write.</param>
+    /// <param name="i">The index to write to.</param>
+    public unsafe void UnsafeSetVectorUnchecked(Vector<T> vector, long i)
+    {
+        vector.CopyTo(new Span<T>(_reference + i, Vector<T>.Count));
     }
 
     /// <summary>

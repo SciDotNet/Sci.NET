@@ -16,7 +16,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             inputMemory.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -29,7 +29,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             inputMemory.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -46,7 +46,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             inputMemory.Length,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -59,7 +59,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             inputMemory.Length,
             ManagedTensorBackend.ParallelizationThreshold,

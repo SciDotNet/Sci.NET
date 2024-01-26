@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
+using Sci.NET.Common.Performance;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -16,7 +17,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         where TNumber : unmanaged, INumber<TNumber>
     {
         // BUG: Vector<TNumber> has strange behaviour when sizeof(TNumber) > 8
-        if (System.Numerics.Vector<TNumber>.IsSupported && Vector.IsHardwareAccelerated && Unsafe.SizeOf<TNumber>() < 8)
+        if (VectorGuard.CanVectorize<TNumber>())
         {
             MatrixMultiplySimd(
                 left,
@@ -57,7 +58,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             left.Length,
             ManagedTensorBackend.ParallelizationThreshold / 2,

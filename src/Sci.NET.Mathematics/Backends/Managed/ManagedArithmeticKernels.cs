@@ -21,7 +21,29 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        if (Vector<TNumber>.IsSupported && Unsafe.SizeOf<TNumber>() < 8 && Vector.IsHardwareAccelerated && n >= Vector<TNumber>.Count)
+        {
+            var vectorSize = Vector<TNumber>.Count;
+            var i = 0L;
+
+            for (; i < n; i += vectorSize)
+            {
+                var leftVector = leftBlock.UnsafeGetVectorUnchecked(i);
+                var rightVector = rightBlock.UnsafeGetVectorUnchecked(i);
+                var resultVector = leftVector + rightVector;
+
+                resultBlock.UnsafeSetVectorUnchecked(resultVector, i);
+            }
+
+            for (; i < n; i++)
+            {
+                resultBlock[i] = leftBlock[i] + rightBlock[i];
+            }
+
+            return;
+        }
+
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -81,7 +103,7 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -141,7 +163,7 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -201,7 +223,7 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -259,7 +281,7 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -275,7 +297,7 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,
@@ -291,7 +313,7 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             n,
             ManagedTensorBackend.ParallelizationThreshold,

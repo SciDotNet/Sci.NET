@@ -18,7 +18,7 @@ internal class ManagedBroadcastingKernels : IBroadcastingKernels
 
         if (tensor.Shape.IsScalar)
         {
-            LazyParallelExecutor.For(
+            _ = LazyParallelExecutor.For(
                 0,
                 result.Shape.ElementCount,
                 ManagedTensorBackend.ParallelizationThreshold,

@@ -4,4 +4,6 @@
 using BenchmarkDotNet.Running;
 using Sci.NET.Mathematics.Benchmarks.SIMD;
 
+BenchmarkRunner.Run<ReduceAddBenchmarks>();
+
 BenchmarkRunner.Run<MatrixMultiplyBenchmarks>();
