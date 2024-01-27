@@ -6,9 +6,9 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="System.Management" Version="8.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
-    <PackageVersion Include="xunit" Version="2.6.4" />
+    <PackageVersion Include="xunit" Version="2.6.6" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.6" />
-    <PackageVersion Include="xunit.extensibility.core" Version="2.6.4" />
+    <PackageVersion Include="xunit.extensibility.core" Version="2.6.6" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.0" />
     <PackageVersion Include="FluentAssertions" Version="6.12.0" />
@@ -20,13 +20,13 @@
   <ItemGroup Label="Analyzers">
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.8.14" />
-    <PackageVersion Include="Roslynator.Analyzers" Version="4.7.0" />
-    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.7.0" />
-    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.7.0" />
+    <PackageVersion Include="Roslynator.Analyzers" Version="4.10.0" />
+    <PackageVersion Include="Roslynator.CodeAnalysis.Analyzers" Version="4.10.0" />
+    <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.10.0" />
     <PackageVersion Include="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
   <ItemGroup Label="Common">
-    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.1" />
+    <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.2" />
     <PackageVersion Include="GtkSharp" Version="3.24.24.38" />
     <PackageVersion Include="Autofac" Version="6.5.0" />
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />

@@ -404,7 +404,7 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static BFloat16 Abs(BFloat16 value)
     {
-        return new BFloat16(StripSign(value._value));
+        return new (StripSign(value._value));
     }
 
     /// <inheritdoc />
