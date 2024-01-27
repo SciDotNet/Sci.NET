@@ -18,11 +18,11 @@ public class SoftmaxPrimeShould : IntegrationTestBase
         var floatResult = SoftmaxPrimeTest<float>(new float[] { 1, 2, 3 }, device) as float[];
         var doubleResult = SoftmaxPrimeTest<double>(new double[] { 1, 2, 3 }, device) as double[];
 
-        floatResult[0].Should().BeApproximately(0.08192506906499322f, 1e-6f);
+        floatResult![0].Should().BeApproximately(0.08192506906499322f, 1e-6f);
         floatResult[1].Should().BeApproximately(0.18483646F, 1e-6f);
         floatResult[2].Should().BeApproximately(0.22269543F, 1e-6f);
 
-        doubleResult[0].Should().BeApproximately(0.08192506906499322, 1e-6);
+        doubleResult![0].Should().BeApproximately(0.08192506906499322, 1e-6);
         doubleResult[1].Should().BeApproximately(0.1848364465099787, 1e-6);
         doubleResult[2].Should().BeApproximately(0.22269542653462335, 1e-6);
     }
