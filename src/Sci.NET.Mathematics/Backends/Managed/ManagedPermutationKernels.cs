@@ -16,7 +16,7 @@ internal class ManagedPermutationKernels : IPermutationKernels
         var sourceBlock = (SystemMemoryBlock<TNumber>)source.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             sourceBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,

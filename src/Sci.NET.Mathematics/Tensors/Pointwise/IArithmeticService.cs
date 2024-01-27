@@ -900,5 +900,5 @@ public interface IArithmeticService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The square root of the <see cref="ITensor{TNumber}"/>.</returns>
     public ITensor<TNumber> Sqrt<TNumber>(ITensor<TNumber> tensor)
-        where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>;
 }
