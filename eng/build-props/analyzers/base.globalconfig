@@ -266,7 +266,7 @@ roslynator_null_check_style = pattern_matching
 roslynator_object_creation_parentheses_style = omit
 # Applicable to: rcs1050
 
-roslynator_object_creation_type_style = implicit_when_type_is_obvious
+roslynator_object_creation_type_style = explicit
 # Applicable to: rcs1250
 
 roslynator_prefix_field_identifier_with_underscore = true
@@ -871,7 +871,7 @@ dotnet_diagnostic.RCS1249.severity = warning
 dotnet_diagnostic.RCS1250.severity = warning
 
 # Remove unnecessary braces from record declaration
-dotnet_diagnostic.RCS1251.severity = warning
+dotnet_diagnostic.RCS1251.severity = none
 
 # Normalize usage of infinite loop
 dotnet_diagnostic.RCS1252.severity = warning
