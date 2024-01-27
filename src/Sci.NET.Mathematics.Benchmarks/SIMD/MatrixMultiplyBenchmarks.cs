@@ -48,7 +48,7 @@ public class MatrixMultiplyBenchmarks
 
         resultMemoryBlock.Fill(0);
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             _result.Rows,
             0,
@@ -83,7 +83,7 @@ public class MatrixMultiplyBenchmarks
 
         resultMemoryBlock.Fill(0);
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             _result.Rows,
             0,

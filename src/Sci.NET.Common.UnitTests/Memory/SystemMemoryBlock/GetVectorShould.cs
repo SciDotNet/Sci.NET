@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
+using Sci.NET.Common.Numerics.Intrinsics;
 
 namespace Sci.NET.Common.UnitTests.Memory.SystemMemoryBlock;
 
@@ -19,9 +20,9 @@ public class GetVectorShould
 
         block.CopyFrom(data);
 
-        var result = block.UnsafeGetVectorUnchecked(offset);
+        var result = block.UnsafeGetVectorUnchecked<int>(offset);
 
-        for (var i = offset; i < Vector<int>.Count; i++)
+        for (var i = offset; i < SimdVector.Count<int>(); i++)
         {
             result[i - offset].Should().Be(data[i]);
         }
@@ -38,7 +39,7 @@ public class GetVectorShould
 
         block.CopyFrom(data);
 
-        var result = block.UnsafeGetVectorUnchecked(offset);
+        var result = block.UnsafeGetVectorUnchecked<float>(offset);
 
         for (var i = offset; i < Vector<float>.Count; i++)
         {
@@ -57,9 +58,9 @@ public class GetVectorShould
 
         block.CopyFrom(data);
 
-        var result = block.UnsafeGetVectorUnchecked(offset);
+        var result = block.UnsafeGetVectorUnchecked<double>(offset);
 
-        for (var i = offset; i < Vector<double>.Count; i++)
+        for (var i = offset; i < SimdVector.Count<double>(); i++)
         {
             result[i - offset].Should().Be(data[i]);
         }

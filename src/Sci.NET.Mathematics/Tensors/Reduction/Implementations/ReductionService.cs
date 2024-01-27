@@ -25,18 +25,18 @@ internal class ReductionService : IReductionService
             result.Dispose();
             return resultTensor;
         }
-
-        if (axes.Length > tensor.Shape.Dimensions.Length)
+        else
         {
-            throw new InvalidShapeException($"The number of axes to sum over cannot exceed the number of dimensions in shape {tensor.Shape}.");
-        }
+            if (axes.Length > tensor.Shape.Dimensions.Length)
+            {
+                throw new InvalidShapeException($"The number of axes to sum over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+            }
 
-        if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
-        {
-            throw new InvalidShapeException($"The axes to sum over must be within the bounds of the tensor with shape {tensor.Shape}.");
-        }
+            if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
+            {
+                throw new InvalidShapeException($"The axes to sum over must be within the bounds of the tensor with shape {tensor.Shape}.");
+            }
 
-        {
             var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
             var result = new Tensor<TNumber>(resultShape, tensor.Backend);
             tensor.Backend.Reduction.ReduceAddAxis(tensor, axes, result);

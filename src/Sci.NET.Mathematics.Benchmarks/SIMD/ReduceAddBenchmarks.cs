@@ -6,6 +6,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
+using Sci.NET.Common.Numerics.Intrinsics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Benchmarks.SIMD;
@@ -62,13 +63,13 @@ public class ReduceAddBenchmarks
         var vectorMemoryBlock = (SystemMemoryBlock<int>)_vector.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<int>)_result.Memory;
         var vectorLength = System.Numerics.Vector<int>.Count;
-        var partialSums = new ConcurrentDictionary<int, System.Numerics.Vector<int>>();
+        var partialSums = new ConcurrentDictionary<int, ISimdVector<int>>();
 
         vectorMemoryBlock.Fill(0);
 
         for (var index = 0; index < partialSums.Count; index++)
         {
-            partialSums[index] = System.Numerics.Vector<int>.Zero;
+            partialSums[index] = SimdVector.Create<int>();
         }
 
         var done = 0L;
@@ -82,12 +83,12 @@ public class ReduceAddBenchmarks
                 vectorLength,
                 i =>
                 {
-                    var vector = vectorMemoryBlock.UnsafeGetVectorUnchecked(i);
+                    var vector = vectorMemoryBlock.UnsafeGetVectorUnchecked<int>(i);
 
                     _ = partialSums.AddOrUpdate(
                         Environment.CurrentManagedThreadId,
                         vector,
-                        (_, sum) => sum + vector);
+                        (_, sum) => sum.Add(vector));
                 });
         }
 

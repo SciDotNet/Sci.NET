@@ -41,7 +41,7 @@ internal class ManagedCastingKernels : ICastingKernels
         var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             output.Rows,
             0,

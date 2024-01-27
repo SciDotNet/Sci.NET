@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Performance;
+using Sci.NET.Common.Numerics.Intrinsics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -17,21 +17,47 @@ internal class ManagedReductionKernels : IReductionKernels
     {
         var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var partialSums = new ConcurrentDictionary<int, ISimdVector<TNumber>>();
+        var vectorCount = SimdVector.Count<TNumber>();
 
-        if (tensor.Shape.ElementCount < ManagedTensorBackend.ParallelizationThreshold)
+        for (var index = 0; index < partialSums.Count; index++)
         {
-            ReduceAddAllSequential(tensor, tensorMemoryBlock, resultMemoryBlock);
-            return;
+            partialSums[index] = SimdVector.Create<TNumber>();
         }
 
-        if (VectorGuard.CanVectorize<TNumber>())
+        var done = 0L;
+
+        if (tensor.Shape.ElementCount >= vectorCount)
         {
-            ReduceAddAllParallelSimd(tensor, tensorMemoryBlock, resultMemoryBlock);
+            done = LazyParallelExecutor.For(
+                0,
+                tensor.Shape.ElementCount,
+                1,
+                vectorCount,
+                i =>
+                {
+                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+
+                    _ = partialSums.AddOrUpdate(
+                        Environment.CurrentManagedThreadId,
+                        vector,
+                        (_, sum) => sum.Add(vector));
+                });
         }
-        else
+
+        var finalSum = TNumber.Zero;
+
+        for (var i = done * vectorCount; i < tensor.Shape.ElementCount; i++)
         {
-            ReduceAddAllParallel(tensor, tensorMemoryBlock, resultMemoryBlock);
+            finalSum += tensorMemoryBlock[i];
         }
+
+        foreach (var partialVectorSum in partialSums.Values)
+        {
+            finalSum += partialVectorSum.Sum();
+        }
+
+        resultMemoryBlock[0] = finalSum;
     }
 
     public void ReduceAddAxis<TNumber>(ITensor<TNumber> tensor, int[] axes, Tensor<TNumber> result)
@@ -100,118 +126,5 @@ internal class ManagedReductionKernels : IReductionKernels
                 }
             }
         }
-    }
-
-    private static void ReduceAddAllSequential<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (VectorGuard.CanVectorize<TNumber>())
-        {
-            ReduceAddAllSequentialSimd(tensor, tensorMemoryBlock, resultMemoryBlock);
-        }
-        else
-        {
-            var sum = TNumber.Zero;
-
-            for (var i = 0; i < tensor.Shape.ElementCount; i++)
-            {
-                sum += tensorMemoryBlock[i];
-            }
-
-            resultMemoryBlock[0] = sum;
-        }
-    }
-
-    private static void ReduceAddAllSequentialSimd<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var sum = TNumber.Zero;
-        var vectorSum = System.Numerics.Vector<TNumber>.Zero;
-        var vectorLength = System.Numerics.Vector<TNumber>.Count;
-        var i = 0L;
-
-        if (tensor.Shape.ElementCount >= vectorLength)
-        {
-            for (; i < tensor.Shape.ElementCount - vectorLength; i += vectorLength)
-            {
-                var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked(i);
-                vectorSum += vector;
-            }
-        }
-
-        for (; i < tensor.Shape.ElementCount; i++)
-        {
-            sum += tensorMemoryBlock[i];
-        }
-
-        for (var j = 0; j < vectorLength; j++)
-        {
-            sum += vectorSum[j];
-        }
-
-        resultMemoryBlock[0] = sum;
-    }
-
-    private static void ReduceAddAllParallel<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var sums = new TNumber[Environment.ProcessorCount];
-
-        _ = LazyParallelExecutor.For(
-            0,
-            tensor.Shape.ElementCount,
-            1,
-            i => sums[Environment.CurrentManagedThreadId % sums.Length] += tensorMemoryBlock[i]);
-
-        resultMemoryBlock[0] = sums.Aggregate(TNumber.Zero, (current, partialVectorSum) => current + partialVectorSum);
-    }
-
-    private static void ReduceAddAllParallelSimd<TNumber>(ITensor<TNumber> tensor, SystemMemoryBlock<TNumber> tensorMemoryBlock, SystemMemoryBlock<TNumber> resultMemoryBlock)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var vectorLength = System.Numerics.Vector<TNumber>.Count;
-        var partialSums = new ConcurrentDictionary<int, System.Numerics.Vector<TNumber>>();
-
-        for (var index = 0; index < partialSums.Count; index++)
-        {
-            partialSums[index] = System.Numerics.Vector<TNumber>.Zero;
-        }
-
-        var done = 0L;
-
-        if (tensor.Shape.ElementCount >= vectorLength)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                tensor.Shape.ElementCount,
-                1,
-                vectorLength,
-                i =>
-                {
-                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked(i);
-
-                    _ = partialSums.AddOrUpdate(
-                        Environment.CurrentManagedThreadId,
-                        vector,
-                        (_, sum) => sum + vector);
-                });
-        }
-
-        var finalSum = TNumber.Zero;
-
-        for (var i = done * vectorLength; i < tensor.Shape.ElementCount; i++)
-        {
-            finalSum = tensorMemoryBlock[i];
-        }
-
-        foreach (var partialVectorSum in partialSums.Values)
-        {
-            for (var j = 0; j < vectorLength; j++)
-            {
-                finalSum += partialVectorSum[j];
-            }
-        }
-
-        resultMemoryBlock[0] = finalSum;
     }
 }

@@ -17,16 +17,25 @@ public static class VectorGuard
     /// Determines whether vectorization is possible for the given type.
     /// </summary>
     /// <typeparam name="TNumber">The type to check.</typeparam>
+    /// <param name="count">The vector count.</param>
     /// <returns>True if vectorization is possible, false otherwise.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CanVectorize<TNumber>()
-        where TNumber : unmanaged, INumber<TNumber>
+    [MethodImpl(ImplementationOptions.HotPath)]
+    public static bool IsSupported<TNumber>(out int count)
+        where TNumber : unmanaged
     {
         if (typeof(TNumber) == typeof(BFloat16))
         {
+            count = 0;
             return false;
         }
 
-        return Vector.IsHardwareAccelerated && Vector<TNumber>.Count > 1 && Unsafe.SizeOf<TNumber>() < 8;
+        if (!Vector<TNumber>.IsSupported)
+        {
+            count = 0;
+            return false;
+        }
+
+        count = Vector<TNumber>.Count;
+        return Vector.IsHardwareAccelerated && Unsafe.SizeOf<TNumber>() < 8;
     }
 }
