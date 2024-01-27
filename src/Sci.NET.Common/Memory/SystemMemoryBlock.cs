@@ -3,11 +3,13 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 using Sci.NET.Common.Collections;
 using Sci.NET.Common.Comparison;
+using Sci.NET.Common.Numerics.Intrinsics;
 using Sci.NET.Common.Performance;
 
 namespace Sci.NET.Common.Memory;
@@ -95,11 +97,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         get
         {
             ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-            if (index < 0 || index >= Length)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be non-negative and less than {Length}.");
-            }
+            ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Length);
 
             return ref Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)index);
         }
@@ -258,38 +257,17 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public unsafe void BlockCopyFrom(IMemoryBlock<T> handle, long srcIdx, long dstIdx, long count)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
+        ArgumentOutOfRangeException.ThrowIfLessThan(srcIdx, 0);
+        ArgumentOutOfRangeException.ThrowIfLessThan(dstIdx, 0);
+        ArgumentOutOfRangeException.ThrowIfLessThan(count, 0);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(srcIdx, handle.Length);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(dstIdx, Length);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, handle.Length - srcIdx);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, Length - dstIdx);
 
         if (handle is not SystemMemoryBlock<T> memoryBlock)
         {
             throw new InvalidOperationException($"Cannot copy from {handle.GetType().Name} to {GetType().Name}.");
-        }
-
-        if (srcIdx < 0 || srcIdx >= memoryBlock.Length)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(srcIdx),
-                "Source index must be within the bounds of the source block.");
-        }
-
-        if (dstIdx < 0 || dstIdx >= Length)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(dstIdx),
-                "Destination index must be within the bounds of the destination block.");
-        }
-
-        if (count < 0 || srcIdx + count > memoryBlock.Length)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(count),
-                "The number of elements to copy must be within the bounds of the source block.");
-        }
-
-        if (dstIdx + count > Length)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(count),
-                "The number of elements to copy must be within the bounds of the destination block.");
         }
 
         Buffer.MemoryCopy(
@@ -303,34 +281,13 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public unsafe void BlockCopyFrom(Span<byte> buffer, int srcIdx, int dstIdx, int count)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-        if (srcIdx < 0 || srcIdx >= buffer.Length)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(srcIdx),
-                "Source index must be within the bounds of the source buffer.");
-        }
-
-        if (dstIdx < 0 || dstIdx >= Length * Unsafe.SizeOf<T>())
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(dstIdx),
-                "Destination index must be within the bounds of the destination block.");
-        }
-
-        if (count < 0 || srcIdx + count > buffer.Length)
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(count),
-                "The number of elements to copy must be within the bounds of the source buffer.");
-        }
-
-        if (dstIdx + count > Length * Unsafe.SizeOf<T>())
-        {
-            throw new ArgumentOutOfRangeException(
-                nameof(count),
-                "The number of elements to copy must be within the bounds of the destination block.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(srcIdx, 0);
+        ArgumentOutOfRangeException.ThrowIfLessThan(dstIdx, 0);
+        ArgumentOutOfRangeException.ThrowIfLessThan(count, 0);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(srcIdx, buffer.Length);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(dstIdx, Length * Unsafe.SizeOf<T>());
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, buffer.Length - srcIdx);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(count, (Length * Unsafe.SizeOf<T>()) - dstIdx);
 
         var byteDestination = (byte*)ToPointer() + dstIdx;
 
@@ -508,16 +465,10 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     public unsafe Span<T> AsSpan(long index, int length)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
-
-        if (index < 0 || index >= Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be non-negative and less than {Length}.");
-        }
-
-        if (index + length > Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(length), $"Length was {length} but must be non-negative and less than {Length - index}.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(length, 0);
+        ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(index, Length - length);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(length, Length - index);
 
         return new Span<T>(_reference + index, length);
     }
@@ -537,24 +488,32 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <summary>
-    /// Gets a <see cref="Vector256{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.
+    /// Gets a <see cref="Vector{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index. This method does not perform bounds checking.
     /// </summary>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{T}"/>.</typeparam>
     /// <param name="i">The index to read from.</param>
-    /// <returns>A <see cref="Vector256{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">The specified index was out of range.</exception>
-    public unsafe Vector256<T> GetVector256(int i)
+    /// <returns>A <see cref="Vector{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.</returns>
+    [MethodImpl(ImplementationOptions.FastPath)]
+    public unsafe ISimdVector<TNumber> UnsafeGetVectorUnchecked<TNumber>(long i) // Must use type argument to get around INumber constraint.
+        where TNumber : unmanaged, INumber<TNumber>
     {
-        if (i < 0 || i >= Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(i), $"Index was {i} but must be non-negative and less than {Length}.");
-        }
+        var span = new Span<TNumber>(_reference + i, SimdVector.Count<TNumber>());
 
-        if (i + Vector256<T>.Count > Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(i), $"Index was {i} but must be less than {Length - Vector256<T>.Count}.");
-        }
+        return SimdVector.Load(span);
+    }
 
-        return Unsafe.ReadUnaligned<Vector256<T>>(_reference + i);
+    /// <summary>
+    /// Writes a <see cref="Vector{T}"/> to the <see cref="SystemMemoryBlock{T}"/> at the specified index. This method does not perform bounds checking.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{T}"/>.</typeparam>
+    /// <param name="vector">The <see cref="Vector{T}"/> to write.</param>
+    /// <param name="i">The index to write to.</param>
+    public unsafe void UnsafeSetVectorUnchecked<TNumber>(ISimdVector<TNumber> vector, long i)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var span = new Span<TNumber>(_reference + i, SimdVector.Count<TNumber>());
+
+        vector.CopyTo(span);
     }
 
     /// <summary>
@@ -565,15 +524,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <exception cref="ArgumentOutOfRangeException">The specified index was out of range.</exception>
     public unsafe void SetVector256(long index, Vector256<T> vector)
     {
-        if (index < 0 || index >= Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be non-negative and less than {Length}.");
-        }
-
-        if (index + Vector256<T>.Count > Length)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), $"Index was {index} but must be less than {Length - Vector256<T>.Count}.");
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(index, Length - Vector256<T>.Count);
 
         Unsafe.WriteUnaligned(_reference + index, vector);
     }

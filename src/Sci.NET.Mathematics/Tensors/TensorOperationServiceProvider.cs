@@ -13,6 +13,8 @@ using Sci.NET.Mathematics.Tensors.Pointwise;
 using Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 using Sci.NET.Mathematics.Tensors.Random;
 using Sci.NET.Mathematics.Tensors.Random.Implementations;
+using Sci.NET.Mathematics.Tensors.Reduction;
+using Sci.NET.Mathematics.Tensors.Reduction.Implementations;
 using Sci.NET.Mathematics.Tensors.Serialization;
 using Sci.NET.Mathematics.Tensors.Serialization.Implementations;
 using Sci.NET.Mathematics.Tensors.Trigonometry;

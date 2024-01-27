@@ -2152,7 +2152,7 @@ internal class ArithmeticService : IArithmeticService
     }
 
     public ITensor<TNumber> Sqrt<TNumber>(ITensor<TNumber> tensor)
-        where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = tensor.Backend;
         var result = new Tensor<TNumber>(tensor.Shape, backend);
