@@ -38,7 +38,7 @@ branches:
     tag: 'alpha'
     increment: Patch
     is-mainline: false
-    tracks-release-branches: true
+    tracks-release-branches: false
     is-release-branch: false
     source-branches: ['main', 'feature', 'support', 'hotfix']
 

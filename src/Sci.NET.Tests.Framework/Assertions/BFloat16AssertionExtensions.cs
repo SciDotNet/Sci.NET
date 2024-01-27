@@ -18,6 +18,6 @@ public static class BFloat16AssertionExtensions
     /// <returns>A <see cref="BFloat16Assertions" /> object for the given <see cref="BFloat16" />.</returns>
     public static BFloat16Assertions Should(this BFloat16 bfloat16)
     {
-        return new BFloat16Assertions(bfloat16);
+        return new (bfloat16);
     }
 }

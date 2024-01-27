@@ -78,7 +78,7 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <inheritdoc cref="FromInt64"/>
     public static implicit operator SizeT(long value)
     {
-        return new SizeT(value);
+        return new (value);
     }
 
     /// <summary>
@@ -134,7 +134,7 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <returns>A <see cref="SizeT"/> with the value given by <paramref name="value"/>.</returns>
     public static SizeT FromInt64(long value)
     {
-        return new SizeT(value);
+        return new (value);
     }
 
     /// <summary>

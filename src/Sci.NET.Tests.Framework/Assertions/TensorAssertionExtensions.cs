@@ -20,6 +20,6 @@ public static class TensorAssertionExtensions
     public static TensorAssertions<TNumber> Should<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return new TensorAssertions<TNumber>(tensor);
+        return new (tensor);
     }
 }

@@ -266,7 +266,7 @@ roslynator_null_check_style = pattern_matching
 roslynator_object_creation_parentheses_style = omit
 # Applicable to: rcs1050
 
-roslynator_object_creation_type_style = explicit
+roslynator_object_creation_type_style = implicit_when_type_is_obvious
 # Applicable to: rcs1250
 
 roslynator_prefix_field_identifier_with_underscore = true
