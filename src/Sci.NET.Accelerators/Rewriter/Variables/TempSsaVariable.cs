@@ -72,6 +72,6 @@ public readonly struct TempSsaVariable : ISsaVariable, IValueEquatable<TempSsaVa
     /// <inheritdoc />
     public IrValue ToIrValue()
     {
-        return new IrValue { Identifier = Name, Type = Type.ToIrType() };
+        return new () { Identifier = Name, Type = Type.ToIrType() };
     }
 }

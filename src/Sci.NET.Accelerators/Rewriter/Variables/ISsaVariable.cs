@@ -33,6 +33,6 @@ public interface ISsaVariable
     /// <returns>The IR value.</returns>
     public IrValue ToIrValue()
     {
-        return new IrValue { Identifier = Name, Type = Type.ToIrType() };
+        return new () { Identifier = Name, Type = Type.ToIrType() };
     }
 }

@@ -11,6 +11,6 @@ internal static class SsaVariableExtensions
     public static IrValue ToIrValue<T>(this T variable)
         where T : ISsaVariable
     {
-        return new IrValue { Identifier = variable.Name, Type = variable.Type.ToIrType() };
+        return new () { Identifier = variable.Name, Type = variable.Type.ToIrType() };
     }
 }

@@ -36,11 +36,7 @@ public class MsilDisassembler
     /// <returns>The disassembled method body.</returns>
     public DisassembledMsilMethod Disassemble()
     {
-        return new DisassembledMsilMethod
-        {
-            Metadata = _methodMetadata,
-            Instructions = ReadInstructions().ToList()
-        };
+        return new () { Metadata = _methodMetadata, Instructions = ReadInstructions().ToList() };
     }
 
     private static MsilInstruction<IMsilOperand> ExpandShortFormInstruction(MsilInstruction<IMsilOperand> instruction)

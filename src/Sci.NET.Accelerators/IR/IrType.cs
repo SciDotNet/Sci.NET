@@ -256,7 +256,7 @@ public sealed class IrType : IIrWritable
     /// <returns>The pointer type.</returns>
     public static IrType MakePointer(IrType type)
     {
-        return new IrType
+        return new ()
         {
             Name = $"ptr {type.Name}",
             Basis = type,
