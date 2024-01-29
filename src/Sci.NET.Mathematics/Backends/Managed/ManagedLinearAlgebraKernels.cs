@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
+using Sci.NET.Common.Numerics.Intrinsics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -16,8 +18,11 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var kLength = left.Columns;
+        var jLength = result.Columns;
+        var vectorCount = SimdVector.Count<TNumber>();
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             result.Rows,
             0,
@@ -26,14 +31,22 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             (i, j) =>
             {
                 var sum = TNumber.Zero;
+                var k = 0;
 
-                for (var k = 0; k < left.Columns; k++)
+                for (; k <= kLength - vectorCount; k += vectorCount)
                 {
-                    sum += leftMemoryBlock[(i * left.Columns) + k] *
-                           rightMemoryBlock[(k * right.Columns) + j];
+                    var leftVector = leftMemoryBlock.UnsafeGetVectorUnchecked<TNumber>((i * kLength) + k);
+                    var rightVector = rightMemoryBlock.UnsafeGetVectorUnchecked<TNumber>((k * jLength) + j);
+
+                    sum += leftVector.Dot(rightVector);
                 }
 
-                resultMemoryBlock[(i * result.Columns) + j] = sum;
+                for (; k < kLength; k++)
+                {
+                    sum += leftMemoryBlock[(i * kLength) + k] * rightMemoryBlock[(k * jLength) + j];
+                }
+
+                resultMemoryBlock[(i * jLength) + j] = sum;
             });
     }
 
@@ -43,11 +56,37 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var vectorCount = SimdVector.Count<TNumber>();
+        var sums = new ConcurrentDictionary<long, ISimdVector<TNumber>>();
+        var done = 0L;
 
-        LazyParallelExecutor.For(
-            0,
-            left.Length,
-            ManagedTensorBackend.ParallelizationThreshold / 2,
-            i => resultMemoryBlock[0] += leftMemoryBlock[i] * rightMemoryBlock[i]);
+        if (left.Length >= vectorCount)
+        {
+            done = LazyParallelExecutor.For(
+                0,
+                left.Length - vectorCount,
+                ManagedTensorBackend.ParallelizationThreshold / 2,
+                vectorCount,
+                i =>
+                {
+                    var leftVector = leftMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                    var rightVector = rightMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+
+                    _ = sums.AddOrUpdate(
+                        i / vectorCount,
+                        _ => leftVector.Multiply(rightVector),
+                        (_, sum) => sum.Add(leftVector.Multiply(rightVector)));
+                });
+        }
+
+        for (var i = done; i < left.Length; i++)
+        {
+            resultMemoryBlock[0] += leftMemoryBlock[i] * rightMemoryBlock[i];
+        }
+
+        if (sums.Values.Count > 0)
+        {
+            resultMemoryBlock[0] += sums.Values.Aggregate((x, y) => x.Add(y)).Sum();
+        }
     }
 }

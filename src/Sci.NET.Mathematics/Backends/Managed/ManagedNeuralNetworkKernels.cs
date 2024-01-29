@@ -35,7 +35,7 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
         var kernelMemory = (SystemMemoryBlock<TNumber>)kernels.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             batchSize,
             0,
@@ -118,7 +118,7 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
         var dInputMemory = (SystemMemoryBlock<TNumber>)dInput.Memory;
         var dKernelMemory = (SystemMemoryBlock<TNumber>)dKernel.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             batchSize,
             0,

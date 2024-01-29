@@ -27,7 +27,7 @@ internal class ManagedCastingKernels : ICastingKernels
         var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             resultMemoryBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold / 2,
@@ -41,7 +41,7 @@ internal class ManagedCastingKernels : ICastingKernels
         var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             output.Rows,
             0,
@@ -58,7 +58,7 @@ internal class ManagedCastingKernels : ICastingKernels
         var inputMemoryBlock = (SystemMemoryBlock<TIn>)input.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TOut>)output.Memory;
 
-        LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
             inputMemoryBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold / 2,

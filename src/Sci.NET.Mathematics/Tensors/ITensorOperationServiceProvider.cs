@@ -8,6 +8,7 @@ using Sci.NET.Mathematics.Tensors.Manipulation;
 using Sci.NET.Mathematics.Tensors.NeuralNetworks;
 using Sci.NET.Mathematics.Tensors.Pointwise;
 using Sci.NET.Mathematics.Tensors.Random;
+using Sci.NET.Mathematics.Tensors.Reduction;
 using Sci.NET.Mathematics.Tensors.Serialization;
 using Sci.NET.Mathematics.Tensors.Trigonometry;
 

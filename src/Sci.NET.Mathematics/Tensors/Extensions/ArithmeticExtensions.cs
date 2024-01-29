@@ -1451,7 +1451,7 @@ public static class ArithmeticExtensions
     /// <returns>The element-wise square root of the <paramref name="tensor"/>.</returns>
     [DebuggerStepThrough]
     public static ITensor<TNumber> Sqrt<TNumber>(this ITensor<TNumber> tensor)
-        where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()

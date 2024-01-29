@@ -16,9 +16,15 @@ public static class LazyParallelExecutor
     /// <param name="toExclusive">The index to iterate to (exclusive).</param>
     /// <param name="parallelizationThreshold">The threshold before the loop is executed in parallel.</param>
     /// <param name="body">The body of the for loop.</param>
-    public static void For(long fromInclusive, long toExclusive, long parallelizationThreshold, Action<long> body)
+    /// <returns>The number of iterations executed.</returns>
+    public static long For(long fromInclusive, long toExclusive, long parallelizationThreshold, Action<long> body)
     {
-        For(fromInclusive, toExclusive, parallelizationThreshold, 1, body);
+        return For(
+            fromInclusive,
+            toExclusive,
+            parallelizationThreshold,
+            1,
+            body);
     }
 
     /// <summary>
@@ -29,15 +35,19 @@ public static class LazyParallelExecutor
     /// <param name="parallelizationThreshold">The threshold before the loop is executed in parallel.</param>
     /// <param name="increment">The increment to use for the loop.</param>
     /// <param name="body">The body of the for loop.</param>
-    public static void For(long fromInclusive, long toExclusive, long parallelizationThreshold, long increment, Action<long> body)
+    /// <returns>The number of iterations executed.</returns>
+    public static long For(long fromInclusive, long toExclusive, long parallelizationThreshold, long increment, Action<long> body)
     {
         if (toExclusive - fromInclusive < parallelizationThreshold)
         {
-            for (var i = fromInclusive; i < toExclusive;)
+            var i = fromInclusive;
+
+            for (; i < toExclusive; i += increment)
             {
                 body(i);
-                i += increment;
             }
+
+            return i;
         }
         else
         {
@@ -49,6 +59,8 @@ public static class LazyParallelExecutor
                     var idx = fromInclusive + (i * increment);
                     body(idx);
                 });
+
+            return (toExclusive - fromInclusive + increment - 1) / increment;
         }
     }
 
@@ -63,7 +75,8 @@ public static class LazyParallelExecutor
     /// <param name="iIncrement">The increment to use for the outer loop.</param>
     /// <param name="jIncrement">The increment to use for the inner loop.</param>
     /// <param name="body">The body of the for loop.</param>
-    public static void For(
+    /// <returns>The number of iterations executed.</returns>
+    public static (long iCount, long jCount) For(
         long iFromInclusive,
         long iToExclusive,
         long jFromInclusive,
@@ -74,12 +87,16 @@ public static class LazyParallelExecutor
         Action<long, long> body)
     {
         var loopIterations = (iToExclusive - iFromInclusive) * (jToExclusive - jFromInclusive);
+        var i = iFromInclusive;
+        var j = jFromInclusive;
 
         if (loopIterations < parallelizationThreshold)
         {
-            for (var i = iFromInclusive; i < iToExclusive; i += iIncrement)
+            for (; i < iToExclusive; i += iIncrement)
             {
-                for (var j = jFromInclusive; j < jToExclusive; j += jIncrement)
+                j = 0;
+
+                for (; j < jToExclusive; j += jIncrement)
                 {
                     body(i, j);
                 }
@@ -96,6 +113,11 @@ public static class LazyParallelExecutor
                 jIncrement);
             _ = Parallel.ForEach(partitioner, pair => body(pair.Item1, pair.Item2));
         }
+
+        var iCount = (iToExclusive - iFromInclusive + iIncrement - 1) / iIncrement;
+        var jCount = (jToExclusive - jFromInclusive + jIncrement - 1) / jIncrement;
+
+        return (iCount, jCount);
     }
 
     /// <summary>
@@ -107,7 +129,8 @@ public static class LazyParallelExecutor
     /// <param name="jToExclusive">The index to iterate to (exclusive) for inner loop.</param>
     /// <param name="parallelizationThreshold">The threshold before the loop is executed in parallel.</param>
     /// <param name="body">The body of the for loop.</param>
-    public static void For(
+    /// <returns>The number of iterations executed.</returns>
+    public static (long iCount, long jCount) For(
         long iFromInclusive,
         long iToExclusive,
         long jFromInclusive,
@@ -115,6 +138,14 @@ public static class LazyParallelExecutor
         long parallelizationThreshold,
         Action<long, long> body)
     {
-        For(iFromInclusive, iToExclusive, jFromInclusive, jToExclusive, parallelizationThreshold, 1, 1, body);
+        return For(
+            iFromInclusive,
+            iToExclusive,
+            jFromInclusive,
+            jToExclusive,
+            parallelizationThreshold,
+            1,
+            1,
+            body);
     }
 }

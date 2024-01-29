@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -15,8 +15,16 @@ public class SoftmaxShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenExample1(IDevice device)
     {
         // Softmax([1, 2, 3]) = [0.090030573170380462f, 0.244728471054797646f, 0.665240955774821878f]
-        SoftmaxTest<float>(new float[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new float[] { 0.090030573170380462f, 0.24472847105479767f, 0.665240955774821878f });
-        SoftmaxTest<double>(new double[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new double[] { 0.090030573170380462, 0.24472847105479767, 0.665240955774821878 });
+        var floatResult = SoftmaxTest<float>(new float[] { 1, 2, 3 }, device) as float[];
+        var doubleResult = SoftmaxTest<double>(new double[] { 1, 2, 3 }, device) as double[];
+
+        floatResult![0].Should().BeApproximately(0.09003057317038045f, 1e-6f);
+        floatResult[1].Should().BeApproximately(0.24472847105479764f, 1e-6f);
+        floatResult[2].Should().BeApproximately(0.665240955774821878f, 1e-6f);
+
+        doubleResult![0].Should().BeApproximately(0.09003057317038045, 1e-6);
+        doubleResult[1].Should().BeApproximately(0.24472847105479764, 1e-6);
+        doubleResult[2].Should().BeApproximately(0.665240955774821878, 1e-6);
     }
 
     private static Array SoftmaxTest<TNumber>(TNumber[] values, IDevice device)

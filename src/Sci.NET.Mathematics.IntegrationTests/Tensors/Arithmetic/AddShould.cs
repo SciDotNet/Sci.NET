@@ -506,4 +506,56 @@ public class AddShould : IntegrationTestBase, IArithmeticTests
         result.To<CpuComputeDevice>();
         return result.ToArray();
     }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenLargeIntTensors(IDevice device)
+    {
+        // Arrange
+        var a = Tensor
+            .FromArray<int>(Enumerable.Range(0, 125000).ToArray())
+            .Reshape(50, 50, 50);
+
+        var b = Tensor
+            .FromArray<int>(Enumerable.Range(0, 125000).ToArray())
+            .Reshape(50, 50, 50);
+
+        a.To(device);
+        b.To(device);
+
+        // Act
+        var result = a.Add(b);
+
+        // Assert
+        var resultArray = result.ToArray();
+        var expectedArray = Enumerable.Range(0, 125000).Select(x => x * 2).ToArray();
+
+        resultArray.Should().BeEquivalentTo(expectedArray);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenLargeLongTensors(IDevice device)
+    {
+        // Arrange
+        var a = Tensor
+            .FromArray<long>(Enumerable.Range(0, 125000).Select(x => (long)x).ToArray())
+            .Reshape(50, 50, 50);
+
+        var b = Tensor
+            .FromArray<long>(Enumerable.Range(0, 125000).Select(x => (long)x).ToArray())
+            .Reshape(50, 50, 50);
+
+        a.To(device);
+        b.To(device);
+
+        // Act
+        var result = a.Add(b);
+
+        // Assert
+        var resultArray = result.ToArray();
+        var expectedArray = Enumerable.Range(0, 125000).Select(x => (long)(x * 2)).ToArray();
+
+        resultArray.Should().BeEquivalentTo(expectedArray);
+    }
 }
