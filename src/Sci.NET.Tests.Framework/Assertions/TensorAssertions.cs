@@ -72,13 +72,31 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
             .Assertion
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
-            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, shape))
+            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, shape, TNumber.Zero))
             .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", shape, Subject.ToArray());
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
     }
 
-    private static bool AreEquivalentElements(Array tensor1, Array tensor2)
+    /// <summary>
+    /// Asserts that the tensor has the given shape.
+    /// </summary>
+    /// <param name="values">The expected shape.</param>
+    /// <param name="tolerance">The tolerance for the comparison.</param>
+    /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    public AndConstraint<TensorAssertions<TNumber>> HaveApproximatelyEquivalentElements(Array values, TNumber tolerance)
+    {
+        _ = Execute
+            .Assertion
+            .BecauseOf(string.Empty, Array.Empty<object>())
+            .Given(() => Subject.ToArray())
+            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, values, tolerance))
+            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", values, Subject.ToArray());
+
+        return new AndConstraint<TensorAssertions<TNumber>>(this);
+    }
+
+    private static bool AreEquivalentElements(Array tensor1, Array tensor2, TNumber tolerance)
     {
         if (tensor1.Rank != tensor2.Rank)
         {
@@ -93,10 +111,10 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
             }
         }
 
-        return CompareElements(tensor1, tensor2);
+        return CompareElements(tensor1, tensor2, tolerance);
     }
 
-    private static bool CompareElements(Array tensor1, Array tensor2)
+    private static bool CompareElements(Array tensor1, Array tensor2, TNumber tollerance)
     {
         var indices = new int[tensor1.Rank];
         var sizes = new int[tensor1.Rank];
@@ -111,14 +129,29 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
             tensor2,
             0,
             indices,
-            sizes);
+            sizes,
+            tollerance);
     }
 
-    private static bool CompareElementsRecursive(Array tensor1, Array tensor2, int dimension, int[] indices, int[] sizes)
+    private static bool CompareElementsRecursive(
+        Array tensor1,
+        Array tensor2,
+        int dimension,
+        int[] indices,
+        int[] sizes,
+        TNumber tolerance)
     {
         if (dimension == tensor1.Rank)
         {
-            return tensor1.GetValue(indices)?.Equals(tensor2.GetValue(indices)) ?? false;
+            var leftValue = (TNumber?)tensor1.GetValue(indices);
+            var rightValue = (TNumber?)tensor2.GetValue(indices);
+
+            if (leftValue is null || rightValue is null)
+            {
+                return false;
+            }
+
+            return TNumber.Abs(leftValue.Value - rightValue.Value) <= TNumber.Abs(tolerance);
         }
 
         for (int i = 0; i < sizes[dimension]; i++)
@@ -130,7 +163,8 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
                     tensor2,
                     dimension + 1,
                     indices,
-                    sizes))
+                    sizes,
+                    tolerance))
             {
                 return false;
             }
