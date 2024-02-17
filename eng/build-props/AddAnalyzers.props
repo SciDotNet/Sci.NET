@@ -7,7 +7,7 @@
         <LangVersion>latest</LangVersion>
         <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-        <TreatWarningsAsErrors Condition="'$(Configuration)' != 'Release'">false</TreatWarningsAsErrors>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
     </PropertyGroup>
     <ItemGroup Condition="'$(EnableAnalyzers)' == 'true'">
@@ -18,6 +18,9 @@
         <GlobalAnalyzerConfigFiles Include="$(RootDirectory)eng/build-props/analyzers/test.globalconfig"
                                    Link="test.globalconfig"
                                    Condition="$(MSBuildProjectName.EndsWith('Tests'))"/>
+        <GlobalAnalyzerConfigFiles Include="$(RootDirectory)eng/build-props/analyzers/test.globalconfig"
+                                   Link="benchmarks.globalconfig"
+                                   Condition="$(MSBuildProjectName.EndsWith('Benchmarks'))"/>
     </ItemGroup>
     <ItemGroup>
         <AssemblyAttribute Include="System.CLSCompliant">
