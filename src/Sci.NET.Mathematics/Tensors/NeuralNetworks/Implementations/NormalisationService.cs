@@ -11,26 +11,31 @@ internal class NormalisationService : INormalisationService
     public Matrix<TNumber> BatchNorm1dForward<TNumber>(Matrix<TNumber> input, Vector<TNumber> scale, Vector<TNumber> bias)
         where TNumber : unmanaged, INumber<TNumber>, IRootFunctions<TNumber>
     {
-        var mean = input.Mean(new int[] { 1 }).ToVector();
+        var mean = input.Mean(new int[] { 0 }).ToVector();
 
         using var m = new Scalar<TNumber>(TNumber.CreateChecked(mean.Shape[0]));
         m.To(input.Device);
 
-        var variance = mean.Subtract(input).Square().Sum(new int[] { 1 }).Divide(m).ToVector();
-        using var epsilon = new Scalar<TNumber>(GenericMath.Epsilon<TNumber>() * TNumber.CreateChecked(1000));
-        var result = new Matrix<TNumber>(input.Rows, input.Columns);
+        var variance = input.Variance(0).ToVector();
+        using var epsilon = new Scalar<TNumber>(GenericMath.ScaledEpsilon<TNumber>(10000));
+        using var epsilonRoot = variance.Add(epsilon).Sqrt();
+        using var difference = input.Subtract(mean);
+        using var norm = difference.Divide(epsilonRoot);
+        var scaleNorm = norm.Multiply(scale);
 
-        result.To(input.Device);
-        epsilon.To(input.Device);
+        return scaleNorm.Add(bias);
+    }
 
-        input.Backend.NeuralNetworks.BatchNorm1dForward(
-            input,
-            scale,
-            bias,
-            mean,
-            variance,
+    public ITensor<TNumber> Clip<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+
+        result.Backend.Normalisation.Clip(
+            tensor,
             result,
-            epsilon);
+            min,
+            max);
 
         return result;
     }

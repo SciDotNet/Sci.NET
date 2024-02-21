@@ -65,25 +65,4 @@ public interface INeuralNetworkKernels
         int dilationX,
         int dilationY)
         where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Performs a forward pass of a 1D batch normalization operation.
-    /// </summary>
-    /// <param name="input">The input tensor.</param>
-    /// <param name="scale">The scale scalar.</param>
-    /// <param name="bias">The bias scalar.</param>
-    /// <param name="runningMean">The running mean scalar.</param>
-    /// <param name="runningVariance">The running variance scalar.</param>
-    /// <param name="result">The result tensor.</param>
-    /// <param name="epsilon">The epsilon value.</param>
-    /// <typeparam name="TNumber">The number type of the operation.</typeparam>
-    public void BatchNorm1dForward<TNumber>(
-        Matrix<TNumber> input,
-        Tensors.Vector<TNumber> scale,
-        Tensors.Vector<TNumber> bias,
-        Tensors.Vector<TNumber> runningMean,
-        Tensors.Vector<TNumber> runningVariance,
-        Matrix<TNumber> result,
-        Scalar<TNumber> epsilon)
-        where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>;
 }

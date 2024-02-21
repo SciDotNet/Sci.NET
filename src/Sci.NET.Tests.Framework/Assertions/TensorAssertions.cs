@@ -86,12 +86,24 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
     public AndConstraint<TensorAssertions<TNumber>> HaveApproximatelyEquivalentElements(Array values, TNumber tolerance)
     {
-        _ = Execute
-            .Assertion
-            .BecauseOf(string.Empty, Array.Empty<object>())
-            .Given(() => Subject.ToArray())
-            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, values, tolerance))
-            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", values, Subject.ToArray());
+        if (Subject.IsScalar())
+        {
+            _ = Execute
+                .Assertion
+                .BecauseOf(string.Empty, Array.Empty<object>())
+                .Given(() => Subject.Memory[0])
+                .ForCondition(tensorElements => TNumber.Abs(tensorElements - (TNumber)(values.GetValue(0) ?? throw new InvalidOperationException())) <= tolerance)
+                .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", values, Subject.Memory[0]);
+        }
+        else
+        {
+            _ = Execute
+                .Assertion
+                .BecauseOf(string.Empty, Array.Empty<object>())
+                .Given(() => Subject.ToArray())
+                .ForCondition(tensorElements => AreEquivalentElements(tensorElements, values, tolerance))
+                .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", values, Subject.ToArray());
+        }
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
     }

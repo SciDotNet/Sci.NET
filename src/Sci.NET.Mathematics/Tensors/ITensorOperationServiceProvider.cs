@@ -9,6 +9,7 @@ using Sci.NET.Mathematics.Tensors.Pointwise;
 using Sci.NET.Mathematics.Tensors.Random;
 using Sci.NET.Mathematics.Tensors.Reduction;
 using Sci.NET.Mathematics.Tensors.Serialization;
+using Sci.NET.Mathematics.Tensors.Statistics;
 using Sci.NET.Mathematics.Tensors.Trigonometry;
 
 namespace Sci.NET.Mathematics.Tensors;
@@ -69,12 +70,6 @@ public interface ITensorOperationServiceProvider
     public IReductionService GetReductionService();
 
     /// <summary>
-    /// Gets an instance of the <see cref="ILinqService"/>.
-    /// </summary>
-    /// <returns>An instance of the <see cref="ILinqService"/>.</returns>
-    public ILinqService GetLinqService();
-
-    /// <summary>
     /// Gets an instance of the <see cref="ITrigonometryService"/>.
     /// </summary>
     /// <returns>An instance of the <see cref="ITrigonometryService"/>.</returns>
@@ -133,5 +128,12 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="INormalisationService"/>.</returns>
     public INormalisationService GetNormalisationService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IVarianceService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IVarianceService"/>.</returns>
+    public IVarianceService GetVarianceService();
+
 #pragma warning restore CA1024
 }

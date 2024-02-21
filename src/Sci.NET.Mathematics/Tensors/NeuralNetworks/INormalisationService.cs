@@ -21,4 +21,15 @@ public interface INormalisationService
     /// <returns>The normalised tensor.</returns>
     public Matrix<TNumber> BatchNorm1dForward<TNumber>(Matrix<TNumber> input, Vector<TNumber> scale, Vector<TNumber> bias)
         where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Clips the values of the <see cref="ITensor{TNumber}"/> to the specified range.
+    /// </summary>
+    /// <param name="tensor">The the <see cref="ITensor{TNumber}"/> to operate on.</param>
+    /// <param name="min">The minimum value to clip to.</param>
+    /// <param name="max">The maximum value to clip to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The clipped <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Clip<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>;
 }
