@@ -9,6 +9,7 @@
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <TestProject Condition="$(MSBuildProjectName.EndsWith('Tests'))">true</TestProject>
         <TestProject Condition="$(MSBuildProjectName.EndsWith('Sci.NET.Tests.Framework'))">true</TestProject>
+        <BenchmarkProject Condition="$(MSBuildProjectName.EndsWith('Benchmarks'))">true</BenchmarkProject>
         <DirectoryBuildPropsPath>$(MSBuildThisFileDirectory)</DirectoryBuildPropsPath>
         <OutputPath>$(SolutionDir)\Artifacts\bin\$(Configuration)\</OutputPath>
         <Configurations>Debug;Release</Configurations>
@@ -26,6 +27,12 @@
             <PropertyGroup>
                 <TargetFramework>net8.0</TargetFramework>
                 <IsTestProject>true</IsTestProject>
+            </PropertyGroup>
+        </When>
+        <When Condition="'$(BenchmarkProject)' == 'true'">
+            <PropertyGroup>
+                <TargetFramework>net8.0</TargetFramework>
+                <IsBenchmarkProject>true</IsBenchmarkProject>
             </PropertyGroup>
         </When>
         <Otherwise>

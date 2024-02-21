@@ -21,11 +21,11 @@ public static class CastingExtensions
     /// <returns>The input cast to the <typeparamref name="TOut"/> type.</returns>
     /// <exception cref="InvalidOperationException">Throws if the two types are not the same length.</exception>
     [MethodImpl(ImplementationOptions.HotPath)]
-    public static unsafe TOut ReinterpretCast<TIn, TOut>(this TIn value)
+    public static TOut ReinterpretCast<TIn, TOut>(this TIn value)
         where TIn : unmanaged
         where TOut : unmanaged
     {
-        if (sizeof(TIn) != sizeof(TOut))
+        if (Unsafe.SizeOf<TIn>() != Unsafe.SizeOf<TOut>())
         {
             throw new InvalidOperationException("Cannot reinterpret cast between types of different sizes.");
         }
