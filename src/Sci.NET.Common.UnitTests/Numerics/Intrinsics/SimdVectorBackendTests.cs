@@ -479,7 +479,7 @@ public class SimdVectorBackendTests
 
         for (var i = 0; i < count; i++)
         {
-            left[i] = i;
+            left[i] = i * 2;
             right[i] = i;
         }
 
@@ -492,7 +492,7 @@ public class SimdVectorBackendTests
         // Assert
         for (var i = 0; i < count; i++)
         {
-            result[i].Should().Be((left[i] + right[i]) * (left[i] + right[i]));
+            result[i].Should().Be((left[i] - right[i]) * (left[i] - right[i]));
         }
     }
 

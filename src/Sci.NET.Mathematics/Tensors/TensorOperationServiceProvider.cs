@@ -42,6 +42,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly IBroadcastService _broadcastService;
     private readonly IVectorOperationsService _vectorOperationsService;
     private readonly IRandomService _randomService;
+    private readonly INormalisationService _normalisationService;
 
     public TensorOperationServiceProvider()
     {
@@ -63,6 +64,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _concatenationService = new ConcatenationService(this);
         _vectorOperationsService = new VectorOperationsService();
         _randomService = new RandomService();
+        _normalisationService = new NormalisationService();
     }
 
     public IMatrixMultiplicationService GetMatrixMultiplicationService()
@@ -153,5 +155,10 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public IRandomService GetRandomService()
     {
         return _randomService;
+    }
+
+    public INormalisationService GetNormalisationService()
+    {
+        return _normalisationService;
     }
 }

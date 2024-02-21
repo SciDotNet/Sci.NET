@@ -93,4 +93,16 @@ public interface ISimdVector<TNumber>
     /// <returns>An instance of the <see cref="ISimdVector{TNumber}"/> with the given values.</returns>
     /// <remarks>Mainly used to create a <see cref="ISimdVector{TNumber}"/> of the same type without type checking overhead.</remarks>
     public ISimdVector<TNumber> CreateWith(Span<TNumber> values);
+
+    /// <summary>
+    /// Finds the maximum element in the <see cref="ISimdVector{TNumber}"/>.
+    /// </summary>
+    /// <returns>The maximum element in the <see cref="ISimdVector{TNumber}"/>.</returns>
+    public TNumber MaxElement();
+
+    /// <summary>
+    /// Finds the minimum element in the <see cref="ISimdVector{TNumber}"/>.
+    /// </summary>
+    /// <returns>The minimum element in the <see cref="ISimdVector{TNumber}"/>.</returns>
+    public TNumber MinElement();
 }

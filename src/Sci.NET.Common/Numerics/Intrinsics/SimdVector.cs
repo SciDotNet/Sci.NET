@@ -25,7 +25,7 @@ public static class SimdVector
     {
         if (VectorGuard.IsSupported<TNumber>(out _))
         {
-            return default(SimdScalarBackend<TNumber>);
+            return default(SimdVectorBackend<TNumber>);
         }
 
         return default(SimdScalarBackend<TNumber>);

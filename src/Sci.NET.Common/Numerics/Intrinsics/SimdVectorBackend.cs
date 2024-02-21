@@ -147,4 +147,28 @@ internal readonly struct SimdVectorBackend<TNumber> : ISimdVector<TNumber>, IVal
 
         return new SimdVectorBackend<TNumber>(values);
     }
+
+    public TNumber MaxElement()
+    {
+        var max = _vector[0];
+
+        for (var i = 1; i < Count; i++)
+        {
+            max = TNumber.Max(max, _vector[i]);
+        }
+
+        return max;
+    }
+
+    public TNumber MinElement()
+    {
+        var min = _vector[0];
+
+        for (var i = 1; i < Count; i++)
+        {
+            min = TNumber.Min(min, _vector[i]);
+        }
+
+        return min;
+    }
 }

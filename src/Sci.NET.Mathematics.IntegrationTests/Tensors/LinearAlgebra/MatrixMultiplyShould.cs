@@ -106,4 +106,19 @@ public class MatrixMultiplyShould : IntegrationTestBase
             .Should()
             .BeEquivalentTo(new BFloat16[,] { { 30, 30 }, { 30, 30 } });
     }
+
+    [Fact]
+    public void BatchNorm()
+    {
+        // Arrange
+        var input = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 1 }, { 2, 3 } }).ToMatrix();
+        var scale = Tensor.FromArray<float>(new float[] { 1, 2, 3 }).ToVector();
+        var bias = Tensor.FromArray<float>(new float[] { 1, 2, 3 }).ToVector();
+
+        // Act
+        var result = input.BatchNorm1dForward(scale, bias);
+
+        // Assert
+        result.Should().NotBeNull();
+    }
 }

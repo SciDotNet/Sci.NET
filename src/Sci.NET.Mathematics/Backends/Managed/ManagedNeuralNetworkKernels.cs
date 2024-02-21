@@ -123,7 +123,7 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
             batchSize,
             0,
             outHeight,
-            0,
+            ManagedTensorBackend.ParallelizationThreshold,
             (n, oh) =>
             {
                 for (var ow = 0; ow < outWidth; ow++)
@@ -171,6 +171,45 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
                         }
                     }
                 }
+            });
+    }
+
+    public void BatchNorm1dForward<TNumber>(
+        Matrix<TNumber> input,
+        Tensors.Vector<TNumber> scale,
+        Tensors.Vector<TNumber> bias,
+        Tensors.Vector<TNumber> runningMean,
+        Tensors.Vector<TNumber> runningVariance,
+        Matrix<TNumber> result,
+        Scalar<TNumber> epsilon)
+        where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>
+    {
+        var inputMemory = (SystemMemoryBlock<TNumber>)input.Memory;
+        var resultMemory = (SystemMemoryBlock<TNumber>)result.Memory;
+        var scaleMemory = (SystemMemoryBlock<TNumber>)scale.Memory;
+        var biasMemory = (SystemMemoryBlock<TNumber>)bias.Memory;
+        var runningMeanMemory = (SystemMemoryBlock<TNumber>)runningMean.Memory;
+        var runningVarianceMemory = (SystemMemoryBlock<TNumber>)runningVariance.Memory;
+        var epsilonValue = epsilon.Value;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            input.Rows,
+            0,
+            input.Columns,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            (i, j) =>
+            {
+                var inputIndex = (i * input.Columns) + j;
+                var resultIndex = (i * result.Columns) + j;
+
+                var mean = runningMeanMemory[j];
+                var variance = runningVarianceMemory[j] * runningVarianceMemory[i];
+                var std = TNumber.Sqrt(variance + epsilonValue);
+                var normalized = (inputMemory[inputIndex] - mean) / std;
+                var scaled = normalized * scaleMemory[j];
+
+                resultMemory[resultIndex] = scaled + biasMemory[j];
             });
     }
 }

@@ -196,4 +196,14 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
 
         return new SimdScalarBackend<TNumber>(values[0]);
     }
+
+    public TNumber MaxElement()
+    {
+        return _scalar;
+    }
+
+    public TNumber MinElement()
+    {
+        return _scalar;
+    }
 }

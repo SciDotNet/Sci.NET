@@ -365,6 +365,34 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         }
     }
 
+    public void AbsoluteDifference<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftBlock = (SystemMemoryBlock<TNumber>)left;
+        var rightBlock = (SystemMemoryBlock<TNumber>)right;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result;
+        var vectorCount = SimdVector.Count<TNumber>();
+
+        var i = LazyParallelExecutor.For(
+            0,
+            resultBlock.Length - vectorCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            vectorCount,
+            i =>
+            {
+                var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                var rightVector = rightBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                var resultVector = leftVector.Subtract(rightVector).Abs();
+
+                resultBlock.UnsafeSetVectorUnchecked(resultVector, i);
+            });
+
+        for (; i < resultBlock.Length; i++)
+        {
+            resultBlock[i] = TNumber.Abs(leftBlock[i] - rightBlock[i]);
+        }
+    }
+
     public void Sqrt<TNumber>(
         IMemoryBlock<TNumber> tensor,
         IMemoryBlock<TNumber> result,
