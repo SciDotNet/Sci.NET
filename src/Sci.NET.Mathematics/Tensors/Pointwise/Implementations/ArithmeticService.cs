@@ -727,8 +727,8 @@ internal class ArithmeticService : IArithmeticService
             left.Memory,
             right.Memory,
             result.Memory,
-            right.Shape.ElementCount,
-            left.Shape.ElementCount / right.Shape.ElementCount);
+            left.Rows,
+            left.Columns);
 
         return result;
     }
@@ -1639,8 +1639,8 @@ internal class ArithmeticService : IArithmeticService
             left.Memory,
             right.Memory,
             result.Memory,
-            right.Length,
-            left.Rows);
+            left.Rows,
+            left.Columns);
 
         return result;
     }

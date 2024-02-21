@@ -33,4 +33,58 @@ public static class ReductionExtensions
             .GetReductionService()
             .Sum(tensor, axes, keepDims);
     }
+
+    /// <summary>
+    /// Computes the mean of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the mean of.</param>
+    /// <param name="axes">The axes to find the mean over.</param>
+    /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The mean of the <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Mean<TNumber>(this ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetReductionService()
+            .Mean(tensor, axes, keepDims);
+    }
+
+    /// <summary>
+    /// Computes the maximum value of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the maximum value of.</param>
+    /// <param name="axes">The axes to find the maximum value over.</param>
+    /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The maximum value of the <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Max<TNumber>(this ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetReductionService()
+            .Max(tensor, axes, keepDims);
+    }
+
+    /// <summary>
+    /// Computes the minimum value of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the minimum value of.</param>
+    /// <param name="axes">The axes to find the minimum value over.</param>
+    /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The minimum value of the <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Min<TNumber>(this ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetReductionService()
+            .Min(tensor, axes, keepDims);
+    }
 }

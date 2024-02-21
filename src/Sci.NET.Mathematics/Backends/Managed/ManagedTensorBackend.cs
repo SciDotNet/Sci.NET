@@ -24,7 +24,6 @@ public class ManagedTensorBackend : ITensorBackend
         Power = new ManagedPowerKernels();
         Device = new CpuComputeDevice();
         Reduction = new ManagedReductionKernels();
-        Linq = new ManagedLinqKernels();
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
         Casting = new ManagedCastingKernels();
@@ -32,6 +31,7 @@ public class ManagedTensorBackend : ITensorBackend
         ActivationFunctions = new ManagedActivationFunctionKernels();
         Broadcasting = new ManagedBroadcastingKernels();
         Permutation = new ManagedPermutationKernels();
+        Normalisation = new ManagedNormalisationKernels();
     }
 
     /// <summary>
@@ -58,9 +58,6 @@ public class ManagedTensorBackend : ITensorBackend
     public IReductionKernels Reduction { get; }
 
     /// <inheritdoc />
-    public ILinqKernels Linq { get; }
-
-    /// <inheritdoc />
     public ITrigonometryKernels Trigonometry { get; }
 
     /// <inheritdoc />
@@ -80,4 +77,7 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public IPermutationKernels Permutation { get; }
+
+    /// <inheritdoc />
+    public INormalisationKernels Normalisation { get; }
 }

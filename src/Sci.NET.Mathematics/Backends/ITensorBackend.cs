@@ -42,11 +42,6 @@ public interface ITensorBackend
     public IReductionKernels Reduction { get; }
 
     /// <summary>
-    /// Gets the <see cref="ILinqKernels"/> instance for the <see cref="ITensorBackend"/>.
-    /// </summary>
-    public ILinqKernels Linq { get; }
-
-    /// <summary>
     /// Gets the <see cref="ITrigonometryKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public ITrigonometryKernels Trigonometry { get; }
@@ -80,4 +75,9 @@ public interface ITensorBackend
     /// Gets the <see cref="IPermutationKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public IPermutationKernels Permutation { get; }
+
+    /// <summary>
+    /// Gets the <see cref="INormalisationKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public INormalisationKernels Normalisation { get; }
 }
