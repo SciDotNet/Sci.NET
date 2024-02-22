@@ -53,6 +53,141 @@ internal class ReductionService : IReductionService
         }
     }
 
+    public ITensor<TNumber> Mean<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        {
+            var result = new Scalar<TNumber>(tensor.Backend);
+            tensor.Backend.Reduction.ReduceMeanAll(tensor, result);
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+            return resultTensor;
+        }
+        else
+        {
+            if (axes.Length > tensor.Shape.Dimensions.Length)
+            {
+                throw new InvalidShapeException($"The number of axes to find the mean over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+            }
+
+            if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
+            {
+                throw new InvalidShapeException($"The axes to find the mean over must be within the bounds of the tensor with shape {tensor.Shape}.");
+            }
+
+            var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
+            var result = new Tensor<TNumber>(resultShape, tensor.Backend);
+            tensor.Backend.Reduction.ReduceMeanAxis(tensor, axes, result);
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+
+            return resultTensor;
+        }
+    }
+
+    public ITensor<TNumber> Max<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        {
+            var result = new Scalar<TNumber>(tensor.Backend);
+            tensor.Backend.Reduction.ReduceMaxAll(tensor, result);
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+            return resultTensor;
+        }
+        else
+        {
+            if (axes.Length > tensor.Shape.Dimensions.Length)
+            {
+                throw new InvalidShapeException($"The number of axes to find the max over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+            }
+
+            if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
+            {
+                throw new InvalidShapeException($"The axes to find the max over must be within the bounds of the tensor with shape {tensor.Shape}.");
+            }
+
+            var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
+            var result = new Tensor<TNumber>(resultShape, tensor.Backend);
+            tensor.Backend.Reduction.ReduceMaxAxis(tensor, axes, result);
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+
+            return resultTensor;
+        }
+    }
+
+    public ITensor<TNumber> Min<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        {
+            var result = new Scalar<TNumber>(tensor.Backend);
+            tensor.Backend.Reduction.ReduceMinAll(tensor, result);
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+            return resultTensor;
+        }
+        else
+        {
+            if (axes.Length > tensor.Shape.Dimensions.Length)
+            {
+                throw new InvalidShapeException($"The number of axes to find the min over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+            }
+
+            if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
+            {
+                throw new InvalidShapeException($"The axes to find the min over must be within the bounds of the tensor with shape {tensor.Shape}.");
+            }
+
+            var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
+            var result = new Tensor<TNumber>(resultShape, tensor.Backend);
+            tensor.Backend.Reduction.ReduceMinAxis(tensor, axes, result);
+
+            if (!keepDims)
+            {
+                return result;
+            }
+
+            var resultTensor = result.Broadcast(tensor.Shape);
+            result.Dispose();
+
+            return resultTensor;
+        }
+    }
+
     private static Shape CalculateResultShape(int[] shape, int[]? axes, bool keepDims)
     {
         var axisSet = axes is not null ? new HashSet<int>(axes) : new HashSet<int>();

@@ -17,6 +17,8 @@ using Sci.NET.Mathematics.Tensors.Reduction;
 using Sci.NET.Mathematics.Tensors.Reduction.Implementations;
 using Sci.NET.Mathematics.Tensors.Serialization;
 using Sci.NET.Mathematics.Tensors.Serialization.Implementations;
+using Sci.NET.Mathematics.Tensors.Statistics;
+using Sci.NET.Mathematics.Tensors.Statistics.Implementations;
 using Sci.NET.Mathematics.Tensors.Trigonometry;
 using Sci.NET.Mathematics.Tensors.Trigonometry.Implementations;
 
@@ -32,7 +34,6 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly IArithmeticService _arithmeticService;
     private readonly IPowerService _powerService;
     private readonly IReductionService _reductionService;
-    private readonly ILinqService _linqService;
     private readonly ITrigonometryService _trigonometryService;
     private readonly ISerializationService _serializationService;
     private readonly ICastingService _castingService;
@@ -42,6 +43,8 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly IBroadcastService _broadcastService;
     private readonly IVectorOperationsService _vectorOperationsService;
     private readonly IRandomService _randomService;
+    private readonly INormalisationService _normalisationService;
+    private readonly IVarianceService _varianceService;
 
     public TensorOperationServiceProvider()
     {
@@ -49,7 +52,6 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _reshapeService = new ReshapeService();
         _deviceGuardService = new DeviceGuardService();
         _reductionService = new ReductionService();
-        _linqService = new LinqService();
         _trigonometryService = new TrigonometryService();
         _serializationService = new SerializationService();
         _castingService = new CastingService();
@@ -63,6 +65,8 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _concatenationService = new ConcatenationService(this);
         _vectorOperationsService = new VectorOperationsService();
         _randomService = new RandomService();
+        _normalisationService = new NormalisationService();
+        _varianceService = new VarianceService();
     }
 
     public IMatrixMultiplicationService GetMatrixMultiplicationService()
@@ -103,11 +107,6 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public IReductionService GetReductionService()
     {
         return _reductionService;
-    }
-
-    public ILinqService GetLinqService()
-    {
-        return _linqService;
     }
 
     public ITrigonometryService GetTrigonometryService()
@@ -153,5 +152,15 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public IRandomService GetRandomService()
     {
         return _randomService;
+    }
+
+    public INormalisationService GetNormalisationService()
+    {
+        return _normalisationService;
+    }
+
+    public IVarianceService GetVarianceService()
+    {
+        return _varianceService;
     }
 }

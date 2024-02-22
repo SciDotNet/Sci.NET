@@ -517,6 +517,27 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     }
 
     /// <summary>
+    /// Sets the value of the <see cref="SystemMemoryBlock{T}"/> at the specified index to the vector value.
+    /// </summary>
+    /// <param name="vector">The vector value to set.</param>
+    /// <param name="index">The index to set the value at.</param>
+    /// <param name="vectorStrategy">The vector strategy to use.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ISimdVector{TNumber}"/>.</typeparam>
+    public unsafe void UnsafeSetVectorUnchecked<TNumber>(ISimdVector<TNumber> vector, long index, VectorStrategy vectorStrategy)
+        where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
+    {
+        if (vectorStrategy == VectorStrategy.Vector)
+        {
+            UnsafeSetVectorUnchecked(vector, index);
+        }
+        else
+        {
+            ref var reference = ref Unsafe.AsRef<TNumber>(_reference + index);
+            reference = vector[0];
+        }
+    }
+
+    /// <summary>
     /// Writes a <see cref="Vector256{T}"/> to the <see cref="SystemMemoryBlock{T}"/> at the specified index.
     /// </summary>
     /// <param name="index">The index to write to.</param>

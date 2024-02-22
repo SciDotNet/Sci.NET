@@ -32,6 +32,6 @@ internal class VectorOperationsService : IVectorOperationsService
     public Scalar<TNumber> Norm<TNumber>(Vector<TNumber> vector)
         where TNumber : unmanaged, IRootFunctions<TNumber>, IFloatingPoint<TNumber>
     {
-        return vector.Inner(vector).Sqrt().ToScalar();
+        return vector.Inner(vector).Sqrt();
     }
 }

@@ -27,6 +27,8 @@ internal readonly struct SimdVectorBackend<TNumber> : ISimdVector<TNumber>, IVal
         _vector = source;
     }
 
+    public int Count => Vector<TNumber>.Count;
+
     public TNumber this[int index] => _vector[index];
 
     public static bool operator ==(SimdVectorBackend<TNumber> left, SimdVectorBackend<TNumber> right)
@@ -56,42 +58,22 @@ internal readonly struct SimdVectorBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public ISimdVector<TNumber> Add(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot add a scalar to a vector.");
-        }
-
-        return new SimdVectorBackend<TNumber>(_vector + vector._vector);
+        return new SimdVectorBackend<TNumber>(Vector.Add(_vector, ((SimdVectorBackend<TNumber>)other)._vector));
     }
 
     public ISimdVector<TNumber> Subtract(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot subtract a scalar from a vector.");
-        }
-
-        return new SimdVectorBackend<TNumber>(_vector - vector._vector);
+        return new SimdVectorBackend<TNumber>(Vector.Subtract(_vector, ((SimdVectorBackend<TNumber>)other)._vector));
     }
 
     public ISimdVector<TNumber> Multiply(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot multiply a vector by a scalar.");
-        }
-
-        return new SimdVectorBackend<TNumber>(_vector * vector._vector);
+        return new SimdVectorBackend<TNumber>(Vector.Multiply(_vector, ((SimdVectorBackend<TNumber>)other)._vector));
     }
 
     public ISimdVector<TNumber> Divide(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot divide a vector by a scalar.");
-        }
-
-        return new SimdVectorBackend<TNumber>(_vector / vector._vector);
+        return new SimdVectorBackend<TNumber>(Vector.Divide(_vector, ((SimdVectorBackend<TNumber>)other)._vector));
     }
 
     public ISimdVector<TNumber> Sqrt()
@@ -106,57 +88,44 @@ internal readonly struct SimdVectorBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public ISimdVector<TNumber> Negate()
     {
-        return new SimdVectorBackend<TNumber>(-_vector);
+        return new SimdVectorBackend<TNumber>(Vector.Negate(_vector));
     }
 
     public ISimdVector<TNumber> Max(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot compare a vector to a scalar.");
-        }
-
-        return new SimdVectorBackend<TNumber>(Vector.Max(_vector, vector._vector));
+        return new SimdVectorBackend<TNumber>(Vector.Max(_vector, ((SimdVectorBackend<TNumber>)other)._vector));
     }
 
     public ISimdVector<TNumber> Min(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot compare a vector to a scalar.");
-        }
-
-        return new SimdVectorBackend<TNumber>(Vector.Min(_vector, vector._vector));
+        return new SimdVectorBackend<TNumber>(Vector.Min(_vector, ((SimdVectorBackend<TNumber>)other)._vector));
     }
 
     public ISimdVector<TNumber> Clamp(ISimdVector<TNumber> min, ISimdVector<TNumber> max)
     {
-        if (min is not SimdVectorBackend<TNumber> minVector)
-        {
-            throw new InvalidOperationException("Cannot compare a vector to a scalar.");
-        }
-
-        if (max is not SimdVectorBackend<TNumber> maxVector)
-        {
-            throw new InvalidOperationException("Cannot compare a vector to a scalar.");
-        }
-
-        return new SimdVectorBackend<TNumber>(Vector.Min(Vector.Max(_vector, minVector._vector), maxVector._vector));
+        return new SimdVectorBackend<TNumber>(Vector.Min(Vector.Max(_vector, ((SimdVectorBackend<TNumber>)min)._vector), ((SimdVectorBackend<TNumber>)max)._vector));
     }
 
     public TNumber Dot(ISimdVector<TNumber> other)
     {
-        if (other is not SimdVectorBackend<TNumber> vector)
-        {
-            throw new InvalidOperationException("Cannot compare a vector to a scalar.");
-        }
-
-        return Vector.Dot(_vector, vector._vector);
+        return Vector.Dot(_vector, ((SimdVectorBackend<TNumber>)other)._vector);
     }
 
     public TNumber Sum()
     {
         return Vector.Sum(_vector);
+    }
+
+    public ISimdVector<TNumber> SquareDifference(ISimdVector<TNumber> other)
+    {
+        var difference = Vector.Subtract(_vector, ((SimdVectorBackend<TNumber>)other)._vector);
+
+        return new SimdVectorBackend<TNumber>(Vector.Multiply(difference, difference));
+    }
+
+    public ISimdVector<TNumber> CreateDuplicateZeroed()
+    {
+        return default(SimdVectorBackend<TNumber>);
     }
 
     public void CopyTo(Span<TNumber> span)
@@ -167,5 +136,39 @@ internal readonly struct SimdVectorBackend<TNumber> : ISimdVector<TNumber>, IVal
         }
 
         _vector.CopyTo(span);
+    }
+
+    public ISimdVector<TNumber> CreateWith(Span<TNumber> values)
+    {
+        if (values.Length != Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(values), $"Values contains {values.Length} elements but expected {Count}.");
+        }
+
+        return new SimdVectorBackend<TNumber>(values);
+    }
+
+    public TNumber MaxElement()
+    {
+        var max = _vector[0];
+
+        for (var i = 1; i < Count; i++)
+        {
+            max = TNumber.Max(max, _vector[i]);
+        }
+
+        return max;
+    }
+
+    public TNumber MinElement()
+    {
+        var min = _vector[0];
+
+        for (var i = 1; i < Count; i++)
+        {
+            min = TNumber.Min(min, _vector[i]);
+        }
+
+        return min;
     }
 }
