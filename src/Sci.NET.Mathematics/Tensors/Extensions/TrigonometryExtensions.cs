@@ -1291,6 +1291,261 @@ public static class TrigonometryExtensions
     }
 
     /// <summary>
+    /// Computes the Inverse Sine Squared of the specified <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Sine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Sine Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Scalar<TNumber> Asin2<TNumber>(this Scalar<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Asin2(tensor)
+            .ToScalar();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Sine Squared of the specified <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Sine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Sine Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Vector<TNumber> Asin2<TNumber>(this Vector<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Asin2(tensor)
+            .ToVector();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Sine Squared of the specified <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Sine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Sine Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Matrix<TNumber> Asin2<TNumber>(this Matrix<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Asin2(tensor)
+            .ToMatrix();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Sine Squared of the specified <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Sine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Sine Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Tensor<TNumber> Asin2<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Asin2(tensor)
+            .ToTensor();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Sine Squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Sine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Sine Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Asin2<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Asin2(tensor)
+            ;
+    }
+
+    /// <summary>
+    /// Computes the Inverse Cosine Squared of the specified <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Cosine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Cosine Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Scalar<TNumber> Acos2<TNumber>(this Scalar<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Acos2(tensor)
+            .ToScalar();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Cosine Squared of the specified <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Cosine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Cosine Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Vector<TNumber> Acos2<TNumber>(this Vector<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Acos2(tensor)
+            .ToVector();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Cosine Squared of the specified <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Cosine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Cosine Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Matrix<TNumber> Acos2<TNumber>(this Matrix<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Acos2(tensor)
+            .ToMatrix();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Cosine Squared of the specified <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Cosine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Cosine Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Tensor<TNumber> Acos2<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Acos2(tensor)
+            .ToTensor();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Cosine Squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Cosine Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Cosine Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Acos2<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Acos2(tensor)
+            ;
+    }
+
+    /// <summary>
+    /// Computes the Inverse Tangent Squared of the specified <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Tangent Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Tangent Squared of the specified <see cref="Scalar{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Scalar<TNumber> Atan2<TNumber>(this Scalar<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Atan2(tensor)
+            .ToScalar();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Tangent Squared of the specified <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Tangent Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Tangent Squared of the specified <see cref="Vector{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Vector<TNumber> Atan2<TNumber>(this Vector<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Atan2(tensor)
+            .ToVector();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Tangent Squared of the specified <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Tangent Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Tangent Squared of the specified <see cref="Matrix{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Matrix<TNumber> Atan2<TNumber>(this Matrix<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Atan2(tensor)
+            .ToMatrix();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Tangent Squared of the specified <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Tangent Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Tangent Squared of the specified <see cref="Tensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static Tensor<TNumber> Atan2<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Atan2(tensor)
+            .ToTensor();
+    }
+
+    /// <summary>
+    /// Computes the Inverse Tangent Squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The tensor to calculate the Inverse Tangent Squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The Inverse Tangent Squared of the specified <see cref="ITensor{TNumber}"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Atan2<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetTrigonometryService()
+            .Atan2(tensor)
+            ;
+    }
+
+    /// <summary>
     /// Computes the Hyperbolic Inverse Sine of the specified <see cref="Scalar{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The tensor to calculate the Hyperbolic Inverse Sine of.</param>

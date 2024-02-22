@@ -151,6 +151,30 @@ internal class TrigonometryService : ITrigonometryService
         return result;
     }
 
+    public ITensor<TNumber> Asin2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        result.Backend.Trigonometry.Asin2(tensor, result);
+        return result;
+    }
+
+    public ITensor<TNumber> Acos2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        result.Backend.Trigonometry.Acos2(tensor, result);
+        return result;
+    }
+
+    public ITensor<TNumber> Atan2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        result.Backend.Trigonometry.Atan2(tensor, result);
+        return result;
+    }
+
     public ITensor<TNumber> ASinh2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
