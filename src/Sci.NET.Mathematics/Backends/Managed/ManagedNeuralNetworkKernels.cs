@@ -123,7 +123,7 @@ internal class ManagedNeuralNetworkKernels : INeuralNetworkKernels
             batchSize,
             0,
             outHeight,
-            0,
+            ManagedTensorBackend.ParallelizationThreshold,
             (n, oh) =>
             {
                 for (var ow = 0; ow < outWidth; ow++)

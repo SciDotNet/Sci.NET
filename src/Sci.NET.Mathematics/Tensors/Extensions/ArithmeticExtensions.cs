@@ -1458,6 +1458,54 @@ public static class ArithmeticExtensions
             .GetArithmeticService()
             .Sqrt(tensor);
     }
+
+    /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
+    [DebuggerStepThrough]
+    public static Scalar<TNumber> Sqrt<TNumber>(this Scalar<TNumber> scalar)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Sqrt(scalar)
+            .ToScalar();
+    }
+
+    /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
+    [DebuggerStepThrough]
+    public static Vector<TNumber> Sqrt<TNumber>(this Vector<TNumber> vector)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Sqrt(vector)
+            .ToVector();
+    }
+
+    /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
+    [DebuggerStepThrough]
+    public static Matrix<TNumber> Sqrt<TNumber>(this Matrix<TNumber> matrix)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Sqrt(matrix)
+            .ToMatrix();
+    }
+
+    /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
+    [DebuggerStepThrough]
+    public static Tensor<TNumber> Sqrt<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetArithmeticService()
+            .Sqrt(tensor)
+            .ToTensor();
+    }
 }
 
 #pragma warning restore IDE0130

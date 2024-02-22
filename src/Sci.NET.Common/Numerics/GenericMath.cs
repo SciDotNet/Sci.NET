@@ -86,4 +86,24 @@ public static class GenericMath
             _ => throw new NotSupportedException("Type not supported for square root."),
         };
     }
+
+    /// <summary>
+    /// Finds a scaled epsilon for the specified number type. If the number type is a floating point type, the epsilon is multiplied by the specified multiplier.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type to find the epsilon for.</typeparam>
+    /// <param name="multiplier">The multiplier to use for the epsilon.</param>
+    /// <returns>A small epsilon for the specified number type.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static TNumber ScaledEpsilon<TNumber>(int multiplier = 1000)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var epsilon = Epsilon<TNumber>();
+
+        if (IsFloatingPoint<TNumber>())
+        {
+            epsilon *= TNumber.CreateChecked(multiplier);
+        }
+
+        return epsilon;
+    }
 }
