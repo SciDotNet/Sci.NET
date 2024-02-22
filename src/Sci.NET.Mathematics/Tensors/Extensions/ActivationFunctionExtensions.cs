@@ -42,7 +42,6 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the sigmoid derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\sigma'(x) = \sigma(x) \cdot (1 - \sigma(x))")]
-    [MathematicExpression(1, @"\sigma'\left(x\right)=\frac{1}{1+e^{-x}}\cdot\left(1-\frac{1}{1+e^{-x}}\right)")]
     public static ITensor<TNumber> SigmoidPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
@@ -269,6 +268,8 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the Mish function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"mish\left(x\right)=x\tanh\left(\ln\left(1+e^{x}\right)\right)")]
+    [MathematicExpression(1, @"mish\left(x\right)=x\cdot\frac{e^{\ln\left(e^{x}+1\right)}-e^{-\ln\left(e^{x}+1\right)}}{e^{\ln\left(e^{x}+1\right)}+e^{-\ln\left(e^{x}+1\right)}}")]
     public static ITensor<TNumber> Mish<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
@@ -285,6 +286,8 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the Mish derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"mish'\left(x\right)=\tanh\left(\ln\left(1+e^{x}\right)\right)+\frac{xe^{x}\operatorname{sech}^{2}\left(\ln\left(1+e^{x}\right)\right)}{e^{x}+1}")]
+    [MathematicExpression(1, @"mish'\left(x\right)=\frac{-1+\left(1+e^{x}\right)^{2}}{1+\left(1+e^{x}\right)^{2}}-\frac{2e^{x}\left(1+e^{x}\right)\left(-1+\left(1+e^{x}\right)^{2}\right)x}{\left(1+\left(1+e^{x}\right)^{2}\right)^{2}}+\frac{2e^{x}\left(1+e^{x}\right)x}{1+\left(1+e^{x}\right)^{2}}")]
     public static ITensor<TNumber> MishPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
@@ -303,6 +306,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the hard Tanh function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{HardTanh}(x) = \begin{cases} \text{min} & \text{if } x < \text{min} \\ x & \text{if } \text{min} \leq x \leq \text{max} \\ \text{max} & \text{if } x > \text{max} \end{cases}")]
     public static ITensor<TNumber> HardTanh<TNumber>(this ITensor<TNumber> value, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -321,6 +325,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the hard Tanh derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{HardTanh}'(x) = \begin{cases} 0 & \text{if } x < \text{min} \\ 1 & \text{if } \text{min} \leq x \leq \text{max} \\ 0 & \text{if } x > \text{max} \end{cases}")]
     public static ITensor<TNumber> HardTanhPrime<TNumber>(this ITensor<TNumber> value, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -337,6 +342,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the hard sigmoid function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{HardSigmoid}(x) = \begin{cases} 0 & \text{if } x < -1 \\ 1 & \text{if } x > 1 \\ 0.5x + 0.5 & \text{if } -1 \leq x \leq 1 \end{cases}")]
     public static ITensor<TNumber> HardSigmoid<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -353,6 +359,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the hard sigmoid derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{HardSigmoid}'(x) = \begin{cases} 0 & \text{if } x < -1 \\ 0 & \text{if } x > 1 \\ 0.5 & \text{if } -1 \leq x \leq 1 \end{cases}")]
     public static ITensor<TNumber> HardSigmoidPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -369,6 +376,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the log sigmoid function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{LogSigmoid}(x) = \ln\left(\frac{1}{1 + e^{-x}}\right)")]
     public static ITensor<TNumber> LogSigmoid<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
@@ -385,6 +393,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the log sigmoid derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{LogSigmoid}'(x) = \frac{1}{1 + e^{x}}")]
     public static ITensor<TNumber> LogSigmoidPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
@@ -401,6 +410,8 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the GELU function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"GELU\left(x\right)=0.5x\left(1+\frac{2}{\sqrt{\pi}}\int_{0}^{\frac{x}{\sqrt{2}}}e^{-t^{2}}dt\right)")]
+    [MathematicExpression(1, @"GELU\left(x\right)\approx0.5x\left(1+\tanh\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)\right)")]
     public static ITensor<TNumber> GELU<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
@@ -417,6 +428,8 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the GELU derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"GELU'\left(x\right)=\frac{0.3989422804014327x}{e^{\frac{x^{2}}{2}}}+0.5\left(1+\frac{2}{\sqrt{\pi}}\int_{0}^{\frac{x}{\sqrt{2}}}e^{-t^{2}}dt\right)")]
+    [MathematicExpression(1, @"GELU'\left(x\right)=0.3989422804014327x\left(1+0.134145x^{2}\right)\operatorname{sech}^{2}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)+0.5\left(1+\tanh\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)\right)")]
     public static ITensor<TNumber> GELUPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
@@ -433,6 +446,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the softplus function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{SoftPlus}(x) = \ln\left(1 + e^{x}\right)")]
     public static ITensor<TNumber> SoftPlus<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
@@ -449,6 +463,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the softplus derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{SoftPlus}'(x) = \frac{e^{x}}{1 + e^{x}}")]
     public static ITensor<TNumber> SoftPlusPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
@@ -465,6 +480,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the softsign function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{SoftSign}(x) = \frac{x}{1 + |x|}")]
     public static ITensor<TNumber> SoftSign<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -481,6 +497,7 @@ public static class ActivationFunctionExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the softsign derivative function.</returns>
     [DebuggerStepThrough]
+    [MathematicExpression(0, @"\text{SoftSign}'(x) = \frac{1}{(1 + |x|)^2}")]
     public static ITensor<TNumber> SoftSignPrime<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {

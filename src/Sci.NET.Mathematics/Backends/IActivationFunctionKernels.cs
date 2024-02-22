@@ -142,7 +142,7 @@ public interface IActivationFunctionKernels
     /// <param name="result">The result of the Mish derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void MishPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
     /// Computes the hard Tanh activation function on the given <see cref="ITensor{TNumber}"/>.

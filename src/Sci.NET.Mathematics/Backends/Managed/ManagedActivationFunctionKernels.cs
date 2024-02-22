@@ -179,7 +179,6 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-        var logE = TNumber.Log(TNumber.E);
 
         _ = LazyParallelExecutor.For(
             0,
@@ -187,17 +186,25 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i =>
             {
-                var softplus = TNumber.Log(TNumber.One + TNumber.Exp(inputMemory[i])) * logE;
-                outputMemory[i] = TNumber.Tanh(softplus);
+                // mish\left(x\right)=x\tanh\left(\ln\left(1+e^{x}\right)\right)
+                // mish\left(x\right)=x\cdot\frac{e^{\ln\left(e^{x}+1\right)}-e^{-\ln\left(e^{x}+1\right)}}{e^{\ln\left(e^{x}+1\right)}+e^{-\ln\left(e^{x}+1\right)}}
+                var expXPlus1 = TNumber.Exp(inputMemory[i]) + TNumber.One;
+                var lnExpXPlus1 = TNumber.Log(expXPlus1);
+                var expLnExpPlus1 = TNumber.Exp(lnExpXPlus1);
+                var negExpLnExpPlus1 = TNumber.Exp(-lnExpXPlus1);
+
+                outputMemory[i] = inputMemory[i] * (expLnExpPlus1 - negExpLnExpPlus1) / (expLnExpPlus1 + negExpLnExpPlus1);
             });
     }
 
     public void MishPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-        var logE = TNumber.Log(TNumber.E);
+        var two = TNumber.CreateChecked(2);
+        var minusOne = TNumber.Zero - TNumber.One;
+        var minusTwo = TNumber.Zero - two;
 
         _ = LazyParallelExecutor.For(
             0,
@@ -205,17 +212,22 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i =>
             {
-                // f\left(x\right)=\left(1-\frac{\left(e^{\log\left(1+e^{x}\right)}-e^{-\log\left(1+e^{x}\right)}\right)^{2}}{\left(e^{\log\left(1+e^{x}\right)}+e^{-\log\left(1+e^{x}\right)}\right)^{2}}\right)\cdot\left(\frac{e^{x}}{1+e^{x}}\right)\cdot\log\left(e\right)
-                var exp = TNumber.Exp(inputMemory[i]);
-                var softplus = TNumber.Log(TNumber.One + exp);
-                var expSoftplus = TNumber.Exp(softplus);
-                var expNegSoftplus = TNumber.Exp(-softplus);
-                var tanhPrimeNumeratorSquared = (expSoftplus - expNegSoftplus) * (expSoftplus - expNegSoftplus);
-                var tanhPrimeDenominatorSquared = (expSoftplus + expNegSoftplus) * (expSoftplus + expNegSoftplus);
-                var tanhPrimePart = TNumber.One - (tanhPrimeNumeratorSquared / tanhPrimeDenominatorSquared);
-                var softPlusPrimePart = exp / (TNumber.One + exp);
+                // mish'\left(x\right)=\frac{-1+\left(1+e^{x}\right)^{2}}{1+\left(1+e^{x}\right)^{2}}-\frac{2e^{x}\left(1+e^{x}\right)\left(-1+\left(1+e^{x}\right)^{2}\right)x}{\left(1+\left(1+e^{x}\right)^{2}\right)^{2}}+\frac{2e^{x}\left(1+e^{x}\right)x}{1+\left(1+e^{x}\right)^{2}}
+                var eToTheX = TNumber.Exp(inputMemory[i]);
+                var onePlusEX = TNumber.One + eToTheX;
+                var onePlusEXSquared = onePlusEX * onePlusEX;
 
-                outputMemory[i] = tanhPrimePart * softPlusPrimePart * logE;
+                // \frac{-1+\left(1+e^{x}\right)^{2}}{1+\left(1+e^{x}\right)^{2}}
+                var firstTerm = (minusOne + onePlusEXSquared) / (TNumber.One + onePlusEXSquared);
+
+                // \frac{2e^{x}\left(1+e^{x}\right)\left(-1+\left(1+e^{x}\right)^{2}\right)x}{\left(1+\left(1+e^{x}\right)^{2}\right)^{2}}
+                var onePlusExpXSquared = (TNumber.One + onePlusEXSquared) * (TNumber.One + onePlusEXSquared);
+                var secondTerm = minusTwo * eToTheX * onePlusEX * (minusOne + onePlusEXSquared) * inputMemory[i] / onePlusExpXSquared;
+
+                // \frac{2e^{x}\left(1+e^{x}\right)x}{1+\left(1+e^{x}\right)^{2}}
+                var thirdTerm = two * eToTheX * onePlusEX * inputMemory[i] / (TNumber.One + onePlusEXSquared);
+
+                outputMemory[i] = firstTerm + secondTerm + thirdTerm;
             });
     }
 
@@ -261,7 +273,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i =>
             {
 #pragma warning disable IDE0045
-                if (inputMemory[i] < min || inputMemory[i] > max)
+                if (inputMemory[i] <= min || inputMemory[i] >= max)
                 {
                     outputMemory[i] = TNumber.Zero;
                 }
@@ -278,6 +290,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
+        var minusOne = TNumber.Zero - TNumber.One;
         var two = TNumber.CreateChecked(2);
 
         _ = LazyParallelExecutor.For(
@@ -286,9 +299,20 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i =>
             {
-                outputMemory[i] = inputMemory[i] <= -TNumber.One || inputMemory[i] >= TNumber.One
-                    ? TNumber.Zero
-                    : (inputMemory[i] + TNumber.One) / two;
+#pragma warning disable IDE0045
+                if (inputMemory[i] <= minusOne)
+                {
+                    outputMemory[i] = TNumber.Zero;
+                }
+                else if (inputMemory[i] >= TNumber.One)
+                {
+                    outputMemory[i] = TNumber.One;
+                }
+                else
+                {
+                    outputMemory[i] = inputMemory[i] / two;
+                }
+#pragma warning restore IDE0045
             });
     }
 
@@ -329,18 +353,12 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-        var logE = TNumber.Log(TNumber.E);
 
         _ = LazyParallelExecutor.For(
             0,
             inputMemory.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var exp = TNumber.One / (TNumber.One + TNumber.Exp(inputMemory[i]));
-
-                outputMemory[i] = exp * logE;
-            });
+            i => outputMemory[i] = TNumber.One / (TNumber.One + TNumber.Exp(inputMemory[i])));
     }
 
     public void GELU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -350,32 +368,6 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
         var two = TNumber.CreateChecked(2);
         var magicNumber = TNumber.CreateChecked(0.044715);
-
-        _ = LazyParallelExecutor.For(
-            0,
-            inputMemory.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i =>
-            {
-                var x = inputMemory[i];
-                var xSquared = x * x;
-                var xCubed = x * xSquared;
-                var part1 = TNumber.Sqrt(two / TNumber.Pi);
-                var part2 = x + (magicNumber * xCubed);
-
-                outputMemory[i] = x / two * (TNumber.One + TNumber.Tanh(part1 * part2));
-            });
-    }
-
-    public void GELUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
-    {
-        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
-        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-        var magicNumber1 = TNumber.CreateChecked(0.044715);
-        var magicNumber2 = TNumber.CreateChecked(0.134145);
-        var two = TNumber.CreateChecked(2);
-        var half = TNumber.CreateChecked(0.5);
         var sqrtPiTerm = TNumber.Sqrt(two / TNumber.Pi);
 
         _ = LazyParallelExecutor.For(
@@ -385,12 +377,52 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i =>
             {
                 var x = inputMemory[i];
+                var halfX = x / two;
+                var xCubed = x * x * x;
+                var tanhArg = sqrtPiTerm * (x + (magicNumber * xCubed));
 
-                var tanhArg = sqrtPiTerm * (x + (magicNumber1 * x * x * x));
-                var tanhVal = TNumber.Tanh(tanhArg);
-                var sechVal = TNumber.One / TNumber.Cosh(tanhArg);
+                outputMemory[i] = halfX * (TNumber.One + TNumber.Tanh(tanhArg));
+            });
+    }
 
-                outputMemory[i] = (half * (TNumber.One + tanhVal)) + (half * x * (TNumber.One - (sechVal * sechVal)) * sqrtPiTerm * (TNumber.One + (magicNumber2 * x * x)));
+    public void GELUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
+    {
+        var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
+        var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
+        var magicNumber1 = TNumber.CreateChecked(0.3989422804014327);
+        var magicNumber2 = TNumber.CreateChecked(0.134145);
+        var magicNumber3 = TNumber.CreateChecked(0.044715);
+        var two = TNumber.CreateChecked(2);
+        var half = TNumber.One / two;
+        var sqrtPiTerm = TNumber.Sqrt(two / TNumber.Pi);
+
+        _ = LazyParallelExecutor.For(
+            0,
+            inputMemory.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var xSquared = inputMemory[i] * inputMemory[i];
+                var xCubed = inputMemory[i] * outputMemory[i] * inputMemory[i];
+                var xPlusMagicXCubed = inputMemory[i] + (magicNumber3 * xCubed);
+
+                // \sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)
+                var tanhArg = sqrtPiTerm * xPlusMagicXCubed;
+
+                // 0.5\left(1+\tanh\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)\right)
+                var halfTanhTerm = half * (TNumber.One + TNumber.Tanh(tanhArg));
+
+                // \operatorname{sech}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)
+                var sechTerm = TNumber.One / TNumber.Cosh(tanhArg);
+
+                // \operatorname{sech}^{2}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)
+                var sechSquared = sechTerm * sechTerm;
+
+                // 0.3989422804014327x\left(1+0.134145x^{2}\right)
+                var firstMagicTerm = magicNumber1 * inputMemory[i] * (TNumber.One + (magicNumber2 * xSquared));
+
+                outputMemory[i] = (firstMagicTerm * sechSquared) + halfTanhTerm;
             });
     }
 
