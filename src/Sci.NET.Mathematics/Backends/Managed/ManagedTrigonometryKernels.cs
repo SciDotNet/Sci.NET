@@ -380,7 +380,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             0,
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.One / TNumber.Tan(tensorBlock[i]));
+            i => resultBlock[i] = TNumber.One / TNumber.Sin(tensorBlock[i]));
     }
 
     public void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
