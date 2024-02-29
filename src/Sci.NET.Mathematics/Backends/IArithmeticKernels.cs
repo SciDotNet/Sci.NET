@@ -235,6 +235,19 @@ public interface IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Finds the absolute difference between two <see cref="IMemoryBlock{TNumber}"/>s.
+    /// </summary>
+    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to subtract from.</param>
+    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to subtract.</param>
+    /// <param name="result">The result of the absolute difference.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
+    public void AbsoluteDifference<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        IMemoryBlock<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Takes the square root of the elements of a <see cref="IMemoryBlock{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The <see cref="IMemoryBlock{TNumber}"/> to take the square root of.</param>

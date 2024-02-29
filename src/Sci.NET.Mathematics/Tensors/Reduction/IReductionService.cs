@@ -18,7 +18,40 @@ public interface IReductionService
     /// <param name="axes">The axes to sum over.</param>
     /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The sum of all of the elements in the <see cref="ITensor{TNumber}"/>.</returns>
+    /// <returns>The sum of all of the elements in the <see cref="ITensor{TNumber}"/> over the selected axes.</returns>
     public ITensor<TNumber> Sum<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the mean of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the mean of.</param>
+    /// <param name="axes">The axes to find the mean over.</param>
+    /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The mean of all of the elements in the <see cref="ITensor{TNumber}"/> over the selected axes.</returns>
+    public ITensor<TNumber> Mean<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the maximum value of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the maximum value of.</param>
+    /// <param name="axes">The axes to find the maximum value over.</param>
+    /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The maximum value of all of the elements in the <see cref="ITensor{TNumber}"/> over the selected axes.</returns>
+    public ITensor<TNumber> Max<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the minimum value of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to find the minimum value of.</param>
+    /// <param name="axes">The axes to find the minimum value over.</param>
+    /// <param name="keepDims">A value indicating whether the dimensions should be preserved.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The minimum value of all of the elements in the <see cref="ITensor{TNumber}"/> over the selected axes.</returns>
+    public ITensor<TNumber> Min<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>;
 }

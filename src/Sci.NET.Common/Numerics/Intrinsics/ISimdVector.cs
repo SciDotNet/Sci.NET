@@ -16,6 +16,11 @@ public interface ISimdVector<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
+    /// Gets the number of elements in the <see cref="ISimdVector{TNumber}"/>.
+    /// </summary>
+    public int Count { get; }
+
+    /// <summary>
     /// Gets the element at the provided index.
     /// </summary>
     /// <param name="index">The index.</param>
@@ -63,8 +68,41 @@ public interface ISimdVector<TNumber>
     public TNumber Sum();
 
     /// <summary>
+    /// Finds the square difference between the two vectors.
+    /// </summary>
+    /// <param name="other">The other parameter.</param>
+    /// <returns>The square difference between the two vectors.</returns>
+    public ISimdVector<TNumber> SquareDifference(ISimdVector<TNumber> other);
+
+    /// <summary>
+    /// Creates a duplicate of the instance with all values zeroed.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ISimdVector{TNumber}"/> with all values zeroed.</returns>
+    public ISimdVector<TNumber> CreateDuplicateZeroed();
+
+    /// <summary>
     /// Copies the vector to the provided span.
     /// </summary>
     /// <param name="span">The destination span.</param>
     public void CopyTo(Span<TNumber> span);
+
+    /// <summary>
+    /// Creates an instance of the <see cref="ISimdVector{TNumber}"/> with the given values.
+    /// </summary>
+    /// <param name="values">The values of the <see cref="ISimdVector{TNumber}"/>.</param>
+    /// <returns>An instance of the <see cref="ISimdVector{TNumber}"/> with the given values.</returns>
+    /// <remarks>Mainly used to create a <see cref="ISimdVector{TNumber}"/> of the same type without type checking overhead.</remarks>
+    public ISimdVector<TNumber> CreateWith(Span<TNumber> values);
+
+    /// <summary>
+    /// Finds the maximum element in the <see cref="ISimdVector{TNumber}"/>.
+    /// </summary>
+    /// <returns>The maximum element in the <see cref="ISimdVector{TNumber}"/>.</returns>
+    public TNumber MaxElement();
+
+    /// <summary>
+    /// Finds the minimum element in the <see cref="ISimdVector{TNumber}"/>.
+    /// </summary>
+    /// <returns>The minimum element in the <see cref="ISimdVector{TNumber}"/>.</returns>
+    public TNumber MinElement();
 }

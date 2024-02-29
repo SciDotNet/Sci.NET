@@ -174,6 +174,33 @@ public interface ITrigonometryService
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>
+    /// Calculates the inverse sine squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse sine squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The inverse sine squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Asin2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Calculates the inverse cosine squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse cosine squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The inverse cosine squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Acos2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Calculates the inverse tangent squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse tangent squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The inverse tangent squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Atan2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
     /// Calculates the inverse hyperbolic sine squared of the specified <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the inverse hyperbolic sine squared of.</param>
