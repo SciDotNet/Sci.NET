@@ -262,7 +262,7 @@ public class MsilToIrTranslator
 
         var firstBlockInstructions = instructions[..offsetToIndex[leaders[1]]];
 
-        basicBlocks.Add(new BasicBlock("block_0", firstBlockInstructions));
+        basicBlocks.Add(new BasicBlock("block_1", firstBlockInstructions));
 
         for (var i = 1; i < leaders.Count - 1; i++)
         {
@@ -271,7 +271,7 @@ public class MsilToIrTranslator
         }
 
         var lastBlockInstructions = instructions[(leaders[^1] - 1) ..];
-        basicBlocks.Add(new BasicBlock($"block_{leaders.Count - 1}", lastBlockInstructions));
+        basicBlocks.Add(new BasicBlock($"block_{leaders.Count}", lastBlockInstructions));
 
         var firstBlock = GetLocalsForBlock(basicBlocks[0]);
         basicBlocks.Insert(0, firstBlock);
@@ -291,7 +291,7 @@ public class MsilToIrTranslator
 
         locals.Add(new BranchInstruction { Target = basicBlock, MsilInstruction = null });
 
-        return new BasicBlock("block_variable_init", locals);
+        return new BasicBlock("block_0", locals);
     }
 
     private List<ISsaVariable> ExtractOperands(MsilInstruction<IMsilOperand> node)
