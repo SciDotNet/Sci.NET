@@ -1,21 +1,24 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.Disassembly.Pdb;
 
 namespace Sci.NET.Accelerators.Disassembly;
 
 /// <summary>
 /// Disassembles method bytes into MSIL instructions.
 /// </summary>
-[PublicAPI]
-public class MsilDisassembler
+internal class MsilDisassembler
 {
     private readonly MsilMethodMetadata _methodMetadata;
+    private readonly ImmutableDictionary<int, PdbSequencePoint> _sequencePoints;
     private readonly byte[] _ilBytes;
     private BlobReader _blobReader;
 
@@ -28,6 +31,14 @@ public class MsilDisassembler
         _methodMetadata = metadata;
         _ilBytes = metadata.MethodBody.GetILAsByteArray() ?? throw new ArgumentException("Method body is null.", nameof(metadata));
         _blobReader = new BlobReader((byte*)Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(_ilBytes)), _ilBytes.Length);
+        _sequencePoints = metadata.MethodDebugInfo.SequencePoints.Select(x => new KeyValuePair<int, PdbSequencePoint>(x.Offset, x)).ToImmutableDictionary();
+    }
+
+    public static DisassembledMsilMethod DisassembleFromMethodBase(MethodBase methodBase)
+    {
+        var metadata = new MsilMethodMetadata(methodBase);
+        var disassembler = new MsilDisassembler(metadata);
+        return disassembler.Disassemble();
     }
 
     /// <summary>
@@ -138,6 +149,11 @@ public class MsilDisassembler
             else
             {
                 instruction = instruction with { Operand = default(MsilNoOperand), OperandType = OperandType.InlineNone };
+            }
+
+            if (_sequencePoints.TryGetValue(instruction.Offset, out var value))
+            {
+                instruction = instruction with { SequencePoint = value };
             }
 
             instruction = ExpandShortFormInstruction(instruction);

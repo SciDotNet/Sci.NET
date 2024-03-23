@@ -57,7 +57,7 @@
     </Choose>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <DebugType>full</DebugType>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
 
     <ItemGroup>

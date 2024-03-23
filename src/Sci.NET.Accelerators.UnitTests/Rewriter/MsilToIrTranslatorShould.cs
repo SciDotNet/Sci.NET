@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics.SymbolStore;
 using System.Reflection;
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Pdb;
 using Sci.NET.Accelerators.IR;
 using Sci.NET.Accelerators.IR.Instructions;
 using Sci.NET.Accelerators.IR.Instructions.Arithmetic;
@@ -28,6 +30,8 @@ public class MsilToIrTranslatorShould
         var rightParameterMock = new Mock<ParameterInfo>();
         var resultParameterMock = new Mock<ParameterInfo>();
         var lengthParameterMock = new Mock<ParameterInfo>();
+        var methodDebugInfoMock = new Mock<MethodDebugInfo>();
+
         var methodBodyBytes = new byte[]
         {
             0x00, 0x16, 0x0A, 0x2B, 0x1C, 0x00, 0x04, 0x06, 0xD3, 0x1A, 0x5A, 0x58, 0x02, 0x06, 0xD3, 0x1A, 0x5A, 0x58, 0x4E, 0x03, 0x06, 0xD3, 0x1A, 0x5A, 0x58, 0x4E, 0x58, 0x56, 0x00, 0x06, 0x17, 0x58, 0x0A, 0x06, 0x6A, 0x05, 0xFE, 0x04, 0x0B, 0x07, 0x2D, 0xDB, 0x2A
@@ -67,7 +71,7 @@ public class MsilToIrTranslatorShould
         {
             Module = moduleMock.Object,
             Parameters = parameters.ToArray(),
-            Variables = variables.ToArray(),
+            Variables = variables.ToImmutableArray(),
             CodeSize = methodBodyBytes.Length,
             InitLocals = true,
             MaxStack = 5,
@@ -76,7 +80,8 @@ public class MsilToIrTranslatorShould
             ReturnType = typeof(long),
             MethodGenericArguments = Array.Empty<Type>(),
             TypeGenericArguments = Array.Empty<Type>(),
-            LocalVariablesSignatureToken = new SymbolToken(999)
+            LocalVariablesSignatureToken = new SymbolToken(999),
+            MethodDebugInfo = methodDebugInfoMock.Object
         };
 
         var disassembler = new MsilDisassembler(metadata);

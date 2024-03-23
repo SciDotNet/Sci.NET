@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.Disassembly.Pdb;
 using Sci.NET.Common.Comparison;
 
 namespace Sci.NET.Accelerators.Disassembly;
@@ -116,6 +117,11 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
     /// </summary>
     public bool IsConditionalBranch => FlowControl
         is FlowControl.Cond_Branch;
+
+    /// <summary>
+    /// Gets the sequence point.
+    /// </summary>
+    public PdbSequencePoint? SequencePoint { get; init; }
 
     /// <inheritdoc />
     public static bool operator ==(MsilInstruction<TOperand> left, MsilInstruction<TOperand> right)

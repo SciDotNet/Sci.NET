@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.SymbolStore;
 using System.Reflection;
@@ -23,7 +24,15 @@ public class MsilMethodMetadata
     [SetsRequiredMembers]
     public MsilMethodMetadata(MethodBase methodBase)
     {
-        var reader = PdbSymbolProvider.ReadPdbFile(methodBase.Module.Assembly);
+        var debugInfoSuccess = DebugInformationManager.TryLoadMethodDebugInformation(methodBase, out var methodDebugInfo);
+
+        MethodDebugInfo = methodDebugInfo;
+
+        if (!debugInfoSuccess)
+        {
+            throw new InvalidOperationException("Debug information not loaded.");
+        }
+
         MethodBase = methodBase;
         MethodBody = methodBase.GetMethodBody() ?? throw new InvalidOperationException("Method body is null.");
         ReturnType = methodBase is MethodInfo methodInfo ? methodInfo.ReturnType : typeof(void);
@@ -32,10 +41,23 @@ public class MsilMethodMetadata
         LocalVariablesSignatureToken = new SymbolToken(MethodBody.LocalSignatureMetadataToken);
         InitLocals = MethodBody.InitLocals;
         Parameters = methodBase.GetParameters().ToArray();
-        Variables = reader.GetMethodVariables(methodBase);
         TypeGenericArguments = methodBase.DeclaringType?.GetGenericArguments().ToArray() ?? Array.Empty<Type>();
         MethodGenericArguments = methodBase.GetGenericArguments().ToArray();
         Module = methodBase.Module;
+
+        var variablesBuilder = ImmutableArray.CreateBuilder<LocalVariable>();
+
+        foreach (var localVariable in MethodBody.LocalVariables)
+        {
+            var pdbVariable = MethodDebugInfo.LocalVariables.FirstOrDefault(x => x.Index == localVariable.LocalIndex);
+
+            variablesBuilder.Add(
+                pdbVariable == default
+                    ? new LocalVariable { Index = localVariable.LocalIndex, Name = pdbVariable.Name, Type = localVariable.LocalType }
+                    : new LocalVariable { Index = localVariable.LocalIndex, Name = $"loc_{localVariable.LocalIndex}", Type = localVariable.LocalType });
+        }
+
+        Variables = variablesBuilder.ToImmutable();
     }
 
     /// <summary>
@@ -73,7 +95,7 @@ public class MsilMethodMetadata
     /// <summary>
     /// Gets the local variables.
     /// </summary>
-    public required LocalVariable[] Variables { get; init; }
+    public required ImmutableArray<LocalVariable> Variables { get; init; }
 
     /// <summary>
     /// Gets the type generic arguments.
@@ -104,4 +126,9 @@ public class MsilMethodMetadata
     /// Gets the module.
     /// </summary>
     public required Module Module { get; init; }
+
+    /// <summary>
+    /// Gets the method debug information.
+    /// </summary>
+    public required MethodDebugInfo MethodDebugInfo { get; init; }
 }
