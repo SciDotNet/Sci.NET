@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
@@ -20,6 +21,9 @@ public class SignExtendInstruction : IValueYieldingInstruction
     public string Name => "sext";
 
     /// <inheritdoc />
+    public ImmutableArray<IrValue> Operands => ImmutableArray.Create(Value);
+
+    /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
     /// <inheritdoc />
@@ -31,7 +35,7 @@ public class SignExtendInstruction : IValueYieldingInstruction
     public required IrValue Value { get; init; }
 
     /// <inheritdoc />
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel)
+    public StringBuilder WriteToIrString(StringBuilder builder)
     {
         return builder.Append('%').Append(Result.Identifier).Append(" = sext ").AppendWritable(Value).Append(" to ").AppendWritable(Result.Type);
     }

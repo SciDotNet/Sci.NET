@@ -54,6 +54,23 @@ public readonly struct PdbSequencePoint : IValueEquatable<PdbSequencePoint>
         return !left.Equals(right);
     }
 
+    /// <summary>
+    /// Gets a sequence point that does not exist.
+    /// </summary>
+    /// <returns>A sequence point that does not exist.</returns>
+    public static PdbSequencePoint None()
+    {
+        return new ()
+        {
+            Offset = -1,
+            DocumentName = string.Empty,
+            StartLine = -1,
+            StartColumn = -1,
+            EndLine = -1,
+            EndColumn = -1
+        };
+    }
+
     /// <inheritdoc cref="IValueEquatable{T}.Equals(T)" />
     public bool Equals(PdbSequencePoint other)
     {

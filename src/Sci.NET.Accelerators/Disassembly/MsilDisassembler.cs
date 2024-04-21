@@ -47,7 +47,9 @@ internal class MsilDisassembler
     /// <returns>The disassembled method body.</returns>
     public DisassembledMsilMethod Disassemble()
     {
-        return new () { Metadata = _methodMetadata, Instructions = ReadInstructions().ToList() };
+        var instructions = ReadInstructions();
+
+        return new DisassembledMsilMethod { Metadata = _methodMetadata, Instructions = instructions.ToList() };
     }
 
     private static MsilInstruction<IMsilOperand> ExpandShortFormInstruction(MsilInstruction<IMsilOperand> instruction)
@@ -249,7 +251,7 @@ internal class MsilDisassembler
             or OpCodeTypes.Starg_S;
 
         return isArgument
-            ? new MsilInlineVarOperand { Value = _methodMetadata.Parameters[index].ParameterType, Index = index, OperandType = OperandType.InlineVar }
-            : new MsilInlineVarOperand { Value = _methodMetadata.Variables[index].Type, Index = index, OperandType = OperandType.InlineVar };
+            ? new MsilInlineVarOperand { Value = _methodMetadata.Parameters[index].ParameterType, Index = index, OperandType = OperandType.InlineVar, Name = _methodMetadata.Parameters[index].Name ?? $"param_{index}" }
+            : new MsilInlineVarOperand { Value = _methodMetadata.Variables[index].Type, Index = index, OperandType = OperandType.InlineVar, Name = _methodMetadata.Variables[index].Name };
     }
 }

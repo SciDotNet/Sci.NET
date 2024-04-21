@@ -18,8 +18,8 @@ internal static class StringBuilderExtensions
         return builder;
     }
 
-    public static StringBuilder AppendWritable(this StringBuilder builder, IIrWritable writable, int indentLevel = 0)
+    public static StringBuilder AppendWritable(this StringBuilder builder, IIrWritable writable)
     {
-        return writable.WriteToIrString(builder, indentLevel);
+        return writable.WriteToIrString(builder);
     }
 }

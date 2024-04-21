@@ -18,14 +18,19 @@ public readonly struct MsilInlineVarOperand : IMsilOperand, IValueEquatable<Msil
     public required OperandType OperandType { get; init; }
 
     /// <summary>
-    /// Gets the value of the operand.
+    /// Gets the type of the variable.
     /// </summary>
     public required Type Value { get; init; }
 
     /// <summary>
-    /// Gets the index of the operand.
+    /// Gets the index of the variable.
     /// </summary>
     public required int Index { get; init; }
+
+    /// <summary>
+    /// Gets the name of the variable.
+    /// </summary>
+    public required string Name { get; init; }
 
     /// <inheritdoc />
     public static bool operator ==(MsilInlineVarOperand left, MsilInlineVarOperand right)

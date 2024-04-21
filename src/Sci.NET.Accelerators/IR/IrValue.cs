@@ -56,7 +56,7 @@ public readonly struct IrValue : IIrWritable, IValueEquatable<IrValue>
     }
 
     /// <inheritdoc />
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel)
+    public StringBuilder WriteToIrString(StringBuilder builder)
     {
         if (Type.IsPointer)
         {

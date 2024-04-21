@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
@@ -20,6 +21,9 @@ public class StoreElementAtPointerInstruction : IInstruction
     public string Name => "store";
 
     /// <inheritdoc />
+    public ImmutableArray<IrValue> Operands => ImmutableArray.Create(Value, Pointer);
+
+    /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
     /// <summary>
@@ -35,7 +39,7 @@ public class StoreElementAtPointerInstruction : IInstruction
 #pragma warning restore CA1720
 
     /// <inheritdoc />
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel)
+    public StringBuilder WriteToIrString(StringBuilder builder)
     {
         return builder.Append("store ").AppendWritable(Value.Type).Append(' ').AppendWritable(Value).Append(", ").AppendWritable(Pointer);
     }

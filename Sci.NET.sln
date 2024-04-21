@@ -43,6 +43,54 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Accelerators", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Accelerators.UnitTests", "src\Sci.NET.Accelerators.UnitTests\Sci.NET.Accelerators.UnitTests.csproj", "{83054C92-5B36-4BF0-A5C2-E05D68E3F078}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{E435E549-ABAE-44E2-BD1F-FC6090A7EAD0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libllvm", "libllvm", "{3D2FA6D4-B835-4CD0-9EEA-929F317C0618}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM", "Sci.NET.LLVM.LibLLVM", "{B5BD45DD-BE86-48F5-8F35-7604B2D5059B}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM\runtime.json = Packages\libllvm\Sci.NET.LLVM.LibLLVM\runtime.json
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM\Sci.NET.LLVM.LibLLVM.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM\Sci.NET.LLVM.LibLLVM.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM.runtime.linux-arm64", "Sci.NET.LLVM.LibLLVM.runtime.linux-arm64", "{3B072095-4CF9-470F-84D5-0FF6F31612AC}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-arm64\LICENSE.txt = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-arm64\LICENSE.txt
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-arm64\Sci.NET.LLVM.LibLLVM.runtime.linux-arm64.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-arm64\Sci.NET.LLVM.LibLLVM.runtime.linux-arm64.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM.runtime.linux-x64", "Sci.NET.LLVM.LibLLVM.runtime.linux-x64", "{EDDDE54D-A331-4468-948D-87E25A538104}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-x64\LICENSE.txt = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-x64\LICENSE.txt
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-x64\Sci.NET.LLVM.LibLLVM.runtime.linux-x64.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.linux-x64\Sci.NET.LLVM.LibLLVM.runtime.linux-x64.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM.runtime.osx-arm64", "Sci.NET.LLVM.LibLLVM.runtime.osx-arm64", "{1FFE59E9-6A68-4850-8665-DA7CC1784FE7}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-arm64\LICENSE.txt = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-arm64\LICENSE.txt
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-arm64\Sci.NET.LLVM.LibLLVM.runtime.osx-arm64.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-arm64\Sci.NET.LLVM.LibLLVM.runtime.osx-arm64.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64", "Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64", "{4C38DBE2-6E6A-45DF-A775-B6DE708046FB}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64\LICENSE.txt = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64\LICENSE.txt
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64\Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64\Sci.NET.LLVM.LibLLVM.runtime.osx-win-arm64.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM.runtime.osx-x64", "Sci.NET.LLVM.LibLLVM.runtime.osx-x64", "{A3957383-BFB0-4398-9297-C8AE09402B25}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-x64\LICENSE.txt = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-x64\LICENSE.txt
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-x64\Sci.NET.LLVM.LibLLVM.runtime.osx-x64.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.osx-x64\Sci.NET.LLVM.LibLLVM.runtime.osx-x64.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sci.NET.LLVM.LibLLVM.runtime.win-x64", "Sci.NET.LLVM.LibLLVM.runtime.win-x64", "{21A6DF22-E52D-4DF1-BAF5-4036D9230126}"
+	ProjectSection(SolutionItems) = preProject
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.win-x64\LICENSE.txt = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.win-x64\LICENSE.txt
+		Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.win-x64\Sci.NET.LLVM.LibLLVM.runtime.win-x64.nuspec = Packages\libllvm\Sci.NET.LLVM.LibLLVM.runtime.win-x64\Sci.NET.LLVM.LibLLVM.runtime.win-x64.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libcuda", "libcuda", "{3A31303E-4EDA-42AB-B2BF-6A789C441CA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +156,15 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
 		{2C72FFC2-F938-4A08-85E5-19DB2066C61A} = {23D4B1C9-4CC8-4B4A-BE72-14FFAE5263B2}
+		{3D2FA6D4-B835-4CD0-9EEA-929F317C0618} = {E435E549-ABAE-44E2-BD1F-FC6090A7EAD0}
+		{B5BD45DD-BE86-48F5-8F35-7604B2D5059B} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{3B072095-4CF9-470F-84D5-0FF6F31612AC} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{EDDDE54D-A331-4468-948D-87E25A538104} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{1FFE59E9-6A68-4850-8665-DA7CC1784FE7} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{4C38DBE2-6E6A-45DF-A775-B6DE708046FB} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{A3957383-BFB0-4398-9297-C8AE09402B25} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{21A6DF22-E52D-4DF1-BAF5-4036D9230126} = {3D2FA6D4-B835-4CD0-9EEA-929F317C0618}
+		{3A31303E-4EDA-42AB-B2BF-6A789C441CA7} = {E435E549-ABAE-44E2-BD1F-FC6090A7EAD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC5435D4-B949-4EC3-9C76-673335B11820}

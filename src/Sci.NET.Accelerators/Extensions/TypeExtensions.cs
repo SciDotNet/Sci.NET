@@ -98,7 +98,7 @@ public static class TypeExtensions
         var fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var fieldTypes = fields.Select(x => x.FieldType.ToIrType()).ToList();
         var totalSize = fieldTypes.Sum(x => x.Bits);
-        var name = $"type {{ {string.Join(", ", fieldTypes.Select(x => x.ToString()))} }}";
+        var name = $"type {{ {string.Join(", ", fieldTypes.Select(x => x.Name))} }}";
 
         return new IrType { Name = name, Bits = totalSize, IsIntrinsic = false, DotnetType = type, IsPointer = false };
     }

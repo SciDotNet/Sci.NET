@@ -322,7 +322,7 @@ public sealed class IrType : IIrWritable
     }
 
     /// <inheritdoc />
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel)
+    public StringBuilder WriteToIrString(StringBuilder builder)
     {
         return builder.Append('@').Append(Name);
     }

@@ -13,4 +13,8 @@
       <ProjectReference Include="..\Sci.NET.Accelerators\Sci.NET.Accelerators.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Rewriter\" />
+    </ItemGroup>
+
 </Project>

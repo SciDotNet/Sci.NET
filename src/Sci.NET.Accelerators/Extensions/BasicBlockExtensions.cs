@@ -23,7 +23,7 @@ public static class BasicBlockExtensions
 
         foreach (var block in basicBlocks)
         {
-            _ = block.WriteToIrString(sb, 0);
+            _ = block.WriteToIrString(sb);
         }
 
         return sb.ToString();

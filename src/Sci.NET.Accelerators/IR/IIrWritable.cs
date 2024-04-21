@@ -15,7 +15,6 @@ public interface IIrWritable
     /// Writes the IR string representation to the string builder.
     /// </summary>
     /// <param name="builder">The string builder to write to.</param>
-    /// <param name="indentLevel">The indent level.</param>
     /// <returns>The instance of the string builder.</returns>
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel);
+    public StringBuilder WriteToIrString(StringBuilder builder);
 }

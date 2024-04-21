@@ -123,6 +123,11 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
     /// </summary>
     public PdbSequencePoint? SequencePoint { get; init; }
 
+    /// <summary>
+    /// Gets a value indicating whether the instruction is a call instruction.
+    /// </summary>
+    public bool IsCall => IlOpCode is OpCodeTypes.Call or OpCodeTypes.Callvirt or OpCodeTypes.Calli;
+
     /// <inheritdoc />
     public static bool operator ==(MsilInstruction<TOperand> left, MsilInstruction<TOperand> right)
     {

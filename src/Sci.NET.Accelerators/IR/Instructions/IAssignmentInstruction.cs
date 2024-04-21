@@ -4,7 +4,7 @@
 namespace Sci.NET.Accelerators.IR.Instructions;
 
 /// <summary>
-/// An instruction that assigns a value.
+/// Represents an instruction that assigns a value.
 /// </summary>
 [PublicAPI]
 public interface IAssignmentInstruction : IValueYieldingInstruction

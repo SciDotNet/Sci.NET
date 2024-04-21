@@ -448,8 +448,8 @@ public class MsilToIrTranslatorShould
         instruction7.Should().NotBeNull();
         instruction7?.Condition.Identifier.Should().Be("tmp_35");
         instruction7?.Condition.Type.Should().Be(IrType.Boolean);
-        instruction7?.TargetTrue.Should().Be(blocks[2]);
-        instruction7?.TargetFalse.Should().Be(blocks[4]);
+        instruction7?.Target.Should().Be(blocks[2]);
+        instruction7?.FalseTarget.Should().Be(blocks[4]);
     }
 
     private static void AssertBlock4(BasicBlock block)

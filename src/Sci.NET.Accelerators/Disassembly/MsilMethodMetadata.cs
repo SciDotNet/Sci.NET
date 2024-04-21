@@ -52,7 +52,7 @@ public class MsilMethodMetadata
             var pdbVariable = MethodDebugInfo.LocalVariables.FirstOrDefault(x => x.Index == localVariable.LocalIndex);
 
             variablesBuilder.Add(
-                pdbVariable == default
+                pdbVariable.Name is not null
                     ? new LocalVariable { Index = localVariable.LocalIndex, Name = pdbVariable.Name, Type = localVariable.LocalType }
                     : new LocalVariable { Index = localVariable.LocalIndex, Name = $"loc_{localVariable.LocalIndex}", Type = localVariable.LocalType });
         }

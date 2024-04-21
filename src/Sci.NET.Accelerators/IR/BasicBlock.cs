@@ -15,6 +15,8 @@ namespace Sci.NET.Accelerators.IR;
 [PublicAPI]
 public class BasicBlock : IIrWritable
 {
+    private readonly List<IInstruction> _instructions;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BasicBlock"/> class.
     /// </summary>
@@ -23,21 +25,21 @@ public class BasicBlock : IIrWritable
     public BasicBlock(string name, IReadOnlyCollection<MsilInstruction<IMsilOperand>> msilInstructions)
     {
         Name = name;
-        Instructions = new List<IInstruction>();
         MsilInstructions = msilInstructions;
+        _instructions = new List<IInstruction>();
     }
 
     internal BasicBlock(string name, IEnumerable<IInstruction> instructions)
     {
         Name = name;
-        Instructions = instructions.ToList();
         MsilInstructions = new List<MsilInstruction<IMsilOperand>>();
+        _instructions = instructions.ToList();
     }
 
     /// <summary>
     /// Gets the instructions of the basic block.
     /// </summary>
-    public IReadOnlyList<IInstruction> Instructions { get; private set; }
+    public IReadOnlyList<IInstruction> Instructions => _instructions;
 
     /// <summary>
     /// Gets the MSIL instructions of the basic block.
@@ -63,24 +65,45 @@ public class BasicBlock : IIrWritable
     public override string ToString()
     {
         var builder = new StringBuilder();
-        return WriteToIrString(builder, 0).ToString();
+        return WriteToIrString(builder).ToString();
     }
 
     /// <inheritdoc />
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel)
+    public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        _ = builder.AppendIndent(indentLevel).Append(Name).Append(':').AppendLine();
+        _ = builder.AppendIndent(0).Append(Name).Append(':').AppendLine();
 
         foreach (var instruction in Instructions)
         {
-            _ = instruction.WriteToIrString(builder, indentLevel + 1).AppendLine().AppendIndent(indentLevel + 1);
+            if (instruction is NopInstruction)
+            {
+                continue;
+            }
+
+            _ = builder.AppendIndent(1);
+            _ = instruction.WriteToIrString(builder).AppendLine();
         }
 
         return builder;
     }
 
-    internal void SetInstructions(IEnumerable<IInstruction> instruction)
+    /// <summary>
+    /// Sets the instructions of the basic block.
+    /// </summary>
+    /// <param name="instruction">The instructions to set.</param>
+    public void SetInstructions(IEnumerable<IInstruction> instruction)
     {
-        Instructions = instruction.ToList();
+        _instructions.Clear();
+        _instructions.AddRange(instruction.ToList());
+    }
+
+    /// <summary>
+    /// Replaces the instruction at the given index with the given instruction.
+    /// </summary>
+    /// <param name="index">The index of the instruction to replace.</param>
+    /// <param name="instruction">The instruction to replace with.</param>
+    public void ReplaceInstruction(int index, IInstruction instruction)
+    {
+        _instructions[index] = instruction;
     }
 }

@@ -65,7 +65,7 @@ public readonly struct Parameter : IIrWritable, IValueEquatable<Parameter>
     }
 
     /// <inheritdoc />
-    public StringBuilder WriteToIrString(StringBuilder builder, int indentLevel)
+    public StringBuilder WriteToIrString(StringBuilder builder)
     {
         return builder.AppendWritable(Type).Append(' ').Append(Identifier);
     }
