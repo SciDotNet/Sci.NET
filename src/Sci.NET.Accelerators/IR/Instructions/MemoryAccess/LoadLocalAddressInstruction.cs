@@ -26,6 +26,9 @@ public class LoadLocalAddressInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
     /// <summary>
     /// Gets the local variable to load the address of.
     /// </summary>

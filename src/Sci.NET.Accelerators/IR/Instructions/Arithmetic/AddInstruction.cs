@@ -26,6 +26,9 @@ public class AddInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
     /// <summary>
     /// Gets the left value.
     /// </summary>

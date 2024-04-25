@@ -14,7 +14,7 @@ namespace Sci.NET.Accelerators.IR.Instructions.Terminators;
 /// </summary>
 [PublicAPI]
 [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1206:Declaration keywords should follow order", Justification = "StyleCop does not support required members.")]
-public class BranchInstruction : IInstruction
+public class BranchInstruction : IBranchInstruction
 {
     /// <inheritdoc />
     public string Name => "br";
@@ -25,6 +25,9 @@ public class BranchInstruction : IInstruction
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
     /// <summary>
     /// Gets the target of the branch.
     /// </summary>
@@ -34,5 +37,11 @@ public class BranchInstruction : IInstruction
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
         return builder.Append("br ").Append(Target.Name);
+    }
+
+    /// <inheritdoc />
+    public IEnumerable<BasicBlock> GetAllTargets()
+    {
+        yield return Target;
     }
 }

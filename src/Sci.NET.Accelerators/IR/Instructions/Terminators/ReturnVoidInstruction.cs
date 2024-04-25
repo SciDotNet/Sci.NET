@@ -23,6 +23,9 @@ public class ReturnVoidInstruction : IInstruction
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
     /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
+    /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
         return builder.Append("ret");

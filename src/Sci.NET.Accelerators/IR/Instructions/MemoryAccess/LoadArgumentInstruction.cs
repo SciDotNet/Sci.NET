@@ -26,6 +26,9 @@ public class LoadArgumentInstruction : IAssignmentInstruction
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
     /// <summary>
     /// Gets the parameter to load.
     /// </summary>

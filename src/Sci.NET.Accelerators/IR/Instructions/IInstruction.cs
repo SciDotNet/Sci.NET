@@ -27,4 +27,9 @@ public interface IInstruction : IIrWritable
     /// Gets the corresponding MSIL instruction (if any).
     /// </summary>
     public MsilInstruction<IMsilOperand>? MsilInstruction { get; }
+
+    /// <summary>
+    /// Gets the basic block containing the instruction.
+    /// </summary>
+    public BasicBlock Block { get; }
 }

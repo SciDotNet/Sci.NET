@@ -27,6 +27,9 @@ public class DeclareLocalInstruction : IAssignmentInstruction
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
     /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
+    /// <inheritdoc />
     public required IrValue Result { get; init; }
 
     /// <summary>

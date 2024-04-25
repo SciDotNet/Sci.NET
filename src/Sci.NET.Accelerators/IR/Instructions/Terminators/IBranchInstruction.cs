@@ -13,4 +13,10 @@ public interface IBranchInstruction : IInstruction
     /// Gets the target of the branch.
     /// </summary>
     public BasicBlock Target { get; }
+
+    /// <summary>
+    /// Gets all targets of the branch.
+    /// </summary>
+    /// <returns>All targets of the branch.</returns>
+    public IEnumerable<BasicBlock> GetAllTargets();
 }

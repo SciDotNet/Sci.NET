@@ -26,6 +26,9 @@ public readonly struct NopInstruction : IInstruction, IValueEquatable<NopInstruc
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
     /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
+    /// <inheritdoc />
     public static bool operator ==(NopInstruction left, NopInstruction right)
     {
         return left.Equals(right);

@@ -26,6 +26,9 @@ public class ConditionalBranchInstruction : IConditionalBranchInstruction
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
     /// <summary>
     /// Gets condition to branch on.
     /// </summary>
@@ -40,6 +43,13 @@ public class ConditionalBranchInstruction : IConditionalBranchInstruction
     /// Gets the target of the branch.
     /// </summary>
     public required BasicBlock FalseTarget { get; init; }
+
+    /// <inheritdoc />
+    public IEnumerable<BasicBlock> GetAllTargets()
+    {
+        yield return Target;
+        yield return FalseTarget;
+    }
 
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)

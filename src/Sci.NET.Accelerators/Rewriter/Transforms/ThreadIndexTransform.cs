@@ -143,7 +143,8 @@ internal class ThreadIndexTransform : IIrTransform
                     Result = dim3Instruction.Result,
                     Type =
                         (ThreadInformationType)(((int)threadInformationInstruction.Type + (int)dim3Instruction.Field) << (int)threadInformationInstruction.Type),
-                    MsilInstruction = threadInformationInstruction.MsilInstruction
+                    MsilInstruction = threadInformationInstruction.MsilInstruction,
+                    Block = dim3Instruction.Block
                 });
 
             allBlocks.ElementAt(storeDim3BlockIndex + 1).RemoveInstruction(storeDim3InstructionIndex);

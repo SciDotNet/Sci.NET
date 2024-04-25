@@ -34,6 +34,7 @@ public class LoadDim3ValueInstruction : IValueYieldingInstruction
         Arguments = callInstruction.Arguments;
         Result = callInstruction.Result;
         MsilInstruction = callInstruction.MsilInstruction;
+        Block = callInstruction.Block;
     }
 
     /// <inheritdoc />
@@ -59,6 +60,9 @@ public class LoadDim3ValueInstruction : IValueYieldingInstruction
 
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
+
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
 
     /// <inheritdoc />
     public required IrValue Result { get; init; }

@@ -27,6 +27,9 @@ public class BranchGreaterThanInstruction : IConditionalBranchInstruction
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
     /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
+    /// <inheritdoc />
     public required BasicBlock Target { get; init; }
 
     /// <inheritdoc/>
@@ -41,6 +44,13 @@ public class BranchGreaterThanInstruction : IConditionalBranchInstruction
     /// Gets condition to branch on.
     /// </summary>
     public required IrValue Right { get; init; }
+
+    /// <inheritdoc />
+    public IEnumerable<BasicBlock> GetAllTargets()
+    {
+        yield return Target;
+        yield return FalseTarget;
+    }
 
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)

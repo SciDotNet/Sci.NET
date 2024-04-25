@@ -8,18 +8,8 @@ using Sci.NET.Accelerators.IR.Instructions;
 
 namespace Sci.NET.Accelerators.Rewriter.Transforms;
 
-/// <summary>
-/// Removes unused instructions.
-/// </summary>
-[PublicAPI]
-public class RemoveUnusedInstructions : IIrTransform
+internal class RemoveUnusedInstructions : IIrTransform
 {
-    /// <summary>
-    /// Transforms the instructions in a basic block.
-    /// </summary>
-    /// <param name="block">The basic block to transform.</param>
-    /// <param name="allBlocks">All basic blocks in the function.</param>
-    /// <exception cref="NotImplementedException">Thrown if the method is not implemented.</exception>
     public void Transform(BasicBlock block, ICollection<BasicBlock> allBlocks)
     {
         var usedValues = new HashSet<IrValue>();

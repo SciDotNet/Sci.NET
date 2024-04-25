@@ -28,6 +28,9 @@ public class StoreLocalInstruction : IInstruction
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }
 
+    /// <inheritdoc />
+    public required BasicBlock Block { get; init; }
+
     /// <summary>
     /// Gets the local variable to store to.
     /// </summary>

@@ -16,6 +16,8 @@ namespace Sci.NET.Accelerators.IR;
 public class BasicBlock : IIrWritable
 {
     private readonly List<IInstruction> _instructions;
+    private readonly List<BasicBlock> _predecessors;
+    private readonly List<BasicBlock> _successors;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BasicBlock"/> class.
@@ -23,17 +25,26 @@ public class BasicBlock : IIrWritable
     /// <param name="name">The name of the basic block.</param>
     /// <param name="msilInstructions">The MSIL instructions of the basic block.</param>
     public BasicBlock(string name, IReadOnlyCollection<MsilInstruction<IMsilOperand>> msilInstructions)
+        : this(name)
     {
         Name = name;
         MsilInstructions = msilInstructions;
-        _instructions = new List<IInstruction>();
     }
 
     internal BasicBlock(string name, IEnumerable<IInstruction> instructions)
+        : this(name)
     {
         Name = name;
-        MsilInstructions = new List<MsilInstruction<IMsilOperand>>();
         _instructions = instructions.ToList();
+    }
+
+    private BasicBlock(string name)
+    {
+        _instructions = new List<IInstruction>();
+        _predecessors = new List<BasicBlock>();
+        _successors = new List<BasicBlock>();
+        MsilInstructions = new List<MsilInstruction<IMsilOperand>>();
+        Name = name;
     }
 
     /// <summary>
@@ -45,6 +56,16 @@ public class BasicBlock : IIrWritable
     /// Gets the MSIL instructions of the basic block.
     /// </summary>
     public IReadOnlyCollection<MsilInstruction<IMsilOperand>> MsilInstructions { get; init; }
+
+    /// <summary>
+    /// Gets the predecessors of the basic block.
+    /// </summary>
+    public IReadOnlyCollection<BasicBlock> Predecessors => _predecessors;
+
+    /// <summary>
+    /// Gets the successors of the basic block.
+    /// </summary>
+    public IReadOnlyCollection<BasicBlock> Successors => _successors;
 
     /// <summary>
     /// Gets the name of the basic block.
@@ -114,5 +135,23 @@ public class BasicBlock : IIrWritable
     public void RemoveInstruction(int index)
     {
         _instructions.RemoveAt(index);
+    }
+
+    /// <summary>
+    /// Adds a successor to the basic block.
+    /// </summary>
+    /// <param name="instruction">The instruction to add as a successor.</param>
+    public void AddSuccessor(BasicBlock instruction)
+    {
+        _successors.Add(instruction);
+    }
+
+    /// <summary>
+    /// Adds a predecessor to the basic block.
+    /// </summary>
+    /// <param name="block">The block to add as a predecessor.</param>
+    public void AddPredecessor(BasicBlock block)
+    {
+        _predecessors.Add(block);
     }
 }
