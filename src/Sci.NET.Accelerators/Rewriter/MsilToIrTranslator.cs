@@ -388,9 +388,11 @@ public class MsilToIrTranslator
             PopBehaviour.Popi_popi_popi or PopBehaviour.Popref_popi_popi or PopBehaviour.Popref_popi_popi8
                 or PopBehaviour.Popref_popi_popr4 or PopBehaviour.Popref_popi_popr8 or PopBehaviour.Popref_popi_popref
                 or PopBehaviour.Popref_popi_pop1 => 3,
-            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 1 => 1,
+            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret &&
+                                   _disassembledMethod.Metadata.ReturnType != typeof(void) => 0,
             PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 0 &&
                                      _disassembledMethod.Metadata.ReturnType == typeof(void) => 0,
+            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 1 => 1,
             PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count > 0 =>
                 throw new InvalidOperationException("The stack is not empty."),
             PopBehaviour.Varpop when node.Operand is MsilMethodOperand operand => GetMethodCallPopBehaviour(operand),
@@ -687,7 +689,7 @@ public class MsilToIrTranslator
                 or OpCodeTypes.Stind_I8 or OpCodeTypes.Stind_R4 or OpCodeTypes.Stind_R8 =>
                 new StoreElementAtPointerInstruction { Value = operands[0].ToIrValue(), Pointer = operands[1].ToIrValue(), MsilInstruction = node, Block = block },
             OpCodeTypes.Clt => new CompareLessThanInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node, Block = block },
-            OpCodeTypes.Ret when operands.Count == 0 => new ReturnVoidInstruction { MsilInstruction = node, Block = block },
+            OpCodeTypes.Ret when operands.Count == 0 || _disassembledMethod.Metadata.ReturnType == typeof(void) => new ReturnVoidInstruction { MsilInstruction = node, Block = block },
             OpCodeTypes.Ret when operands.Count != 0 => new ReturnInstruction { Value = operands[0].ToIrValue(), MsilInstruction = node, Block = block },
             OpCodeTypes.Call or OpCodeTypes.Calli or OpCodeTypes.Callvirt when node.Operand is MsilMethodOperand operand =>
                 new CallInstruction

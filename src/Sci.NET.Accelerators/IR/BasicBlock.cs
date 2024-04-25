@@ -16,8 +16,8 @@ namespace Sci.NET.Accelerators.IR;
 public class BasicBlock : IIrWritable
 {
     private readonly List<IInstruction> _instructions;
-    private readonly List<BasicBlock> _predecessors;
-    private readonly List<BasicBlock> _successors;
+    private readonly HashSet<BasicBlock> _predecessors;
+    private readonly HashSet<BasicBlock> _successors;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BasicBlock"/> class.
@@ -41,8 +41,8 @@ public class BasicBlock : IIrWritable
     private BasicBlock(string name)
     {
         _instructions = new List<IInstruction>();
-        _predecessors = new List<BasicBlock>();
-        _successors = new List<BasicBlock>();
+        _predecessors = new HashSet<BasicBlock>();
+        _successors = new HashSet<BasicBlock>();
         MsilInstructions = new List<MsilInstruction<IMsilOperand>>();
         Name = name;
     }
@@ -143,7 +143,7 @@ public class BasicBlock : IIrWritable
     /// <param name="instruction">The instruction to add as a successor.</param>
     public void AddSuccessor(BasicBlock instruction)
     {
-        _successors.Add(instruction);
+        _ = _successors.Add(instruction);
     }
 
     /// <summary>
@@ -152,6 +152,6 @@ public class BasicBlock : IIrWritable
     /// <param name="block">The block to add as a predecessor.</param>
     public void AddPredecessor(BasicBlock block)
     {
-        _predecessors.Add(block);
+        _ = _predecessors.Add(block);
     }
 }
