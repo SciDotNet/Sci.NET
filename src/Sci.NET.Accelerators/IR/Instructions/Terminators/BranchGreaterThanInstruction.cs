@@ -45,7 +45,7 @@ public class BranchGreaterThanInstruction : IConditionalBranchInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append("bgt ").AppendWritable(Left).Append(" <").AppendWritable(Right).Append(' ').Append(Target.Name).Append(", ")
+        return builder.Append("bgt ").AppendWritable(Left).Append(" < ").AppendWritable(Right).Append(' ').Append(Target.Name).Append(", ")
             .Append(FalseTarget.Name);
     }
 }

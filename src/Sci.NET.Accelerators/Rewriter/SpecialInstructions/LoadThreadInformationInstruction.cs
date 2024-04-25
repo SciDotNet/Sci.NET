@@ -6,19 +6,20 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
-using Sci.NET.Accelerators.Extensions;
+using Sci.NET.Accelerators.IR;
+using Sci.NET.Accelerators.IR.Instructions;
 
-namespace Sci.NET.Accelerators.IR.Instructions.MemoryAccess;
+namespace Sci.NET.Accelerators.Rewriter.SpecialInstructions;
 
 /// <summary>
-/// An instruction that loads a constant value.
+/// Represents an instruction that loads thread information.
 /// </summary>
 [PublicAPI]
-[SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1206:Declaration keywords should follow order", Justification = "StyleCop does not support required members.")]
-public class LoadConstantInstruction : IAssignmentInstruction
+[SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1206:Declaration keywords should follow order", Justification = "StyleCop doesnt support required members yet.")]
+public class LoadThreadInformationInstruction : IValueYieldingInstruction
 {
     /// <inheritdoc />
-    public string Name => "load_constant";
+    public string Name => $"load_thread_info_{Type}";
 
     /// <inheritdoc />
     public ImmutableArray<IrValue> Operands => ImmutableArray<IrValue>.Empty;
@@ -30,13 +31,17 @@ public class LoadConstantInstruction : IAssignmentInstruction
     public required IrValue Result { get; init; }
 
     /// <summary>
-    /// Gets the value to load.
+    /// Gets the type of the thread information.
     /// </summary>
-    public required object Value { get; init; }
+    public required ThreadInformationType Type { get; init; }
 
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.AppendWritable(Result).Append(" = ").AppendWritable(Result.Type).Append(' ').Append(Value);
+        _ = Result.WriteToIrString(builder)
+            .Append(" = ")
+            .Append(Name);
+
+        return builder;
     }
 }

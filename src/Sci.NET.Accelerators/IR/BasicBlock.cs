@@ -106,4 +106,13 @@ public class BasicBlock : IIrWritable
     {
         _instructions[index] = instruction;
     }
+
+    /// <summary>
+    /// Removes the instruction at the given index.
+    /// </summary>
+    /// <param name="index">The index of the instruction to remove.</param>
+    public void RemoveInstruction(int index)
+    {
+        _instructions.RemoveAt(index);
+    }
 }

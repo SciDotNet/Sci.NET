@@ -37,7 +37,8 @@ public class LoadLocalAddressInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        _ = Result.WriteToIrString(builder)
+        _ = builder
+            .AppendWritable(Result)
             .Append(" = ")
             .Append(Name)
             .Append(' ')

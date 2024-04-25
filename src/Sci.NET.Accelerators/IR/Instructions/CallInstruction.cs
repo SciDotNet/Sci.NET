@@ -19,7 +19,7 @@ public class CallInstruction : IValueYieldingInstruction
     public string Name => "call";
 
     /// <inheritdoc />
-    public ImmutableArray<IrValue> Operands { get; }
+    public ImmutableArray<IrValue> Operands => Arguments;
 
     /// <inheritdoc />
     public required MsilInstruction<IMsilOperand>? MsilInstruction { get; init; }

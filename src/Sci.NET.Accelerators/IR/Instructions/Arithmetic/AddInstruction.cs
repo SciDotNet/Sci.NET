@@ -42,6 +42,6 @@ public class AddInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append('%').Append(Result.Identifier).Append(" = add ").AppendWritable(Left).Append(", ").AppendWritable(Right);
+        return builder.AppendWritable(Result).Append(" = add ").AppendWritable(Left).Append(", ").AppendWritable(Right);
     }
 }

@@ -42,7 +42,7 @@ public class MultiplyInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append('%').Append(Result.Identifier).Append(" = mul ").AppendWritable(Left).Append(", ")
+        return builder.AppendWritable(Result).Append(" = mul ").AppendWritable(Left).Append(", ")
             .AppendWritable(Right);
     }
 }

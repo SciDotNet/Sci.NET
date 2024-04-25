@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.Extensions;
 using Sci.NET.Accelerators.IR;
 using Sci.NET.Accelerators.IR.Instructions;
 
@@ -23,12 +24,12 @@ public class LoadDim3ThreadInfoInstruction : IValueYieldingInstruction
     /// Initializes a new instance of the <see cref="LoadDim3ThreadInfoInstruction"/> class.
     /// </summary>
     /// <param name="callInstruction">The method operand.</param>
-    /// <param name="threadIdx">The thread info type.</param>
+    /// <param name="dim3ThreadIdx">The thread info type.</param>
     [SetsRequiredMembers]
-    public LoadDim3ThreadInfoInstruction(CallInstruction callInstruction, ThreadInfoType threadIdx)
+    public LoadDim3ThreadInfoInstruction(CallInstruction callInstruction, Dim3ThreadInformationType dim3ThreadIdx)
     {
         Method = callInstruction.MethodBase;
-        Type = threadIdx;
+        Type = dim3ThreadIdx;
         Arguments = callInstruction.Arguments;
         Result = callInstruction.Result;
         MsilInstruction = callInstruction.MsilInstruction;
@@ -45,7 +46,7 @@ public class LoadDim3ThreadInfoInstruction : IValueYieldingInstruction
     /// <summary>
     /// Gets the type of the thread info.
     /// </summary>
-    public required ThreadInfoType Type { get; init; }
+    public required Dim3ThreadInformationType Type { get; init; }
 
     /// <inheritdoc />
     public ImmutableArray<IrValue> Operands => ImmutableArray.Create(Result).AddRange(Arguments);
@@ -65,7 +66,7 @@ public class LoadDim3ThreadInfoInstruction : IValueYieldingInstruction
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
         _ = builder
-            .Append(Result)
+            .AppendWritable(Result)
             .Append(" = ")
             .Append(Name)
             .Append('(')

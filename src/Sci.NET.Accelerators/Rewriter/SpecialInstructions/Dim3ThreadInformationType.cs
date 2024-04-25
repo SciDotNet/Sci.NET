@@ -6,25 +6,30 @@ namespace Sci.NET.Accelerators.Rewriter.SpecialInstructions;
 /// <summary>
 /// Represents the type of thread information.
 /// </summary>
-public enum ThreadInfoType
+public enum Dim3ThreadInformationType
 {
+    /// <summary>
+    /// No thread information.
+    /// </summary>
+    None = 0,
+
     /// <summary>
     /// The thread index.
     /// </summary>
-    ThreadIdx = 0,
+    ThreadIdx = 1,
 
     /// <summary>
     /// The block index.
     /// </summary>
-    BlockIdx = 1,
+    BlockIdx = 2,
 
     /// <summary>
     /// The grid dimension.
     /// </summary>
-    GridDim = 2,
+    GridDim = 3,
 
     /// <summary>
     /// The block dimension.
     /// </summary>
-    BlockDim = 3
+    BlockDim = 4
 }

@@ -37,6 +37,6 @@ public class LoadElementFromPointerInstruction : IAssignmentInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append('%').Append(Result.Identifier).Append(" = ").Append(Name).Append(' ').AppendWritable(Result.Type).Append(", ").AppendWritable(Pointer);
+        return builder.AppendWritable(Result).Append(" = ").Append(Name).Append(' ').AppendWritable(Result.Type).Append(", ").AppendWritable(Pointer);
     }
 }

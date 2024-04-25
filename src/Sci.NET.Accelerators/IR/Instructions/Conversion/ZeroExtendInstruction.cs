@@ -37,6 +37,6 @@ public class ZeroExtendInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append('%').Append(Result.Identifier).Append(" = zext ").AppendWritable(Value).Append(" to ").AppendWritable(Result.Type);
+        return builder.AppendWritable(Result).Append(" = zext ").AppendWritable(Value).Append(" to ").AppendWritable(Result.Type);
     }
 }

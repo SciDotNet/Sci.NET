@@ -11,27 +11,28 @@ namespace Sci.NET.Accelerators.Rewriter.Transforms;
 [PublicAPI]
 public static class TransformManager
 {
-    private static readonly ConcurrentBag<IInstructionTransform> _builtinTransforms;
-    private static readonly ConcurrentBag<IInstructionTransform> _userTransforms;
+    private static readonly ConcurrentQueue<IIrTransform> _builtinTransforms;
+    private static readonly ConcurrentQueue<IIrTransform> _userTransforms;
 
 #pragma warning disable CA1810
     static TransformManager()
 #pragma warning restore CA1810
     {
-        _builtinTransforms = new ConcurrentBag<IInstructionTransform>();
-        _userTransforms = new ConcurrentBag<IInstructionTransform>();
+        _builtinTransforms = new ConcurrentQueue<IIrTransform>();
+        _userTransforms = new ConcurrentQueue<IIrTransform>();
 
         // Add built-in transforms
         AddBuiltinTransform(new ThreadIndexTransform());
+        AddBuiltinTransform(new RemoveUnusedInstructions());
     }
 
     /// <summary>
     /// Adds a transform to the manager.
     /// </summary>
     /// <param name="transform">The transform to add.</param>
-    public static void AddTransform(IInstructionTransform transform)
+    public static void AddTransform(IIrTransform transform)
     {
-        _userTransforms.Add(transform);
+        _userTransforms.Enqueue(transform);
     }
 
     /// <summary>
@@ -46,14 +47,14 @@ public static class TransformManager
     /// Gets all transforms.
     /// </summary>
     /// <returns>All transforms.</returns>
-    public static IEnumerable<IInstructionTransform> GetTransforms()
+    public static IEnumerable<IIrTransform> GetTransforms()
     {
         return _builtinTransforms.Concat(_userTransforms);
     }
 
-    internal static void AddBuiltinTransform(IInstructionTransform transform)
+    internal static void AddBuiltinTransform(IIrTransform transform)
     {
-        _builtinTransforms.Add(transform);
+        _builtinTransforms.Enqueue(transform);
     }
 
     internal static void ClearBuiltinTransforms()

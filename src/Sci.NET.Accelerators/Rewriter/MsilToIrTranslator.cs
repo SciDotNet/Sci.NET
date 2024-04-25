@@ -129,20 +129,17 @@ public class MsilToIrTranslator
                     not FlowControl.Branch and not FlowControl.Cond_Branch and not FlowControl.Return &&
                 blockIdx < basicBlocks.Length - 1)
             {
-                blockInstructions.Add(new BranchInstruction
-                {
-                    Target = basicBlocks[blockIdx + 1], MsilInstruction = null
-                });
+                blockInstructions.Add(new BranchInstruction { Target = basicBlocks[blockIdx + 1], MsilInstruction = null });
             }
 
             block.SetInstructions(blockInstructions);
         }
 
-        foreach (var basicBlock in basicBlocks)
+        foreach (var transform in TransformManager.GetTransforms())
         {
-            foreach (var transform in TransformManager.GetTransforms())
+            foreach (var basicBlock in basicBlocks)
             {
-                transform.Transform(basicBlock);
+                transform.Transform(basicBlock, basicBlocks);
             }
         }
 
@@ -326,10 +323,7 @@ public class MsilToIrTranslator
         foreach (var local in _localVariableSsaVariables)
         {
             var irLocal = local.ToIrValue();
-            locals.Add(new DeclareLocalInstruction
-            {
-                Result = local.ToIrValue(), Value = irLocal.Type.CreateDefaultInstance(), MsilInstruction = null
-            });
+            locals.Add(new DeclareLocalInstruction { Result = local.ToIrValue(), Value = irLocal.Type.CreateDefaultInstance(), MsilInstruction = null });
         }
 
         locals.Add(new BranchInstruction { Target = basicBlock, MsilInstruction = null });
@@ -633,85 +627,31 @@ public class MsilToIrTranslator
         {
             OpCodeTypes.Nop => default(NopInstruction),
             OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineIntOperand operand => new
-                LoadArgumentInstruction
-                {
-                    Parameter = _argumentSsaVariables[operand.Value].ToIrValue(),
-                    Result = result.ToIrValue(),
-                    MsilInstruction = node
-                },
+                LoadArgumentInstruction { Parameter = _argumentSsaVariables[operand.Value].ToIrValue(), Result = result.ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineVarOperand operand => new
-                LoadArgumentInstruction
-                {
-                    Parameter = _argumentSsaVariables[operand.Index].ToIrValue(),
-                    Result = result.ToIrValue(),
-                    MsilInstruction = node
-                },
+                LoadArgumentInstruction { Parameter = _argumentSsaVariables[operand.Index].ToIrValue(), Result = result.ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Stloc or OpCodeTypes.Stloc_S when node.Operand is MsilInlineIntOperand operand => new
-                StoreLocalInstruction
-                {
-                    Local = _localVariableSsaVariables[operand.Value].ToIrValue(),
-                    Value = operands[0].ToIrValue(),
-                    MsilInstruction = node
-                },
+                StoreLocalInstruction { Local = _localVariableSsaVariables[operand.Value].ToIrValue(), Value = operands[0].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Stloc or OpCodeTypes.Stloc_S when node.Operand is MsilInlineVarOperand operand => new
-                StoreLocalInstruction
-                {
-                    Local = _localVariableSsaVariables[operand.Index].ToIrValue(),
-                    Value = operands[0].ToIrValue(),
-                    MsilInstruction = node
-                },
+                StoreLocalInstruction { Local = _localVariableSsaVariables[operand.Index].ToIrValue(), Value = operands[0].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineIntOperand operand => new
-                LoadLocalInstruction
-                {
-                    Local = _localVariableSsaVariables[operand.Value].ToIrValue(),
-                    Result = result.ToIrValue(),
-                    MsilInstruction = node
-                },
+                LoadLocalInstruction { Local = _localVariableSsaVariables[operand.Value].ToIrValue(), Result = result.ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineVarOperand operand => new
-                LoadLocalInstruction
-                {
-                    Local = _localVariableSsaVariables[operand.Index].ToIrValue(),
-                    Result = result.ToIrValue(),
-                    MsilInstruction = node
-                },
+                LoadLocalInstruction { Local = _localVariableSsaVariables[operand.Index].ToIrValue(), Result = result.ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Ldc_I4 or OpCodeTypes.Ldc_I4_S when node.Operand is MsilInlineIntOperand operand => new
                 LoadConstantInstruction { Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node },
-            OpCodeTypes.Ldc_I8 when node.Operand is MsilInlineLongOperand operand => new LoadConstantInstruction
-            {
-                Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node
-            },
-            OpCodeTypes.Ldc_R4 when node.Operand is MsilInlineSingleOperand operand => new LoadConstantInstruction
-            {
-                Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node
-            },
-            OpCodeTypes.Ldc_R8 when node.Operand is MsilInlineDoubleOperand operand => new LoadConstantInstruction
-            {
-                Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node
-            },
+            OpCodeTypes.Ldc_I8 when node.Operand is MsilInlineLongOperand operand => new LoadConstantInstruction { Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node },
+            OpCodeTypes.Ldc_R4 when node.Operand is MsilInlineSingleOperand operand => new LoadConstantInstruction { Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node },
+            OpCodeTypes.Ldc_R8 when node.Operand is MsilInlineDoubleOperand operand => new LoadConstantInstruction { Result = result.ToIrValue(), Value = operand.Value, MsilInstruction = node },
             OpCodeTypes.Conv_I or OpCodeTypes.Conv_I1 or OpCodeTypes.Conv_I2 or OpCodeTypes.Conv_I4
                 or OpCodeTypes.Conv_I8 or OpCodeTypes.Conv_R4 or OpCodeTypes.Conv_R8 or OpCodeTypes.Conv_U4
-                or OpCodeTypes.Conv_U8 => new SignExtendInstruction
-                {
-                    Result = result.ToIrValue(), Value = operands[0].ToIrValue(), MsilInstruction = node
-                },
+                or OpCodeTypes.Conv_U8 => new SignExtendInstruction { Result = result.ToIrValue(), Value = operands[0].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Br or OpCodeTypes.Br_S when node.Operand is MsilBranchTargetOperand operand => new
                 BranchInstruction { Target = FindBlockForOffset(basicBlocks, operand.Target), MsilInstruction = node },
             OpCodeTypes.Brtrue or OpCodeTypes.Brtrue_S when node.Operand is MsilBranchTargetOperand operand => new
-                ConditionalBranchInstruction
-                {
-                    Condition = operands[0].ToIrValue(),
-                    Target = FindBlockForOffset(basicBlocks, operand.Target),
-                    FalseTarget = nextBlock,
-                    MsilInstruction = node
-                },
+                ConditionalBranchInstruction { Condition = operands[0].ToIrValue(), Target = FindBlockForOffset(basicBlocks, operand.Target), FalseTarget = nextBlock, MsilInstruction = node },
             OpCodeTypes.Brfalse or OpCodeTypes.Brfalse_S when node.Operand is MsilBranchTargetOperand operand => new
-                ConditionalBranchInstruction
-                {
-                    Condition = operands[0].ToIrValue(),
-                    Target = nextBlock,
-                    FalseTarget = FindBlockForOffset(basicBlocks, operand.Target),
-                    MsilInstruction = node
-                },
+                ConditionalBranchInstruction { Condition = operands[0].ToIrValue(), Target = nextBlock, FalseTarget = FindBlockForOffset(basicBlocks, operand.Target), MsilInstruction = node },
             OpCodeTypes.Bge or OpCodeTypes.Bge_S when node.Operand is MsilBranchTargetOperand operand => new
                 BranchGreaterThanInstruction
                 {
@@ -721,45 +661,18 @@ public class MsilToIrTranslator
                     FalseTarget = nextBlock,
                     MsilInstruction = node
                 },
-            OpCodeTypes.Mul => new MultiplyInstruction
-            {
-                Result = result.ToIrValue(),
-                Left = operands[0].ToIrValue(),
-                Right = operands[1].ToIrValue(),
-                MsilInstruction = node
-            },
-            OpCodeTypes.Add => new AddInstruction
-            {
-                Result = result.ToIrValue(),
-                Left = operands[0].ToIrValue(),
-                Right = operands[1].ToIrValue(),
-                MsilInstruction = node
-            },
+            OpCodeTypes.Mul => new MultiplyInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node },
+            OpCodeTypes.Add => new AddInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Ldind_I or OpCodeTypes.Ldind_I1 or OpCodeTypes.Ldind_I2 or OpCodeTypes.Ldind_I4
                 or OpCodeTypes.Ldind_I8 or OpCodeTypes.Ldind_U1 or OpCodeTypes.Ldind_U2 or OpCodeTypes.Ldind_U4
                 or OpCodeTypes.Ldind_R4 or OpCodeTypes.Ldind_R8 =>
-                new LoadElementFromPointerInstruction
-                {
-                    Result = result.ToIrValue(), Pointer = operands[0].ToIrValue(), MsilInstruction = node
-                },
+                new LoadElementFromPointerInstruction { Result = result.ToIrValue(), Pointer = operands[0].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Stind_I or OpCodeTypes.Stind_I1 or OpCodeTypes.Stind_I2 or OpCodeTypes.Stind_I4
                 or OpCodeTypes.Stind_I8 or OpCodeTypes.Stind_R4 or OpCodeTypes.Stind_R8 =>
-                new StoreElementAtPointerInstruction
-                {
-                    Value = operands[0].ToIrValue(), Pointer = operands[1].ToIrValue(), MsilInstruction = node
-                },
-            OpCodeTypes.Clt => new CompareLessThanInstruction
-            {
-                Result = result.ToIrValue(),
-                Left = operands[0].ToIrValue(),
-                Right = operands[1].ToIrValue(),
-                MsilInstruction = node
-            },
+                new StoreElementAtPointerInstruction { Value = operands[0].ToIrValue(), Pointer = operands[1].ToIrValue(), MsilInstruction = node },
+            OpCodeTypes.Clt => new CompareLessThanInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Ret when operands.Count == 0 => new ReturnVoidInstruction { MsilInstruction = node },
-            OpCodeTypes.Ret when operands.Count != 0 => new ReturnInstruction
-            {
-                Value = operands[0].ToIrValue(), MsilInstruction = node
-            },
+            OpCodeTypes.Ret when operands.Count != 0 => new ReturnInstruction { Value = operands[0].ToIrValue(), MsilInstruction = node },
             OpCodeTypes.Call or OpCodeTypes.Calli or OpCodeTypes.Callvirt when node.Operand is MsilMethodOperand operand =>
                 new CallInstruction
                 {
@@ -770,15 +683,11 @@ public class MsilToIrTranslator
                 },
             OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S when node.Operand is MsilInlineIntOperand operand => new LoadLocalAddressInstruction
             {
-                Result = result.ToIrValue(),
-                Local = _localVariableSsaVariables[operand.Value].ToIrValue(),
-                MsilInstruction = node
+                Result = result.ToIrValue(), Local = _localVariableSsaVariables[operand.Value].ToIrValue(), MsilInstruction = node
             },
             OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S when node.Operand is MsilInlineVarOperand operand => new LoadLocalAddressInstruction
             {
-                Result = result.ToIrValue(),
-                Local = _localVariableSsaVariables[operand.Index].ToIrValue(),
-                MsilInstruction = node
+                Result = result.ToIrValue(), Local = _localVariableSsaVariables[operand.Index].ToIrValue(), MsilInstruction = node
             },
         };
     }

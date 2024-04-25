@@ -9,11 +9,12 @@ namespace Sci.NET.Accelerators.Rewriter.Transforms;
 /// An interface for an instruction transform.
 /// </summary>
 [PublicAPI]
-public interface IInstructionTransform
+public interface IIrTransform
 {
     /// <summary>
     /// Transforms the instructions in a basic block.
     /// </summary>
     /// <param name="block">The basic block to transform.</param>
-    public void Transform(BasicBlock block);
+    /// <param name="allBlocks">All basic blocks in the function.</param>
+    public void Transform(BasicBlock block, ICollection<BasicBlock> allBlocks);
 }

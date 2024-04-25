@@ -56,6 +56,12 @@ public readonly struct IrValue : IIrWritable, IValueEquatable<IrValue>
     }
 
     /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{Type} {Identifier}";
+    }
+
+    /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
         if (Type.IsPointer)

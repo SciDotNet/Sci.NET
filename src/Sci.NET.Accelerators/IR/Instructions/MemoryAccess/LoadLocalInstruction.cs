@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.Extensions;
 
 namespace Sci.NET.Accelerators.IR.Instructions.MemoryAccess;
 
@@ -36,6 +37,6 @@ public class LoadLocalInstruction : IAssignmentInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append('%').Append(Result.Identifier).Append(" = ").Append('%').Append(Local.Identifier);
+        return builder.AppendWritable(Result).Append(" = ").AppendWritable(Local);
     }
 }

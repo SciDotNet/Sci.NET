@@ -37,6 +37,6 @@ public class LoadArgumentInstruction : IAssignmentInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
-        return builder.Append('%').Append(Result.Identifier).Append(" = ").AppendWritable(Parameter);
+        return builder.AppendWritable(Result).Append(" = ").AppendWritable(Parameter);
     }
 }

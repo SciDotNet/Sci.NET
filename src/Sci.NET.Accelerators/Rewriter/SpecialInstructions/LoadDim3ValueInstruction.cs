@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
+using Sci.NET.Accelerators.Extensions;
 using Sci.NET.Accelerators.IR;
 using Sci.NET.Accelerators.IR.Instructions;
 using Sci.NET.Common;
@@ -65,12 +66,19 @@ public class LoadDim3ValueInstruction : IValueYieldingInstruction
     /// <inheritdoc />
     public StringBuilder WriteToIrString(StringBuilder builder)
     {
+        var args = Arguments.Select(x =>
+        {
+            var sb = new StringBuilder();
+            _ = x.WriteToIrString(sb);
+            return sb.ToString();
+        });
+
         _ = builder
-            .Append(Result)
+            .AppendWritable(Result)
             .Append(" = ")
             .Append(Name)
             .Append('(')
-            .AppendJoin(", ", Arguments.Select(x => x.ToString()))
+            .AppendJoin(", ", args)
             .Append(')');
 
         return builder;

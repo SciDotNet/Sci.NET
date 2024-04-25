@@ -103,7 +103,8 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
     /// </summary>
     public bool IsBranch => FlowControl
         is FlowControl.Branch
-        or FlowControl.Cond_Branch;
+        or FlowControl.Cond_Branch
+        or FlowControl.Break;
 
     /// <summary>
     ///  Gets a value indicating whether the instruction is an unconditional branch.

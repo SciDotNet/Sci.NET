@@ -8,20 +8,26 @@ namespace Sci.NET.Accelerators.Rewriter.SpecialInstructions;
 /// <summary>
 /// Represents a field of a <see cref="Dim3"/> value.
 /// </summary>
+[PublicAPI]
 public enum Dim3Field
 {
     /// <summary>
+    /// No field.
+    /// </summary>
+    None = 0,
+
+    /// <summary>
     /// The X field.
     /// </summary>
-    X = 0,
+    X = 1,
 
     /// <summary>
     /// The Y field.
     /// </summary>
-    Y = 1,
+    Y = 3,
 
     /// <summary>
     /// The Z field.
     /// </summary>
-    Z = 2
+    Z = 4
 }
