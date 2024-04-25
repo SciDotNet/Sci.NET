@@ -42,6 +42,16 @@ public readonly struct PdbSequencePoint : IValueEquatable<PdbSequencePoint>
     /// </summary>
     public required int Offset { get; init; }
 
+    /// <summary>
+    /// Gets a value indicating whether the sequence point is hidden.
+    /// </summary>
+    public bool IsHidden => StartLine == 0xfeefee;
+
+    /// <summary>
+    /// Gets a value indicating whether the sequence point does not exist.
+    /// </summary>
+    public bool IsNone => Offset == -1;
+
     /// <inheritdoc />
     public static bool operator ==(PdbSequencePoint left, PdbSequencePoint right)
     {
@@ -69,6 +79,12 @@ public readonly struct PdbSequencePoint : IValueEquatable<PdbSequencePoint>
             EndLine = -1,
             EndColumn = -1
         };
+    }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"Document: {DocumentName}, Start: {StartLine}:{StartColumn}, End: {EndLine}:{EndColumn}, Offset: {Offset}";
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.Equals(T)" />

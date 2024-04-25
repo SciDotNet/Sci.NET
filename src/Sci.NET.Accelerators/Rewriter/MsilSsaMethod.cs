@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.IR;
+using Sci.NET.Accelerators.IR.Instructions;
 using Sci.NET.Accelerators.Rewriter.Variables;
 
 namespace Sci.NET.Accelerators.Rewriter;
@@ -64,6 +65,88 @@ public class MsilSsaMethod
         foreach (var basicBlock in BasicBlocks)
         {
             _ = builder.AppendLine(basicBlock.ToString());
+        }
+
+        _ = builder.AppendLine("}");
+        return builder.ToString();
+    }
+
+    /// <summary>
+    /// Gets the IR and MSIL string representation of the method.
+    /// </summary>
+    /// <returns>The IR and MSIL string representation of the method.</returns>
+    public string GetIrAndMsilString()
+    {
+        var headerBuilder = new StringBuilder();
+        var lines = new List<(string IR, string MSIL, string CS)>();
+        var builder = new StringBuilder();
+        _ = headerBuilder.Append("method ").Append(Metadata.MethodBase.Name).Append('(');
+        foreach (var parameter in Parameters)
+        {
+            _ = headerBuilder.Append(parameter.Type).Append(' ').Append(parameter.Name).Append(", ");
+        }
+
+        if (Parameters.Count > 0)
+        {
+            headerBuilder.Length -= 2;
+        }
+
+        _ = headerBuilder.Append(") : ").Append(ReturnType).AppendLine(" {");
+        foreach (var local in Locals)
+        {
+            _ = headerBuilder.Append("    ").Append(local.Type).Append(' ').Append(local.Name).AppendLine(";");
+        }
+
+        foreach (var basicBlock in BasicBlocks)
+        {
+            lines.Add((basicBlock.Name + ":", string.Empty, string.Empty));
+
+            foreach (var instruction in basicBlock.Instructions)
+            {
+                if (instruction is NopInstruction)
+                {
+                    continue;
+                }
+
+                var instructionBuilder = new StringBuilder();
+                _ = instruction.WriteToIrString(instructionBuilder);
+
+                var cs = string.Empty;
+                var sequencePoint = instruction.MsilInstruction?.SequencePoint;
+                var sourceFile = sequencePoint?.DocumentName;
+
+                if (sequencePoint is not null && sourceFile is not null && File.Exists(instruction.MsilInstruction?.SequencePoint?.DocumentName))
+                {
+                    try
+                    {
+                        if (sequencePoint.Value.IsHidden)
+                        {
+                            cs = "#line hidden";
+                        }
+                        else
+                        {
+                            var source = File.ReadAllLines(sourceFile);
+                            var line = source[sequencePoint.Value.StartLine - 1].Trim();
+                            cs = $"{line.Replace("\n", " ", StringComparison.Ordinal)}";
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        cs = "// PDB Error: Could not read source file.";
+                    }
+                }
+
+                lines.Add(("    " + instructionBuilder, instruction.MsilInstruction.ToString() !, cs));
+            }
+        }
+
+        const int paddingSize = 4;
+        var longestIrLine = lines.Max(x => x.IR.Length) + paddingSize;
+        var longestMsilLine = lines.Max(x => x.MSIL.Length) + paddingSize;
+
+        foreach (var (ir, msil, cs) in lines)
+        {
+            _ = builder.Append("|".PadRight(paddingSize)).Append(msil.PadRight(longestMsilLine)).Append("|".PadRight(paddingSize)).Append(ir.PadRight(longestIrLine)).Append("|".PadRight(paddingSize)).AppendLine(cs);
         }
 
         _ = builder.AppendLine("}");

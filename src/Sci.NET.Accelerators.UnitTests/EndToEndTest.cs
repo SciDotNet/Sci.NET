@@ -26,6 +26,8 @@ public class EndToEndTest
 
         var ir = ssaConverter.Transform();
 
+        var irString = ir.GetIrAndMsilString();
+
         Assert.NotNull(disassembly);
     }
 
@@ -44,6 +46,8 @@ public class EndToEndTest
         var ssaConverter = new MsilToIrTranslator(disassembly);
 
         var ir = ssaConverter.Transform();
+
+        var irString = ir.GetIrAndMsilString();
 
         Assert.NotNull(ir);
     }
