@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly.Operands;
@@ -22,7 +23,7 @@ public class DisassembledMsilMethod
     /// <summary>
     /// Gets the instructions.
     /// </summary>
-    public required IReadOnlyCollection<MsilInstruction<IMsilOperand>> Instructions { get; init; }
+    public required ImmutableArray<MsilInstruction<IMsilOperand>> Instructions { get; init; }
 
     /// <summary>
     /// Gets the name of the method.

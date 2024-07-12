@@ -81,7 +81,11 @@ public class MsilToIrTranslator
     /// <returns>The SSA form of the method.</returns>
     public MsilSsaMethod Transform()
     {
-        var basicBlocks = FindBasicBlocks();
+        var basicBlocksList = new CfgBuilder(_disassembledMethod).Build();
+
+        basicBlocksList.Insert(0, GetLocalsInitBlock(basicBlocksList[0]));
+
+        var basicBlocks = basicBlocksList.ToArray();
 
         for (var blockIdx = 1; blockIdx < basicBlocks.Length; blockIdx++)
         {
@@ -123,15 +127,6 @@ public class MsilToIrTranslator
                     basicBlocks);
 
                 blockInstructions.Add(symbol);
-
-                if (symbol is IBranchInstruction branchInstruction)
-                {
-                    foreach (var target in branchInstruction.GetAllTargets())
-                    {
-                        target.AddPredecessor(block);
-                        block.AddSuccessor(target);
-                    }
-                }
             }
 
             if (blockInstructions[^1].MsilInstruction?.FlowControl is
@@ -139,8 +134,6 @@ public class MsilToIrTranslator
                 blockIdx < basicBlocks.Length - 1)
             {
                 blockInstructions.Add(new BranchInstruction { Target = basicBlocks[blockIdx + 1], MsilInstruction = null, Block = block });
-                block.AddSuccessor(basicBlocks[blockIdx + 1]);
-                basicBlocks[blockIdx + 1].AddPredecessor(block);
             }
 
             block.SetInstructions(blockInstructions);
@@ -278,55 +271,6 @@ public class MsilToIrTranslator
         return popCount;
     }
 
-    private BasicBlock[] FindBasicBlocks()
-    {
-        var leaders = new HashSet<int> { 0 };
-
-        foreach (var instruction in _disassembledMethod.Instructions)
-        {
-            if (instruction.IsBranch)
-            {
-                foreach (var target in instruction.GetBranchTargets())
-                {
-                    _ = leaders.Add(target);
-                }
-
-                if (instruction.FlowControl is FlowControl.Cond_Branch)
-                {
-                    _ = leaders.Add(instruction.Offset + instruction.Size);
-                }
-            }
-        }
-
-        var leadersArray = leaders.ToList();
-        leadersArray.Sort();
-
-        var basicBlocks = new List<BasicBlock>();
-        var instructions = _disassembledMethod.Instructions.ToArray();
-
-        var firstBlockInstructions = instructions.Where(x => x.Offset < leadersArray[1]).ToArray();
-
-        basicBlocks.Add(new BasicBlock("block_1", firstBlockInstructions));
-
-        for (var i = 1; i < leadersArray.Count - 1; i++)
-        {
-            var blockInstructions = instructions.Where(x => x.Offset >= leadersArray[i] && x.Offset < leadersArray[i + 1]).ToArray();
-            basicBlocks.Add(new BasicBlock($"block_{i + 1}", blockInstructions));
-        }
-
-        if (leadersArray[^1] != instructions[^1].Offset)
-        {
-            // The last block is not a leader.
-            var lastBlockInstructions = instructions.Where(x => x.Offset >= leadersArray[^1]).ToArray();
-            basicBlocks.Add(new BasicBlock($"block_{leadersArray.Count}", lastBlockInstructions));
-        }
-
-        var firstBlock = GetLocalsInitBlock(basicBlocks[0]);
-        basicBlocks.Insert(0, firstBlock);
-
-        return basicBlocks.ToArray();
-    }
-
     private BasicBlock GetLocalsInitBlock(BasicBlock firstCodeBlock)
     {
         var locals = new List<IInstruction>();
@@ -389,7 +333,7 @@ public class MsilToIrTranslator
                 or PopBehaviour.Popref_popi_popr4 or PopBehaviour.Popref_popi_popr8 or PopBehaviour.Popref_popi_popref
                 or PopBehaviour.Popref_popi_pop1 => 3,
             PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret &&
-                                   _disassembledMethod.Metadata.ReturnType != typeof(void) => 0,
+                                     _disassembledMethod.Metadata.ReturnType != typeof(void) => 0,
             PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 0 &&
                                      _disassembledMethod.Metadata.ReturnType == typeof(void) => 0,
             PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 1 => 1,
@@ -666,9 +610,23 @@ public class MsilToIrTranslator
             OpCodeTypes.Br or OpCodeTypes.Br_S when node.Operand is MsilBranchTargetOperand operand => new
                 BranchInstruction { Target = FindBlockForOffset(basicBlocks, operand.Target), MsilInstruction = node, Block = block },
             OpCodeTypes.Brtrue or OpCodeTypes.Brtrue_S when node.Operand is MsilBranchTargetOperand operand => new
-                ConditionalBranchInstruction { Condition = operands[0].ToIrValue(), Target = FindBlockForOffset(basicBlocks, operand.Target), FalseTarget = nextBlock, MsilInstruction = node, Block = block },
+                ConditionalBranchInstruction
+                {
+                    Condition = operands[0].ToIrValue(),
+                    Target = FindBlockForOffset(basicBlocks, operand.Target),
+                    FalseTarget = nextBlock,
+                    MsilInstruction = node,
+                    Block = block
+                },
             OpCodeTypes.Brfalse or OpCodeTypes.Brfalse_S when node.Operand is MsilBranchTargetOperand operand => new
-                ConditionalBranchInstruction { Condition = operands[0].ToIrValue(), Target = nextBlock, FalseTarget = FindBlockForOffset(basicBlocks, operand.Target), MsilInstruction = node, Block = block },
+                ConditionalBranchInstruction
+                {
+                    Condition = operands[0].ToIrValue(),
+                    Target = nextBlock,
+                    FalseTarget = FindBlockForOffset(basicBlocks, operand.Target),
+                    MsilInstruction = node,
+                    Block = block
+                },
             OpCodeTypes.Bge or OpCodeTypes.Bge_S when node.Operand is MsilBranchTargetOperand operand => new
                 BranchGreaterThanInstruction
                 {
@@ -679,8 +637,22 @@ public class MsilToIrTranslator
                     MsilInstruction = node,
                     Block = block
                 },
-            OpCodeTypes.Mul => new MultiplyInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node, Block = block },
-            OpCodeTypes.Add => new AddInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node, Block = block },
+            OpCodeTypes.Mul => new MultiplyInstruction
+            {
+                Result = result.ToIrValue(),
+                Left = operands[0].ToIrValue(),
+                Right = operands[1].ToIrValue(),
+                MsilInstruction = node,
+                Block = block
+            },
+            OpCodeTypes.Add => new AddInstruction
+            {
+                Result = result.ToIrValue(),
+                Left = operands[0].ToIrValue(),
+                Right = operands[1].ToIrValue(),
+                MsilInstruction = node,
+                Block = block
+            },
             OpCodeTypes.Ldind_I or OpCodeTypes.Ldind_I1 or OpCodeTypes.Ldind_I2 or OpCodeTypes.Ldind_I4
                 or OpCodeTypes.Ldind_I8 or OpCodeTypes.Ldind_U1 or OpCodeTypes.Ldind_U2 or OpCodeTypes.Ldind_U4
                 or OpCodeTypes.Ldind_R4 or OpCodeTypes.Ldind_R8 =>
@@ -688,7 +660,14 @@ public class MsilToIrTranslator
             OpCodeTypes.Stind_I or OpCodeTypes.Stind_I1 or OpCodeTypes.Stind_I2 or OpCodeTypes.Stind_I4
                 or OpCodeTypes.Stind_I8 or OpCodeTypes.Stind_R4 or OpCodeTypes.Stind_R8 =>
                 new StoreElementAtPointerInstruction { Value = operands[0].ToIrValue(), Pointer = operands[1].ToIrValue(), MsilInstruction = node, Block = block },
-            OpCodeTypes.Clt => new CompareLessThanInstruction { Result = result.ToIrValue(), Left = operands[0].ToIrValue(), Right = operands[1].ToIrValue(), MsilInstruction = node, Block = block },
+            OpCodeTypes.Clt => new CompareLessThanInstruction
+            {
+                Result = result.ToIrValue(),
+                Left = operands[0].ToIrValue(),
+                Right = operands[1].ToIrValue(),
+                MsilInstruction = node,
+                Block = block
+            },
             OpCodeTypes.Ret when operands.Count == 0 || _disassembledMethod.Metadata.ReturnType == typeof(void) => new ReturnVoidInstruction { MsilInstruction = node, Block = block },
             OpCodeTypes.Ret when operands.Count != 0 => new ReturnInstruction { Value = operands[0].ToIrValue(), MsilInstruction = node, Block = block },
             OpCodeTypes.Call or OpCodeTypes.Calli or OpCodeTypes.Callvirt when node.Operand is MsilMethodOperand operand =>

@@ -49,7 +49,7 @@ internal class MsilDisassembler
     {
         var instructions = ReadInstructions();
 
-        return new DisassembledMsilMethod { Metadata = _methodMetadata, Instructions = instructions.ToList() };
+        return new DisassembledMsilMethod { Metadata = _methodMetadata, Instructions = instructions.ToImmutableArray() };
     }
 
     private static MsilInstruction<IMsilOperand> ExpandShortFormInstruction(MsilInstruction<IMsilOperand> instruction)

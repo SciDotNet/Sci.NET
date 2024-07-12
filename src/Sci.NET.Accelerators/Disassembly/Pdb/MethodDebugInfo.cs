@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Metadata;
 
@@ -11,6 +12,7 @@ namespace Sci.NET.Accelerators.Disassembly.Pdb;
 /// Represents the debug information for a method.
 /// </summary>
 [PublicAPI]
+[SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1206:Declaration keywords should follow order", Justification = "StyleCop does not support required members yet.")]
 public class MethodDebugInfo
 {
     /// <summary>
@@ -19,11 +21,19 @@ public class MethodDebugInfo
     /// <param name="assemblyDebugInformation">The assembly debug information.</param>
     /// <param name="methodBase">The method base.</param>
     /// <param name="definitionHandle">The method definition handle.</param>
-    public MethodDebugInfo(AssemblyDebugInformation assemblyDebugInformation, MethodBase methodBase, MethodDefinitionHandle definitionHandle)
+    [SetsRequiredMembers]
+    public MethodDebugInfo(IAssemblyDebugInformation assemblyDebugInformation, MethodBase methodBase, MethodDefinitionHandle definitionHandle)
     {
         AssemblyDebugInformation = assemblyDebugInformation;
         MethodBase = methodBase;
         Handle = definitionHandle;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MethodDebugInfo"/> class.
+    /// </summary>
+    public MethodDebugInfo()
+    {
     }
 
     /// <summary>
@@ -67,17 +77,17 @@ public class MethodDebugInfo
     /// <summary>
     /// Gets the method base.
     /// </summary>
-    public MethodBase MethodBase { get; }
+    public required MethodBase MethodBase { get; init; }
 
     /// <summary>
     /// Gets the assembly debug information.
     /// </summary>
-    public AssemblyDebugInformation AssemblyDebugInformation { get; }
+    public required IAssemblyDebugInformation AssemblyDebugInformation { get; init; }
 
     /// <summary>
     /// Gets the method definition handle.
     /// </summary>
-    public MethodDefinitionHandle Handle { get; }
+    public required MethodDefinitionHandle Handle { get; init; }
 
     /// <summary>
     /// Gets the local variables.

@@ -96,22 +96,23 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
     public bool IsTerminator => FlowControl
         is FlowControl.Branch
         or FlowControl.Cond_Branch
-        or FlowControl.Return;
+        or FlowControl.Return
+        or FlowControl.Throw
+        or FlowControl.Break;
 
     /// <summary>
     /// Gets a value indicating whether the instruction is a branch.
     /// </summary>
-    public bool IsBranch => FlowControl
-        is FlowControl.Branch
-        or FlowControl.Cond_Branch
-        or FlowControl.Break;
+    public bool IsBranch => IsUnconditionalBranch || IsConditionalBranch;
 
     /// <summary>
     ///  Gets a value indicating whether the instruction is an unconditional branch.
     /// </summary>
     public bool IsUnconditionalBranch => FlowControl
         is FlowControl.Branch
-        or FlowControl.Return;
+        or FlowControl.Return
+        or FlowControl.Throw
+        or FlowControl.Break;
 
     /// <summary>
     /// Gets a value indicating whether the instruction is a conditional branch.
@@ -163,6 +164,11 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
                 break;
             default:
                 yield break;
+        }
+
+        if (IsConditionalBranch)
+        {
+            yield return Offset + Size;
         }
     }
 

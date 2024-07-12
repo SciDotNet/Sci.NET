@@ -10,12 +10,12 @@ internal sealed class DebugInformationManager : IDisposable
     private static readonly DebugInformationManager _instance = new ();
 
     private readonly ReaderWriterLockSlim _lock;
-    private readonly Dictionary<Assembly, AssemblyDebugInformation> _assemblyDebugInformation;
+    private readonly Dictionary<Assembly, IAssemblyDebugInformation> _assemblyDebugInformation;
 
     private DebugInformationManager()
     {
         _lock = new ReaderWriterLockSlim();
-        _assemblyDebugInformation = new Dictionary<Assembly, AssemblyDebugInformation>();
+        _assemblyDebugInformation = new Dictionary<Assembly, IAssemblyDebugInformation>();
     }
 
     public static bool TryLoadMethodDebugInformation(MethodBase method, out MethodDebugInfo methodDebugInfo)
@@ -27,7 +27,7 @@ internal sealed class DebugInformationManager : IDisposable
             if (_instance._assemblyDebugInformation.TryGetValue(method.DeclaringType!.Assembly, out var assemblyDebugInformation) && assemblyDebugInformation.TryGetMethodDebugInfo(method, out var methodInfo))
             {
                 methodDebugInfo = methodInfo;
-                return false;
+                return true;
             }
 
             _instance._lock.EnterWriteLock();
@@ -44,13 +44,25 @@ internal sealed class DebugInformationManager : IDisposable
                 {
                     throw new InvalidOperationException("Method debug information not loaded.");
                 }
+
+                methodDebugInfo = methodInfo;
+            }
+            catch
+            {
+                var fakeAssemblyDebugInformation = new FakeAssemblyDebugInformation(method.DeclaringType.Assembly);
+                _instance._assemblyDebugInformation.Add(method.DeclaringType.Assembly, fakeAssemblyDebugInformation);
+
+                if (!fakeAssemblyDebugInformation.TryGetMethodDebugInfo(method, out var fakeMethodInfo))
+                {
+                    throw new InvalidOperationException("Method debug information not loaded.");
+                }
+
+                methodDebugInfo = fakeMethodInfo;
             }
             finally
             {
                 _instance._lock.ExitWriteLock();
             }
-
-            methodDebugInfo = methodInfo;
         }
         finally
         {

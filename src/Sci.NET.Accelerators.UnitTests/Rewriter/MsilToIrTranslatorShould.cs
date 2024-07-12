@@ -4,6 +4,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics.SymbolStore;
 using System.Reflection;
+using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Pdb;
 using Sci.NET.Accelerators.IR;
@@ -30,7 +31,6 @@ public class MsilToIrTranslatorShould
         var rightParameterMock = new Mock<ParameterInfo>();
         var resultParameterMock = new Mock<ParameterInfo>();
         var lengthParameterMock = new Mock<ParameterInfo>();
-        var methodDebugInfoMock = new Mock<MethodDebugInfo>();
 
         var methodBodyBytes = new byte[]
         {
@@ -81,7 +81,12 @@ public class MsilToIrTranslatorShould
             MethodGenericArguments = Array.Empty<Type>(),
             TypeGenericArguments = Array.Empty<Type>(),
             LocalVariablesSignatureToken = new SymbolToken(999),
-            MethodDebugInfo = methodDebugInfoMock.Object
+            MethodDebugInfo = new MethodDebugInfo
+            {
+                Handle = default,
+                MethodBase = new DynamicMethod("Add", typeof(long), new[] { typeof(float*), typeof(float*), typeof(float*), typeof(long) }),
+                AssemblyDebugInformation = new FakeAssemblyDebugInformation(Assembly.GetExecutingAssembly())
+            }
         };
 
         var disassembler = new MsilDisassembler(metadata);
@@ -95,9 +100,11 @@ public class MsilToIrTranslatorShould
         ssaMethod.Locals.Count.Should().Be(variables.Count);
         ssaMethod.Parameters.Count.Should().Be(parameters.Count);
         ssaMethod.ReturnType.Should().Be(typeof(long));
-        ssaMethod.BasicBlocks.Count.Should().Be(5);
+        ssaMethod.BasicBlocks.Count.Should().Be(4);
 
         var blocks = ssaMethod.BasicBlocks.ToArray();
+
+        blocks.Skip(1).Sum(x => x.Instructions.Count).Should().Be(disassembledMethod.Instructions.Length);
 
         AssertBlock0(blocks[0], blocks);
         AssertBlock1(blocks[1], blocks);
@@ -153,13 +160,13 @@ public class MsilToIrTranslatorShould
         block.Instructions[3].Should().BeOfType<BranchInstruction>();
         var instruction3 = block.Instructions[3] as BranchInstruction;
         instruction3.Should().NotBeNull();
-        instruction3?.Target.Should().Be(blocks[2]);
+        instruction3?.Target.Should().Be(blocks[3]);
     }
 
     private static void AssertBlock2(BasicBlock block, BasicBlock[] blocks)
     {
         block.Name.Should().Be("block_2");
-        block.Instructions.Count.Should().Be(30);
+        block.Instructions.Count.Should().Be(29);
 
         block.Instructions[0].Should().BeOfType<NopInstruction>();
 
@@ -378,15 +385,8 @@ public class MsilToIrTranslatorShould
         instruction25?.Value.Identifier.Should().Be("tmp_29");
         instruction25?.Value.Type.Should().Be(IrType.Int64);
 
-        block.Instructions[28].Should().BeOfType<LoadLocalInstruction>();
-        var instruction26 = block.Instructions[28] as LoadLocalInstruction;
-        instruction26.Should().NotBeNull();
-        instruction26?.Result.Identifier.Should().Be("tmp_30");
-        instruction26?.Result.Type.Should().Be(IrType.Int64);
-        instruction26?.Local.Identifier.Should().Be("loc_0");
-
-        block.Instructions[29].Should().BeOfType<BranchInstruction>();
-        var instruction29 = block.Instructions[29] as BranchInstruction;
+        block.Instructions[28].Should().BeOfType<BranchInstruction>();
+        var instruction29 = block.Instructions[28] as BranchInstruction;
         instruction29.Should().NotBeNull();
         instruction29?.Target.Should().Be(blocks[3]);
     }
@@ -399,31 +399,31 @@ public class MsilToIrTranslatorShould
         block.Instructions[0].Should().BeOfType<LoadLocalInstruction>();
         var instruction1 = block.Instructions[0] as LoadLocalInstruction;
         instruction1.Should().NotBeNull();
-        instruction1?.Result.Identifier.Should().Be("tmp_31");
+        instruction1?.Result.Identifier.Should().Be("tmp_30");
         instruction1?.Result.Type.Should().Be(IrType.Int64);
         instruction1?.Local.Identifier.Should().Be("loc_0");
 
         block.Instructions[1].Should().BeOfType<SignExtendInstruction>();
         var instruction2 = block.Instructions[1] as SignExtendInstruction;
         instruction2.Should().NotBeNull();
-        instruction2?.Result.Identifier.Should().Be("tmp_32");
-        instruction2?.Value.Identifier.Should().Be("tmp_31");
+        instruction2?.Result.Identifier.Should().Be("tmp_31");
+        instruction2?.Value.Identifier.Should().Be("tmp_30");
         instruction2?.Result.Type.Should().Be(IrType.Int64);
         instruction2?.Value.Type.Should().Be(IrType.Int64);
 
         block.Instructions[2].Should().BeOfType<LoadArgumentInstruction>();
         var instruction3 = block.Instructions[2] as LoadArgumentInstruction;
         instruction3.Should().NotBeNull();
-        instruction3?.Result.Identifier.Should().Be("tmp_33");
+        instruction3?.Result.Identifier.Should().Be("tmp_32");
         instruction3?.Result.Type.Should().Be(IrType.Int64);
         instruction3?.Parameter.Identifier.Should().Be("arg_length");
 
         block.Instructions[3].Should().BeOfType<CompareLessThanInstruction>();
         var instruction4 = block.Instructions[3] as CompareLessThanInstruction;
         instruction4.Should().NotBeNull();
-        instruction4?.Result.Identifier.Should().Be("tmp_34");
-        instruction4?.Left.Identifier.Should().Be("tmp_32");
-        instruction4?.Right.Identifier.Should().Be("tmp_33");
+        instruction4?.Result.Identifier.Should().Be("tmp_33");
+        instruction4?.Left.Identifier.Should().Be("tmp_31");
+        instruction4?.Right.Identifier.Should().Be("tmp_32");
         instruction4?.Result.Type.Should().Be(IrType.Boolean);
         instruction4?.Left.Type.Should().Be(IrType.Int64);
         instruction4?.Right.Type.Should().Be(IrType.Int64);
@@ -433,20 +433,20 @@ public class MsilToIrTranslatorShould
         instruction5.Should().NotBeNull();
         instruction5?.Local.Identifier.Should().Be("loc_1");
         instruction5?.Local.Type.Should().Be(IrType.Boolean);
-        instruction5?.Value.Identifier.Should().Be("tmp_34");
+        instruction5?.Value.Identifier.Should().Be("tmp_33");
         instruction5?.Value.Type.Should().Be(IrType.Boolean);
 
         block.Instructions[5].Should().BeOfType<LoadLocalInstruction>();
         var instruction6 = block.Instructions[5] as LoadLocalInstruction;
         instruction6.Should().NotBeNull();
-        instruction6?.Result.Identifier.Should().Be("tmp_35");
+        instruction6?.Result.Identifier.Should().Be("tmp_34");
         instruction6?.Result.Type.Should().Be(IrType.Boolean);
         instruction6?.Local.Identifier.Should().Be("loc_1");
 
         block.Instructions[6].Should().BeOfType<ConditionalBranchInstruction>();
         var instruction7 = block.Instructions[6] as ConditionalBranchInstruction;
         instruction7.Should().NotBeNull();
-        instruction7?.Condition.Identifier.Should().Be("tmp_35");
+        instruction7?.Condition.Identifier.Should().Be("tmp_34");
         instruction7?.Condition.Type.Should().Be(IrType.Boolean);
         instruction7?.Target.Should().Be(blocks[2]);
         instruction7?.FalseTarget.Should().Be(blocks[4]);
