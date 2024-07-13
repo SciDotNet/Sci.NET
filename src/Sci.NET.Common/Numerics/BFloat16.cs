@@ -57,49 +57,49 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     public static int Radix => 2;
 
     /// <inheritdoc />
-    public static BFloat16 Zero => new (PositiveZeroBits);
+    public static BFloat16 Zero => new(PositiveZeroBits);
 
     /// <inheritdoc />
-    public static BFloat16 NegativeZero => new (NegativeZeroBits);
+    public static BFloat16 NegativeZero => new(NegativeZeroBits);
 
     /// <inheritdoc />
-    public static BFloat16 One => new (OneBits);
+    public static BFloat16 One => new(OneBits);
 
     /// <inheritdoc />
-    public static BFloat16 NegativeOne => new (NegativeOneBits);
+    public static BFloat16 NegativeOne => new(NegativeOneBits);
 
     /// <inheritdoc />
-    public static BFloat16 Epsilon => new (EpsilonBits);
+    public static BFloat16 Epsilon => new(EpsilonBits);
 
     /// <inheritdoc />
-    public static BFloat16 NaN => new (NaNBits);
+    public static BFloat16 NaN => new(NaNBits);
 
     /// <inheritdoc />
-    public static BFloat16 NegativeInfinity => new (NegativeInfinityBits);
+    public static BFloat16 NegativeInfinity => new(NegativeInfinityBits);
 
     /// <inheritdoc />
-    public static BFloat16 PositiveInfinity => new (PositiveInfinityBits);
+    public static BFloat16 PositiveInfinity => new(PositiveInfinityBits);
 
     /// <inheritdoc />
-    public static BFloat16 MaxValue => new (MaxValueBits);
+    public static BFloat16 MaxValue => new(MaxValueBits);
 
     /// <inheritdoc />
-    public static BFloat16 MinValue => new (MinValueBits);
+    public static BFloat16 MinValue => new(MinValueBits);
 
     /// <inheritdoc />
-    public static BFloat16 E => new (EBits);
+    public static BFloat16 E => new(EBits);
 
     /// <inheritdoc />
-    public static BFloat16 Pi => new (PiBits);
+    public static BFloat16 Pi => new(PiBits);
 
     /// <inheritdoc />
-    public static BFloat16 Tau => new (TauBits);
+    public static BFloat16 Tau => new(TauBits);
 
     /// <inheritdoc />
-    public static BFloat16 AdditiveIdentity => new (PositiveZeroBits);
+    public static BFloat16 AdditiveIdentity => new(PositiveZeroBits);
 
     /// <inheritdoc />
-    public static BFloat16 MultiplicativeIdentity => new (OneBits);
+    public static BFloat16 MultiplicativeIdentity => new(OneBits);
 
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
     [ExcludeFromCodeCoverage]
@@ -404,7 +404,7 @@ public readonly struct BFloat16 : IBinaryFloatingPointIeee754<BFloat16>,
     /// <inheritdoc />
     public static BFloat16 Abs(BFloat16 value)
     {
-        return new (StripSign(value._value));
+        return new(StripSign(value._value));
     }
 
     /// <inheritdoc />
