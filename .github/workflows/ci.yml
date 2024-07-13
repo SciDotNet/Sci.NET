@@ -37,4 +37,10 @@ jobs:
     - name: Build
       shell: pwsh
       run: |
-        .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }}
+        .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }} -BuildNugetPackages 1
+    - name: Publish NuGet packages
+      env:
+        run: dotnet nuget push --source https://nuget.pkg.github.com/SciDotNet/index.json --api-key ${GITHUB_TOKEN}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    
