@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Sci.NET.Common;
 
 /// <summary>
-/// An unsigned integer the count of a pointer on the current platform.
+/// An unsigned integer with the size of a pointer on the current platform.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 [DebuggerDisplay("{_value}")]
@@ -22,6 +22,8 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <param name="value">The value of the <see cref="SizeT"/>.</param>
     public SizeT(nint value)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
+
         _value = (nuint)value;
     }
 
@@ -40,6 +42,7 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <param name="value">The value of the <see cref="SizeT"/>.</param>
     public SizeT(int value)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
         _value = (nuint)value;
     }
 
