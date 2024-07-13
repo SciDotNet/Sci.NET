@@ -12,7 +12,7 @@ namespace Sci.NET.Mathematics.Backends.Devices;
 [PublicAPI]
 public class CpuComputeDevice : IDevice
 {
-    private static readonly CpuComputeDevice Instance = new (Guid.NewGuid(), CpuInfo.GetInfoString());
+    private static readonly CpuComputeDevice Instance = new(Guid.NewGuid(), CpuInfo.GetInfoString());
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CpuComputeDevice"/> class.

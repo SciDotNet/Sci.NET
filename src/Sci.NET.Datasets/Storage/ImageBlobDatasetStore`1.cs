@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Streams;
 using Sci.NET.Datasets.Storage.Compression;
@@ -15,6 +16,7 @@ namespace Sci.NET.Datasets.Storage;
 /// </summary>
 /// <typeparam name="TTensor">The tensor type.</typeparam>
 [PublicAPI]
+[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1649:File name should match first type name", Justification = "Non-generic type with same name")]
 public class ImageBlobDatasetStore<TTensor> : IDatasetStore<ITensor<TTensor>>
     where TTensor : unmanaged, INumber<TTensor>
 {

@@ -13,5 +13,5 @@ public abstract class IntegrationTestBase
     /// <summary>
     /// Gets the devices to use for integration tests.
     /// </summary>
-    public static TheoryData<IDevice> ComputeDevices => new () { new CpuComputeDevice() };
+    public static TheoryData<IDevice> ComputeDevices => new() { new CpuComputeDevice() };
 }
