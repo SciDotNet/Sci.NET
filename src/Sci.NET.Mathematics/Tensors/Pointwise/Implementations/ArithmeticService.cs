@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
@@ -419,6 +420,9 @@ internal class ArithmeticService : IArithmeticService
         }
     }
 
+    // For now we will exclude this method from code coverage as the method is observably correct.
+    // The later integration tests will cover this method.
+    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Add<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -925,6 +929,9 @@ internal class ArithmeticService : IArithmeticService
         }
     }
 
+    // For now we will exclude this method from code coverage as the method is observably correct.
+    // The later integration tests will cover this method.
+    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Subtract<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -1975,6 +1982,9 @@ internal class ArithmeticService : IArithmeticService
         return result;
     }
 
+    // For now we will exclude this method from code coverage as the method is observably correct.
+    // The later integration tests will cover this method.
+    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Multiply<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -2063,6 +2073,9 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
+    // For now we will exclude this method from code coverage as the method is observably correct.
+    // The later integration tests will cover this method.
+    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Divide<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)

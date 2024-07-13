@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -10,6 +11,7 @@ namespace Sci.NET.Mathematics.Tensors.Exceptions;
 /// The interpolated string handler for <see cref="InvalidShapeException"/>.
 /// </summary>
 [InterpolatedStringHandler]
+[ExcludeFromCodeCoverage]
 [PublicAPI]
 public readonly ref struct InvalidShapeInterpolatedStringHandler
 {
