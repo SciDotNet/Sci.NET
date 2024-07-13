@@ -135,7 +135,7 @@ public static class LazyParallelExecutor
     /// <param name="jIncrement">The increment to use for the inner loop.</param>
     /// <param name="body">The body of the for loop.</param>
     /// <returns>The number of iterations executed.</returns>
-    public static (long iCount, long jCount) For(
+    public static (long ICount, long JCount) For(
         long iFromInclusive,
         long iToExclusive,
         long jFromInclusive,
@@ -189,7 +189,7 @@ public static class LazyParallelExecutor
     /// <param name="parallelizationThreshold">The threshold before the loop is executed in parallel.</param>
     /// <param name="body">The body of the for loop.</param>
     /// <returns>The number of iterations executed.</returns>
-    public static (long iCount, long jCount) For(
+    public static (long ICount, long JCount) For(
         long iFromInclusive,
         long iToExclusive,
         long jFromInclusive,

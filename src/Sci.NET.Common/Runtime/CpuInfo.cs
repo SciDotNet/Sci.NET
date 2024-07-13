@@ -83,7 +83,7 @@ public static class CpuInfo
     }
 
     [SupportedOSPlatformGuard("windows")]
-    private static (string vendor, string model, double clockSpeed) GetWindowsInfo()
+    private static (string Vendor, string Model, double ClockSpeed) GetWindowsInfo()
     {
 #pragma warning disable CA1416
         using var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Processor");
@@ -106,7 +106,7 @@ public static class CpuInfo
         return (vendor, model, clockSpeed);
     }
 
-    private static (string vendor, string model, double clockSpeed) GetLinuxOsxInfo()
+    private static (string Vendor, string Model, double ClockSpeed) GetLinuxOsxInfo()
     {
         var vendor = string.Empty;
         var model = string.Empty;
