@@ -20,6 +20,10 @@ jobs:
     - uses: actions/checkout@v3
       with: 
         fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4.0.1
+      env:
+        NUGET_AUTH_TOKEN: '%NUGET_AUTH_TOKEN%'
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0
       with:
@@ -37,4 +41,8 @@ jobs:
     - name: Build
       shell: pwsh
       run: |
-        .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }}
+        .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }} -BuildNugetPackages 1
+    - name: Publish NuGet packages
+      run: dotnet nuget push .\Artifacts\bin\release\*.nupkg --source https://nuget.pkg.github.com/SciDotNet/index.json --api-key ${{ github.token }}
+    
+    
