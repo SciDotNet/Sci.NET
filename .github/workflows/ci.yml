@@ -39,8 +39,8 @@ jobs:
       run: |
         .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }} -BuildNugetPackages 1
     - name: Publish NuGet packages
-      run: dotnet nuget push .\Artifacts\bin\release\*.nupkg --source https://nuget.pkg.github.com/SciDotNet/index.json --api-key ${GITHUB_TOKEN}
+      run: dotnet nuget push .\Artifacts\bin\release\*.nupkg --source https://nuget.pkg.github.com/SciDotNet/index.json
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     
