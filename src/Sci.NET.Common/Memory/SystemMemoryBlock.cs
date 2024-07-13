@@ -183,9 +183,9 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        for (var i = 0; i < Length; i++)
+        for (var i = 0L; i < Length; i++)
         {
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)i) = value;
+            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nuint)i) = value;
         }
     }
 #pragma warning restore CA1502 // Avoid excessive complexity
@@ -240,13 +240,16 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
 
         // Otherwise write in chunks using long pointer
+        // Note: There is no test coverage for this code path as no in-memory stream can exceed 2.5GB.
+        //       We could add a test for this by creating a custom stream that allows for a larger buffer size
+        //       or by using a file stream, but this would slow down CI builds.
         var remaining = byteLength;
         var pointer = (byte*)_reference;
         var offset = 0L;
 
         while (remaining > 0)
         {
-            var chunkLength = Math.Min(remaining, int.MaxValue);
+            var chunkLength = Math.Min(remaining, int.MaxValue - 1);
             stream.Write(new ReadOnlySpan<byte>(pointer + offset, (int)chunkLength));
             remaining -= chunkLength;
             offset += chunkLength;
@@ -449,7 +452,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         if (Length > int.MaxValue)
         {
-            throw new InvalidOperationException("Cannot create a span larger than int.MaxValue");
+            throw new InvalidOperationException($"Cannot create a span larger than int.MaxValue ({int.MaxValue}) elements.");
         }
 
         return new Span<T>(_reference, (int)Length);
@@ -567,7 +570,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// Disposes the <see cref="SystemMemoryBlock{T}"/>.
     /// </summary>
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
-    private unsafe void Dispose(bool isDisposing)
+    private void Dispose(bool isDisposing)
     {
         ReleaseUnmanagedResources();
 
@@ -579,7 +582,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
     private unsafe void ReleaseUnmanagedResources()
     {
-        if (_cannotDispose)
+        if (_cannotDispose || IsDisposed)
         {
             return;
         }

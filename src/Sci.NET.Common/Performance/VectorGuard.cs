@@ -36,6 +36,8 @@ public static class VectorGuard
         }
 
         count = Vector<TNumber>.Count;
+
+        // 8 bytes is a catch-all since currently there are no vector types which are 8 bytes in size.
         return Vector.IsHardwareAccelerated && Unsafe.SizeOf<TNumber>() < 8;
     }
 }
