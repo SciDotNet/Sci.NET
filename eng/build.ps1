@@ -45,4 +45,5 @@
     
     if ($BuildNugetPackages)
     {
+	    &$Dotnet pack -c Release /p:Version=$PackageVersion
     }
