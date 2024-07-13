@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using Sci.NET.Mathematics.Backends.Devices;
 
 namespace Sci.NET.Mathematics.Tensors.Exceptions;
@@ -10,6 +11,7 @@ namespace Sci.NET.Mathematics.Tensors.Exceptions;
 /// instances which are not stored on the same <see cref="IDevice"/>.
 /// </summary>
 [PublicAPI]
+[ExcludeFromCodeCoverage]
 public class TensorDataLocalityException : Exception
 {
     /// <summary>
