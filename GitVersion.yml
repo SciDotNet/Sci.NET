@@ -87,7 +87,30 @@ branches:
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 30000
-
+  release-candidate:
+    mode: ContinuousDelivery
+    tag: rc
+    increment: Patch
+    regex: ^rc[/-]
+    source-branches:
+      - develop
+      - main
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+    pre-release-weight: 20000
+  release:
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Minor
+    regex: ^release[/-]
+    source-branches:
+      - develop
+      - main
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+    pre-release-weight: 10000
     
 ignore:
   sha: []
