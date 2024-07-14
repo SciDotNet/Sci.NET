@@ -93,4 +93,40 @@ public interface ISerializationService
     /// <returns>The deserialized <see cref="ITensor{TNumber}"/>.</returns>
     public ITensor<TNumber> LoadCompressed<TNumber>(Stream stream)
         where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Loads a named dictionary of <see cref="ITensor{TNumber}"/> from a file in the safetensors format.
+    /// </summary>
+    /// <param name="path">The path to the file to load from.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A dictionary of the deserialized <see cref="ITensor{TNumber}"/> objects.</returns>
+    public Dictionary<string, ITensor<TNumber>> LoadSafeTensors<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Loads a named dictionary of <see cref="ITensor{TNumber}"/> from a stream in the safetensors format.
+    /// </summary>
+    /// <param name="stream">The stream to load from.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A dictionary of the deserialized <see cref="ITensor{TNumber}"/> objects.</returns>
+    public Dictionary<string, ITensor<TNumber>> LoadSafeTensors<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Saves a named dictionary <see cref="ITensor{TNumber}"/> to a file in the safetensors format.
+    /// </summary>
+    /// <param name="tensors">The <see cref="ITensor{TNumber}"/> objects to serialize.</param>
+    /// <param name="path">The path to the file to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void SaveSafeTensors<TNumber>(Dictionary<string, ITensor<TNumber>> tensors, string path)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Saves a named dictionary of <see cref="ITensor{TNumber}"/> to a stream in the safetensors format.
+    /// </summary>
+    /// <param name="tensors">The <see cref="ITensor{TNumber}"/> objects to serialize.</param>
+    /// <param name="stream">The stream to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void SaveSafeTensors<TNumber>(Dictionary<string, ITensor<TNumber>> tensors, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>;
 }
