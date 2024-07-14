@@ -43,6 +43,7 @@ jobs:
       run: |
         .\eng\build.ps1 -C Release -CleanBuild 1 -PackageVersion ${{ env.GitVersion_FullSemVer }} -BuildNugetPackages 1
     - name: Publish NuGet packages
+      if: github.event_name != 'pull_request'
       run: dotnet nuget push .\Artifacts\bin\release\*.nupkg --source https://nuget.pkg.github.com/SciDotNet/index.json --api-key ${{ github.token }}
     
     
