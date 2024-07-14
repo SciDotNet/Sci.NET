@@ -69,6 +69,37 @@ public static class SerializationExtensions
     }
 
     /// <summary>
+    /// Saves a dictionary of named <see cref="ITensor{TNumber}"/> to a file in the safetensors format.
+    /// </summary>
+    /// <param name="tensors">The dictionary of named <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="path">The path of the file to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    [DebuggerStepThrough]
+    public static void SaveSafeTensors<TNumber>(this Dictionary<string, ITensor<TNumber>> tensors, string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .SaveSafeTensors(tensors, path);
+    }
+
+    /// <summary>
+    /// Saves a dictionary of named <see cref="ITensor{TNumber}"/> to a stream in the safetensors format.
+    /// </summary>
+    /// <param name="tensors">The dictionary of named <see cref="ITensor{TNumber}"/> to serialize.</param>
+    /// <param name="stream">The stream to save to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public static void SaveSafeTensors<TNumber>(this Dictionary<string, ITensor<TNumber>> tensors, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .SaveSafeTensors(tensors, stream);
+    }
+
+    /// <summary>
     /// Compresses and saves a <see cref="ITensor{TNumber}"/> to a file.
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to serialize.</param>

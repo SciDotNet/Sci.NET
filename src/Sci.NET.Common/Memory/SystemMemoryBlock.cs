@@ -235,7 +235,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         // Write the entire block in one go if possible
         if (byteLength <= int.MaxValue)
         {
-            stream.Write(new ReadOnlySpan<byte>(_reference, (int)byteLength));
+            stream.Write(new ReadOnlySpan<byte>(_reference, (int)byteLength).ToArray());
             return;
         }
 
@@ -251,6 +251,44 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         {
             var chunkLength = Math.Min(remaining, int.MaxValue - 1);
             stream.Write(new ReadOnlySpan<byte>(pointer + offset, (int)chunkLength));
+            remaining -= chunkLength;
+            offset += chunkLength;
+        }
+    }
+
+    /// <summary>
+    /// Reads the elements from the stream into the <see cref="SystemMemoryBlock{T}"/>.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="startOffset">The offset to start reading from.</param>
+    /// <param name="storedDataLength">The length of the stored data.</param>
+    /// <exception cref="ArgumentException">The stored data length must be the same as the length of the memory block.</exception>
+    public unsafe void ReadElementsFrom(Stream stream, long startOffset, long storedDataLength)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        var byteLength = Length * Unsafe.SizeOf<T>();
+
+        if (byteLength != storedDataLength)
+        {
+            throw new ArgumentException("The stored data length must be the same as the length of the memory block.", nameof(storedDataLength));
+        }
+
+        _ = stream.Seek(startOffset, SeekOrigin.Begin);
+
+        if (byteLength <= int.MaxValue)
+        {
+            _ = stream.Read(new Span<byte>(_reference, (int)byteLength));
+            return;
+        }
+
+        var remaining = byteLength;
+        var pointer = (byte*)_reference;
+        var offset = 0L;
+
+        while (remaining > 0)
+        {
+            var chunkLength = Math.Min(remaining, int.MaxValue - 1);
+            _ = stream.Read(new Span<byte>(pointer + offset, (int)chunkLength));
             remaining -= chunkLength;
             offset += chunkLength;
         }
