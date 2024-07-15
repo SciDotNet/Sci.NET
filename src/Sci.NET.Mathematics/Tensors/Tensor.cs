@@ -205,6 +205,21 @@ public static class Tensor
     }
 
     /// <summary>
+    /// Loads a dictionary of named tensors from the specified file in the safetensors format.
+    /// </summary>
+    /// <param name="path">The path of the file to load from.</param>
+    /// <typeparam name="TNumber">The number type of the tensors.</typeparam>
+    /// <returns>The loaded dictionary of named tensors.</returns>
+    public static Dictionary<string, ITensor<TNumber>> LoadSafeTensors<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetSerializationService()
+            .LoadSafeTensors<TNumber>(path);
+    }
+
+    /// <summary>
     /// Loads a tensor from the specified buffer.
     /// </summary>
     /// <param name="stream">The buffer to load the tensor from.</param>
