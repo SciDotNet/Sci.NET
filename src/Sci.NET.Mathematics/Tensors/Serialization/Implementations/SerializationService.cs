@@ -1,13 +1,18 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using Newtonsoft.Json;
 using Sci.NET.Common.Attributes;
+using Sci.NET.Common.Exceptions;
+using Sci.NET.Common.Numerics;
 using Sci.NET.Common.Performance;
 using Sci.NET.Common.Streams;
+using Sci.NET.Mathematics.Tensors.Serialization.Implementations.Safetensors;
 
 namespace Sci.NET.Mathematics.Tensors.Serialization.Implementations;
 
@@ -199,7 +204,158 @@ internal class SerializationService : ISerializationService
         return Load<TNumber>(compressedStream);
     }
 
-    // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
+    public Dictionary<string, ITensor<TNumber>> LoadSafeTensors<TNumber>(string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        using var stream = File.OpenRead(path);
+
+        return LoadSafeTensors<TNumber>(stream);
+    }
+
+    public Dictionary<string, ITensor<TNumber>> LoadSafeTensors<TNumber>(Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var headerLength = stream.ReadValue<long>();
+        var headerBuffer = new byte[headerLength];
+        _ = stream.Read(headerBuffer);
+        var headerString = Encoding.UTF8.GetString(headerBuffer);
+        var header = JsonConvert.DeserializeObject<Dictionary<string, SafetensorsHeaderValue>>(headerString)
+                     ?? throw new FileLoadException("The header could not be deserialized.");
+        var dtypeString = GetSafetensorsDtypeString<TNumber>();
+        headerLength += sizeof(long);
+
+        if (header.Any(x => x.Value.Dtype != dtypeString))
+        {
+            throw new NotSupportedException("The data type of the tensor does not match the data type of the serializer.");
+        }
+
+        var tensors = header.ToDictionary(x => x.Key, x => (ITensor<TNumber>)new Tensor<TNumber>(new Shape(x.Value.Shape.ToArray())));
+
+        try
+        {
+            foreach (var tensor in header)
+            {
+                LoadSafetensorData(stream, tensors[tensor.Key], headerLength, tensor.Value);
+            }
+        }
+        catch
+        {
+            foreach (var tensor in tensors)
+            {
+                tensor.Value.Dispose();
+            }
+
+            throw;
+        }
+
+        stream.Close();
+
+        return tensors;
+    }
+
+    public void SaveSafeTensors<TNumber>(Dictionary<string, ITensor<TNumber>> tensors, string path)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+
+        using var fileStream = new FileStream(
+            path,
+            FileMode.CreateNew,
+            FileAccess.Write,
+            FileShare.None,
+            4096,
+            FileOptions.RandomAccess);
+
+        SaveSafeTensors(tensors, fileStream);
+    }
+
+    public void SaveSafeTensors<TNumber>(Dictionary<string, ITensor<TNumber>> tensors, Stream stream)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var offset = 0L;
+
+        var tensorMetadata = tensors.ToDictionary(
+            x => x.Key,
+            x =>
+            {
+                var initialOffset = offset;
+                var dataLength = x.Value.Shape.ElementCount * Unsafe.SizeOf<TNumber>();
+                offset += dataLength;
+
+                return new SafetensorsHeaderValue
+                {
+                    Shape = x.Value.Shape.ToList(),
+                    Dtype = GetSafetensorsDtypeString<TNumber>(),
+                    DataOffsets = new List<long>
+                    {
+                        initialOffset,
+                        initialOffset + dataLength
+                    }
+                };
+            });
+
+        var metadataBuffer = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(tensorMetadata));
+        var paddingBytes = (8 - (metadataBuffer.Length % 8)) % 8;
+
+        if (paddingBytes > 0)
+        {
+            Array.Resize(ref metadataBuffer, metadataBuffer.Length + paddingBytes);
+        }
+
+        using var writer = new BinaryWriter(stream);
+
+        writer.Write(BitConverter.GetBytes((long)metadataBuffer.Length));
+        writer.Write(metadataBuffer.AsSpan());
+
+        foreach (var tensor in tensors)
+        {
+            tensor.Value.Memory.WriteTo(writer.BaseStream);
+        }
+
+        stream.Flush();
+        stream.Close();
+    }
+
+    private static void LoadSafetensorData<TNumber>(Stream stream, ITensor<TNumber> tensor, long headerLength, SafetensorsHeaderValue tensorDescriptor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var storedDataLength = tensorDescriptor.DataOffsets[1] - tensorDescriptor.DataOffsets[0];
+        var storedElementSize = storedDataLength / tensor.Shape.ElementCount;
+        var handle = tensor.Memory.ToSystemMemory();
+
+        InvalidOperationExceptionHelper.ThrowIfNotEqual(storedElementSize, Unsafe.SizeOf<TNumber>(), "The stored element size does not match the element size of the tensor.");
+        InvalidOperationExceptionHelper.ThrowIfNotEqual(storedDataLength, handle.Length * Unsafe.SizeOf<TNumber>(), "The stored data length is not equal to the tensor data length.");
+
+        handle.ReadElementsFrom(stream, tensorDescriptor.DataOffsets[0] + headerLength, storedDataLength);
+    }
+
+    [ExcludeFromCodeCoverage]
+    private static string GetSafetensorsDtypeString<TNumber>()
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TNumber.Zero switch
+        {
+            double => "F64",
+            float => "F32",
+            Half => "F16",
+            BFloat16 => "BF16",
+            long => "I64",
+            ulong => "U64",
+            int => "I32",
+            uint => "U32",
+            short => "I16",
+            ushort => "U16",
+            sbyte => "I8",
+            byte => "U8",
+            bool => "BOOL",
+            _ => throw new NotSupportedException()
+        };
+    }
+
+    [ExcludeFromCodeCoverage]
     private static ReadOnlySpan<byte> GetNumpyDataType<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -219,7 +375,7 @@ internal class SerializationService : ISerializationService
         };
     }
 
-    // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
+    [ExcludeFromCodeCoverage]
     private static string GetDataType<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -236,6 +392,7 @@ internal class SerializationService : ISerializationService
             Half => "f2",
             float => "f4",
             double => "f8",
+            BFloat16 => "bf2",
             _ => "unknown"
         };
     }
