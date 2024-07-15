@@ -1,12 +1,14 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Compression;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Newtonsoft.Json;
 using Sci.NET.Common.Attributes;
+using Sci.NET.Common.Exceptions;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Common.Performance;
 using Sci.NET.Common.Streams;
@@ -324,19 +326,13 @@ internal class SerializationService : ISerializationService
         var storedElementSize = storedDataLength / tensor.Shape.ElementCount;
         var handle = tensor.Memory.ToSystemMemory();
 
-        if (storedElementSize != Unsafe.SizeOf<TNumber>())
-        {
-            throw new InvalidOperationException("The stored element size does not match the element size of the tensor.");
-        }
-
-        if (storedDataLength != handle.Length * Unsafe.SizeOf<TNumber>())
-        {
-            throw new InvalidOperationException("The stored data length is not equal to the tensor data length.");
-        }
+        InvalidOperationExceptionHelper.ThrowIfNotEqual(storedElementSize, Unsafe.SizeOf<TNumber>(), "The stored element size does not match the element size of the tensor.");
+        InvalidOperationExceptionHelper.ThrowIfNotEqual(storedDataLength, handle.Length * Unsafe.SizeOf<TNumber>(), "The stored data length is not equal to the tensor data length.");
 
         handle.ReadElementsFrom(stream, tensorDescriptor.DataOffsets[0] + headerLength, storedDataLength);
     }
 
+    [ExcludeFromCodeCoverage]
     private static string GetSafetensorsDtypeString<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -359,7 +355,7 @@ internal class SerializationService : ISerializationService
         };
     }
 
-    // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
+    [ExcludeFromCodeCoverage]
     private static ReadOnlySpan<byte> GetNumpyDataType<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -379,7 +375,7 @@ internal class SerializationService : ISerializationService
         };
     }
 
-    // ReSharper disable once CyclomaticComplexity -- This is a switch statement, it's supposed to be complex
+    [ExcludeFromCodeCoverage]
     private static string GetDataType<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -396,6 +392,7 @@ internal class SerializationService : ISerializationService
             Half => "f2",
             float => "f4",
             double => "f8",
+            BFloat16 => "bf2",
             _ => "unknown"
         };
     }
