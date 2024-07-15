@@ -22,7 +22,7 @@ branches:
     increment: Minor
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
-    regex: ^features?[/-]
+    regex: ^features?/.*$
     source-branches:
     - develop
     - main
@@ -36,7 +36,7 @@ branches:
     mode: ContinuousDelivery
     tag: hotfix
     increment: Patch
-    regex: ^hotfix(es)?[/-]
+    regex: ^hotfix(es)?/.*$
     source-branches:
     - main
     - develop
@@ -51,7 +51,7 @@ branches:
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
-    regex: ^support[/-]
+    regex: ^support?/.*$
     source-branches:
     - main
     tracks-release-branches: false
@@ -64,7 +64,7 @@ branches:
     increment: Patch
     prevent-increment-of-merged-branch-version: false
     track-merge-target: true
-    regex: ^dev(elop)?(ment)?$
+    regex: ^dev(elop)?(ment)?/.*$
     source-branches: []
     tracks-release-branches: true
     is-release-branch: false
