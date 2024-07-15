@@ -388,6 +388,12 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     }
 
     /// <inheritdoc />
+    public override string ToString()
+    {
+        return Tensor.ToString(this);
+    }
+
+    /// <inheritdoc />
     public void Dispose()
     {
         Dispose(true);
