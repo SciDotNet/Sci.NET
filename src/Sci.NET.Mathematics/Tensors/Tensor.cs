@@ -412,4 +412,60 @@ public static class Tensor
         return tensor.Shape.IsMatrix ||
                tensor.Shape.Dimensions.Count(x => x != 0) == 2;
     }
+
+    /// <summary>
+    /// Converts a <see cref="ITensor{TNumber}"/> to a string.
+    /// <list type="bullet">
+    /// <item>If the <paramref name="tensor"/> is a <see cref="Scalar{TNumber}"/>, the value is returned.</item>
+    /// <item>If the <paramref name="tensor"/> is a <see cref="Vector{TNumber}"/>, the values are returned in a single line.</item>
+    /// <item>If the <paramref name="tensor"/> is a <see cref="Matrix{TNumber}"/>, the values are returned in a matrix format.</item>
+    /// <item>If the <paramref name="tensor"/> is a higher rank tensor, the values are returned in a multi-dimensional format.</item>
+    /// <item>If the <paramref name="tensor"/> is more than 500 elements, only the shape is returned.</item>
+    /// </list>
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to convert.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <see cref="ITensor{TNumber}"/> as a string.</returns>
+    public static string ToString<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (tensor.Shape.ElementCount > 500)
+        {
+            var prefix = tensor switch
+            {
+                Vector<TNumber> => "Vector",
+                Matrix<TNumber> => "Matrix",
+                _ => "Tensor"
+            };
+
+            return $"{prefix} with shape {tensor.Shape}";
+        }
+
+        return ConvertToString(tensor, 0, 0).TrimStart('\n');
+    }
+
+    private static string ConvertToString<TNumber>(ITensor<TNumber> tensor, int dimension, long index)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (dimension == tensor.Shape.Dimensions.Length - 1)
+        {
+            var elements = new List<string>();
+            for (int i = 0; i < tensor.Shape[dimension]; i++)
+            {
+                elements.Add($"{tensor.Memory[index + (i * tensor.Shape.Strides[dimension])]}");
+            }
+
+            return $"[{string.Join(",", elements)}]";
+        }
+        else
+        {
+            var elements = new List<string>();
+            for (int i = 0; i < tensor.Shape[dimension]; i++)
+            {
+                elements.Add(ConvertToString(tensor, dimension + 1, index + (i * tensor.Shape.Strides[dimension])));
+            }
+
+            return $"[{string.Join(",", elements)}]";
+        }
+    }
 }
