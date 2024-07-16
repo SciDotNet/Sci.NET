@@ -2,7 +2,7 @@ mode: ContinuousDeployment
 branches:
   main:
     mode: ContinuousDelivery
-    tag: 'beta'
+    tag: beta
     increment: Patch
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
@@ -93,8 +93,8 @@ branches:
     increment: Patch
     regex: ^rc[/-]
     source-branches:
-      - develop
-      - main
+    - develop
+    - main
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
@@ -105,13 +105,14 @@ branches:
     increment: Minor
     regex: ^release[/-]
     source-branches:
-      - develop
-      - main
+    - develop
+    - main
     tracks-release-branches: false
     is-release-branch: true
     is-mainline: false
     pre-release-weight: 10000
-    
 ignore:
   sha: []
+merge-message-formats: {}
+
 merge-message-formats: {}

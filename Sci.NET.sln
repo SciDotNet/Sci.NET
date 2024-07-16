@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basics.MatrixMultiply", "Sa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basics.Arithmetic", "Samples\Basics.Arithmetic\Basics.Arithmetic.csproj", "{2D8E6664-4382-40CC-9122-F39DD3B4CB5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basics.Reduction", "Samples\Basics.Reduction\Basics.Reduction.csproj", "{117F67BF-81AB-4558-9BB9-4A170C7FC827}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{2D8E6664-4382-40CC-9122-F39DD3B4CB5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D8E6664-4382-40CC-9122-F39DD3B4CB5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D8E6664-4382-40CC-9122-F39DD3B4CB5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{117F67BF-81AB-4558-9BB9-4A170C7FC827}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{117F67BF-81AB-4558-9BB9-4A170C7FC827}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{117F67BF-81AB-4558-9BB9-4A170C7FC827}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{117F67BF-81AB-4558-9BB9-4A170C7FC827}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{2C72FFC2-F938-4A08-85E5-19DB2066C61A} = {23D4B1C9-4CC8-4B4A-BE72-14FFAE5263B2}
 		{C8D200B6-1CC6-4CD9-95D2-E1EE0C3321EF} = {7BDB3E57-DE57-44BB-BA16-00DFDF795FEC}
 		{2D8E6664-4382-40CC-9122-F39DD3B4CB5A} = {7BDB3E57-DE57-44BB-BA16-00DFDF795FEC}
+		{117F67BF-81AB-4558-9BB9-4A170C7FC827} = {7BDB3E57-DE57-44BB-BA16-00DFDF795FEC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC5435D4-B949-4EC3-9C76-673335B11820}
