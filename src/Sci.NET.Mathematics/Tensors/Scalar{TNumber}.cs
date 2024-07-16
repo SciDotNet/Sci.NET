@@ -392,6 +392,12 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         GC.SuppressFinalize(this);
     }
 
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Tensor.ToString(this);
+    }
+
     /// <summary>
     /// Disposes of the <see cref="Vector{TNumber}"/>.
     /// </summary>
