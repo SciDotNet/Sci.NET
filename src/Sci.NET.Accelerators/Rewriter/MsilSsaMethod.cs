@@ -4,6 +4,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.Disassembly.Pdb;
 using Sci.NET.Accelerators.IR;
 using Sci.NET.Accelerators.IR.Instructions;
 using Sci.NET.Accelerators.Rewriter.Variables;
@@ -117,23 +118,7 @@ public class MsilSsaMethod
 
                 if (sequencePoint is not null && sourceFile is not null && File.Exists(instruction.MsilInstruction?.SequencePoint?.DocumentName))
                 {
-                    try
-                    {
-                        if (sequencePoint.Value.IsHidden)
-                        {
-                            cs = "#line hidden";
-                        }
-                        else
-                        {
-                            var source = File.ReadAllLines(sourceFile);
-                            var line = source[sequencePoint.Value.StartLine - 1].Trim();
-                            cs = $"{line.Replace("\n", " ", StringComparison.Ordinal)}";
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        cs = "// PDB Error: Could not read source file.";
-                    }
+                    cs = HandleAddSequencePoint(sequencePoint, sourceFile);
                 }
 
                 lines.Add(("    " + instructionBuilder, instruction.MsilInstruction.ToString()!, cs));
@@ -151,5 +136,29 @@ public class MsilSsaMethod
 
         _ = builder.AppendLine("}");
         return builder.ToString();
+    }
+
+    private static string HandleAddSequencePoint([DisallowNull] PdbSequencePoint? sequencePoint, string sourceFile)
+    {
+        string cs;
+        try
+        {
+            if (sequencePoint.Value.IsHidden)
+            {
+                cs = "#line hidden";
+            }
+            else
+            {
+                var source = File.ReadAllLines(sourceFile);
+                var line = source[sequencePoint.Value.StartLine - 1].Trim();
+                cs = $"{line.Replace("\n", " ", StringComparison.Ordinal)}";
+            }
+        }
+        catch (Exception)
+        {
+            cs = "// PDB Error: Could not read source file.";
+        }
+
+        return cs;
     }
 }
