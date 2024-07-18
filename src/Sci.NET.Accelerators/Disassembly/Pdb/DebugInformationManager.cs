@@ -7,7 +7,7 @@ namespace Sci.NET.Accelerators.Disassembly.Pdb;
 
 internal sealed class DebugInformationManager : IDisposable
 {
-    private static readonly DebugInformationManager _instance = new ();
+    private static readonly DebugInformationManager _instance = new();
 
     private readonly ReaderWriterLockSlim _lock;
     private readonly Dictionary<Assembly, IAssemblyDebugInformation> _assemblyDebugInformation;

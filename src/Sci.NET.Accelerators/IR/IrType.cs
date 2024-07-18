@@ -18,7 +18,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the void type.
     /// </summary>
-    public static IrType Void { get; } = new ()
+    public static IrType Void { get; } = new()
     {
         Name = "void",
         Bits = 0,
@@ -31,7 +31,7 @@ public sealed class IrType : IIrWritable
     /// Gets the pointer type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Pointer { get; } = new ()
+    public static IrType Pointer { get; } = new()
     {
         Name = "pointer",
         Bits = 0,
@@ -44,7 +44,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the native integer type.
     /// </summary>
-    public static IrType NativeInt { get; } = new ()
+    public static IrType NativeInt { get; } = new()
     {
         Name = "nativeint",
         Bits = 0,
@@ -56,7 +56,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the boolean type.
     /// </summary>
-    public static IrType Boolean { get; } = new ()
+    public static IrType Boolean { get; } = new()
     {
         Name = "bool",
         Bits = 1,
@@ -69,7 +69,7 @@ public sealed class IrType : IIrWritable
     /// Gets the 8-bit integer type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Int8 { get; } = new ()
+    public static IrType Int8 { get; } = new()
     {
         Name = "int8",
         Bits = 8,
@@ -82,7 +82,7 @@ public sealed class IrType : IIrWritable
     /// Gets the 16-bit integer type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Int16 { get; } = new ()
+    public static IrType Int16 { get; } = new()
     {
         Name = "int16",
         Bits = 16,
@@ -95,7 +95,7 @@ public sealed class IrType : IIrWritable
     /// Gets the 32-bit integer type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Int32 { get; } = new ()
+    public static IrType Int32 { get; } = new()
     {
         Name = "int32",
         Bits = 32,
@@ -108,7 +108,7 @@ public sealed class IrType : IIrWritable
     /// Gets the 64-bit integer type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Int64 { get; } = new ()
+    public static IrType Int64 { get; } = new()
     {
         Name = "int64",
         Bits = 64,
@@ -120,7 +120,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the 128-bit integer type.
     /// </summary>
-    public static IrType Int128 { get; } = new ()
+    public static IrType Int128 { get; } = new()
     {
         Name = "int128",
         Bits = 128,
@@ -133,7 +133,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the half precision floating point type.
     /// </summary>
-    public static IrType Fp16 { get; } = new ()
+    public static IrType Fp16 { get; } = new()
     {
         Name = "fp16",
         Bits = 16,
@@ -145,7 +145,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the 16-bit floating point type.
     /// </summary>
-    public static IrType Bf16 { get; } = new ()
+    public static IrType Bf16 { get; } = new()
     {
         Name = "bf16",
         Bits = 16,
@@ -158,7 +158,7 @@ public sealed class IrType : IIrWritable
     /// Gets the single precision floating point type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Fp32 { get; } = new ()
+    public static IrType Fp32 { get; } = new()
     {
         Name = "fp32",
         Bits = 32,
@@ -171,7 +171,7 @@ public sealed class IrType : IIrWritable
     /// Gets the double precision floating point type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Fp64 { get; } = new ()
+    public static IrType Fp64 { get; } = new()
     {
         Name = "fp64",
         Bits = 64,
@@ -183,7 +183,7 @@ public sealed class IrType : IIrWritable
     /// <summary>
     /// Gets the quadruple precision floating point type.
     /// </summary>
-    public static IrType Fp128 { get; } = new ()
+    public static IrType Fp128 { get; } = new()
     {
         Name = "fp128",
         Bits = 128,
@@ -197,7 +197,7 @@ public sealed class IrType : IIrWritable
     /// Gets the string type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType String { get; } = new ()
+    public static IrType String { get; } = new()
     {
         Name = "string",
         Bits = 0,
@@ -210,7 +210,7 @@ public sealed class IrType : IIrWritable
     /// Gets the character type.
     /// </summary>
     [SuppressMessage("Naming", "CA1720:Identifier contains type name", Justification = "This is the name of the type.")]
-    public static IrType Char { get; } = new ()
+    public static IrType Char { get; } = new()
     {
         Name = "char",
         Bits = 16,
@@ -256,7 +256,7 @@ public sealed class IrType : IIrWritable
     /// <returns>The pointer type.</returns>
     public static IrType MakePointer(IrType type)
     {
-        return new ()
+        return new()
         {
             Name = $"ptr {type.Name}",
             Basis = type,

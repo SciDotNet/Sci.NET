@@ -136,7 +136,7 @@ public class MsilSsaMethod
                     }
                 }
 
-                lines.Add(("    " + instructionBuilder, instruction.MsilInstruction.ToString() !, cs));
+                lines.Add(("    " + instructionBuilder, instruction.MsilInstruction.ToString()!, cs));
             }
         }
 

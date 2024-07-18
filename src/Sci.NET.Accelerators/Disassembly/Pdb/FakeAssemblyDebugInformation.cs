@@ -54,11 +54,18 @@ internal class FakeAssemblyDebugInformation : IAssemblyDebugInformation
     public bool TryLoadLocalScopes(MethodDebugInfo methodDebugInfo, out ImmutableArray<PdbLocalScope> localScopes)
     {
         var methodBody = methodDebugInfo.MethodBase.GetMethodBody();
-        var variables = methodBody?.LocalVariables.Select(x => new PdbLocalVariable { Index = x.LocalIndex, Name = $"fake_local_{x.LocalIndex}" }).ToImmutableArray() ?? ImmutableArray<PdbLocalVariable>.Empty;
+        var variables = methodBody
+            ?.LocalVariables.Select(
+                x => new PdbLocalVariable
+                {
+                    Index = x.LocalIndex,
+                    Name = $"fake_local_{x.LocalIndex}"
+                })
+            .ToImmutableArray() ?? ImmutableArray<PdbLocalVariable>.Empty;
 
         localScopes = new ImmutableArray<PdbLocalScope>
         {
-            new ()
+            new()
             {
                 StartOffset = 0,
                 EndOffset = methodBody?.GetILAsByteArray()?.Length ?? 0,

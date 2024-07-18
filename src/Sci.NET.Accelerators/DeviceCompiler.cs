@@ -14,7 +14,7 @@ namespace Sci.NET.Accelerators;
 [PublicAPI]
 public static class DeviceCompiler
 {
-    private static readonly ConcurrentDictionary<KernelCacheEntry, ICompiledKernel> KernelCache = new ();
+    private static readonly ConcurrentDictionary<KernelCacheEntry, ICompiledKernel> KernelCache = new();
 
     /// <summary>
     /// Compiles a kernel method.
@@ -43,7 +43,11 @@ public static class DeviceCompiler
         where TCompiler : IDeviceCompiler<TKernel>, new()
         where TKernel : ICompiledKernel
     {
-        var kernelCacheEntry = new KernelCacheEntry { Method = methodInfo, CompilerIdentifier = TCompiler.Identifier };
+        var kernelCacheEntry = new KernelCacheEntry
+        {
+            Method = methodInfo,
+            CompilerIdentifier = TCompiler.Identifier
+        };
 
         if (KernelCache.TryGetValue(kernelCacheEntry, out var kernel) && kernel is TKernel cachedKernel)
         {

@@ -70,7 +70,7 @@ public readonly struct PdbSequencePoint : IValueEquatable<PdbSequencePoint>
     /// <returns>A sequence point that does not exist.</returns>
     public static PdbSequencePoint None()
     {
-        return new ()
+        return new()
         {
             Offset = -1,
             DocumentName = string.Empty,

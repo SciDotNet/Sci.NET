@@ -16,6 +16,6 @@ internal class IlCompiler : IDeviceCompiler<IlKernel>
 
     public IlKernel Compile(MsilSsaMethod intermediateRepresentation)
     {
-        return new ("Kernel");
+        return new("Kernel");
     }
 }
