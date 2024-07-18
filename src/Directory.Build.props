@@ -40,13 +40,14 @@
                 <IsTestProject>false</IsTestProject>
                 <Title>Sci.NET</Title>
                 <Authors>Sci.NET</Authors>
-                <Copyright>Sci.NET 2023</Copyright>
+                <Copyright>Sci.NET 2024</Copyright>
                 <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
                 <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
                 <IsPackable>true</IsPackable>
                 <PackageIcon>icon-small.png</PackageIcon>
                 <PackageProjectUrl>https://github.com/SciDotNet/Sci.NET/</PackageProjectUrl>
                 <RepositoryUrl>https://github.com/SciDotNet/Sci.NET/</RepositoryUrl>
+                <Description>Sci.NET is a .NET library for scientific computing.</Description>
             </PropertyGroup>
             <PropertyGroup>
                 <NoWarn>$(NoWarn);NU5104;NU5100;</NoWarn>

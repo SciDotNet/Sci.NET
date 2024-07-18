@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 namespace Sci.NET.Common;
 
 /// <summary>
-/// An unsigned integer the count of a pointer on the current platform.
+/// An unsigned integer with the size of a pointer on the current platform.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
 [DebuggerDisplay("{_value}")]
@@ -22,6 +22,8 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <param name="value">The value of the <see cref="SizeT"/>.</param>
     public SizeT(nint value)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
+
         _value = (nuint)value;
     }
 
@@ -40,6 +42,7 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <param name="value">The value of the <see cref="SizeT"/>.</param>
     public SizeT(int value)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(value, 0);
         _value = (nuint)value;
     }
 
@@ -73,12 +76,12 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <summary>
     /// Gets a <see cref="SizeT"/> representing zero.
     /// </summary>
-    public static SizeT Zero => new (0);
+    public static SizeT Zero => new(0);
 
     /// <inheritdoc cref="FromInt64"/>
     public static implicit operator SizeT(long value)
     {
-        return new (value);
+        return new(value);
     }
 
     /// <summary>
@@ -134,7 +137,7 @@ public readonly struct SizeT : IEquatable<SizeT>, IEquatable<int>
     /// <returns>A <see cref="SizeT"/> with the value given by <paramref name="value"/>.</returns>
     public static SizeT FromInt64(long value)
     {
-        return new (value);
+        return new(value);
     }
 
     /// <summary>

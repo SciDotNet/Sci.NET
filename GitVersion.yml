@@ -1,14 +1,17 @@
 mode: Mainline
-
 branches:
   main:
     mode: ContinuousDelivery
-    tag: ''
+    tag: beta
     increment: Patch
-    prevent-increment-of-merged-branch-version: true
+    prevent-increment-of-merged-branch-version: false
     track-merge-target: false
     regex: ^main$
-    source-branches: ['feature', 'hotfix', 'support', 'develop']
+    source-branches:
+    - feature
+    - hotfix
+    - support
+    - develop
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
@@ -20,17 +23,24 @@ branches:
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
     regex: ^features?[/-]
-    source-branches: ['develop', 'main', 'support', 'hotfix']
+    source-branches:
+    - develop
+    - main
+    - support
+    - hotfix
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 30000
   hotfix:
     mode: ContinuousDelivery
-    regex: ^hotfix(es)?[/-]
-    tag: 'hotfix'
+    tag: hotfix
     increment: Patch
-    source-branches: ['main', 'develop', 'support']
+    regex: ^hotfix(es)?[/-]
+    source-branches:
+    - main
+    - develop
+    - support
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
@@ -42,7 +52,8 @@ branches:
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
     regex: ^support[/-]
-    source-branches: ['main']
+    source-branches:
+    - main
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: true
@@ -67,13 +78,41 @@ branches:
     tag-number-pattern: '[/-](?<number>\d+)'
     track-merge-target: false
     regex: ^(pull|pull\-requests|pr)[/-]
-    source-branches: ['feature', 'hotfix', 'support', 'develop']
+    source-branches:
+    - feature
+    - hotfix
+    - support
+    - develop
     tracks-release-branches: false
     is-release-branch: false
     is-mainline: false
     pre-release-weight: 30000
-
+  release-candidate:
+    mode: ContinuousDelivery
+    tag: rc
+    increment: Patch
+    regex: ^rc[/-]
+    source-branches:
+    - develop
+    - main
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+    pre-release-weight: 20000
+  release:
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Minor
+    regex: ^release[/-]
+    source-branches:
+    - develop
+    - main
+    tracks-release-branches: false
+    is-release-branch: true
+    is-mainline: false
+    pre-release-weight: 10000
 ignore:
   sha: []
+merge-message-formats: {}
 
 merge-message-formats: {}

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace Sci.NET.Mathematics.Tensors.Exceptions;
@@ -9,6 +10,7 @@ namespace Sci.NET.Mathematics.Tensors.Exceptions;
 /// The exception that is thrown when a <see cref="ITensor{TNumber}"/> has an invalid shape.
 /// </summary>
 [PublicAPI]
+[ExcludeFromCodeCoverage]
 public class InvalidShapeException : Exception
 {
     /// <summary>

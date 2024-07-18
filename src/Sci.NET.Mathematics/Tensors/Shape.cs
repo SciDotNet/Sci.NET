@@ -144,7 +144,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <returns>A new scalar <see cref="Shape"/>.</returns>
     public static Shape Scalar()
     {
-        return new ();
+        return new();
     }
 
     /// <summary>
@@ -154,7 +154,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <returns>A shape representing a vector of the given <paramref name="length"/>.</returns>
     public static Shape Vector(int length)
     {
-        return new (length);
+        return new(length);
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <returns>The new <see cref="Shape"/>.</returns>
     public static Shape Matrix(int rows, int columns)
     {
-        return new (rows, columns);
+        return new(rows, columns);
     }
 
     /// <summary>
@@ -175,7 +175,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <returns>The new <see cref="Shape"/>.</returns>
     public static Shape Tensor(params int[] dimensions)
     {
-        return new (dimensions);
+        return new(dimensions);
     }
 
     /// <summary>

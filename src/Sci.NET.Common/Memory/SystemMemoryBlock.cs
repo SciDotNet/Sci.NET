@@ -183,9 +183,9 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        for (var i = 0; i < Length; i++)
+        for (var i = 0L; i < Length; i++)
         {
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)i) = value;
+            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nuint)i) = value;
         }
     }
 #pragma warning restore CA1502 // Avoid excessive complexity
@@ -235,19 +235,60 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         // Write the entire block in one go if possible
         if (byteLength <= int.MaxValue)
         {
-            stream.Write(new ReadOnlySpan<byte>(_reference, (int)byteLength));
+            stream.Write(new ReadOnlySpan<byte>(_reference, (int)byteLength).ToArray());
             return;
         }
 
         // Otherwise write in chunks using long pointer
+        // Note: There is no test coverage for this code path as no in-memory stream can exceed 2.5GB.
+        //       We could add a test for this by creating a custom stream that allows for a larger buffer size
+        //       or by using a file stream, but this would slow down CI builds.
         var remaining = byteLength;
         var pointer = (byte*)_reference;
         var offset = 0L;
 
         while (remaining > 0)
         {
-            var chunkLength = Math.Min(remaining, int.MaxValue);
+            var chunkLength = Math.Min(remaining, int.MaxValue - 1);
             stream.Write(new ReadOnlySpan<byte>(pointer + offset, (int)chunkLength));
+            remaining -= chunkLength;
+            offset += chunkLength;
+        }
+    }
+
+    /// <summary>
+    /// Reads the elements from the stream into the <see cref="SystemMemoryBlock{T}"/>.
+    /// </summary>
+    /// <param name="stream">The stream to read from.</param>
+    /// <param name="startOffset">The offset to start reading from.</param>
+    /// <param name="storedDataLength">The length of the stored data.</param>
+    /// <exception cref="ArgumentException">The stored data length must be the same as the length of the memory block.</exception>
+    public unsafe void ReadElementsFrom(Stream stream, long startOffset, long storedDataLength)
+    {
+        ObjectDisposedException.ThrowIf(IsDisposed, this);
+        var byteLength = Length * Unsafe.SizeOf<T>();
+
+        if (byteLength != storedDataLength)
+        {
+            throw new ArgumentException("The stored data length must be the same as the length of the memory block.", nameof(storedDataLength));
+        }
+
+        _ = stream.Seek(startOffset, SeekOrigin.Begin);
+
+        if (byteLength <= int.MaxValue)
+        {
+            _ = stream.Read(new Span<byte>(_reference, (int)byteLength));
+            return;
+        }
+
+        var remaining = byteLength;
+        var pointer = (byte*)_reference;
+        var offset = 0L;
+
+        while (remaining > 0)
+        {
+            var chunkLength = Math.Min(remaining, int.MaxValue - 1);
+            _ = stream.Read(new Span<byte>(pointer + offset, (int)chunkLength));
             remaining -= chunkLength;
             offset += chunkLength;
         }
@@ -449,7 +490,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         if (Length > int.MaxValue)
         {
-            throw new InvalidOperationException("Cannot create a span larger than int.MaxValue");
+            throw new InvalidOperationException($"Cannot create a span larger than int.MaxValue ({int.MaxValue}) elements.");
         }
 
         return new Span<T>(_reference, (int)Length);
@@ -567,7 +608,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// Disposes the <see cref="SystemMemoryBlock{T}"/>.
     /// </summary>
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
-    private unsafe void Dispose(bool isDisposing)
+    private void Dispose(bool isDisposing)
     {
         ReleaseUnmanagedResources();
 
@@ -579,7 +620,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
     private unsafe void ReleaseUnmanagedResources()
     {
-        if (_cannotDispose)
+        if (_cannotDispose || IsDisposed)
         {
             return;
         }

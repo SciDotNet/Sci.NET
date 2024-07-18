@@ -26,4 +26,36 @@ public class CopyToShould
             destination[i].Should().Be(0x42);
         }
     }
+
+    [Fact]
+    public void ThrowException_WhenDisposed()
+    {
+        var memoryBlock = new SystemMemoryBlock<int>(10);
+        memoryBlock.Dispose();
+
+        var act = () => memoryBlock.CopyTo(new SystemMemoryBlock<int>(10));
+
+        act.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenNotSystemMemoryBlock()
+    {
+        var memoryBlock = new SystemMemoryBlock<int>(10);
+
+        var act = () => memoryBlock.CopyTo(new Mock<IMemoryBlock<int>>().Object);
+
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Fact]
+    public void ThrowException_WhenDestinationIsTooSmall()
+    {
+        var memoryBlock = new SystemMemoryBlock<int>(10);
+        var destination = new SystemMemoryBlock<int>(5);
+
+        var act = () => memoryBlock.CopyTo(destination);
+
+        act.Should().Throw<ArgumentException>();
+    }
 }
