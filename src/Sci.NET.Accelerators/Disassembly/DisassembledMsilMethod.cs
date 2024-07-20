@@ -3,6 +3,7 @@
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Text;
 using Sci.NET.Accelerators.Disassembly.Operands;
 
@@ -66,9 +67,10 @@ public class DisassembledMsilMethod
             .AppendLine("    )")
             .AppendLine();
 
-        foreach (var instruction in Instructions)
+        for (var index = 0; index < Instructions.Length; index++)
         {
-            _ = builder.Append("    ").AppendLine(instruction.ToString());
+            var instruction = Instructions[index];
+            _ = builder.Append((index + 1).ToString("0000", CultureInfo.InvariantCulture)).Append("    ").AppendLine(instruction.ToString());
         }
 
         _ = builder.AppendLine("  }");

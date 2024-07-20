@@ -18,7 +18,7 @@ namespace Sci.NET.Accelerators.Disassembly;
 public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstruction<TOperand>>
     where TOperand : IMsilOperand
 {
-     /// <summary>
+    /// <summary>
     /// Initializes a new instance of the <see cref="MsilInstruction{TOperand}"/> struct.
     /// </summary>
     /// <param name="opcode">The opcode.</param>
@@ -169,6 +169,42 @@ public readonly struct MsilInstruction<TOperand> : IValueEquatable<MsilInstructi
         if (IsConditionalBranch)
         {
             yield return Offset + Size;
+        }
+    }
+
+    /// <summary>
+    /// Gets the branch target instructions.
+    /// </summary>
+    /// <param name="disassembledMsilMethod">The disassembled MSIL method.</param>
+    /// <returns>The branch target instructions.</returns>
+    public IEnumerable<MsilInstruction<IMsilOperand>> GetBranchTargetInstructions(DisassembledMsilMethod disassembledMsilMethod)
+    {
+        foreach (var target in GetBranchTargets())
+        {
+            var instruction = disassembledMsilMethod.Instructions.FirstOrDefault(x => x.Offset == target);
+
+            if (instruction != default)
+            {
+                yield return instruction;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the branch target instructions.
+    /// </summary>
+    /// <param name="disassembledMsilMethod">The disassembled MSIL method.</param>
+    /// <returns>The branch target instructions.</returns>
+    public IEnumerable<int> GetBranchTargetInstructionIndices(DisassembledMsilMethod disassembledMsilMethod)
+    {
+        foreach (var target in GetBranchTargets())
+        {
+            var instruction = disassembledMsilMethod.Instructions.FirstOrDefault(x => x.Offset == target);
+
+            if (instruction != default)
+            {
+                yield return instruction.Index;
+            }
         }
     }
 

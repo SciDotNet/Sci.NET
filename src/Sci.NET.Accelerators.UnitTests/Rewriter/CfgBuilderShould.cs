@@ -17,7 +17,7 @@ public class CfgBuilderShould
         var cfg = new CfgBuilder(disassembledMethod);
 
         // Act
-        cfg.Build();
+        var result = cfg.Build();
 
         // Assert
         Assert.NotNull(cfg);

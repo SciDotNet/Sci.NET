@@ -17,14 +17,11 @@ public class EndToEndTest
                        throw new InvalidOperationException();
 
         var info = new MsilMethodMetadata(metadata);
-
         var disassembler = new MsilDisassembler(info);
-
         var disassembly = disassembler.Disassemble();
-
         var ssaConverter = new MsilToIrTranslator(disassembly);
-
-        var ir = ssaConverter.Transform();
+        var cfg = new CfgBuilder(disassembly).Build();
+        var ir = ssaConverter.Transform(cfg);
 
         var irString = ir.GetIrAndMsilString();
 
@@ -38,14 +35,11 @@ public class EndToEndTest
                        throw new InvalidOperationException();
 
         var info = new MsilMethodMetadata(metadata);
-
         var disassembler = new MsilDisassembler(info);
-
         var disassembly = disassembler.Disassemble();
-
         var ssaConverter = new MsilToIrTranslator(disassembly);
-
-        var ir = ssaConverter.Transform();
+        var cfg = new CfgBuilder(disassembly).Build();
+        var ir = ssaConverter.Transform(cfg);
 
         var irString = ir.GetIrAndMsilString();
 
@@ -60,19 +54,22 @@ public class EndToEndTest
         long n,
         long k)
     {
+        // Basic block 1
         var row = (Kernel.BlockIdx.Y * Kernel.BlockDim.Y) + Kernel.ThreadIdx.Y;
         var col = (Kernel.BlockIdx.X * Kernel.BlockDim.X) + Kernel.ThreadIdx.X;
-
         var sum = 0.0f;
 
         if (row < m && col < n)
         {
+            // Basic block 2
             for (var i = 0; i < k; i++)
             {
+                // Basic block 3
                 sum += left[(row * k) + i] * right[(i * n) + col];
             }
         }
 
+        // Basic block 4
         Kernel.SyncThreads();
 
         result[(row * n) + col] = sum;

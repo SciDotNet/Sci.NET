@@ -114,9 +114,10 @@ public class MsilToIrTranslatorShould
         var disassembler = new MsilDisassembler(metadata);
         var disassembledMethod = disassembler.Disassemble();
         var ssaTransformer = new MsilToIrTranslator(disassembledMethod);
+        var cfg = new CfgBuilder(disassembledMethod).Build();
 
         // Act
-        var ssaMethod = ssaTransformer.Transform();
+        var ssaMethod = ssaTransformer.Transform(cfg);
 
         // Assert
         ssaMethod.Locals.Count.Should().Be(variables.Count);

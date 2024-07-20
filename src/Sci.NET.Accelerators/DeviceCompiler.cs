@@ -3,8 +3,11 @@
 
 using System.Collections.Concurrent;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Sci.NET.Accelerators.Disassembly;
+using Sci.NET.Accelerators.IR;
 using Sci.NET.Accelerators.Rewriter;
+using Sci.NET.Common.Performance;
 
 namespace Sci.NET.Accelerators;
 
@@ -54,18 +57,35 @@ public static class DeviceCompiler
             return cachedKernel;
         }
 
-        var disassembledMethod = new MsilDisassembler(new MsilMethodMetadata(methodInfo))
-            .Disassemble();
-
-        var intermediateRepresentation = new MsilToIrTranslator(disassembledMethod)
-            .Transform();
-
+        var disassembledMethod = DisassembleMethod(methodInfo);
+        var controlFlowGraph = BuildControlFlowGraph(disassembledMethod);
+        var intermediateRepresentation = BuildIntermediateRepresentation(disassembledMethod, controlFlowGraph);
         var deviceCompiler = new TCompiler();
-
         var compiledKernel = deviceCompiler.Compile(intermediateRepresentation);
 
         _ = KernelCache.TryAdd(kernelCacheEntry, compiledKernel);
 
         return compiledKernel;
+    }
+
+    [MethodImpl(ImplementationOptions.FastPath)]
+    private static MsilSsaMethod BuildIntermediateRepresentation(DisassembledMsilMethod disassembledMethod, List<BasicBlock> controlFlowGraph)
+    {
+        return new MsilToIrTranslator(disassembledMethod)
+            .Transform(controlFlowGraph);
+    }
+
+    [MethodImpl(ImplementationOptions.FastPath)]
+    private static List<BasicBlock> BuildControlFlowGraph(DisassembledMsilMethod disassembledMethod)
+    {
+        return new CfgBuilder(disassembledMethod)
+            .Build();
+    }
+
+    [MethodImpl(ImplementationOptions.FastPath)]
+    private static DisassembledMsilMethod DisassembleMethod(MethodInfo methodInfo)
+    {
+        return new MsilDisassembler(new MsilMethodMetadata(methodInfo))
+            .Disassemble();
     }
 }
