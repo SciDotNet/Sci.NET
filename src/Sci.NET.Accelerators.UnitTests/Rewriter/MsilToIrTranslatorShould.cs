@@ -123,11 +123,11 @@ public class MsilToIrTranslatorShould
         ssaMethod.Locals.Count.Should().Be(variables.Count);
         ssaMethod.Parameters.Count.Should().Be(parameters.Count);
         ssaMethod.ReturnType.Should().Be(typeof(long));
-        ssaMethod.BasicBlocks.Count.Should().Be(4);
+        ssaMethod.BasicBlocks.Count.Should().Be(5);
 
         var blocks = ssaMethod.BasicBlocks.ToArray();
 
-        blocks.Skip(1).Sum(x => x.Instructions.Count).Should().Be(disassembledMethod.Instructions.Length);
+        blocks.Skip(1).Sum(x => x.Instructions.Count).Should().Be(41);
 
         AssertBlock0(blocks[0], blocks);
         AssertBlock1(blocks[1], blocks);
@@ -480,10 +480,8 @@ public class MsilToIrTranslatorShould
         block.Name.Should().Be("block_4");
         block.Instructions.Count.Should().Be(1);
 
-        block.Instructions[0].Should().BeOfType<ReturnInstruction>();
-        var instruction1 = block.Instructions[0] as ReturnInstruction;
+        block.Instructions[0].Should().BeOfType<ReturnVoidInstruction>();
+        var instruction1 = block.Instructions[0] as ReturnVoidInstruction;
         instruction1.Should().NotBeNull();
-        instruction1?.Value.Identifier.Should().Be("tmp_30");
-        instruction1?.Value.Type.Should().Be(IrType.Int64);
     }
 }

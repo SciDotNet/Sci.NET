@@ -13,7 +13,7 @@ public class EndToEndTest
     [Fact]
     public void Test()
     {
-        var metadata = typeof(EndToEndTest).GetMethod(nameof(Add), BindingFlags.Static | BindingFlags.NonPublic) ??
+        var metadata = typeof(EndToEndTest).GetMethod(nameof(MatrixMultiply), BindingFlags.Static | BindingFlags.NonPublic) ??
                        throw new InvalidOperationException();
 
         var info = new MsilMethodMetadata(metadata);
@@ -23,9 +23,8 @@ public class EndToEndTest
         var cfg = CfgBuilder.Build(disassembly);
         var ir = ssaConverter.Transform(cfg);
 
-        var irString = ir.GetIrAndMsilString();
-
-        Assert.NotNull(disassembly);
+        // I need to write some real assertions here, but for now, just check that the IR is not null
+        Assert.NotNull(ir);
     }
 
     [Fact]
@@ -41,12 +40,11 @@ public class EndToEndTest
         var cfg = CfgBuilder.Build(disassembly);
         var ir = ssaConverter.Transform(cfg);
 
-        var irString = ir.GetIrAndMsilString();
-
+        // I need to write some real assertions here, but for now, just check that the IR is not null
         Assert.NotNull(ir);
     }
 
-    private static void Add(
+    private static void MatrixMultiply(
         IMemoryBlock<float> left,
         IMemoryBlock<float> right,
         IMemoryBlock<float> result,
@@ -54,22 +52,18 @@ public class EndToEndTest
         long n,
         long k)
     {
-        // Basic block 1
         var row = (Kernel.BlockIdx.Y * Kernel.BlockDim.Y) + Kernel.ThreadIdx.Y;
         var col = (Kernel.BlockIdx.X * Kernel.BlockDim.X) + Kernel.ThreadIdx.X;
         var sum = 0.0f;
 
         if (row < m && col < n)
         {
-            // Basic block 2
             for (var i = 0; i < k; i++)
             {
-                // Basic block 3
                 sum += left[(row * k) + i] * right[(i * n) + col];
             }
         }
 
-        // Basic block 4
         Kernel.SyncThreads();
 
         result[(row * n) + col] = sum;

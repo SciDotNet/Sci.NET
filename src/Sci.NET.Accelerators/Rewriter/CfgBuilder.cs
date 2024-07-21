@@ -84,7 +84,7 @@ public static class CfgBuilder
                 continue;
             }
 
-            basicBlocks.Add(new BasicBlock($"block_{i}", block));
+            basicBlocks.Add(new BasicBlock($"block_{i + 1}", block));
         }
 
         return basicBlocks;

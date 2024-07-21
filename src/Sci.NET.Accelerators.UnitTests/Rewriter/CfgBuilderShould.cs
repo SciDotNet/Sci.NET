@@ -12,7 +12,7 @@ public class CfgBuilderShould
     [Fact]
     public void SomeTest()
     {
-        var method = GetType().GetMethod(nameof(Add), BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException();
+        var method = GetType().GetMethod(nameof(SomeExampleMethod), BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException();
         var disassembledMethod = new MsilDisassembler(new MsilMethodMetadata(method)).Disassemble();
 
         // Act
@@ -22,7 +22,7 @@ public class CfgBuilderShould
         Assert.NotNull(cfg);
     }
 
-    private static int Add(int left, int right)
+    private static int SomeExampleMethod(int left, int right)
     {
         var result = left * right;
 
