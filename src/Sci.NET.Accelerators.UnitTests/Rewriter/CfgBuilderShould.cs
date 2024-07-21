@@ -14,10 +14,9 @@ public class CfgBuilderShould
     {
         var method = GetType().GetMethod(nameof(Add), BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException();
         var disassembledMethod = new MsilDisassembler(new MsilMethodMetadata(method)).Disassemble();
-        var cfg = new CfgBuilder(disassembledMethod);
 
         // Act
-        var result = cfg.Build();
+        var cfg = CfgBuilder.Build(disassembledMethod);
 
         // Assert
         Assert.NotNull(cfg);

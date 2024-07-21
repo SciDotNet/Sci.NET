@@ -114,7 +114,7 @@ public class MsilToIrTranslatorShould
         var disassembler = new MsilDisassembler(metadata);
         var disassembledMethod = disassembler.Disassemble();
         var ssaTransformer = new MsilToIrTranslator(disassembledMethod);
-        var cfg = new CfgBuilder(disassembledMethod).Build();
+        var cfg = CfgBuilder.Build(disassembledMethod);
 
         // Act
         var ssaMethod = ssaTransformer.Transform(cfg);

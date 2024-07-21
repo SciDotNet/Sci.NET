@@ -1,119 +1,134 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Collections.Immutable;
+using System.Reflection.Emit;
 using Sci.NET.Accelerators.Disassembly;
 using Sci.NET.Accelerators.Disassembly.Operands;
 using Sci.NET.Accelerators.IR;
 
 namespace Sci.NET.Accelerators.Rewriter;
 
-internal class CfgBuilder
+/// <summary>
+/// Builds a new control flow graph.
+/// </summary>
+[PublicAPI]
+public static class CfgBuilder
 {
-    private readonly DisassembledMsilMethod _disassembledMethod;
-    private readonly HashSet<int> _leaders;
-    private readonly HashSet<int> _terminators;
-    private readonly Dictionary<int, BasicBlock> _basicBlocks;
-    private readonly Dictionary<int, List<BasicBlock>> _successorMapping;
-
-    public CfgBuilder(DisassembledMsilMethod disassembledMsilMethod)
+    /// <summary>
+    /// Builds a new control flow graph.
+    /// </summary>
+    /// <param name="method">The disassembled method.</param>
+    /// <returns>The new control flow graph.</returns>
+    public static ICollection<BasicBlock> Build(DisassembledMsilMethod method)
     {
-        _disassembledMethod = disassembledMsilMethod;
-        _successorMapping = new Dictionary<int, List<BasicBlock>>();
-        _leaders = new HashSet<int>();
-        _terminators = new HashSet<int>();
-        _basicBlocks = new Dictionary<int, BasicBlock>();
+        var instructions = method.Instructions;
+        var leaders = FindLeaders(method, instructions);
+        var sortedLeaders = leaders.OrderBy(x => x).ToArray();
+        var basicBlocks = FillBasicBlocks(sortedLeaders, instructions);
+        var successors = FindSuccessors(basicBlocks, method);
+
+        AddSuccessorsAndPredecessors(successors);
+
+        return basicBlocks;
     }
 
-    public List<BasicBlock> Build()
-    {
-        FindLeadersTerminators();
-        ConstructBasicBlocks();
-        ComputeSuccessors();
-        AddPredecessorsAndSuccessors();
-
-        return _basicBlocks.Values.ToList();
-    }
-
-    private void ConstructBasicBlocks()
-    {
-        var sortedLeaders = _leaders.OrderBy(x => x).ToArray();
-        var sortedTerminators = _terminators.OrderBy(x => x).ToArray();
-
-        for (var i = 0; i < sortedLeaders.Length; i++)
-        {
-            var leader = sortedLeaders[i];
-            var terminator = sortedTerminators[i];
-
-            var instructions = new List<MsilInstruction<IMsilOperand>>();
-            for (var j = leader; j < terminator; j++)
-            {
-                instructions.Add(_disassembledMethod.Instructions[j]);
-            }
-
-            _basicBlocks.Add(i, new BasicBlock($"block_{i}", instructions));
-        }
-    }
-
-    private void FindLeadersTerminators()
+    private static HashSet<int> FindLeaders(DisassembledMsilMethod method, ImmutableArray<MsilInstruction<IMsilOperand>> instructions)
     {
         var leaders = new HashSet<int> { 0 };
-        var terminators = new HashSet<int>();
 
-        foreach (var instruction in _disassembledMethod.Instructions)
+        for (var i = 0; i < instructions.Length; i++)
         {
-            if (instruction.IsBranch)
+            var instruction = instructions[i];
+            if (instruction.FlowControl is FlowControl.Branch or FlowControl.Cond_Branch)
             {
-                foreach (var target in instruction.GetBranchTargetInstructionIndices(_disassembledMethod))
+                _ = leaders.Add(i + 1);
+
+                foreach (var target in instruction.GetBranchTargetInstructionIndices(method))
                 {
                     _ = leaders.Add(target);
                 }
             }
+
+            if (instruction.FlowControl is FlowControl.Return)
+            {
+                _ = leaders.Add(i + 1);
+            }
+
+            if (instruction.FlowControl is FlowControl.Throw)
+            {
+                _ = leaders.Add(i + 1);
+            }
         }
 
-        _leaders.UnionWith(leaders.OrderBy(x => x));
-        _terminators.UnionWith(_leaders.Skip(1).Select(x => x - 1).Append(_disassembledMethod.Instructions.Length - 1));
+        return leaders;
     }
 
-    private void ComputeSuccessors()
+    private static List<BasicBlock> FillBasicBlocks(int[] sortedLeaders, ImmutableArray<MsilInstruction<IMsilOperand>> instructions)
     {
-        foreach (var basicBlock in _basicBlocks.SkipLast(1))
+        var basicBlocks = new List<BasicBlock>();
+
+        for (var i = 0; i < sortedLeaders.Length - 1; i++)
         {
-            var lastInstruction = basicBlock.Value.MsilInstructions.Last();
+            var leader = sortedLeaders[i];
+            var terminator = sortedLeaders[i + 1];
+            var block = new List<MsilInstruction<IMsilOperand>>();
 
-            if (!_successorMapping.TryGetValue(basicBlock.Key, out List<BasicBlock>? value))
+            for (var j = leader; j < terminator; j++)
             {
-                value = new List<BasicBlock>();
-                _successorMapping.Add(basicBlock.Key, value);
+                block.Add(instructions[j]);
             }
 
-            if (lastInstruction.IsBranch)
+            if (block.Count == 0)
             {
-                foreach (var target in lastInstruction.GetBranchTargetInstructions(_disassembledMethod))
-                {
-                    var targetBlocks = _basicBlocks.Where(x => x.Value.MsilInstructions.Contains(target)).ToList();
-                    value.AddRange(targetBlocks.Select(x => x.Value));
-                }
+                continue;
             }
-            else
-            {
-                if (!_successorMapping.ContainsKey(basicBlock.Key + 1))
-                {
-                    _successorMapping.Add(basicBlock.Key + 1, new List<BasicBlock>());
-                }
 
-                value.Add(_basicBlocks[basicBlock.Key + 1]);
-            }
+            basicBlocks.Add(new BasicBlock($"block_{i}", block));
         }
+
+        return basicBlocks;
     }
 
-    private void AddPredecessorsAndSuccessors()
+    private static Dictionary<BasicBlock, List<BasicBlock>> FindSuccessors(List<BasicBlock> basicBlocks, DisassembledMsilMethod method)
     {
-        foreach (var (index, successors) in _successorMapping)
+        var successors = new Dictionary<BasicBlock, List<BasicBlock>>();
+
+        foreach (var block in basicBlocks)
+        {
+            var lastInstruction = block.MsilInstructions.Last();
+
+            if (lastInstruction.FlowControl is FlowControl.Branch or FlowControl.Cond_Branch)
+            {
+                foreach (var targetIndex in lastInstruction.GetBranchTargetInstructionIndices(method))
+                {
+                    var targetBlock = basicBlocks.Find(x => x.MsilInstructions.First().Index == targetIndex);
+
+                    if (targetBlock is not null)
+                    {
+                        if (!successors.TryGetValue(block, out var value))
+                        {
+                            value ??= new List<BasicBlock>();
+                            successors[block] = value;
+                        }
+
+                        value.Add(targetBlock);
+                    }
+                }
+            }
+        }
+
+        return successors;
+    }
+
+    private static void AddSuccessorsAndPredecessors(Dictionary<BasicBlock, List<BasicBlock>> successorMapping)
+    {
+        foreach (var (block, successors) in successorMapping)
         {
             foreach (var successor in successors)
             {
-                _basicBlocks[index].AddSuccessor(successor);
-                successor.AddPredecessor(_basicBlocks[index]);
+                block.AddSuccessor(successor);
+                successor.AddPredecessor(block);
             }
         }
     }

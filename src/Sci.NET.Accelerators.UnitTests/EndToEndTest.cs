@@ -20,7 +20,7 @@ public class EndToEndTest
         var disassembler = new MsilDisassembler(info);
         var disassembly = disassembler.Disassemble();
         var ssaConverter = new MsilToIrTranslator(disassembly);
-        var cfg = new CfgBuilder(disassembly).Build();
+        var cfg = CfgBuilder.Build(disassembly);
         var ir = ssaConverter.Transform(cfg);
 
         var irString = ir.GetIrAndMsilString();
@@ -38,7 +38,7 @@ public class EndToEndTest
         var disassembler = new MsilDisassembler(info);
         var disassembly = disassembler.Disassemble();
         var ssaConverter = new MsilToIrTranslator(disassembly);
-        var cfg = new CfgBuilder(disassembly).Build();
+        var cfg = CfgBuilder.Build(disassembly);
         var ir = ssaConverter.Transform(cfg);
 
         var irString = ir.GetIrAndMsilString();

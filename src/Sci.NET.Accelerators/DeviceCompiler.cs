@@ -69,17 +69,16 @@ public static class DeviceCompiler
     }
 
     [MethodImpl(ImplementationOptions.FastPath)]
-    private static MsilSsaMethod BuildIntermediateRepresentation(DisassembledMsilMethod disassembledMethod, List<BasicBlock> controlFlowGraph)
+    private static MsilSsaMethod BuildIntermediateRepresentation(DisassembledMsilMethod disassembledMethod, ICollection<BasicBlock> controlFlowGraph)
     {
         return new MsilToIrTranslator(disassembledMethod)
             .Transform(controlFlowGraph);
     }
 
     [MethodImpl(ImplementationOptions.FastPath)]
-    private static List<BasicBlock> BuildControlFlowGraph(DisassembledMsilMethod disassembledMethod)
+    private static ICollection<BasicBlock> BuildControlFlowGraph(DisassembledMsilMethod disassembledMethod)
     {
-        return new CfgBuilder(disassembledMethod)
-            .Build();
+        return CfgBuilder.Build(disassembledMethod);
     }
 
     [MethodImpl(ImplementationOptions.FastPath)]
