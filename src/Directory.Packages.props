@@ -1,9 +1,7 @@
 <Project>
   <ItemGroup Label="Test">
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.12" />
-    <PackageVersion Include="CppSharp" Version="1.1.5.3168" />
-    <PackageVersion Include="CppSharp.Runtime" Version="1.1.5.3168" />
+    <PackageVersion Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.13.12" /> 
     <PackageVersion Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.1" />
@@ -30,9 +28,6 @@
   </ItemGroup>
   <ItemGroup Label="Common">
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.4" />
-    <PackageVersion Include="GtkSharp" Version="3.24.24.38" />
-    <PackageVersion Include="Autofac" Version="6.5.0" />
-    <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="JetBrains.Annotations" Version="2024.2.0" />
     <PackageVersion Include="T4.Build" Version="0.2.4" />
   </ItemGroup>

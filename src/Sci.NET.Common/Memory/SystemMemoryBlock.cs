@@ -2,11 +2,11 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
+using Sci.NET.Common.Attributes;
 using Sci.NET.Common.Collections;
 using Sci.NET.Common.Comparison;
 using Sci.NET.Common.Numerics.Intrinsics;
@@ -24,7 +24,7 @@ namespace Sci.NET.Common.Memory;
 public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMemoryBlock<T>>
     where T : unmanaged
 {
-    private readonly unsafe T* _reference;
+    private readonly unsafe T* _pointer;
     private readonly ConcurrentList<Guid> _rentals;
     private readonly bool _cannotDispose;
 
@@ -39,7 +39,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         Buffer.MemoryCopy(
             Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(array)),
-            _reference,
+            _pointer,
             array.LongLength * Unsafe.SizeOf<T>(),
             array.LongLength * Unsafe.SizeOf<T>());
     }
@@ -56,14 +56,14 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         var elementSize = (nuint)Unsafe.SizeOf<T>();
         var totalSize = length * elementSize;
 
-        _reference = (T*)NativeMemory.AllocZeroed(totalSize);
+        _pointer = (T*)NativeMemory.AllocZeroed(totalSize);
         Length = count;
     }
 
-    private unsafe SystemMemoryBlock(T* reference, long length)
+    private unsafe SystemMemoryBlock(T* pointer, long length)
     {
         _rentals = new ConcurrentList<Guid>();
-        _reference = reference;
+        _pointer = pointer;
         _cannotDispose = true;
         Length = length;
     }
@@ -100,7 +100,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
             ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
             ArgumentOutOfRangeException.ThrowIfGreaterThanOrEqual(index, Length);
 
-            return ref Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nint)index);
+            return ref Unsafe.Add(ref Unsafe.AsRef<T>(_pointer), (nint)index);
         }
     }
 
@@ -144,7 +144,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         var bufferPtr = Unsafe.AsPointer(ref MemoryMarshal.GetArrayDataReference(buffer));
-        var dataPtr = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nuint)start));
+        var dataPtr = Unsafe.AsPointer(ref Unsafe.Add(ref Unsafe.AsRef<T>(_pointer), (nuint)start));
 
         Buffer.MemoryCopy(
             bufferPtr,
@@ -167,7 +167,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         var result = new T[Length];
 
         Buffer.MemoryCopy(
-            _reference,
+            _pointer,
             Unsafe.AsPointer(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(result), 0)),
             Length * Unsafe.SizeOf<T>(),
             Length * Unsafe.SizeOf<T>());
@@ -178,14 +178,13 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 #pragma warning disable CA1502 // Avoid excessive complexity
     /// <inheritdoc />
     [MethodImpl(ImplementationOptions.HotPath)]
-    [SuppressMessage("ReSharper", "CyclomaticComplexity", Justification = "Performance critical code.")]
     public unsafe void Fill(T value)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         for (var i = 0L; i < Length; i++)
         {
-            Unsafe.Add(ref Unsafe.AsRef<T>(_reference), (nuint)i) = value;
+            Unsafe.Add(ref Unsafe.AsRef<T>(_pointer), (nuint)i) = value;
         }
     }
 #pragma warning restore CA1502 // Avoid excessive complexity
@@ -201,8 +200,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
 
         Buffer.MemoryCopy(
-            source._reference,
-            _reference,
+            source._pointer,
+            _pointer,
             Length * Unsafe.SizeOf<T>(),
             Length * Unsafe.SizeOf<T>());
     }
@@ -220,7 +219,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         Buffer.MemoryCopy(
             Unsafe.AsPointer(ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(array), 0)),
-            _reference,
+            _pointer,
             Length * Unsafe.SizeOf<T>(),
             Length * Unsafe.SizeOf<T>());
     }
@@ -235,7 +234,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         // Write the entire block in one go if possible
         if (byteLength <= int.MaxValue)
         {
-            stream.Write(new ReadOnlySpan<byte>(_reference, (int)byteLength).ToArray());
+            stream.Write(new ReadOnlySpan<byte>(_pointer, (int)byteLength).ToArray());
             return;
         }
 
@@ -244,7 +243,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         //       We could add a test for this by creating a custom stream that allows for a larger buffer size
         //       or by using a file stream, but this would slow down CI builds.
         var remaining = byteLength;
-        var pointer = (byte*)_reference;
+        var pointer = (byte*)_pointer;
         var offset = 0L;
 
         while (remaining > 0)
@@ -277,12 +276,12 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
 
         if (byteLength <= int.MaxValue)
         {
-            _ = stream.Read(new Span<byte>(_reference, (int)byteLength));
+            _ = stream.Read(new Span<byte>(_pointer, (int)byteLength));
             return;
         }
 
         var remaining = byteLength;
-        var pointer = (byte*)_reference;
+        var pointer = (byte*)_pointer;
         var offset = 0L;
 
         while (remaining > 0)
@@ -312,8 +311,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
 
         Buffer.MemoryCopy(
-            memoryBlock._reference + srcIdx,
-            _reference + dstIdx,
+            memoryBlock._pointer + srcIdx,
+            _pointer + dstIdx,
             count * Unsafe.SizeOf<T>(),
             count * Unsafe.SizeOf<T>());
     }
@@ -386,8 +385,8 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
 
         Buffer.MemoryCopy(
-            _reference,
-            systemMemoryBlock._reference,
+            _pointer,
+            systemMemoryBlock._pointer,
             Length * Unsafe.SizeOf<T>(),
             Length * Unsafe.SizeOf<T>());
     }
@@ -408,14 +407,14 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         ObjectDisposedException.ThrowIf(IsDisposed, this);
         ObjectDisposedException.ThrowIf(other?.IsDisposed ?? false, other ?? this);
 
-        return other is not null && _reference == other._reference && Length == other.Length;
+        return other is not null && _pointer == other._pointer && Length == other.Length;
     }
 
     /// <inheritdoc cref="IValueEquatable{T}.GetHashCode" />
     [MethodImpl(ImplementationOptions.HotPath)]
     public override unsafe int GetHashCode()
     {
-        return HashCode.Combine((int)((long)_reference & uint.MaxValue), (int)((long)_reference >> 32));
+        return HashCode.Combine((int)((long)_pointer & uint.MaxValue), (int)((long)_pointer >> 32));
     }
 
     /// <summary>
@@ -431,7 +430,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
         return typeof(T) == typeof(char)
-            ? new string(new ReadOnlySpan<char>(_reference, checked((int)Length)))
+            ? new string(new ReadOnlySpan<char>(_pointer, checked((int)Length)))
             : $"{nameof(SystemMemoryBlock<T>)}<{typeof(T).Name}>[{Length}]";
     }
 
@@ -463,7 +462,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        return ref Unsafe.AsRef<T>(_reference);
+        return ref Unsafe.AsRef<T>(_pointer);
     }
 
     /// <summary>
@@ -475,7 +474,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        return _reference;
+        return _pointer;
     }
 
     /// <summary>
@@ -493,7 +492,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
             throw new InvalidOperationException($"Cannot create a span larger than int.MaxValue ({int.MaxValue}) elements.");
         }
 
-        return new Span<T>(_reference, (int)Length);
+        return new Span<T>(_pointer, (int)Length);
     }
 
     /// <summary>
@@ -511,7 +510,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         ArgumentOutOfRangeException.ThrowIfGreaterThan(index, Length - length);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(length, Length - index);
 
-        return new Span<T>(_reference + index, length);
+        return new Span<T>(_pointer + index, length);
     }
 
     /// <summary>
@@ -520,12 +519,13 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <typeparam name="TOut">The output type parameter.</typeparam>
     /// <returns>A copy of this instance as a <see cref="SystemMemoryBlock{TOut}"/>.</returns>
     /// <exception cref="ObjectDisposedException">The memory block has been disposed.</exception>
+    [MemoryCorrupter]
     public unsafe SystemMemoryBlock<TOut> DangerousReinterpretCast<TOut>()
         where TOut : unmanaged
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 
-        return new SystemMemoryBlock<TOut>((TOut*)_reference, Length);
+        return new SystemMemoryBlock<TOut>((TOut*)_pointer, Length);
     }
 
     /// <summary>
@@ -535,10 +535,11 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="i">The index to read from.</param>
     /// <returns>A <see cref="Vector{T}"/> from the <see cref="SystemMemoryBlock{T}"/> at the specified index.</returns>
     [MethodImpl(ImplementationOptions.FastPath)]
+    [MemoryCorrupter]
     public unsafe ISimdVector<TNumber> UnsafeGetVectorUnchecked<TNumber>(long i) // Must use type argument to get around INumber constraint.
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var span = new Span<TNumber>(_reference + i, SimdVector.Count<TNumber>());
+        var span = new Span<TNumber>(_pointer + i, SimdVector.Count<TNumber>());
 
         return SimdVector.Load(span);
     }
@@ -549,10 +550,12 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{T}"/>.</typeparam>
     /// <param name="vector">The <see cref="Vector{T}"/> to write.</param>
     /// <param name="i">The index to write to.</param>
+    [MethodImpl(ImplementationOptions.FastPath)]
+    [MemoryCorrupter]
     public unsafe void UnsafeSetVectorUnchecked<TNumber>(ISimdVector<TNumber> vector, long i)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var span = new Span<TNumber>(_reference + i, SimdVector.Count<TNumber>());
+        var span = new Span<TNumber>(_pointer + i, SimdVector.Count<TNumber>());
 
         vector.CopyTo(span);
     }
@@ -564,8 +567,10 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="index">The index to set the value at.</param>
     /// <param name="vectorStrategy">The vector strategy to use.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ISimdVector{TNumber}"/>.</typeparam>
+    [MethodImpl(ImplementationOptions.FastPath)]
+    [MemoryCorrupter]
     public unsafe void UnsafeSetVectorUnchecked<TNumber>(ISimdVector<TNumber> vector, long index, VectorStrategy vectorStrategy)
-        where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>
     {
         if (vectorStrategy == VectorStrategy.Vector)
         {
@@ -573,7 +578,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         }
         else
         {
-            ref var reference = ref Unsafe.AsRef<TNumber>(_reference + index);
+            ref var reference = ref Unsafe.AsRef<TNumber>(_pointer + index);
             reference = vector[0];
         }
     }
@@ -589,7 +594,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
         ArgumentOutOfRangeException.ThrowIfGreaterThan(index, Length - Vector256<T>.Count);
 
-        Unsafe.WriteUnaligned(_reference + index, vector);
+        Unsafe.WriteUnaligned(_pointer + index, vector);
     }
 
     /// <inheritdoc />
@@ -625,6 +630,6 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
             return;
         }
 
-        NativeMemory.Free(_reference);
+        NativeMemory.Free(_pointer);
     }
 }

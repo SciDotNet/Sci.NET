@@ -49,57 +49,280 @@ internal class MsilDisassembler
     {
         var instructions = ReadInstructions();
 
-        return new DisassembledMsilMethod { Metadata = _methodMetadata, Instructions = instructions.ToImmutableArray() };
+        return new DisassembledMsilMethod
+        {
+            Metadata = _methodMetadata,
+            Instructions = instructions.ToImmutableArray()
+        };
     }
 
     private static MsilInstruction<IMsilOperand> ExpandShortFormInstruction(MsilInstruction<IMsilOperand> instruction)
     {
-        instruction = ExpandLdArgShortForm(instruction);
-        instruction = ExpandLdLocShortForm(instruction);
-        instruction = ExpandStLocShortForm(instruction);
+        instruction = ExpandLdlocShortForm(instruction);
+        instruction = ExpandStlocShortForm(instruction);
+        instruction = ExpandLdargShortForm(instruction);
         instruction = ExpandLdcI4ShortForm(instruction);
+        instruction = ExpandBranchShortForm(instruction);
 
         return instruction;
     }
 
-    private static MsilInstruction<IMsilOperand> ExpandLdArgShortForm(MsilInstruction<IMsilOperand> instruction)
+    private static MsilInstruction<IMsilOperand> ExpandBranchShortForm(MsilInstruction<IMsilOperand> instruction)
     {
 #pragma warning disable IDE0072
         return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Ldarg_0 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new MsilInlineIntOperand { Value = 0 } },
-            OpCodeTypes.Ldarg_1 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new MsilInlineIntOperand { Value = 1 } },
-            OpCodeTypes.Ldarg_2 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new MsilInlineIntOperand { Value = 2 } },
-            OpCodeTypes.Ldarg_3 => instruction with { IlOpCode = OpCodeTypes.Ldarg, Name = "ldarg", Operand = new MsilInlineIntOperand { Value = 3 } },
+            OpCodeTypes.Br_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Br,
+                Name = "br",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Brtrue_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Brtrue,
+                Name = "brtrue",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Brfalse_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Brfalse,
+                Name = "brfalse",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Beq_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Beq,
+                Name = "beq",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Bge_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Bge,
+                Name = "bge",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Bgt_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Bgt,
+                Name = "bgt",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Ble_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ble,
+                Name = "ble",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Blt_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Blt,
+                Name = "blt",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Bne_Un_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Bne_Un,
+                Name = "bne.un",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Bge_Un_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Bge_Un,
+                Name = "bge.un",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Bgt_Un_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Bgt_Un,
+                Name = "bgt.un",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Ble_Un_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ble_Un,
+                Name = "ble.un",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
+            OpCodeTypes.Blt_Un_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Blt_Un,
+                Name = "blt.un",
+                Operand = new MsilBranchTargetOperand
+                {
+                    OperandType = OperandType.InlineBrTarget,
+                    Target = instruction.Operand is MsilBranchTargetOperand branchOperand ? branchOperand.Target : 0
+                }
+            },
             _ => instruction
         };
     }
 
-    private static MsilInstruction<IMsilOperand> ExpandLdLocShortForm(MsilInstruction<IMsilOperand> instruction)
+    private static MsilInstruction<IMsilOperand> ExpandLdargShortForm(MsilInstruction<IMsilOperand> instruction)
     {
 #pragma warning disable IDE0072
         return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Ldloc_0 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new MsilInlineIntOperand { Value = 0 } },
-            OpCodeTypes.Ldloc_1 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new MsilInlineIntOperand { Value = 1 } },
-            OpCodeTypes.Ldloc_2 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new MsilInlineIntOperand { Value = 2 } },
-            OpCodeTypes.Ldloc_3 => instruction with { IlOpCode = OpCodeTypes.Ldloc, Name = "ldloc", Operand = new MsilInlineIntOperand { Value = 3 } },
+            OpCodeTypes.Ldarg_0 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldarg,
+                Name = "ldarg",
+                Operand = new MsilInlineIntOperand { Value = 0 }
+            },
+            OpCodeTypes.Ldarg_1 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldarg,
+                Name = "ldarg",
+                Operand = new MsilInlineIntOperand { Value = 1 }
+            },
+            OpCodeTypes.Ldarg_2 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldarg,
+                Name = "ldarg",
+                Operand = new MsilInlineIntOperand { Value = 2 }
+            },
+            OpCodeTypes.Ldarg_3 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldarg,
+                Name = "ldarg",
+                Operand = new MsilInlineIntOperand { Value = 3 }
+            },
+            OpCodeTypes.Ldarg_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldarg,
+                Name = "ldarg",
+                Operand = new MsilInlineIntOperand { Value = instruction.Operand is MsilInlineByteOperand byteOperand ? byteOperand.Value : 0 }
+            },
             _ => instruction
         };
     }
 
-    private static MsilInstruction<IMsilOperand> ExpandStLocShortForm(MsilInstruction<IMsilOperand> instruction)
+    private static MsilInstruction<IMsilOperand> ExpandLdlocShortForm(MsilInstruction<IMsilOperand> instruction)
     {
 #pragma warning disable IDE0072
         return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Stloc_0 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new MsilInlineIntOperand { Value = 0 } },
-            OpCodeTypes.Stloc_1 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new MsilInlineIntOperand { Value = 1 } },
-            OpCodeTypes.Stloc_2 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new MsilInlineIntOperand { Value = 2 } },
-            OpCodeTypes.Stloc_3 => instruction with { IlOpCode = OpCodeTypes.Stloc, Name = "stloc", Operand = new MsilInlineIntOperand { Value = 3 } },
+            OpCodeTypes.Ldloc_0 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldloc,
+                Name = "ldloc",
+                Operand = new MsilInlineIntOperand { Value = 0 }
+            },
+            OpCodeTypes.Ldloc_1 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldloc,
+                Name = "ldloc",
+                Operand = new MsilInlineIntOperand { Value = 1 }
+            },
+            OpCodeTypes.Ldloc_2 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldloc,
+                Name = "ldloc",
+                Operand = new MsilInlineIntOperand { Value = 2 }
+            },
+            OpCodeTypes.Ldloc_3 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldloc,
+                Name = "ldloc",
+                Operand = new MsilInlineIntOperand { Value = 3 }
+            },
+            OpCodeTypes.Ldloc_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldloc,
+                Name = "ldloc",
+                Operand = new MsilInlineIntOperand { Value = instruction.Operand is MsilInlineByteOperand byteOperand ? byteOperand.Value : 0 }
+            },
+            _ => instruction
+        };
+    }
+
+    private static MsilInstruction<IMsilOperand> ExpandStlocShortForm(MsilInstruction<IMsilOperand> instruction)
+    {
+#pragma warning disable IDE0072
+        return instruction.IlOpCode switch
+#pragma warning restore IDE0072
+        {
+            OpCodeTypes.Stloc_0 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Stloc,
+                Name = "stloc",
+                Operand = new MsilInlineIntOperand { Value = 0 }
+            },
+            OpCodeTypes.Stloc_1 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Stloc,
+                Name = "stloc",
+                Operand = new MsilInlineIntOperand { Value = 1 }
+            },
+            OpCodeTypes.Stloc_2 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Stloc,
+                Name = "stloc",
+                Operand = new MsilInlineIntOperand { Value = 2 }
+            },
+            OpCodeTypes.Stloc_3 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Stloc,
+                Name = "stloc",
+                Operand = new MsilInlineIntOperand { Value = 3 }
+            },
+            OpCodeTypes.Stloc_S => instruction with
+            {
+                IlOpCode = OpCodeTypes.Stloc,
+                Name = "stloc",
+                Operand = new MsilInlineIntOperand { Value = instruction.Operand is MsilInlineByteOperand byteOperand ? byteOperand.Value : 0 }
+            },
             _ => instruction
         };
     }
@@ -110,16 +333,66 @@ internal class MsilDisassembler
         return instruction.IlOpCode switch
 #pragma warning restore IDE0072
         {
-            OpCodeTypes.Ldc_I4_0 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 0 } },
-            OpCodeTypes.Ldc_I4_1 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 1 } },
-            OpCodeTypes.Ldc_I4_2 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 2 } },
-            OpCodeTypes.Ldc_I4_3 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 3 } },
-            OpCodeTypes.Ldc_I4_4 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 4 } },
-            OpCodeTypes.Ldc_I4_5 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 5 } },
-            OpCodeTypes.Ldc_I4_6 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 6 } },
-            OpCodeTypes.Ldc_I4_7 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 7 } },
-            OpCodeTypes.Ldc_I4_8 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = 8 } },
-            OpCodeTypes.Ldc_I4_M1 => instruction with { IlOpCode = OpCodeTypes.Ldc_I4, Name = "ldc.i4", Operand = new MsilInlineIntOperand { Value = -1 } },
+            OpCodeTypes.Ldc_I4_0 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 0 }
+            },
+            OpCodeTypes.Ldc_I4_1 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 1 }
+            },
+            OpCodeTypes.Ldc_I4_2 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 2 }
+            },
+            OpCodeTypes.Ldc_I4_3 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 3 }
+            },
+            OpCodeTypes.Ldc_I4_4 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 4 }
+            },
+            OpCodeTypes.Ldc_I4_5 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 5 }
+            },
+            OpCodeTypes.Ldc_I4_6 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 6 }
+            },
+            OpCodeTypes.Ldc_I4_7 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 7 }
+            },
+            OpCodeTypes.Ldc_I4_8 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = 8 }
+            },
+            OpCodeTypes.Ldc_I4_M1 => instruction with
+            {
+                IlOpCode = OpCodeTypes.Ldc_I4,
+                Name = "ldc.i4",
+                Operand = new MsilInlineIntOperand { Value = -1 }
+            },
             _ => instruction
         };
     }
@@ -150,7 +423,11 @@ internal class MsilDisassembler
             }
             else
             {
-                instruction = instruction with { Operand = default(MsilNoOperand), OperandType = OperandType.InlineNone };
+                instruction = instruction with
+                {
+                    Operand = default(MsilNoOperand),
+                    OperandType = OperandType.InlineNone
+                };
             }
 
             if (_sequencePoints.TryGetValue(instruction.Offset, out var value))
@@ -194,11 +471,24 @@ internal class MsilDisassembler
                     branches[i] = baseOffset + _blobReader.ReadInt32();
                 }
 
-                return new MsilSwitchTargetsOperand { OperandType = instruction.OperandType, Branches = branches, BaseOffset = baseOffset };
+                return new MsilSwitchTargetsOperand
+                {
+                    OperandType = instruction.OperandType,
+                    Branches = branches,
+                    BaseOffset = baseOffset
+                };
             case OperandType.ShortInlineBrTarget:
-                return new MsilBranchTargetOperand { OperandType = instruction.OperandType, Target = _blobReader.ReadSByte() + _blobReader.Offset };
+                return new MsilBranchTargetOperand
+                {
+                    OperandType = instruction.OperandType,
+                    Target = _blobReader.ReadSByte() + _blobReader.Offset
+                };
             case OperandType.InlineBrTarget:
-                return new MsilBranchTargetOperand { OperandType = instruction.OperandType, Target = _blobReader.ReadInt32() + _blobReader.Offset };
+                return new MsilBranchTargetOperand
+                {
+                    OperandType = instruction.OperandType,
+                    Target = _blobReader.ReadInt32() + _blobReader.Offset
+                };
             case OperandType.ShortInlineI:
                 if (instruction.IlOpCode == OpCodeTypes.Ldc_I4_S)
                 {
@@ -219,19 +509,39 @@ internal class MsilDisassembler
             case OperandType.InlineVar:
                 return ResolveInlineVarOperand(instruction, _blobReader.ReadInt16());
             case OperandType.InlineSig:
-                return new MemberInfoOperand { Value = _methodMetadata.Module.ResolveMember(_blobReader.ReadInt32()), OperandType = OperandType.InlineSig };
+                return new MemberInfoOperand
+                {
+                    Value = _methodMetadata.Module.ResolveMember(_blobReader.ReadInt32()),
+                    OperandType = OperandType.InlineSig
+                };
             case OperandType.InlineString:
                 return new MsilInlineStringOperand { Value = _methodMetadata.Module.ResolveString(_blobReader.ReadInt32()) };
             case OperandType.InlineTok:
-                return new MemberInfoOperand { Value = _methodMetadata.Module.ResolveMember(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray()), OperandType = OperandType.InlineTok };
+                return new MemberInfoOperand
+                {
+                    Value = _methodMetadata.Module.ResolveMember(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray()),
+                    OperandType = OperandType.InlineTok
+                };
             case OperandType.InlineType:
-                return new MsilTypeOperand { Value = _methodMetadata.Module.ResolveType(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray()), OperandType = OperandType.InlineType };
+                return new MsilTypeOperand
+                {
+                    Value = _methodMetadata.Module.ResolveType(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray()),
+                    OperandType = OperandType.InlineType
+                };
             case OperandType.InlineMethod:
                 var methodBase = _methodMetadata.Module.ResolveMethod(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray());
-                return new MsilMethodOperand { OperandType = instruction.OperandType, MethodBase = methodBase };
+                return new MsilMethodOperand
+                {
+                    OperandType = instruction.OperandType,
+                    MethodBase = methodBase
+                };
             case OperandType.InlineField:
                 var field = _methodMetadata.Module.ResolveField(_blobReader.ReadInt32(), _methodMetadata.TypeGenericArguments.ToArray(), _methodMetadata.MethodGenericArguments.ToArray());
-                return new MsilFieldOperand { OperandType = instruction.OperandType, FieldInfo = field };
+                return new MsilFieldOperand
+                {
+                    OperandType = instruction.OperandType,
+                    FieldInfo = field
+                };
             default:
                 throw new NotSupportedException();
         }
@@ -251,7 +561,19 @@ internal class MsilDisassembler
             or OpCodeTypes.Starg_S;
 
         return isArgument
-            ? new MsilInlineVarOperand { Value = _methodMetadata.Parameters[index].ParameterType, Index = index, OperandType = OperandType.InlineVar, Name = _methodMetadata.Parameters[index].Name ?? $"param_{index}" }
-            : new MsilInlineVarOperand { Value = _methodMetadata.Variables[index].Type, Index = index, OperandType = OperandType.InlineVar, Name = _methodMetadata.Variables[index].Name };
+            ? new MsilInlineVarOperand
+            {
+                Value = _methodMetadata.Parameters[index].ParameterType,
+                Index = index,
+                OperandType = OperandType.InlineVar,
+                Name = _methodMetadata.Parameters[index].Name ?? $"param_{index}"
+            }
+            : new MsilInlineVarOperand
+            {
+                Value = _methodMetadata.Variables[index].Type,
+                Index = index,
+                OperandType = OperandType.InlineVar,
+                Name = _methodMetadata.Variables[index].Name
+            };
     }
 }

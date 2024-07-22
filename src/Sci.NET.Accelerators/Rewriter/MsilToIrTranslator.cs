@@ -39,11 +39,7 @@ public class MsilToIrTranslator
     ];
 #pragma warning restore SA1009, SA1010
 
-    private readonly DisassembledMsilMethod _disassembledMethod;
-    private readonly LocalVariableSsaVariable[] _localVariableSsaVariables;
-    private readonly ParameterSsaVariable[] _argumentSsaVariables;
-    private readonly VariableNameGenerator _nameGenerator;
-    private readonly Stack<ISsaVariable> _stack;
+    private readonly IrGeneratingContext _context;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MsilToIrTranslator"/> class.
@@ -51,28 +47,7 @@ public class MsilToIrTranslator
     /// <param name="disassembledMethod">The disassembled method.</param>
     public MsilToIrTranslator(DisassembledMsilMethod disassembledMethod)
     {
-        _disassembledMethod = disassembledMethod;
-        _nameGenerator = new VariableNameGenerator();
-        _localVariableSsaVariables = new LocalVariableSsaVariable[disassembledMethod.Metadata.Variables.Length];
-        _stack = new Stack<ISsaVariable>();
-
-        for (var index = 0; index < disassembledMethod.Metadata.Variables.Length; index++)
-        {
-            _localVariableSsaVariables[index] = new LocalVariableSsaVariable(
-                index,
-                _nameGenerator.NextLocalName(),
-                disassembledMethod.Metadata.Variables[index].Type);
-        }
-
-        _argumentSsaVariables = new ParameterSsaVariable[disassembledMethod.Metadata.Parameters.Length];
-
-        for (var index = 0; index < disassembledMethod.Metadata.Parameters.Length; index++)
-        {
-            _argumentSsaVariables[index] = new ParameterSsaVariable(
-                index,
-                $"arg_{disassembledMethod.Metadata.Parameters[index].Name}",
-                disassembledMethod.Metadata.Parameters[index].ParameterType);
-        }
+        _context = new IrGeneratingContext(disassembledMethod);
     }
 
     /// <summary>
@@ -102,7 +77,7 @@ public class MsilToIrTranslator
 
                 while (count > 0)
                 {
-                    poppedItems[count - 1] = _stack.Pop();
+                    poppedItems[count - 1] = _context.Stack.Pop();
                     count--;
                 }
 
@@ -115,7 +90,7 @@ public class MsilToIrTranslator
 
                 if (result.Type != typeof(void))
                 {
-                    _stack.Push(result);
+                    _context.Stack.Push(result);
                 }
 
                 var symbol = GetInstruction(
@@ -158,10 +133,10 @@ public class MsilToIrTranslator
         return new MsilSsaMethod
         {
             BasicBlocks = basicBlocks,
-            Locals = _localVariableSsaVariables,
-            Parameters = _argumentSsaVariables,
-            ReturnType = _disassembledMethod.Metadata.ReturnType,
-            Metadata = _disassembledMethod.Metadata
+            Locals = _context.LocalVariableSsaVariables,
+            Parameters = _context.ArgumentSsaVariables,
+            ReturnType = _context.DisassembledMethod.Metadata.ReturnType,
+            Metadata = _context.DisassembledMethod.Metadata
         };
     }
 
@@ -281,7 +256,7 @@ public class MsilToIrTranslator
     {
         var locals = new List<IInstruction>();
 
-        foreach (var local in _localVariableSsaVariables)
+        foreach (var local in _context.LocalVariableSsaVariables)
         {
             var irLocal = local.ToIrValue();
             locals.Add(
@@ -317,22 +292,22 @@ public class MsilToIrTranslator
 #pragma warning restore IDE0010
         {
             case OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineIntOperand index:
-                operands.Add(_argumentSsaVariables[index.Value]);
+                operands.Add(_context.ArgumentSsaVariables[index.Value]);
                 break;
             case OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineIntOperand index:
-                operands.Add(_localVariableSsaVariables[index.Value]);
+                operands.Add(_context.LocalVariableSsaVariables[index.Value]);
                 break;
             case OpCodeTypes.Ldc_I4 or OpCodeTypes.Ldc_I4_S when node.Operand is MsilInlineIntOperand value:
-                operands.Add(new Int4ConstantSsaVariable(_nameGenerator.NextTemporaryName(), value.Value));
+                operands.Add(new Int4ConstantSsaVariable(_context.NameGenerator.NextTemporaryName(), value.Value));
                 break;
             case OpCodeTypes.Ldc_I8 when node.Operand is MsilInlineLongOperand value:
-                operands.Add(new Int8ConstantSsaVariable(_nameGenerator.NextTemporaryName(), value.Value));
+                operands.Add(new Int8ConstantSsaVariable(_context.NameGenerator.NextTemporaryName(), value.Value));
                 break;
             case OpCodeTypes.Ldc_R4 when node.Operand is MsilInlineSingleOperand value:
-                operands.Add(new Float4ConstantSsaVariable(_nameGenerator.NextTemporaryName(), value.Value));
+                operands.Add(new Float4ConstantSsaVariable(_context.NameGenerator.NextTemporaryName(), value.Value));
                 break;
             case OpCodeTypes.Ldc_R8 when node.Operand is MsilInlineDoubleOperand value:
-                operands.Add(new Float8ConstantSsaVariable(_nameGenerator.NextTemporaryName(), value.Value));
+                operands.Add(new Float8ConstantSsaVariable(_context.NameGenerator.NextTemporaryName(), value.Value));
                 break;
         }
 
@@ -352,11 +327,11 @@ public class MsilToIrTranslator
                 or PopBehaviour.Popref_popi_popr4 or PopBehaviour.Popref_popi_popr8 or PopBehaviour.Popref_popi_popref
                 or PopBehaviour.Popref_popi_pop1 => 3,
             PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret &&
-                                     _disassembledMethod.Metadata.ReturnType != typeof(void) => 0,
-            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 0 &&
-                                     _disassembledMethod.Metadata.ReturnType == typeof(void) => 0,
-            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count == 1 => 1,
-            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _stack.Count > 0 =>
+                                     _context.DisassembledMethod.Metadata.ReturnType != typeof(void) => 0,
+            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _context.Stack.Count == 0 &&
+                                     _context.DisassembledMethod.Metadata.ReturnType == typeof(void) => 0,
+            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _context.Stack.Count == 1 => 1,
+            PopBehaviour.Varpop when node.IlOpCode is OpCodeTypes.Ret && _context.Stack.Count > 0 =>
                 throw new InvalidOperationException("The stack is not empty."),
             PopBehaviour.Varpop when node.Operand is MsilMethodOperand operand => GetMethodCallPopBehaviour(operand),
             PopBehaviour.Varpop => throw new NotSupportedException("Varpop is not supported."),
@@ -366,19 +341,22 @@ public class MsilToIrTranslator
 
     private ISsaVariable GetResult(MsilInstruction<IMsilOperand> node, List<ISsaVariable> operands)
     {
+        // This code was generated procedurally from documentation. It is verified to be correct
+        // but we should be ignoring short form (inst_s) and macro (inst_m) instructions.
+        // This can be an improvement for the future as it will (marginally) improve performance.
 #pragma warning disable IDE0072
         return node.IlOpCode switch
 #pragma warning restore IDE0072
         {
             OpCodeTypes.Nop => default(VoidSsaVariable),
             OpCodeTypes.Break => default(VoidSsaVariable),
-            OpCodeTypes.Ldnull => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldc_I4 or OpCodeTypes.Ldc_I4_S => _nameGenerator.GetNextTemp(typeof(int)),
-            OpCodeTypes.Ldc_I8 => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Ldc_R4 => _nameGenerator.GetNextTemp(typeof(float)),
-            OpCodeTypes.Ldc_R8 => _nameGenerator.GetNextTemp(typeof(double)),
+            OpCodeTypes.Ldnull => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldc_I4 or OpCodeTypes.Ldc_I4_S => _context.NameGenerator.GetNextTemp(typeof(int)),
+            OpCodeTypes.Ldc_I8 => _context.NameGenerator.GetNextTemp(typeof(long)),
+            OpCodeTypes.Ldc_R4 => _context.NameGenerator.GetNextTemp(typeof(float)),
+            OpCodeTypes.Ldc_R8 => _context.NameGenerator.GetNextTemp(typeof(double)),
             OpCodeTypes.Dup => operands[0],
-            OpCodeTypes.Pop => _stack.Peek(),
+            OpCodeTypes.Pop => _context.Stack.Peek(),
             OpCodeTypes.Jmp => default(VoidSsaVariable),
             OpCodeTypes.Call or OpCodeTypes.Callvirt => GetMethodCallReturnType(
                 node.Operand is MsilMethodOperand operand ? operand : default),
@@ -412,17 +390,17 @@ public class MsilToIrTranslator
                 or OpCodeTypes.Ble_Un
                 or OpCodeTypes.Blt_Un => default(VoidSsaVariable),
             OpCodeTypes.Switch => default(VoidSsaVariable),
-            OpCodeTypes.Ldind_I1 => _nameGenerator.GetNextTemp(typeof(sbyte)),
-            OpCodeTypes.Ldind_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
-            OpCodeTypes.Ldind_I2 => _nameGenerator.GetNextTemp(typeof(short)),
-            OpCodeTypes.Ldind_U2 => _nameGenerator.GetNextTemp(typeof(ushort)),
-            OpCodeTypes.Ldind_I4 => _nameGenerator.GetNextTemp(typeof(int)),
-            OpCodeTypes.Ldind_U4 => _nameGenerator.GetNextTemp(typeof(uint)),
-            OpCodeTypes.Ldind_I8 => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Ldind_I => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldind_R4 => _nameGenerator.GetNextTemp(typeof(float)),
-            OpCodeTypes.Ldind_R8 => _nameGenerator.GetNextTemp(typeof(double)),
-            OpCodeTypes.Ldind_Ref => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldind_I1 => _context.NameGenerator.GetNextTemp(typeof(sbyte)),
+            OpCodeTypes.Ldind_U1 => _context.NameGenerator.GetNextTemp(typeof(byte)),
+            OpCodeTypes.Ldind_I2 => _context.NameGenerator.GetNextTemp(typeof(short)),
+            OpCodeTypes.Ldind_U2 => _context.NameGenerator.GetNextTemp(typeof(ushort)),
+            OpCodeTypes.Ldind_I4 => _context.NameGenerator.GetNextTemp(typeof(int)),
+            OpCodeTypes.Ldind_U4 => _context.NameGenerator.GetNextTemp(typeof(uint)),
+            OpCodeTypes.Ldind_I8 => _context.NameGenerator.GetNextTemp(typeof(long)),
+            OpCodeTypes.Ldind_I => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldind_R4 => _context.NameGenerator.GetNextTemp(typeof(float)),
+            OpCodeTypes.Ldind_R8 => _context.NameGenerator.GetNextTemp(typeof(double)),
+            OpCodeTypes.Ldind_Ref => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stind_Ref => default(VoidSsaVariable),
             OpCodeTypes.Stind_I1 => default(VoidSsaVariable),
             OpCodeTypes.Stind_I2 => default(VoidSsaVariable),
@@ -430,80 +408,80 @@ public class MsilToIrTranslator
             OpCodeTypes.Stind_I8 => default(VoidSsaVariable),
             OpCodeTypes.Stind_R4 => default(VoidSsaVariable),
             OpCodeTypes.Stind_R8 => default(VoidSsaVariable),
-            OpCodeTypes.Add => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Sub => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Mul => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Div => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Div_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Rem => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Rem_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.And => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Or => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Xor => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Shl => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Shr => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Shr_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Neg => _nameGenerator.GetNextTemp(operands[0].Type),
-            OpCodeTypes.Not => _nameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
-            OpCodeTypes.Conv_I1 => _nameGenerator.GetNextTemp(typeof(sbyte)),
-            OpCodeTypes.Conv_I2 => _nameGenerator.GetNextTemp(typeof(short)),
-            OpCodeTypes.Conv_I4 => _nameGenerator.GetNextTemp(typeof(int)),
-            OpCodeTypes.Conv_I8 => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Conv_R4 => _nameGenerator.GetNextTemp(typeof(float)),
-            OpCodeTypes.Conv_R8 => _nameGenerator.GetNextTemp(typeof(double)),
-            OpCodeTypes.Conv_U4 => _nameGenerator.GetNextTemp(typeof(uint)),
-            OpCodeTypes.Conv_U8 => _nameGenerator.GetNextTemp(typeof(ulong)),
+            OpCodeTypes.Add => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Sub => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Mul => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Div => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Div_Un => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Rem => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Rem_Un => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.And => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Or => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Xor => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Shl => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Shr => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Shr_Un => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Neg => _context.NameGenerator.GetNextTemp(operands[0].Type),
+            OpCodeTypes.Not => _context.NameGenerator.GetNextTemp(GetResultTypeFromBitManipulationOperation(operands)),
+            OpCodeTypes.Conv_I1 => _context.NameGenerator.GetNextTemp(typeof(sbyte)),
+            OpCodeTypes.Conv_I2 => _context.NameGenerator.GetNextTemp(typeof(short)),
+            OpCodeTypes.Conv_I4 => _context.NameGenerator.GetNextTemp(typeof(int)),
+            OpCodeTypes.Conv_I8 => _context.NameGenerator.GetNextTemp(typeof(long)),
+            OpCodeTypes.Conv_R4 => _context.NameGenerator.GetNextTemp(typeof(float)),
+            OpCodeTypes.Conv_R8 => _context.NameGenerator.GetNextTemp(typeof(double)),
+            OpCodeTypes.Conv_U4 => _context.NameGenerator.GetNextTemp(typeof(uint)),
+            OpCodeTypes.Conv_U8 => _context.NameGenerator.GetNextTemp(typeof(ulong)),
             OpCodeTypes.Cpobj => default(VoidSsaVariable),
-            OpCodeTypes.Ldobj when node.Operand is MsilTypeOperand typeOperand => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Ldobj when node.Operand is MsilTypeOperand typeOperand => _context.NameGenerator.GetNextTemp(
                 typeOperand
                     .Value),
-            OpCodeTypes.Ldobj => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldstr => _nameGenerator.GetNextTemp(typeof(string)),
+            OpCodeTypes.Ldobj => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldstr => _context.NameGenerator.GetNextTemp(typeof(string)),
             OpCodeTypes.Newobj =>
                 GetMethodCallReturnType(node.Operand is MsilMethodOperand operand ? operand : default),
-            OpCodeTypes.Castclass => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Isinst => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_R_Un => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Unbox => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Castclass => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Isinst => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_R_Un => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Unbox => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Throw => default(VoidSsaVariable),
-            OpCodeTypes.Ldfld => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldflda => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldfld => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldflda => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stfld => default(VoidSsaVariable),
-            OpCodeTypes.Ldsfld => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldsflda => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldsfld => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldsflda => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stsfld => default(VoidSsaVariable),
             OpCodeTypes.Stobj => default(VoidSsaVariable),
-            OpCodeTypes.Conv_Ovf_I1_Un => _nameGenerator.GetNextTemp(typeof(sbyte)),
-            OpCodeTypes.Conv_Ovf_I2_Un => _nameGenerator.GetNextTemp(typeof(short)),
-            OpCodeTypes.Conv_Ovf_I4_Un => _nameGenerator.GetNextTemp(typeof(int)),
-            OpCodeTypes.Conv_Ovf_I8_Un => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Conv_Ovf_U1_Un => _nameGenerator.GetNextTemp(typeof(byte)),
-            OpCodeTypes.Conv_Ovf_U2_Un => _nameGenerator.GetNextTemp(typeof(ushort)),
-            OpCodeTypes.Conv_Ovf_U4_Un => _nameGenerator.GetNextTemp(typeof(uint)),
-            OpCodeTypes.Conv_Ovf_U8_Un => _nameGenerator.GetNextTemp(typeof(ulong)),
-            OpCodeTypes.Conv_Ovf_I_Un when node.Operand is MsilTypeOperand type => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Conv_Ovf_I1_Un => _context.NameGenerator.GetNextTemp(typeof(sbyte)),
+            OpCodeTypes.Conv_Ovf_I2_Un => _context.NameGenerator.GetNextTemp(typeof(short)),
+            OpCodeTypes.Conv_Ovf_I4_Un => _context.NameGenerator.GetNextTemp(typeof(int)),
+            OpCodeTypes.Conv_Ovf_I8_Un => _context.NameGenerator.GetNextTemp(typeof(long)),
+            OpCodeTypes.Conv_Ovf_U1_Un => _context.NameGenerator.GetNextTemp(typeof(byte)),
+            OpCodeTypes.Conv_Ovf_U2_Un => _context.NameGenerator.GetNextTemp(typeof(ushort)),
+            OpCodeTypes.Conv_Ovf_U4_Un => _context.NameGenerator.GetNextTemp(typeof(uint)),
+            OpCodeTypes.Conv_Ovf_U8_Un => _context.NameGenerator.GetNextTemp(typeof(ulong)),
+            OpCodeTypes.Conv_Ovf_I_Un when node.Operand is MsilTypeOperand type => _context.NameGenerator.GetNextTemp(
                 type.Value),
             OpCodeTypes.Conv_Ovf_I_Un => throw new InvalidOperationException("The type operand is not valid."),
-            OpCodeTypes.Conv_Ovf_U_Un when node.Operand is MsilTypeOperand type => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Conv_Ovf_U_Un when node.Operand is MsilTypeOperand type => _context.NameGenerator.GetNextTemp(
                 type.Value),
             OpCodeTypes.Conv_Ovf_U_Un => throw new InvalidOperationException("The type operand is not valid."),
-            OpCodeTypes.Box => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Newarr => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldlen => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldelema => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldelem_I1 => _nameGenerator.GetNextTemp(typeof(sbyte)),
-            OpCodeTypes.Ldelem_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
-            OpCodeTypes.Ldelem_I2 => _nameGenerator.GetNextTemp(typeof(short)),
-            OpCodeTypes.Ldelem_U2 => _nameGenerator.GetNextTemp(typeof(ushort)),
-            OpCodeTypes.Ldelem_I4 => _nameGenerator.GetNextTemp(typeof(int)),
-            OpCodeTypes.Ldelem_U4 => _nameGenerator.GetNextTemp(typeof(uint)),
-            OpCodeTypes.Ldelem_I8 => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Ldelem_I when node.Operand is MsilTypeOperand typeOperand => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Box => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Newarr => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldlen => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldelema => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldelem_I1 => _context.NameGenerator.GetNextTemp(typeof(sbyte)),
+            OpCodeTypes.Ldelem_U1 => _context.NameGenerator.GetNextTemp(typeof(byte)),
+            OpCodeTypes.Ldelem_I2 => _context.NameGenerator.GetNextTemp(typeof(short)),
+            OpCodeTypes.Ldelem_U2 => _context.NameGenerator.GetNextTemp(typeof(ushort)),
+            OpCodeTypes.Ldelem_I4 => _context.NameGenerator.GetNextTemp(typeof(int)),
+            OpCodeTypes.Ldelem_U4 => _context.NameGenerator.GetNextTemp(typeof(uint)),
+            OpCodeTypes.Ldelem_I8 => _context.NameGenerator.GetNextTemp(typeof(long)),
+            OpCodeTypes.Ldelem_I when node.Operand is MsilTypeOperand typeOperand => _context.NameGenerator.GetNextTemp(
                 typeOperand.Value),
             OpCodeTypes.Ldelem_I => throw new InvalidOperationException("The type operand is not valid."),
-            OpCodeTypes.Ldelem_R4 => _nameGenerator.GetNextTemp(typeof(float)),
-            OpCodeTypes.Ldelem_R8 => _nameGenerator.GetNextTemp(typeof(double)),
-            OpCodeTypes.Ldelem_Ref => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldelem_R4 => _context.NameGenerator.GetNextTemp(typeof(float)),
+            OpCodeTypes.Ldelem_R8 => _context.NameGenerator.GetNextTemp(typeof(double)),
+            OpCodeTypes.Ldelem_Ref => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stelem_I => default(VoidSsaVariable),
             OpCodeTypes.Stelem_I1 => default(VoidSsaVariable),
             OpCodeTypes.Stelem_I2 => default(VoidSsaVariable),
@@ -512,64 +490,64 @@ public class MsilToIrTranslator
             OpCodeTypes.Stelem_R4 => default(VoidSsaVariable),
             OpCodeTypes.Stelem_R8 => default(VoidSsaVariable),
             OpCodeTypes.Stelem_Ref => default(VoidSsaVariable),
-            OpCodeTypes.Ldelem => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldelem => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stelem => default(VoidSsaVariable),
-            OpCodeTypes.Unbox_Any => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_Ovf_I1 => _nameGenerator.GetNextTemp(typeof(sbyte)),
-            OpCodeTypes.Conv_Ovf_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
-            OpCodeTypes.Conv_Ovf_I2 => _nameGenerator.GetNextTemp(typeof(short)),
-            OpCodeTypes.Conv_Ovf_U2 => _nameGenerator.GetNextTemp(typeof(ushort)),
-            OpCodeTypes.Conv_Ovf_I4 => _nameGenerator.GetNextTemp(typeof(int)),
-            OpCodeTypes.Conv_Ovf_U4 => _nameGenerator.GetNextTemp(typeof(uint)),
-            OpCodeTypes.Conv_Ovf_I8 => _nameGenerator.GetNextTemp(typeof(long)),
-            OpCodeTypes.Conv_Ovf_U8 => _nameGenerator.GetNextTemp(typeof(ulong)),
-            OpCodeTypes.Refanyval => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ckfinite => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Mkrefany => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldtoken => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_U2 => _nameGenerator.GetNextTemp(typeof(ushort)),
-            OpCodeTypes.Conv_U1 => _nameGenerator.GetNextTemp(typeof(byte)),
-            OpCodeTypes.Conv_I when node.Operand is MsilTypeOperand typeOperand => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Unbox_Any => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_Ovf_I1 => _context.NameGenerator.GetNextTemp(typeof(sbyte)),
+            OpCodeTypes.Conv_Ovf_U1 => _context.NameGenerator.GetNextTemp(typeof(byte)),
+            OpCodeTypes.Conv_Ovf_I2 => _context.NameGenerator.GetNextTemp(typeof(short)),
+            OpCodeTypes.Conv_Ovf_U2 => _context.NameGenerator.GetNextTemp(typeof(ushort)),
+            OpCodeTypes.Conv_Ovf_I4 => _context.NameGenerator.GetNextTemp(typeof(int)),
+            OpCodeTypes.Conv_Ovf_U4 => _context.NameGenerator.GetNextTemp(typeof(uint)),
+            OpCodeTypes.Conv_Ovf_I8 => _context.NameGenerator.GetNextTemp(typeof(long)),
+            OpCodeTypes.Conv_Ovf_U8 => _context.NameGenerator.GetNextTemp(typeof(ulong)),
+            OpCodeTypes.Refanyval => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ckfinite => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Mkrefany => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldtoken => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_U2 => _context.NameGenerator.GetNextTemp(typeof(ushort)),
+            OpCodeTypes.Conv_U1 => _context.NameGenerator.GetNextTemp(typeof(byte)),
+            OpCodeTypes.Conv_I when node.Operand is MsilTypeOperand typeOperand => _context.NameGenerator.GetNextTemp(
                 typeOperand.Value),
-            OpCodeTypes.Conv_I => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Conv_Ovf_I when node.Operand is MsilTypeOperand typeOperand => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Conv_I => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_Ovf_I when node.Operand is MsilTypeOperand typeOperand => _context.NameGenerator.GetNextTemp(
                 typeOperand.Value),
             OpCodeTypes.Conv_Ovf_I => throw new InvalidOperationException("The type operand is not valid."),
-            OpCodeTypes.Conv_Ovf_U when node.Operand is MsilTypeOperand typeOperand => _nameGenerator.GetNextTemp(
+            OpCodeTypes.Conv_Ovf_U when node.Operand is MsilTypeOperand typeOperand => _context.NameGenerator.GetNextTemp(
                 typeOperand.Value),
             OpCodeTypes.Conv_Ovf_U => throw new InvalidOperationException("The type operand is not valid."),
-            OpCodeTypes.Add_Ovf => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Add_Ovf_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Mul_Ovf => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Mul_Ovf_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Sub_Ovf => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
-            OpCodeTypes.Sub_Ovf_Un => _nameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Add_Ovf => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Add_Ovf_Un => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Mul_Ovf => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Mul_Ovf_Un => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Sub_Ovf => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
+            OpCodeTypes.Sub_Ovf_Un => _context.NameGenerator.GetNextTemp(GetResultTypeFromBinaryArithmeticOperation(operands)),
             OpCodeTypes.Endfinally => default(VoidSsaVariable),
             OpCodeTypes.Leave => default(VoidSsaVariable),
             OpCodeTypes.Stind_I => default(VoidSsaVariable),
-            OpCodeTypes.Conv_U => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Arglist => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ceq => _nameGenerator.GetNextTemp(typeof(bool)),
-            OpCodeTypes.Cgt => _nameGenerator.GetNextTemp(typeof(bool)),
-            OpCodeTypes.Cgt_Un => _nameGenerator.GetNextTemp(typeof(bool)),
-            OpCodeTypes.Clt => _nameGenerator.GetNextTemp(typeof(bool)),
-            OpCodeTypes.Clt_Un => _nameGenerator.GetNextTemp(typeof(bool)),
-            OpCodeTypes.Ldftn => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Ldvirtftn => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Conv_U => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Arglist => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ceq => _context.NameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Cgt => _context.NameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Cgt_Un => _context.NameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Clt => _context.NameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Clt_Un => _context.NameGenerator.GetNextTemp(typeof(bool)),
+            OpCodeTypes.Ldftn => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldvirtftn => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineIntOperand operand =>
-                _nameGenerator.GetNextTemp(_argumentSsaVariables[operand.Value].Type),
-            OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineVarOperand operand => _nameGenerator
+                _context.NameGenerator.GetNextTemp(_context.ArgumentSsaVariables[operand.Value].Type),
+            OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineVarOperand operand => _context.NameGenerator
                 .GetNextTemp(operand.Value),
-            OpCodeTypes.Ldarga => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldarga => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Starg => default(VoidSsaVariable),
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineIntOperand operand =>
-                _nameGenerator.GetNextTemp(_localVariableSsaVariables[operand.Value].Type),
-            OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineVarOperand operand => _nameGenerator
+                _context.NameGenerator.GetNextTemp(_context.LocalVariableSsaVariables[operand.Value].Type),
+            OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineVarOperand operand => _context.NameGenerator
                 .GetNextTemp(operand.Value),
-            OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S => _context.NameGenerator.GetNextTemp(typeof(nint)),
             OpCodeTypes.Stloc or OpCodeTypes.Stloc_S => default(VoidSsaVariable),
-            OpCodeTypes.Localloc => _nameGenerator.GetNextTemp(typeof(nint)),
-            OpCodeTypes.Endfilter => _nameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Localloc => _context.NameGenerator.GetNextTemp(typeof(nint)),
+            OpCodeTypes.Endfilter => _context.NameGenerator.GetNextTemp(typeof(nint)),
         };
     }
 
@@ -579,17 +557,208 @@ public class MsilToIrTranslator
 
         if (method is MethodInfo methodInfo)
         {
-            return new TempSsaVariable(_nameGenerator.NextLocalName(), methodInfo.ReturnType);
+            return new TempSsaVariable(_context.NameGenerator.NextLocalName(), methodInfo.ReturnType);
         }
 
         if (method is ConstructorInfo constructorInfo)
         {
             return new TempSsaVariable(
-                _nameGenerator.NextLocalName(),
+                _context.NameGenerator.NextLocalName(),
                 constructorInfo.DeclaringType ?? throw new InvalidOperationException("The constructor does not have a declaring type."));
         }
 
         return default(VoidSsaVariable);
+    }
+
+#pragma warning disable IDE0051, RCS1213
+    private IInstruction GetInstructionV2(
+        MsilInstruction<IMsilOperand> node,
+        List<ISsaVariable> operands,
+        ISsaVariable result,
+        BasicBlock block)
+#pragma warning restore IDE0051, RCS1213
+    {
+        _ = block;
+
+#pragma warning disable IDE0072
+        return node.IlOpCode switch
+#pragma warning restore IDE0072
+        {
+            OpCodeTypes.Nop => default(NopInstruction),
+            OpCodeTypes.Break => throw new NotSupportedException("Break is not supported."),
+            OpCodeTypes.Ldarg => IrInstructionEmitter.EmitLdarg(node, result, block, _context),
+            OpCodeTypes.Ldarga => throw new NotSupportedException("Ldarga is not supported."),
+            OpCodeTypes.Starg => throw new NotSupportedException("Starg is not supported."),
+            OpCodeTypes.Ldloc => IrInstructionEmitter.EmitLdloc(node, result, block, _context),
+            OpCodeTypes.Stloc => IrInstructionEmitter.EmitStloc(node, operands, block, _context),
+            OpCodeTypes.Ldnull => throw new NotSupportedException("Ldnull is not supported."),
+            OpCodeTypes.Ldc_I4_M1 => throw new NotSupportedException("Ldc_I4_M1 is not supported."),
+            OpCodeTypes.Ldc_I4 => throw new NotSupportedException("Ldc_I4 is not supported."),
+            OpCodeTypes.Ldc_I8 => throw new NotSupportedException("Ldc_I8 is not supported."),
+            OpCodeTypes.Ldc_R4 => throw new NotSupportedException("Ldc_R4 is not supported."),
+            OpCodeTypes.Ldc_R8 => throw new NotSupportedException("Ldc_R8 is not supported."),
+            OpCodeTypes.Dup => throw new NotSupportedException("Dup is not supported."),
+            OpCodeTypes.Pop => throw new NotSupportedException("Pop is not supported."),
+            OpCodeTypes.Jmp => throw new NotSupportedException("Jmp is not supported."),
+            OpCodeTypes.Call or OpCodeTypes.Calli or OpCodeTypes.Callvirt => throw new NotSupportedException("Call is not supported."),
+            OpCodeTypes.Ret => throw new NotSupportedException("Ret is not supported."),
+            OpCodeTypes.Br => throw new NotSupportedException("Br is not supported."),
+            OpCodeTypes.Brfalse => throw new NotSupportedException("Brfalse is not supported."),
+            OpCodeTypes.Brtrue => throw new NotSupportedException("Brtrue is not supported."),
+            OpCodeTypes.Beq => throw new NotSupportedException("Beq is not supported."),
+            OpCodeTypes.Bge => throw new NotSupportedException("Bge is not supported."),
+            OpCodeTypes.Bgt => throw new NotSupportedException("Bgt is not supported."),
+            OpCodeTypes.Ble => throw new NotSupportedException("Ble is not supported."),
+            OpCodeTypes.Blt => throw new NotSupportedException("Blt is not supported."),
+            OpCodeTypes.Bne_Un => throw new NotSupportedException("Bne_Un is not supported."),
+            OpCodeTypes.Bge_Un => throw new NotSupportedException("Bge_Un is not supported."),
+            OpCodeTypes.Bgt_Un => throw new NotSupportedException("Bgt_Un is not supported."),
+            OpCodeTypes.Ble_Un => throw new NotSupportedException("Ble_Un is not supported."),
+            OpCodeTypes.Blt_Un => throw new NotSupportedException("Blt_Un is not supported."),
+            OpCodeTypes.Switch => throw new NotSupportedException("Switch is not supported."),
+            OpCodeTypes.Ldind_I1 => throw new NotSupportedException("Ldind_I1 is not supported."),
+            OpCodeTypes.Ldind_U1 => throw new NotSupportedException("Ldind_U1 is not supported."),
+            OpCodeTypes.Ldind_I2 => throw new NotSupportedException("Ldind_I2 is not supported."),
+            OpCodeTypes.Ldind_U2 => throw new NotSupportedException("Ldind_U2 is not supported."),
+            OpCodeTypes.Ldind_I4 => throw new NotSupportedException("Ldind_I4 is not supported."),
+            OpCodeTypes.Ldind_U4 => throw new NotSupportedException("Ldind_U4 is not supported."),
+            OpCodeTypes.Ldind_I8 => throw new NotSupportedException("Ldind_I8 is not supported."),
+            OpCodeTypes.Ldind_I => throw new NotSupportedException("Ldind_I is not supported."),
+            OpCodeTypes.Ldind_R4 => throw new NotSupportedException("Ldind_R4 is not supported."),
+            OpCodeTypes.Ldind_R8 => throw new NotSupportedException("Ldind_R8 is not supported."),
+            OpCodeTypes.Ldind_Ref => throw new NotSupportedException("Ldind_Ref is not supported."),
+            OpCodeTypes.Stind_Ref => throw new NotSupportedException("Stind_Ref is not supported."),
+            OpCodeTypes.Stind_I1 => throw new NotSupportedException("Stind_I1 is not supported."),
+            OpCodeTypes.Stind_I2 => throw new NotSupportedException("Stind_I2 is not supported."),
+            OpCodeTypes.Stind_I4 => throw new NotSupportedException("Stind_I4 is not supported."),
+            OpCodeTypes.Stind_I8 => throw new NotSupportedException("Stind_I8 is not supported."),
+            OpCodeTypes.Stind_R4 => throw new NotSupportedException("Stind_R4 is not supported."),
+            OpCodeTypes.Stind_R8 => throw new NotSupportedException("Stind_R8 is not supported."),
+            OpCodeTypes.Add => throw new NotSupportedException("Add is not supported."),
+            OpCodeTypes.Sub => throw new NotSupportedException("Sub is not supported."),
+            OpCodeTypes.Mul => throw new NotSupportedException("Mul is not supported."),
+            OpCodeTypes.Div => throw new NotSupportedException("Div is not supported."),
+            OpCodeTypes.Div_Un => throw new NotSupportedException("Div_Un is not supported."),
+            OpCodeTypes.Rem => throw new NotSupportedException("Rem is not supported."),
+            OpCodeTypes.Rem_Un => throw new NotSupportedException("Rem_Un is not supported."),
+            OpCodeTypes.And => throw new NotSupportedException("And is not supported."),
+            OpCodeTypes.Or => throw new NotSupportedException("Or is not supported."),
+            OpCodeTypes.Xor => throw new NotSupportedException("Xor is not supported."),
+            OpCodeTypes.Shl => throw new NotSupportedException("Shl is not supported."),
+            OpCodeTypes.Shr => throw new NotSupportedException("Shr is not supported."),
+            OpCodeTypes.Shr_Un => throw new NotSupportedException("Shr_Un is not supported."),
+            OpCodeTypes.Neg => throw new NotSupportedException("Neg is not supported."),
+            OpCodeTypes.Not => throw new NotSupportedException("Not is not supported."),
+            OpCodeTypes.Conv_I1 => throw new NotSupportedException("Conv_I1 is not supported."),
+            OpCodeTypes.Conv_I2 => throw new NotSupportedException("Conv_I2 is not supported."),
+            OpCodeTypes.Conv_I4 => throw new NotSupportedException("Conv_I4 is not supported."),
+            OpCodeTypes.Conv_I8 => throw new NotSupportedException("Conv_I8 is not supported."),
+            OpCodeTypes.Conv_R4 => throw new NotSupportedException("Conv_R4 is not supported."),
+            OpCodeTypes.Conv_R8 => throw new NotSupportedException("Conv_R8 is not supported."),
+            OpCodeTypes.Conv_U4 => throw new NotSupportedException("Conv_U4 is not supported."),
+            OpCodeTypes.Conv_U8 => throw new NotSupportedException("Conv_U8 is not supported."),
+            OpCodeTypes.Cpobj => throw new NotSupportedException("Cpobj is not supported."),
+            OpCodeTypes.Ldobj => throw new NotSupportedException("Ldobj is not supported."),
+            OpCodeTypes.Ldstr => throw new NotSupportedException("Ldstr is not supported."),
+            OpCodeTypes.Newobj => throw new NotSupportedException("Newobj is not supported."),
+            OpCodeTypes.Castclass => throw new NotSupportedException("Castclass is not supported."),
+            OpCodeTypes.Isinst => throw new NotSupportedException("Isinst is not supported."),
+            OpCodeTypes.Conv_R_Un => throw new NotSupportedException("Conv_R_Un is not supported."),
+            OpCodeTypes.Unbox => throw new NotSupportedException("Unbox is not supported."),
+            OpCodeTypes.Throw => throw new NotSupportedException("Throw is not supported."),
+            OpCodeTypes.Ldfld => throw new NotSupportedException("Ldfld is not supported."),
+            OpCodeTypes.Ldflda => throw new NotSupportedException("Ldflda is not supported."),
+            OpCodeTypes.Stfld => throw new NotSupportedException("Stfld is not supported."),
+            OpCodeTypes.Ldsfld => throw new NotSupportedException("Ldsfld is not supported."),
+            OpCodeTypes.Ldsflda => throw new NotSupportedException("Ldsflda is not supported."),
+            OpCodeTypes.Stsfld => throw new NotSupportedException("Stsfld is not supported."),
+            OpCodeTypes.Stobj => throw new NotSupportedException("Stobj is not supported."),
+            OpCodeTypes.Conv_Ovf_I1_Un => throw new NotSupportedException("Conv_Ovf_I1_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_I2_Un => throw new NotSupportedException("Conv_Ovf_I2_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_I4_Un => throw new NotSupportedException("Conv_Ovf_I4_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_I8_Un => throw new NotSupportedException("Conv_Ovf_I8_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_U1_Un => throw new NotSupportedException("Conv_Ovf_U1_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_U2_Un => throw new NotSupportedException("Conv_Ovf_U2_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_U4_Un => throw new NotSupportedException("Conv_Ovf_U4_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_U8_Un => throw new NotSupportedException("Conv_Ovf_U8_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_I_Un => throw new NotSupportedException("Conv_Ovf_I_Un is not supported."),
+            OpCodeTypes.Conv_Ovf_U_Un => throw new NotSupportedException("Conv_Ovf_U_Un is not supported."),
+            OpCodeTypes.Box => throw new NotSupportedException("Box is not supported."),
+            OpCodeTypes.Newarr => throw new NotSupportedException("Newarr is not supported."),
+            OpCodeTypes.Ldlen => throw new NotSupportedException("Ldlen is not supported."),
+            OpCodeTypes.Ldelema => throw new NotSupportedException("Ldelema is not supported."),
+            OpCodeTypes.Ldelem_I1 => throw new NotSupportedException("Ldelem_I1 is not supported."),
+            OpCodeTypes.Ldelem_U1 => throw new NotSupportedException("Ldelem_U1 is not supported."),
+            OpCodeTypes.Ldelem_I2 => throw new NotSupportedException("Ldelem_I2 is not supported."),
+            OpCodeTypes.Ldelem_U2 => throw new NotSupportedException("Ldelem_U2 is not supported."),
+            OpCodeTypes.Ldelem_I4 => throw new NotSupportedException("Ldelem_I4 is not supported."),
+            OpCodeTypes.Ldelem_U4 => throw new NotSupportedException("Ldelem_U4 is not supported."),
+            OpCodeTypes.Ldelem_I8 => throw new NotSupportedException("Ldelem_I8 is not supported."),
+            OpCodeTypes.Ldelem_I => throw new NotSupportedException("Ldelem_I is not supported."),
+            OpCodeTypes.Ldelem_R4 => throw new NotSupportedException("Ldelem_R4 is not supported."),
+            OpCodeTypes.Ldelem_R8 => throw new NotSupportedException("Ldelem_R8 is not supported."),
+            OpCodeTypes.Ldelem_Ref => throw new NotSupportedException("Ldelem_Ref is not supported."),
+            OpCodeTypes.Stelem_I => throw new NotSupportedException("Stelem_I is not supported."),
+            OpCodeTypes.Stelem_I1 => throw new NotSupportedException("Stelem_I1 is not supported."),
+            OpCodeTypes.Stelem_I2 => throw new NotSupportedException("Stelem_I2 is not supported."),
+            OpCodeTypes.Stelem_I4 => throw new NotSupportedException("Stelem_I4 is not supported."),
+            OpCodeTypes.Stelem_I8 => throw new NotSupportedException("Stelem_I8 is not supported."),
+            OpCodeTypes.Stelem_R4 => throw new NotSupportedException("Stelem_R4 is not supported."),
+            OpCodeTypes.Stelem_R8 => throw new NotSupportedException("Stelem_R8 is not supported."),
+            OpCodeTypes.Stelem_Ref => throw new NotSupportedException("Stelem_Ref is not supported."),
+            OpCodeTypes.Ldelem => throw new NotSupportedException("Ldelem is not supported."),
+            OpCodeTypes.Stelem => throw new NotSupportedException("Stelem is not supported."),
+            OpCodeTypes.Unbox_Any => throw new NotSupportedException("Unbox_Any is not supported."),
+            OpCodeTypes.Conv_Ovf_I1 => throw new NotSupportedException("Conv_Ovf_I1 is not supported."),
+            OpCodeTypes.Conv_Ovf_U1 => throw new NotSupportedException("Conv_Ovf_U1 is not supported."),
+            OpCodeTypes.Conv_Ovf_I2 => throw new NotSupportedException("Conv_Ovf_I2 is not supported."),
+            OpCodeTypes.Conv_Ovf_U2 => throw new NotSupportedException("Conv_Ovf_U2 is not supported."),
+            OpCodeTypes.Conv_Ovf_I4 => throw new NotSupportedException("Conv_Ovf_I4 is not supported."),
+            OpCodeTypes.Conv_Ovf_U4 => throw new NotSupportedException("Conv_Ovf_U4 is not supported."),
+            OpCodeTypes.Conv_Ovf_I8 => throw new NotSupportedException("Conv_Ovf_I8 is not supported."),
+            OpCodeTypes.Conv_Ovf_U8 => throw new NotSupportedException("Conv_Ovf_U8 is not supported."),
+            OpCodeTypes.Refanyval => throw new NotSupportedException("Refanyval is not supported."),
+            OpCodeTypes.Ckfinite => throw new NotSupportedException("Ckfinite is not supported."),
+            OpCodeTypes.Mkrefany => throw new NotSupportedException("Mkrefany is not supported."),
+            OpCodeTypes.Ldtoken => throw new NotSupportedException("Ldtoken is not supported."),
+            OpCodeTypes.Conv_U2 => throw new NotSupportedException("Conv_U2 is not supported."),
+            OpCodeTypes.Conv_U1 => throw new NotSupportedException("Conv_U1 is not supported."),
+            OpCodeTypes.Conv_I => throw new NotSupportedException("Conv_I is not supported."),
+            OpCodeTypes.Conv_Ovf_I => throw new NotSupportedException("Conv_Ovf_I is not supported."),
+            OpCodeTypes.Conv_Ovf_U => throw new NotSupportedException("Conv_Ovf_U is not supported."),
+            OpCodeTypes.Add_Ovf => throw new NotSupportedException("Add_Ovf is not supported."),
+            OpCodeTypes.Add_Ovf_Un => throw new NotSupportedException("Add_Ovf_Un is not supported."),
+            OpCodeTypes.Mul_Ovf => throw new NotSupportedException("Mul_Ovf is not supported."),
+            OpCodeTypes.Mul_Ovf_Un => throw new NotSupportedException("Mul_Ovf_Un is not supported."),
+            OpCodeTypes.Sub_Ovf => throw new NotSupportedException("Sub_Ovf is not supported."),
+            OpCodeTypes.Sub_Ovf_Un => throw new NotSupportedException("Sub_Ovf_Un is not supported."),
+            OpCodeTypes.Endfinally => throw new NotSupportedException("Endfinally is not supported."),
+            OpCodeTypes.Leave => throw new NotSupportedException("Leave is not supported."),
+            OpCodeTypes.Stind_I => throw new NotSupportedException("Stind_I is not supported."),
+            OpCodeTypes.Conv_U => throw new NotSupportedException("Conv_U is not supported."),
+            OpCodeTypes.Arglist => throw new NotSupportedException("Arglist is not supported."),
+            OpCodeTypes.Ceq => throw new NotSupportedException("Ceq is not supported."),
+            OpCodeTypes.Cgt => throw new NotSupportedException("Cgt is not supported."),
+            OpCodeTypes.Cgt_Un => throw new NotSupportedException("Cgt_Un is not supported."),
+            OpCodeTypes.Clt => throw new NotSupportedException("Clt is not supported."),
+            OpCodeTypes.Clt_Un => throw new NotSupportedException("Clt_Un is not supported."),
+            OpCodeTypes.Ldftn => throw new NotSupportedException("Ldftn is not supported."),
+            OpCodeTypes.Ldvirtftn => throw new NotSupportedException("Ldvirtftn is not supported."),
+            OpCodeTypes.Localloc => throw new NotSupportedException("Localloc is not supported."),
+            OpCodeTypes.Endfilter => throw new NotSupportedException("Endfilter is not supported."),
+            OpCodeTypes.Unaligned => throw new NotSupportedException("Unaligned is not supported."),
+            OpCodeTypes.Volatile => throw new NotSupportedException("Volatile is not supported."),
+            OpCodeTypes.Tailcall => throw new NotSupportedException("Tailcall is not supported."),
+            OpCodeTypes.Initobj => throw new NotSupportedException("Initobj is not supported."),
+            OpCodeTypes.Constrained => throw new NotSupportedException("Constrained is not supported."),
+            OpCodeTypes.Cpblk => throw new NotSupportedException("Cpblk is not supported."),
+            OpCodeTypes.Initblk => throw new NotSupportedException("Initblk is not supported."),
+            OpCodeTypes.Rethrow => throw new NotSupportedException("Rethrow is not supported."),
+            OpCodeTypes.Sizeof => throw new NotSupportedException("Sizeof is not supported."),
+            OpCodeTypes.Refanytype => throw new NotSupportedException("Refanytype is not supported."),
+            OpCodeTypes.Readonly => throw new NotSupportedException("Readonly is not supported."),
+            _ => throw new NotSupportedException("The instruction is not supported.")
+        };
     }
 
     private IInstruction GetInstruction(
@@ -610,7 +779,7 @@ public class MsilToIrTranslator
             OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineIntOperand operand => new
                 LoadArgumentInstruction
                 {
-                    Parameter = _argumentSsaVariables[operand.Value].ToIrValue(),
+                    Parameter = _context.ArgumentSsaVariables[operand.Value].ToIrValue(),
                     Result = result.ToIrValue(),
                     MsilInstruction = node,
                     Block = block
@@ -618,31 +787,15 @@ public class MsilToIrTranslator
             OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineVarOperand operand => new
                 LoadArgumentInstruction
                 {
-                    Parameter = _argumentSsaVariables[operand.Index].ToIrValue(),
+                    Parameter = _context.ArgumentSsaVariables[operand.Index].ToIrValue(),
                     Result = result.ToIrValue(),
-                    MsilInstruction = node,
-                    Block = block
-                },
-            OpCodeTypes.Stloc or OpCodeTypes.Stloc_S when node.Operand is MsilInlineIntOperand operand => new
-                StoreLocalInstruction
-                {
-                    Local = _localVariableSsaVariables[operand.Value].ToIrValue(),
-                    Value = operands[0].ToIrValue(),
-                    MsilInstruction = node,
-                    Block = block
-                },
-            OpCodeTypes.Stloc or OpCodeTypes.Stloc_S when node.Operand is MsilInlineVarOperand operand => new
-                StoreLocalInstruction
-                {
-                    Local = _localVariableSsaVariables[operand.Index].ToIrValue(),
-                    Value = operands[0].ToIrValue(),
                     MsilInstruction = node,
                     Block = block
                 },
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineIntOperand operand => new
                 LoadLocalInstruction
                 {
-                    Local = _localVariableSsaVariables[operand.Value].ToIrValue(),
+                    Local = _context.LocalVariableSsaVariables[operand.Value].ToIrValue(),
                     Result = result.ToIrValue(),
                     MsilInstruction = node,
                     Block = block
@@ -650,7 +803,7 @@ public class MsilToIrTranslator
             OpCodeTypes.Ldloc or OpCodeTypes.Ldloc_S when node.Operand is MsilInlineVarOperand operand => new
                 LoadLocalInstruction
                 {
-                    Local = _localVariableSsaVariables[operand.Index].ToIrValue(),
+                    Local = _context.LocalVariableSsaVariables[operand.Index].ToIrValue(),
                     Result = result.ToIrValue(),
                     MsilInstruction = node,
                     Block = block
@@ -771,7 +924,7 @@ public class MsilToIrTranslator
                 MsilInstruction = node,
                 Block = block
             },
-            OpCodeTypes.Ret when operands.Count == 0 || _disassembledMethod.Metadata.ReturnType == typeof(void) => new ReturnVoidInstruction
+            OpCodeTypes.Ret when operands.Count == 0 || _context.DisassembledMethod.Metadata.ReturnType == typeof(void) => new ReturnVoidInstruction
             {
                 MsilInstruction = node,
                 Block = block
@@ -794,14 +947,14 @@ public class MsilToIrTranslator
             OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S when node.Operand is MsilInlineIntOperand operand => new LoadLocalAddressInstruction
             {
                 Result = result.ToIrValue(),
-                Local = _localVariableSsaVariables[operand.Value].ToIrValue(),
+                Local = _context.LocalVariableSsaVariables[operand.Value].ToIrValue(),
                 MsilInstruction = node,
                 Block = block
             },
             OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S when node.Operand is MsilInlineVarOperand operand => new LoadLocalAddressInstruction
             {
                 Result = result.ToIrValue(),
-                Local = _localVariableSsaVariables[operand.Index].ToIrValue(),
+                Local = _context.LocalVariableSsaVariables[operand.Index].ToIrValue(),
                 MsilInstruction = node,
                 Block = block
             },
