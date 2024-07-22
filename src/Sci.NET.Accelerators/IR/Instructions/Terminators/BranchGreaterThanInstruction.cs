@@ -36,12 +36,12 @@ public class BranchGreaterThanInstruction : IConditionalBranchInstruction
     public required BasicBlock FalseTarget { get; init; }
 
     /// <summary>
-    /// Gets condition to branch on.
+    /// Gets the left value to compare.
     /// </summary>
     public required IrValue Left { get; init; }
 
     /// <summary>
-    /// Gets condition to branch on.
+    /// Gets the right value to compare.
     /// </summary>
     public required IrValue Right { get; init; }
 
