@@ -585,13 +585,13 @@ public class MsilToIrTranslator
 #pragma warning restore IDE0072
         {
             OpCodeTypes.Nop => default(NopInstruction),
-            OpCodeTypes.Break => throw new NotSupportedException("Break is not supported."),
+            OpCodeTypes.Break => IrInstructionEmitter.EmitBreak(node, block, _context),
             OpCodeTypes.Ldarg => IrInstructionEmitter.EmitLdarg(node, result, block, _context),
-            OpCodeTypes.Ldarga => throw new NotSupportedException("Ldarga is not supported."),
-            OpCodeTypes.Starg => throw new NotSupportedException("Starg is not supported."),
+            OpCodeTypes.Ldarga => IrInstructionEmitter.EmitLdarga(node, result, block, _context),
+            OpCodeTypes.Starg => IrInstructionEmitter.EmitStarg(node, operands, block, _context),
             OpCodeTypes.Ldloc => IrInstructionEmitter.EmitLdloc(node, result, block, _context),
             OpCodeTypes.Stloc => IrInstructionEmitter.EmitStloc(node, operands, block, _context),
-            OpCodeTypes.Ldnull => throw new NotSupportedException("Ldnull is not supported."),
+            OpCodeTypes.Ldnull => IrInstructionEmitter.EmitLdnull(node, result, block, _context),
             OpCodeTypes.Ldc_I4_M1 => throw new NotSupportedException("Ldc_I4_M1 is not supported."),
             OpCodeTypes.Ldc_I4 => throw new NotSupportedException("Ldc_I4 is not supported."),
             OpCodeTypes.Ldc_I8 => throw new NotSupportedException("Ldc_I8 is not supported."),
@@ -776,6 +776,14 @@ public class MsilToIrTranslator
 #pragma warning restore IDE0072
         {
             OpCodeTypes.Nop => default(NopInstruction),
+            OpCodeTypes.Stloc or OpCodeTypes.Stloc_S when node.Operand is MsilInlineIntOperand operand => new
+                StoreLocalInstruction
+                {
+                    Local = _context.LocalVariableSsaVariables[operand.Value].ToIrValue(),
+                    Value = operands[0].ToIrValue(),
+                    MsilInstruction = node,
+                    Block = block
+                },
             OpCodeTypes.Ldarg or OpCodeTypes.Ldarg_S when node.Operand is MsilInlineIntOperand operand => new
                 LoadArgumentInstruction
                 {
@@ -944,20 +952,6 @@ public class MsilToIrTranslator
                     MsilInstruction = node,
                     Block = block
                 },
-            OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S when node.Operand is MsilInlineIntOperand operand => new LoadLocalAddressInstruction
-            {
-                Result = result.ToIrValue(),
-                Local = _context.LocalVariableSsaVariables[operand.Value].ToIrValue(),
-                MsilInstruction = node,
-                Block = block
-            },
-            OpCodeTypes.Ldloca or OpCodeTypes.Ldloca_S when node.Operand is MsilInlineVarOperand operand => new LoadLocalAddressInstruction
-            {
-                Result = result.ToIrValue(),
-                Local = _context.LocalVariableSsaVariables[operand.Index].ToIrValue(),
-                MsilInstruction = node,
-                Block = block
-            },
         };
     }
 }
