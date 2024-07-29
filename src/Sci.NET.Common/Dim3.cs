@@ -55,4 +55,10 @@ public readonly struct Dim3 : IValueEquatable<Dim3>
     {
         return HashCode.Combine(X, Y, Z);
     }
+
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{{{X}, {Y}, {Z}}})";
+    }
 }
