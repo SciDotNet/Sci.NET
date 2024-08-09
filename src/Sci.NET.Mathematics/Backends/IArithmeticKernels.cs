@@ -173,6 +173,16 @@ public interface IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Multiplies the elements of two <see cref="IMemoryBlock{TNumber}"/>s in place.
+    /// </summary>
+    /// <param name="leftMemory">The left <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
+    /// <param name="rightMemory">The right <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
+    /// <param name="shapeElementCount">The number of elements to multiply.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
+    public void MultiplyTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> leftMemory, IMemoryBlock<TNumber> rightMemory, long shapeElementCount)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Divides the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
     /// </summary>
     /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to divide.</param>

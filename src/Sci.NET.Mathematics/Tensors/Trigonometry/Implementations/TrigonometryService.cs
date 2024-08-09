@@ -16,7 +16,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Cos()));
+            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Cos());
         }
 
         return result;
@@ -30,7 +30,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sin().Negate()));
+            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Sin().Negate());
         }
 
         return result;
@@ -44,7 +44,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sec2()));
+            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Sec2());
         }
 
         return result;
@@ -60,11 +60,11 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                t =>
+                _ =>
                 {
                     using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
-                    using var sinX = t.Sin();
-                    using var cosX = t.Cos();
+                    using var sinX = tensor.Sin();
+                    using var cosX = tensor.Cos();
                     return multiplier.Multiply(sinX).Multiply(cosX);
                 });
         }
@@ -77,6 +77,20 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Cos2(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                tensor,
+                _ =>
+                {
+                    using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
+                    using var sinX = tensor.Sin();
+                    using var cosX = tensor.Cos();
+                    return multiplier.Multiply(sinX).Multiply(cosX).Negate();
+                });
+        }
+
         return result;
     }
 
@@ -85,6 +99,21 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Tan2(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                tensor,
+                _ =>
+                {
+                    using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
+                    using var secX = tensor.Sec2();
+                    using var tanX = tensor.Tan();
+
+                    return multiplier.Multiply(secX).Multiply(secX).Multiply(tanX);
+                });
+        }
+
         return result;
     }
 
@@ -93,6 +122,12 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Sinh(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Cosh());
+        }
+
         return result;
     }
 
@@ -101,6 +136,12 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Cosh(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Sinh());
+        }
+
         return result;
     }
 
@@ -109,6 +150,16 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Tanh(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, _ =>
+            {
+                using var one = new Scalar<TNumber>(TNumber.CreateChecked(1));
+                return one.Subtract(tensor.Tanh2());
+            });
+        }
+
         return result;
     }
 

@@ -218,6 +218,12 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
             if (parent.RequiresGradient)
             {
                 var parentGradient = gradientFunc(Gradient!);
+
+                TensorServiceProvider
+                    .GetTensorOperationServiceProvider()
+                    .GetArithmeticService()
+                    .MultiplyInplace(parentGradient, Gradient!);
+
                 parent.AccumulateGradient(parentGradient);
             }
         }

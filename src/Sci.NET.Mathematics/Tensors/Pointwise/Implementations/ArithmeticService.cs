@@ -1444,6 +1444,16 @@ internal class ArithmeticService : IArithmeticService
         }
     }
 
+    public void MultiplyInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+
+        InvalidShapeException.ThrowIfDifferentElementCount(left.Shape, right.Shape);
+
+        left.Backend.Arithmetic.MultiplyTensorTensorInplace(left.Memory, right.Memory, left.Shape.ElementCount);
+    }
+
     public Scalar<TNumber> Divide<TNumber>(
         Scalar<TNumber> left,
         Scalar<TNumber> right)

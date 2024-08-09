@@ -260,6 +260,33 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
             (i, j) => resultBlock[(i * n) + j] = leftBlock[j] * rightBlock[(i * n) + j]);
     }
 
+    public void MultiplyTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> leftMemory, IMemoryBlock<TNumber> rightMemory, long shapeElementCount)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var left = (SystemMemoryBlock<TNumber>)leftMemory;
+        var right = (SystemMemoryBlock<TNumber>)rightMemory;
+        var vectorCount = SimdVector.Count<TNumber>();
+
+        var i = LazyParallelExecutor.For(
+            0,
+            shapeElementCount - vectorCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            vectorCount,
+            i =>
+            {
+                var leftVector = left.UnsafeGetVectorUnchecked<TNumber>(i);
+                var rightVector = right.UnsafeGetVectorUnchecked<TNumber>(i);
+                var resultVector = leftVector.Multiply(rightVector);
+
+                left.UnsafeSetVectorUnchecked(resultVector, i);
+            });
+
+        for (; i < shapeElementCount; i++)
+        {
+            left[i] *= right[i];
+        }
+    }
+
     public void DivideTensorTensor<TNumber>(
         IMemoryBlock<TNumber> left,
         IMemoryBlock<TNumber> right,

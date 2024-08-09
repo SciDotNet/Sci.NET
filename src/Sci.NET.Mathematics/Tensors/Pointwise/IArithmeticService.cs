@@ -619,6 +619,15 @@ public interface IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Multiplies the <paramref name="left"/> by the <paramref name="right"/> and stores the result in the <paramref name="left"/>.
+    /// </summary>
+    /// <param name="left">The left operand.</param>
+    /// <param name="right">The right operand.</param>
+    /// <typeparam name="TNumber">The number type of the operands.</typeparam>
+    public void MultiplyInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Finds the quotient of the <paramref name="left"/> <see cref="Scalar{TNumber}"/> and <paramref name="right"/> <see cref="Scalar{TNumber}"/>.
     /// </summary>
     /// <param name="left">The left operand.</param>
