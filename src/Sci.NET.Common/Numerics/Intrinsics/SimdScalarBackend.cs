@@ -76,28 +76,12 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public ISimdVector<TNumber> Sqrt()
     {
-        return _scalar switch
-        {
-            byte b => new SimdScalarBackend<TNumber>((TNumber)(object)(byte)MathF.Sqrt(b)),
-            double d => new SimdScalarBackend<TNumber>((TNumber)(object)Math.Sqrt(d)),
-            short s => new SimdScalarBackend<TNumber>((TNumber)(object)(short)MathF.Sqrt(s)),
-            int i => new SimdScalarBackend<TNumber>((TNumber)(object)(int)Math.Sqrt(i)),
-            long l => new SimdScalarBackend<TNumber>((TNumber)(object)(long)Math.Sqrt(l)),
-            nint n => new SimdScalarBackend<TNumber>((TNumber)(object)(nint)Math.Sqrt(n)),
-            nuint n => new SimdScalarBackend<TNumber>((TNumber)(object)(nuint)Math.Sqrt(n)),
-            sbyte s => new SimdScalarBackend<TNumber>((TNumber)(object)(sbyte)MathF.Sqrt(s)),
-            float f => new SimdScalarBackend<TNumber>((TNumber)(object)MathF.Sqrt(f)),
-            ushort u => new SimdScalarBackend<TNumber>((TNumber)(object)(ushort)MathF.Sqrt(u)),
-            uint u => new SimdScalarBackend<TNumber>((TNumber)(object)(uint)Math.Sqrt(u)),
-            ulong u => (ISimdVector<TNumber>)new SimdScalarBackend<TNumber>((TNumber)(object)(ulong)Math.Sqrt(u)),
-            BFloat16 b => new SimdScalarBackend<TNumber>((TNumber)(object)BFloat16.Sqrt(b)),
-            _ => throw new NotSupportedException("Type not supported for square root.")
-        };
+        return new SimdScalarBackend<TNumber>(GenericMath.Sqrt(_scalar));
     }
 
     public ISimdVector<TNumber> Abs()
     {
-        return new SimdScalarBackend<TNumber>(TNumber.CreateChecked(Math.Abs(double.CreateChecked(_scalar))));
+        return GenericMath.Abs(_scalar);
     }
 
     public ISimdVector<TNumber> Negate()
