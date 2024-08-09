@@ -10,32 +10,65 @@ internal class TrigonometryService : ITrigonometryService
     public ITensor<TNumber> Sin<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
+
         result.Backend.Trigonometry.Sin(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Cos()));
+        }
+
         return result;
     }
 
     public ITensor<TNumber> Cos<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Cos(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sin().Negate()));
+        }
+
         return result;
     }
 
     public ITensor<TNumber> Tan<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Tan(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sec2()));
+        }
+
         return result;
     }
 
     public ITensor<TNumber> Sin2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Sin2(tensor, result);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                tensor,
+                t =>
+                {
+                    using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
+                    using var sinX = t.Sin();
+                    using var cosX = t.Cos();
+                    return multiplier.Multiply(sinX).Multiply(cosX);
+                });
+        }
+
         return result;
     }
 

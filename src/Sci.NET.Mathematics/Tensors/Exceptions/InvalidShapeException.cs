@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -27,4 +28,32 @@ public class InvalidShapeException : Exception
     /// Gets the given shape.
     /// </summary>
     public IEnumerable<Shape> GivenShapes { get; }
+
+    /// <summary>
+    /// Throws an exception if the shapes are different.
+    /// </summary>
+    /// <param name="shapes">The shapes to compare.</param>
+    /// <exception cref="InvalidShapeException">Throws when the shapes are different.</exception>
+    [StackTraceHidden]
+    public static void ThrowIfDifferentShape(params Shape[] shapes)
+    {
+        if (shapes.Distinct().Count() != 1)
+        {
+            throw new InvalidShapeException($"The shapes of the tensors are different but should be the same. {string.Join(", ", shapes.Select(x => x.ToString()).ToArray())}");
+        }
+    }
+
+    /// <summary>
+    /// Throws an exception if the two shapes have different element counts.
+    /// </summary>
+    /// <param name="shapes">The shapes to compare.</param>
+    /// <exception cref="InvalidShapeException">Throws when the element counts are different.</exception>
+    [StackTraceHidden]
+    public static void ThrowIfDifferentElementCount(params Shape[] shapes)
+    {
+        if (shapes.Distinct().Count() != 1)
+        {
+            throw new InvalidShapeException($"The shapes of the tensors have different element counts but should be the same. {string.Join(", ", shapes.Select(x => x.ToString()).ToArray())}");
+        }
+    }
 }

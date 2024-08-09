@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
@@ -23,13 +24,16 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// Initializes a new instance of the <see cref="Scalar{TNumber}"/> class.
     /// </summary>
     /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
-    public Scalar(ITensorBackend? backend = null)
+    /// <param name="requiresGradient">A value indicating whether the <see cref="Vector{TNumber}"/> requires a gradient.</param>
+    public Scalar(ITensorBackend? backend = null, bool requiresGradient = false)
     {
         Shape = Shape.Scalar();
         Backend = backend ?? Tensor.DefaultBackend;
         Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
         Memory.Rent(_id);
+        RequiresGradient = requiresGradient;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
     }
 
     /// <summary>
@@ -37,13 +41,16 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// </summary>
     /// <param name="value">The value of the <see cref="Vector{TNumber}"/>.</param>
     /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
-    public Scalar(TNumber value, ITensorBackend? backend = null)
+    /// <param name="requiresGradient">A value indicating whether the <see cref="Vector{TNumber}"/> requires a gradient.</param>
+    public Scalar(TNumber value, ITensorBackend? backend = null, bool requiresGradient = false)
     {
         Shape = Shape.Scalar();
         Backend = backend ?? Tensor.DefaultBackend;
         Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
         Memory.Rent(_id);
+        RequiresGradient = requiresGradient;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
 
         using var systemMemory = new SystemMemoryBlock<TNumber>(1);
         systemMemory[0] = value;
@@ -56,13 +63,16 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// </summary>
     /// <param name="handle">The memory handle to use for the <see cref="Vector{TNumber}"/>.</param>
     /// <param name="backend">The backend type to use for the <see cref="Vector{TNumber}"/>.</param>
-    public Scalar(IMemoryBlock<TNumber> handle, ITensorBackend backend)
+    /// <param name="requiresGradient">A value indicating whether the <see cref="Vector{TNumber}"/> requires a gradient.</param>
+    public Scalar(IMemoryBlock<TNumber> handle, ITensorBackend backend, bool requiresGradient = false)
     {
         Shape = Shape.Scalar();
         Backend = backend;
         Memory = handle;
         IsMemoryOwner = false;
         Memory.Rent(_id);
+        RequiresGradient = requiresGradient;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
     }
 
     /// <summary>
@@ -87,6 +97,16 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
 
     /// <inheritdoc />
     public bool IsMemoryOwner { get; private set; }
+
+    /// <inheritdoc />
+    [MemberNotNullWhen(true, nameof(RequiresGradient))]
+    public ITensor<TNumber>? Gradient { get; private set; }
+
+    /// <inheritdoc />
+    public bool RequiresGradient { get; }
+
+    /// <inheritdoc />
+    ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <summary>
     /// Gets the length of the <see cref="Vector{TNumber}"/>.
@@ -113,6 +133,13 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     /// <param name="index">The index of the scalar to get.</param>
     public Scalar<TNumber> this[int index] => Tensor.Slice(this, index).ToScalar();
 #pragma warning restore CA2000, CA1043
+
+    /// <summary>
+    /// Implicitly converts a <typeparamref name="TNumber"/> to a <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The <see cref="Scalar{TNumber}"/> representation of the value.</returns>
+    public static implicit operator Scalar<TNumber>(TNumber value) => new(value);
 
     /// <summary>
     /// Adds the left and right operands.
@@ -377,7 +404,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         var newBackend = device.GetTensorBackend();
         var oldHandle = Memory;
         var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
-        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
+        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend, RequiresGradient);
 
         newHandle.CopyFromSystemMemory(Memory.ToSystemMemory());
         Memory = newHandle;

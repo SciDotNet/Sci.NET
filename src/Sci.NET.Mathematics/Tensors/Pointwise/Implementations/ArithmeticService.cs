@@ -12,11 +12,11 @@ namespace Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 
 internal class ArithmeticService : IArithmeticService
 {
-    private readonly IDeviceGuardService _guardService;
+    private readonly IDeviceGuardService _deviceGuardService;
 
     public ArithmeticService(ITensorOperationServiceProvider provider)
     {
-        _guardService = provider.GetDeviceGuardService();
+        _deviceGuardService = provider.GetDeviceGuardService();
     }
 
     public Scalar<TNumber> Add<TNumber>(
@@ -24,7 +24,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
         var result = new Scalar<TNumber>(backend);
 
@@ -42,7 +42,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -62,7 +62,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -82,7 +82,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -102,7 +102,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -122,7 +122,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -146,7 +146,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -171,7 +171,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -196,7 +196,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -216,7 +216,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -241,7 +241,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Rows != right.Rows || left.Columns != right.Columns)
@@ -265,7 +265,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
@@ -290,7 +290,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -310,7 +310,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -335,7 +335,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Columns || left.Shape[^2] != right.Rows)
@@ -360,7 +360,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -511,12 +511,22 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
+    public void AddInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+
+        InvalidShapeException.ThrowIfDifferentElementCount(left.Shape, right.Shape);
+
+        left.Backend.Arithmetic.AddTensorTensorInplace(left.Memory, right.Memory, left.Shape.ElementCount);
+    }
+
     public Scalar<TNumber> Subtract<TNumber>(
         Scalar<TNumber> left,
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Scalar<TNumber>(backend);
@@ -535,7 +545,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -555,7 +565,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -575,7 +585,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -595,7 +605,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -615,7 +625,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -641,7 +651,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -668,7 +678,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -695,7 +705,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -715,7 +725,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -742,7 +752,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
@@ -768,7 +778,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Columns != right.Shape[^2] || left.Rows != right.Shape[^1])
         {
@@ -795,7 +805,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -815,7 +825,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -842,7 +852,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Shape[^1] != right.Rows || left.Shape[^2] != right.Columns)
         {
@@ -869,7 +879,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -1025,7 +1035,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Scalar<TNumber>(backend);
@@ -1044,7 +1054,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -1063,7 +1073,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -1083,7 +1093,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -1103,7 +1113,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -1123,7 +1133,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -1149,7 +1159,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -1176,7 +1186,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -1200,7 +1210,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -1220,7 +1230,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -1247,7 +1257,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape != right.Shape)
@@ -1273,7 +1283,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
@@ -1300,7 +1310,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -1320,7 +1330,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -1347,7 +1357,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
@@ -1374,7 +1384,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -1439,7 +1449,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Scalar<TNumber>(backend);
@@ -1458,7 +1468,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -1478,7 +1488,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -1498,7 +1508,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -1518,7 +1528,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -1538,7 +1548,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -1562,7 +1572,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -1587,7 +1597,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -1612,7 +1622,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -1632,7 +1642,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -1657,7 +1667,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         var backend = left.Backend;
 
@@ -1682,7 +1692,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         var backend = left.Backend;
 
@@ -1708,7 +1718,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -1728,7 +1738,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -1753,7 +1763,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
@@ -1778,7 +1788,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -1913,7 +1923,7 @@ internal class ArithmeticService : IArithmeticService
         {
             var newMemoryBlock = value.Memory.Copy();
 
-            return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend);
+            return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend, value.RequiresGradient);
         }
 
         var result = new Tensor<TNumber>(value.Shape, backend);

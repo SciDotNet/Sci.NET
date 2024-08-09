@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
@@ -13,7 +14,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The type of the numbers stored in the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
-public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
+public interface ITensor<TNumber> : ITensorLocalityOperations
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
@@ -37,6 +38,22 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     public bool IsMemoryOwner { get; }
 
     /// <summary>
+    /// Gets the gradient of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(RequiresGradient))]
+    public ITensor<TNumber>? Gradient { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="ITensor{TNumber}"/> requires a gradient.
+    /// </summary>
+    public bool RequiresGradient { get; }
+
+    /// <summary>
+    /// Gets the parent nodes of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    protected internal ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> Parents { get; }
+
+    /// <summary>
     /// Gets the slice of the <see cref="ITensor{TNumber}"/> at the specified indices.
     /// </summary>
     /// <param name="indices">The indices of the <see cref="ITensor{TNumber}"/> to slice.</param>
@@ -51,6 +68,28 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     public ITensor<TNumber> Transpose()
     {
         return new Tensor<TNumber>(this, new Shape(Shape.Dimensions.Reverse().ToArray()));
+    }
+
+    /// <summary>
+    /// Propagates the gradient backward through the computation graph.
+    /// </summary>
+    public void Backward()
+    {
+        if (RequiresGradient)
+        {
+            Gradient?.Memory.Fill(TNumber.One);
+            BackwardInternal();
+        }
+    }
+
+    /// <summary>
+    /// Adds a parent node to the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="parent">The parent node to add.</param>
+    /// <param name="gradientFunc">The gradient function to apply to the parent node.</param>
+    public void AddParent(ITensor<TNumber> parent, Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunc)
+    {
+        Parents.Add((parent, gradientFunc));
     }
 
     /// <summary>
@@ -167,4 +206,51 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     /// Detaches the memory from the <see cref="ITensor{TNumber}"/>.
     /// </summary>
     protected internal void DetachMemory();
+
+    /// <summary>
+    /// Propagates the gradient backward through the computation graph.
+    /// </summary>
+    protected void BackwardInternal()
+    {
+        // First, propagate to each parent
+        foreach (var (parent, gradientFunc) in Parents)
+        {
+            if (parent.RequiresGradient)
+            {
+                var parentGradient = gradientFunc(Gradient!);
+                parent.AccumulateGradient(parentGradient);
+            }
+        }
+
+        // Ensure each parent node gets its accumulated gradient and continues to propagate
+        foreach (var (parent, _) in Parents)
+        {
+            parent.BackwardInternal();
+        }
+    }
+
+    /// <summary>
+    /// Accumulates the gradient of the parent node.
+    /// </summary>
+    /// <param name="parentGradient">The gradient of the parent node.</param>
+    /// <exception cref="InvalidShapeException">Throws when the shape of the parent gradient tensor is invalid.</exception>
+    protected void AccumulateGradient(ITensor<TNumber> parentGradient)
+    {
+        ArgumentNullException.ThrowIfNull(Gradient);
+        InvalidShapeException.ThrowIfDifferentShape(Gradient.Shape, parentGradient.Shape);
+
+        if (parentGradient.Shape != Shape)
+        {
+            throw new InvalidShapeException(
+                $"The shape of the parent gradient tensor must be the same as the shape of the tensor, but got {parentGradient.Shape} and {Shape}");
+        }
+
+        if (RequiresGradient)
+        {
+            TensorServiceProvider
+                .GetTensorOperationServiceProvider()
+                .GetArithmeticService()
+                .AddInplace(Gradient, parentGradient);
+        }
+    }
 }

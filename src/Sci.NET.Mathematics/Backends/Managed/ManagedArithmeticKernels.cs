@@ -43,6 +43,33 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         }
     }
 
+    public void AddTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftBlock = (SystemMemoryBlock<TNumber>)left;
+        var rightBlock = (SystemMemoryBlock<TNumber>)right;
+        var vectorCount = SimdVector.Count<TNumber>();
+
+        var i = LazyParallelExecutor.For(
+            0,
+            n - vectorCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            vectorCount,
+            i =>
+            {
+                var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                var rightVector = rightBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                var resultVector = leftVector.Add(rightVector);
+
+                leftBlock.UnsafeSetVectorUnchecked(resultVector, i);
+            });
+
+        for (; i < n; i++)
+        {
+            leftBlock[i] += rightBlock[i];
+        }
+    }
+
     public void AddTensorBroadcastTensor<TNumber>(
         IMemoryBlock<TNumber> left,
         IMemoryBlock<TNumber> right,

@@ -24,14 +24,17 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// Initializes a new instance of the <see cref="Tensor{TNumber}"/> class.
     /// </summary>
     /// <param name="backend">The backend type to use for the <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="requiresGradient">A value indicating whether the <see cref="ITensor{TNumber}"/> requires a gradient.</param>
     /// <param name="shape">The dimensions of the <see cref="Tensor{TNumber}"/>.</param>
-    public Tensor(ITensorBackend? backend = null, params int[] shape)
+    public Tensor(ITensorBackend? backend = null, bool requiresGradient = false, params int[] shape)
     {
         Shape = new Shape(shape);
         Backend = backend ?? Tensor.DefaultBackend;
         Memory = Backend.Storage.Allocate<TNumber>(Shape);
         IsMemoryOwner = true;
         Memory.Rent(_id);
+        RequiresGradient = requiresGradient;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
     }
 
     /// <summary>
@@ -39,8 +42,9 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// </summary>
     /// <param name="shape">The shape of the <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="backend">The backend type to use for the <see cref="ITensor{TNumber}"/>.</param>
-    public Tensor(Shape shape, ITensorBackend? backend = null)
-        : this(backend, shape.Dimensions)
+    /// <param name="requiresGradient">A value indicating whether the <see cref="ITensor{TNumber}"/> requires a gradient.</param>
+    public Tensor(Shape shape, ITensorBackend? backend = null, bool requiresGradient = false)
+        : this(backend, requiresGradient, shape.Dimensions)
     {
     }
 
@@ -61,6 +65,8 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         Shape = newShape;
         IsMemoryOwner = false;
         Memory.Rent(_id);
+        RequiresGradient = previousTensor.RequiresGradient;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
     }
 
     /// <summary>
@@ -69,13 +75,16 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// <param name="memoryBlock">The memory block for the <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="shape">The shape of the <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="backend">The <see cref="ITensorBackend"/> instance which the <see cref="ITensor{TNumber}"/> uses.</param>
-    public Tensor(IMemoryBlock<TNumber> memoryBlock, Shape shape, ITensorBackend backend)
+    /// <param name="requiresGradient">A value indicating whether the <see cref="ITensor{TNumber}"/> requires a gradient.</param>
+    public Tensor(IMemoryBlock<TNumber> memoryBlock, Shape shape, ITensorBackend backend, bool requiresGradient)
     {
         Memory = memoryBlock;
         Shape = shape;
         Backend = backend;
         IsMemoryOwner = false;
         Memory.Rent(_id);
+        RequiresGradient = requiresGradient;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
     }
 
     /// <summary>
@@ -97,6 +106,16 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
 
     /// <inheritdoc />
     public bool IsMemoryOwner { get; private set; }
+
+    /// <inheritdoc />
+    [MemberNotNullWhen(true, nameof(RequiresGradient))]
+    public ITensor<TNumber>? Gradient { get; internal set; }
+
+    /// <inheritdoc />
+    public bool RequiresGradient { get; }
+
+    /// <inheritdoc/>
+    ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <inheritdoc/>
     public IDevice Device => Backend.Device;
@@ -379,7 +398,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         var newBackend = device.GetTensorBackend();
         var oldHandle = Memory;
         var newHandle = newBackend.Storage.Allocate<TNumber>(Shape);
-        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend);
+        using var tempTensor = new Tensor<TNumber>(newHandle, Shape, newBackend, RequiresGradient);
 
         newHandle.CopyFromSystemMemory(Memory.ToSystemMemory());
         Memory = newHandle;

@@ -28,6 +28,19 @@ public interface IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Adds the elements of the right <see cref="IMemoryBlock{TNumber}"/> to the left <see cref="IMemoryBlock{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add to.</param>
+    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
+    /// <param name="n">The number of elements to add.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
+    public void AddTensorTensorInplace<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Adds the elements of Adds the elements of two <see cref="IMemoryBlock{TNumber}"/>s together.
     /// </summary>
     /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add.</param>

@@ -96,8 +96,7 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Sin(tensor)
-            ;
+            .Sin(tensor);
     }
 
     /// <summary>
@@ -181,8 +180,7 @@ public static class TrigonometryExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetTrigonometryService()
-            .Cos(tensor)
-            ;
+            .Cos(tensor);
     }
 
     /// <summary>

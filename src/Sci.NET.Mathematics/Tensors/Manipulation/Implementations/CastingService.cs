@@ -53,7 +53,7 @@ internal class CastingService : ICastingService
                 .ToSystemMemory()
                 .DangerousReinterpretCast<TOut>();
 
-            return new Tensor<TOut>(newMemoryBlock, input.Shape, input.Backend);
+            return new Tensor<TOut>(newMemoryBlock, input.Shape, input.Backend, input.RequiresGradient);
         }
 
         var result = new Tensor<TOut>(input.Shape, input.Backend);
