@@ -75,7 +75,7 @@ internal class TrigonometryService : ITrigonometryService
     public ITensor<TNumber> Cos2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Cos2(tensor, result);
 
         if (tensor.RequiresGradient)
@@ -97,7 +97,7 @@ internal class TrigonometryService : ITrigonometryService
     public ITensor<TNumber> Tan2<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Tan2(tensor, result);
 
         if (tensor.RequiresGradient)
@@ -107,10 +107,9 @@ internal class TrigonometryService : ITrigonometryService
                 _ =>
                 {
                     using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
-                    using var secX = tensor.Sec2();
                     using var tanX = tensor.Tan();
-
-                    return multiplier.Multiply(secX).Multiply(secX).Multiply(tanX);
+                    using var sec2X = tensor.Sec2();
+                    return multiplier.Multiply(tanX).Multiply(sec2X);
                 });
         }
 
@@ -134,7 +133,7 @@ internal class TrigonometryService : ITrigonometryService
     public ITensor<TNumber> Cosh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Cosh(tensor, result);
 
         if (tensor.RequiresGradient)
@@ -148,16 +147,18 @@ internal class TrigonometryService : ITrigonometryService
     public ITensor<TNumber> Tanh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Tanh(tensor, result);
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, _ =>
-            {
-                using var one = new Scalar<TNumber>(TNumber.CreateChecked(1));
-                return one.Subtract(tensor.Tanh2());
-            });
+            ((ITensor<TNumber>)result).AddParent(
+                tensor,
+                _ =>
+                {
+                    using var one = new Scalar<TNumber>(TNumber.CreateChecked(1));
+                    return one.Subtract(tensor.Tanh2());
+                });
         }
 
         return result;

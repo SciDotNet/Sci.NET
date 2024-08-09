@@ -6,7 +6,7 @@ using Sci.NET.Tests.Framework.Assertions;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Differentiation;
 
-public class AutoGradTests
+public class CompoundFunctionAutoGradTests
 {
     [Fact]
     public void CosineSinTest()

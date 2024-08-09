@@ -17,4 +17,19 @@
       <PackageReference Include="JetBrains.dotMemoryUnit" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Tensors\Differentiation\AutomaticDifferentiationTests.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>AutomaticDifferentiationTests.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Tensors\Differentiation\AutomaticDifferentiationTests.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>AutomaticDifferentiationTests.tt</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>
