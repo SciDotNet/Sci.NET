@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Sci.NET.Common.Comparison;
+using Sci.NET.Common.Numerics.Intrinsics.Exceptions;
 
 namespace Sci.NET.Common.Numerics.Intrinsics;
 
@@ -47,42 +48,30 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public ISimdVector<TNumber> Add(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> scalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        return new SimdScalarBackend<TNumber>(_scalar + scalar._scalar);
+        return new SimdScalarBackend<TNumber>(_scalar + ((SimdScalarBackend<TNumber>)other)._scalar);
     }
 
     public ISimdVector<TNumber> Subtract(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> scalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        return new SimdScalarBackend<TNumber>(_scalar - scalar._scalar);
+        return new SimdScalarBackend<TNumber>(_scalar - ((SimdScalarBackend<TNumber>)other)._scalar);
     }
 
     public ISimdVector<TNumber> Multiply(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> scalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        return new SimdScalarBackend<TNumber>(_scalar * scalar._scalar);
+        return new SimdScalarBackend<TNumber>(_scalar * ((SimdScalarBackend<TNumber>)other)._scalar);
     }
 
     public ISimdVector<TNumber> Divide(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> scalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        return new SimdScalarBackend<TNumber>(_scalar / scalar._scalar);
+        return new SimdScalarBackend<TNumber>(_scalar / ((SimdScalarBackend<TNumber>)other)._scalar);
     }
 
     public ISimdVector<TNumber> Sqrt()
@@ -101,6 +90,7 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
             ushort u => new SimdScalarBackend<TNumber>((TNumber)(object)(ushort)MathF.Sqrt(u)),
             uint u => new SimdScalarBackend<TNumber>((TNumber)(object)(uint)Math.Sqrt(u)),
             ulong u => (ISimdVector<TNumber>)new SimdScalarBackend<TNumber>((TNumber)(object)(ulong)Math.Sqrt(u)),
+            BFloat16 b => new SimdScalarBackend<TNumber>((TNumber)(object)BFloat16.Sqrt(b)),
             _ => throw new NotSupportedException("Type not supported for square root.")
         };
     }
@@ -122,37 +112,23 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public ISimdVector<TNumber> Min(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> scalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        return new SimdScalarBackend<TNumber>(TNumber.Min(_scalar, scalar._scalar));
+        return new SimdScalarBackend<TNumber>(TNumber.Min(_scalar, ((SimdScalarBackend<TNumber>)other)._scalar));
     }
 
     public ISimdVector<TNumber> Clamp(ISimdVector<TNumber> min, ISimdVector<TNumber> max)
     {
-        if (min is not SimdScalarBackend<TNumber> minScalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {min.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(min, max);
 
-        if (max is not SimdScalarBackend<TNumber> maxScalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {max.GetType()}.");
-        }
-
-        return new SimdScalarBackend<TNumber>(TNumber.Clamp(_scalar, minScalar._scalar, maxScalar._scalar));
+        return new SimdScalarBackend<TNumber>(TNumber.Clamp(_scalar, ((SimdScalarBackend<TNumber>)min)._scalar, ((SimdScalarBackend<TNumber>)max)._scalar));
     }
 
     public TNumber Dot(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> scalar)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        return _scalar * scalar._scalar;
+        return _scalar * ((SimdScalarBackend<TNumber>)other)._scalar;
     }
 
     public TNumber Sum()
@@ -162,12 +138,9 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public ISimdVector<TNumber> SquareDifference(ISimdVector<TNumber> other)
     {
-        if (other is not SimdScalarBackend<TNumber> otherVector)
-        {
-            throw new InvalidOperationException($"Cannot operate on a {typeof(SimdScalarBackend<TNumber>)} and a {other.GetType()}.");
-        }
+        InvalidVectorOperationException.ThrowIfNotOfType<SimdScalarBackend<TNumber>, TNumber>(other);
 
-        var sum = _scalar + otherVector._scalar;
+        var sum = _scalar + ((SimdScalarBackend<TNumber>)other)._scalar;
 
         return new SimdScalarBackend<TNumber>(sum * sum);
     }
@@ -179,20 +152,14 @@ internal readonly struct SimdScalarBackend<TNumber> : ISimdVector<TNumber>, IVal
 
     public void CopyTo(Span<TNumber> span)
     {
-        if (span.Length != 1)
-        {
-            throw new ArgumentException("Span length must be 1 for scalar types.");
-        }
+        ArgumentOutOfRangeException.ThrowIfNotEqual(span.Length, 1);
 
         span[0] = _scalar;
     }
 
     public ISimdVector<TNumber> CreateWith(Span<TNumber> values)
     {
-        if (values.Length != Count)
-        {
-            throw new ArgumentOutOfRangeException(nameof(values), $"Values contains {values.Length} elements but expected {Count}.");
-        }
+        ArgumentOutOfRangeException.ThrowIfNotEqual(values.Length, Count);
 
         return new SimdScalarBackend<TNumber>(values[0]);
     }

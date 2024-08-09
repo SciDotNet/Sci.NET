@@ -66,6 +66,26 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             });
     }
 
+    public void Sin2BackwardsInPlace<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var multiplier = TNumber.CreateChecked(2);
+
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var input = tensorBlock[i];
+                var (sin, cos) = TNumber.SinCos(input);
+
+                resultBlock[i] = sin * cos * multiplier;
+            });
+    }
+
     public void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {

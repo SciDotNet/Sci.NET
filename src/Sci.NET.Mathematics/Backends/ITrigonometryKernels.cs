@@ -49,6 +49,16 @@ public interface ITrigonometryKernels
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
+    /// Computes the element-wise derivative of the cosine squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Sin2BackwardsInPlace<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
     /// Computes the element-wise cosine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
