@@ -66,7 +66,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             });
     }
 
-    public void Sin2BackwardsInPlace<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+    public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;

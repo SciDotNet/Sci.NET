@@ -55,7 +55,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Sin2BackwardsInPlace<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+    public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>

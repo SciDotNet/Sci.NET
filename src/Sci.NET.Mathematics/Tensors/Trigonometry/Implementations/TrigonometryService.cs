@@ -60,14 +60,17 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ =>
-                {
-                    using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
-                    using var sinX = tensor.Sin();
-                    using var cosX = tensor.Cos();
-                    return multiplier.Multiply(sinX).Multiply(cosX);
-                });
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Sin2Backwards(tensor));
         }
+
+        return result;
+    }
+
+    public ITensor<TNumber> Sin2Backwards<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
+        result.Backend.Trigonometry.Sin2Backwards(tensor, result, tensor.Shape.ElementCount);
 
         return result;
     }

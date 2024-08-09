@@ -48,6 +48,15 @@ public interface ITrigonometryService
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
+    /// Calculates the derivative of the sine squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the derivative of the sine squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The derivative of the sine squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Sin2Backwards<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
     /// Calculates the cosine squared of the specified <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the cosine squared of.</param>
