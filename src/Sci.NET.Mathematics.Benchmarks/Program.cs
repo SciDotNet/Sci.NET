@@ -3,12 +3,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Running;
-using Sci.NET.Mathematics.Benchmarks.SIMD;
+using Sci.NET.Mathematics.Benchmarks.Autograd;
 
 [assembly:ExcludeFromCodeCoverage]
 
-BenchmarkRunner.Run<AdditionBenchmarks>();
+BenchmarkRunner.Run<Sin2Benchmarks>();
 
-BenchmarkRunner.Run<ReduceAddBenchmarks>();
-
-BenchmarkRunner.Run<MatrixMultiplyBenchmarks>();
+// BenchmarkRunner.Run<AdditionBenchmarks>();
+// BenchmarkRunner.Run<ReduceAddBenchmarks>();
+// BenchmarkRunner.Run<MatrixMultiplyBenchmarks>();
