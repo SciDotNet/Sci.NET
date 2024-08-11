@@ -85,14 +85,17 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ =>
-                {
-                    using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
-                    using var sinX = tensor.Sin();
-                    using var cosX = tensor.Cos();
-                    return multiplier.Multiply(sinX).Multiply(cosX).Negate();
-                });
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Cos2Backwards(tensor));
         }
+
+        return result;
+    }
+
+    public ITensor<TNumber> Cos2Backwards<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
+        result.Backend.Trigonometry.Cos2Backwards(tensor, result, tensor.Shape.ElementCount);
 
         return result;
     }
@@ -107,14 +110,17 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ =>
-                {
-                    using var multiplier = new Scalar<TNumber>(TNumber.CreateChecked(2));
-                    using var tanX = tensor.Tan();
-                    using var sec2X = tensor.Sec2();
-                    return multiplier.Multiply(tanX).Multiply(sec2X);
-                });
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Tan2Backwards(tensor));
         }
+
+        return result;
+    }
+
+    public ITensor<TNumber> Tan2Backwards<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
+        result.Backend.Trigonometry.Tan2Backwards(tensor, result, tensor.Shape.ElementCount);
 
         return result;
     }
@@ -122,7 +128,7 @@ internal class TrigonometryService : ITrigonometryService
     public ITensor<TNumber> Sinh<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
-        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, tensor.RequiresGradient);
         result.Backend.Trigonometry.Sinh(tensor, result);
 
         if (tensor.RequiresGradient)
@@ -157,12 +163,17 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ =>
-                {
-                    using var one = new Scalar<TNumber>(TNumber.CreateChecked(1));
-                    return one.Subtract(tensor.Tanh2());
-                });
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().TanhBackwards(tensor));
         }
+
+        return result;
+    }
+
+    public ITensor<TNumber> TanhBackwards<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
+        result.Backend.Trigonometry.TanhBackwards(tensor, result, tensor.Shape.ElementCount);
 
         return result;
     }

@@ -66,12 +66,30 @@ public interface ITrigonometryService
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
+    /// Calculates the derivative of the cosine squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the derivative of the cosine squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The derivative of the cosine squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Cos2Backwards<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
     /// Calculates the tangent squared of the specified <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the tangent squared of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The tangent squared of the <see cref="ITensor{TNumber}"/>.</returns>
     public ITensor<TNumber> Tan2<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Calculates the derivative of the tangent squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the derivative of the tangent squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The derivative of the tangent squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> Tan2Backwards<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -99,6 +117,15 @@ public interface ITrigonometryService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The hyperbolic tangent of the <see cref="ITensor{TNumber}"/>.</returns>
     public ITensor<TNumber> Tanh<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Calculates the hyperbolic sine squared of the specified <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to calculate the hyperbolic sine squared of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The hyperbolic sine squared of the <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> TanhBackwards<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>

@@ -3,10 +3,12 @@
 
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Benchmarks.Autograd;
 
+[NativeMemoryProfiler]
 [MemoryDiagnoser]
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Benchmark class")]
 public class Sin2Benchmarks

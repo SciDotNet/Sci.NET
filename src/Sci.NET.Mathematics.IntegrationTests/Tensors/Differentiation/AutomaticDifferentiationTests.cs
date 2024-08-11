@@ -137,4 +137,25 @@ public class AutomaticDifferentiationTests : IntegrationTestBase
         result.Should().HaveApproximatelyEquivalentElements(new double[] { 2.42551882081476 }, 1e-9);
     }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void Backwards_Sinh_1(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<double>(new double[] { 1.0d }, requiresGradient: true);
+        tensor.To(device);
+        var result = tensor.Sinh();
+
+        // Act
+        result.Backward();
+
+        // Assert
+        tensor.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().NotBeNull();
+
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.5430806348152437 }, 1e-9);
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { 1.1752011936438014 }, 1e-9);
+    }
+
 }

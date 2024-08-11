@@ -68,12 +68,32 @@ public interface ITrigonometryKernels
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
+    /// Computes the element-wise derivative of the cosine squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
     /// Computes the element-wise tangent squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise derivative of the tangent squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -101,6 +121,16 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Tanh<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise hyperbolic sine squared of a <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>

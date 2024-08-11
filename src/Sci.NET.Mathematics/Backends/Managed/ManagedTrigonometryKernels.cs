@@ -103,6 +103,27 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             });
     }
 
+    public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var multiplier = TNumber.CreateChecked(2);
+        var negativeOne = TNumber.Zero - TNumber.One;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var input = tensorBlock[i];
+                var (sin, cos) = TNumber.SinCos(input);
+
+                resultBlock[i] = negativeOne * (sin * cos * multiplier);
+            });
+    }
+
     public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
@@ -117,6 +138,27 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             {
                 var tan = TNumber.Tan(tensorBlock[i]);
                 resultBlock[i] = tan * tan;
+            });
+    }
+
+    public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var multiplier = TNumber.CreateChecked(2);
+
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var input = tensorBlock[i];
+                var sec = TNumber.One / TNumber.Cos(input);
+                var sec2 = sec * sec;
+                var tan = TNumber.Tan(input);
+                resultBlock[i] = sec2 * tan * multiplier;
             });
     }
 
@@ -157,6 +199,25 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             tensor.Shape.ElementCount,
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultBlock[i] = TNumber.Tanh(tensorBlock[i]));
+    }
+
+    public void TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+        where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var input = tensorBlock[i];
+                var tanh = TNumber.Tanh(input);
+                var tanh2 = tanh * tanh;
+                resultBlock[i] = TNumber.One - tanh2;
+            });
     }
 
     public void Sinh2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)

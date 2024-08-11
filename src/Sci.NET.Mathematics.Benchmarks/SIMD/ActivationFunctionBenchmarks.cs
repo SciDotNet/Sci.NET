@@ -3,6 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Numerics.Intrinsics;
@@ -11,6 +12,7 @@ using Sci.NET.Mathematics.Backends.Managed;
 
 namespace Sci.NET.Mathematics.Benchmarks.SIMD;
 
+[NativeMemoryProfiler]
 [MemoryDiagnoser]
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Benchmark class")]
 public class ActivationFunctionBenchmarks
