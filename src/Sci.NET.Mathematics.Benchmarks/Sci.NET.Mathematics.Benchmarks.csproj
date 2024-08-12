@@ -13,4 +13,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="ActivationFunctionKernels\" />
+    </ItemGroup>
 </Project>

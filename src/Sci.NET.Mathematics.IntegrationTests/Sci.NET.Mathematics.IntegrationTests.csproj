@@ -18,22 +18,31 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="Tensors\Differentiation\AutomaticDifferentiationTests.tt">
+        <None Update="Tensors\Differentiation\TrigonometryBackwardsTests.tt">
             <Generator>TextTemplatingFileGenerator</Generator>
-            <LastGenOutput>AutomaticDifferentiationTests.cs</LastGenOutput>
+            <LastGenOutput>TrigonometryBackwardsTests.cs</LastGenOutput>
+        </None>
+        <None Update="Tensors\Differentiation\ActivationFunctionBackwardsTests.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>ActivationFunctionBackwardsTests.cs</LastGenOutput>
         </None>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Tensors\Differentiation\AutomaticDifferentiationTests.cs">
+        <Compile Update="Tensors\Differentiation\TrigonometryBackwardsTests.cs">
             <AutoGen>True</AutoGen>
             <DesignTime>True</DesignTime>
-            <DependentUpon>AutomaticDifferentiationTests.tt</DependentUpon>
+            <DependentUpon>TrigonometryBackwardsTests.tt</DependentUpon>
         </Compile>
-        <Compile Update="Tensors\Differentiation\AutomaticDifferentiationTests.cs">
+        <Compile Update="Tensors\Differentiation\TrigonometryBackwardsTests.cs">
           <AutoGen>True</AutoGen>
           <DesignTime>True</DesignTime>
-          <DependentUpon>AutomaticDifferentiationTests.tt</DependentUpon>
+          <DependentUpon>TrigonometryBackwardsTests.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Tensors\Differentiation\ActivationFunctionBackwardsTests.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>ActivationFunctionBackwardsTests.tt</DependentUpon>
         </Compile>
     </ItemGroup>
 

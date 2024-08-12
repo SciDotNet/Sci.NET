@@ -9,7 +9,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Differentiation;
 
-public class AutomaticDifferentiationTests : IntegrationTestBase
+public class TrigonometryBackwardsTests : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
@@ -156,6 +156,48 @@ public class AutomaticDifferentiationTests : IntegrationTestBase
         tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.5430806348152437 }, 1e-9);
         result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
         result.Should().HaveApproximatelyEquivalentElements(new double[] { 1.1752011936438014 }, 1e-9);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void Backwards_Cosh_1(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<double>(new double[] { 1.0d }, requiresGradient: true);
+        tensor.To(device);
+        var result = tensor.Cosh();
+
+        // Act
+        result.Backward();
+
+        // Assert
+        tensor.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().NotBeNull();
+
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.1752011936438014 }, 1e-9);
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { 1.5430806348152437 }, 1e-9);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void Backwards_Tanh_1(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<double>(new double[] { 1.0d }, requiresGradient: true);
+        tensor.To(device);
+        var result = tensor.Tanh();
+
+        // Act
+        result.Backward();
+
+        // Assert
+        tensor.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().NotBeNull();
+
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 0.41997434161402614 }, 1e-9);
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { 0.7615941559557649 }, 1e-9);
     }
 
 }
