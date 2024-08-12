@@ -74,18 +74,22 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
         var vectorLength = SimdVector.Count<TNumber>();
+        var done = 0L;
 
-        var done = LazyParallelExecutor.For(
-            0,
-            inputMemory.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            vectorLength,
-            i =>
-            {
-                var vector = inputMemory.UnsafeGetVectorUnchecked<TNumber>(i);
-                var exp = vector.Exp();
-                outputMemory.UnsafeSetVectorUnchecked(exp, i);
-            });
+        if (value.Shape.ElementCount > vectorLength)
+        {
+            done = LazyParallelExecutor.For(
+                0,
+                inputMemory.Length,
+                ManagedTensorBackend.ParallelizationThreshold,
+                vectorLength,
+                i =>
+                {
+                    var vector = inputMemory.UnsafeGetVectorUnchecked<TNumber>(i);
+                    var exp = vector.Exp();
+                    outputMemory.UnsafeSetVectorUnchecked(exp, i);
+                });
+        }
 
         for (var i = done; i < inputMemory.Length; i++)
         {
@@ -94,18 +98,22 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
 
         sumBuffer.Backend.Reduction.ReduceAddAll(result, sumBuffer);
         var sum = SimdVector.Create(sumBuffer.Value);
+        done = 0;
 
-        done = LazyParallelExecutor.For(
-            0,
-            inputMemory.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            vectorLength,
-            i =>
-            {
-                var vector = outputMemory.UnsafeGetVectorUnchecked<TNumber>(i);
-                var divided = vector.Divide(sum);
-                outputMemory.UnsafeSetVectorUnchecked(divided, i);
-            });
+        if (value.Shape.ElementCount > vectorLength)
+        {
+            done = LazyParallelExecutor.For(
+                0,
+                inputMemory.Length,
+                ManagedTensorBackend.ParallelizationThreshold,
+                vectorLength,
+                i =>
+                {
+                    var vector = outputMemory.UnsafeGetVectorUnchecked<TNumber>(i);
+                    var divided = vector.Divide(sum);
+                    outputMemory.UnsafeSetVectorUnchecked(divided, i);
+                });
+        }
 
         for (var i = done; i < inputMemory.Length; i++)
         {
@@ -121,19 +129,23 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
         var vectorLength = SimdVector.Count<TNumber>();
         var oneVector = SimdVector.Create(TNumber.One);
+        var done = 0L;
 
-        // Find the derivative of the softmax function
-        var done = LazyParallelExecutor.For(
-            0,
-            inputMemory.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            vectorLength,
-            i =>
-            {
-                var softmaxVector = softmaxMemory.UnsafeGetVectorUnchecked<TNumber>(i);
-                var derivative = softmaxVector.Multiply(oneVector.Subtract(softmaxVector));
-                outputMemory.UnsafeSetVectorUnchecked(derivative, i);
-            });
+        if (value.Shape.ElementCount > vectorLength)
+        {
+            // Find the derivative of the softmax function
+            done = LazyParallelExecutor.For(
+                0,
+                inputMemory.Length,
+                ManagedTensorBackend.ParallelizationThreshold,
+                vectorLength,
+                i =>
+                {
+                    var softmaxVector = softmaxMemory.UnsafeGetVectorUnchecked<TNumber>(i);
+                    var derivative = softmaxVector.Multiply(oneVector.Subtract(softmaxVector));
+                    outputMemory.UnsafeSetVectorUnchecked(derivative, i);
+                });
+        }
 
         for (var i = done; i < inputMemory.Length; i++)
         {

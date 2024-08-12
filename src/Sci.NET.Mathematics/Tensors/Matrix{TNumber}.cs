@@ -420,6 +420,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         if (disposing && IsMemoryOwner)
         {
             Memory.Dispose();
+            Gradient?.Dispose();
         }
     }
 }
