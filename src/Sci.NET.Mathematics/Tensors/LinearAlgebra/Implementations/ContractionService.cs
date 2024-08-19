@@ -37,17 +37,11 @@ internal class ContractionService : IContractionService
 
         var contractedSize = 1;
 
-        if (leftIndices.Length != rightIndices.Length)
-        {
-            throw new ArgumentException("The number of left and right indices must be equal.");
-        }
+        ArgumentOutOfRangeException.ThrowIfNotEqual(leftIndices.Length, rightIndices.Length);
 
         for (var i = 0; i < leftIndices.Length; i++)
         {
-            if (left.Shape[leftIndices[i]] != right.Shape[rightIndices[i]])
-            {
-                throw new ArgumentException("The dimensions of the left and right indices must be equal.");
-            }
+            ArgumentOutOfRangeException.ThrowIfNotEqual(left.Shape[leftIndices[i]], right.Shape[rightIndices[i]]);
 
             contractedSize *= left.Shape[leftIndices[i]];
         }
@@ -90,11 +84,46 @@ internal class ContractionService : IContractionService
         using var permutedLeft = _permutationService.Permute(left, leftPermutation.ToArray());
         using var permutedRight = _permutationService.Permute(right, rightPermutation.ToArray());
         using var reshapeLeft = _reshapeService.Reshape(permutedLeft, new Shape(leftSize, contractedSize));
-        using var reshapeLeftMatrix = reshapeLeft.ToMatrix();
+        using var reshapeLeftMatrix = reshapeLeft.ToMatrix(requiresGradient: false);
         using var reshapeRight = _reshapeService.Reshape(permutedRight, new Shape(contractedSize, rightSize));
-        using var reshapeRightMatrix = reshapeRight.ToMatrix();
-        using var mm = _matrixMultiplicationService.MatrixMultiply(reshapeLeftMatrix, reshapeRightMatrix);
-        return _reshapeService.Reshape(mm, new Shape(resultShape.ToArray()));
+        using var reshapeRightMatrix = reshapeRight.ToMatrix(requiresGradient: false);
+        using var mm = _matrixMultiplicationService.MatrixMultiply(reshapeLeftMatrix, reshapeRightMatrix, requiresGradient: false);
+        var result = _reshapeService.Reshape(mm, new Shape(resultShape.ToArray()), requiresGradient: false).RecreateWithGradient();
+
+        if (left.RequiresGradient)
+        {
+            result.AddParent(
+                left,
+                grad =>
+                {
+                    var nonContractedAAxes = Enumerable
+                        .Range(0, left.Shape.Rank)
+                        .Where(i => !leftIndices.Contains(i))
+                        .ToArray();
+                    var nonContractedBAxes = Enumerable
+                        .Range(0, right.Shape.Rank)
+                        .Where(i => !rightIndices.Contains(i))
+                        .ToArray();
+
+                    var leftInd = Enumerable.Range(nonContractedBAxes.Length, grad.Shape.Rank - nonContractedBAxes.Length).ToList();
+                    var aGrad = grad.Contract(right, leftInd.ToArray(), nonContractedBAxes.ToArray());
+                    var permuteAxes = nonContractedAAxes.Concat(leftIndices).ToArray();
+
+                    return aGrad.Permute(permuteAxes);
+                });
+        }
+
+        if (right.RequiresGradient)
+        {
+            result.AddParent(
+                right,
+                _ =>
+                {
+                    throw new NotImplementedException();
+                });
+        }
+
+        return result;
     }
 
     public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
@@ -102,15 +131,9 @@ internal class ContractionService : IContractionService
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
 
-        if (left.Shape[^1] != right.Shape[^1])
-        {
-            throw new ArgumentException("The last dimensions of the left and right operands must be equal.", nameof(right));
-        }
-
-        if (left.Shape.Rank != 1 || right.Shape.Rank != 1)
-        {
-            throw new InvalidShapeException($"Inner product is only defined for vectors, but got shapes {left.Shape} and {right.Shape}.");
-        }
+        ArgumentOutOfRangeException.ThrowIfNotEqual(left.Shape[^1], right.Shape[^1]);
+        InvalidShapeException.ThrowIfNotOfRank(left, 1);
+        InvalidShapeException.ThrowIfNotOfRank(right, 1);
 
         var result = new Scalar<TNumber>(left.Backend);
         left.Backend.LinearAlgebra.InnerProduct(left, right, result);
@@ -162,5 +185,17 @@ internal class ContractionService : IContractionService
         }
 
         return bits;
+    }
+
+    private static int[] InversePermutation(int[] perm)
+    {
+        var inversePerm = new int[perm.Length];
+
+        for (int i = 0; i < perm.Length; i++)
+        {
+            inversePerm[perm[i]] = i;
+        }
+
+        return inversePerm;
     }
 }

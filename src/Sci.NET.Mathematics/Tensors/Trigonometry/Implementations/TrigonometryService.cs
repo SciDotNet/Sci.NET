@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Trigonometry.Implementations;
 
@@ -16,7 +17,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Cos());
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Cos()));
         }
 
         return result;
@@ -30,7 +31,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Sin().Negate());
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sin().Negate()));
         }
 
         return result;
@@ -44,7 +45,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Sec2());
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sec2()));
         }
 
         return result;
@@ -60,17 +61,20 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Sin2Backwards(tensor));
+                grad => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Sin2Backwards(tensor, grad));
         }
 
         return result;
     }
 
-    public ITensor<TNumber> Sin2Backwards<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
-        result.Backend.Trigonometry.Sin2Backwards(tensor, result, tensor.Shape.ElementCount);
+
+        InvalidShapeException.ThrowIfDifferentShape(tensor.Shape, gradient.Shape);
+
+        result.Backend.Trigonometry.Sin2Backwards(tensor, gradient, result, tensor.Shape.ElementCount);
 
         return result;
     }
@@ -85,17 +89,20 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Cos2Backwards(tensor));
+                grad => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Cos2Backwards(tensor, grad));
         }
 
         return result;
     }
 
-    public ITensor<TNumber> Cos2Backwards<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
-        result.Backend.Trigonometry.Cos2Backwards(tensor, result, tensor.Shape.ElementCount);
+
+        InvalidShapeException.ThrowIfDifferentShape(tensor.Shape, gradient.Shape);
+
+        result.Backend.Trigonometry.Cos2Backwards(tensor, gradient, result, tensor.Shape.ElementCount);
 
         return result;
     }
@@ -110,17 +117,20 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Tan2Backwards(tensor));
+                grad => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().Tan2Backwards(tensor, grad));
         }
 
         return result;
     }
 
-    public ITensor<TNumber> Tan2Backwards<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
-        result.Backend.Trigonometry.Tan2Backwards(tensor, result, tensor.Shape.ElementCount);
+
+        InvalidShapeException.ThrowIfDifferentShape(tensor.Shape, gradient.Shape);
+
+        result.Backend.Trigonometry.Tan2Backwards(tensor, gradient, result, tensor.Shape.ElementCount);
 
         return result;
     }
@@ -133,7 +143,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Cosh());
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Cosh()));
         }
 
         return result;
@@ -147,7 +157,7 @@ internal class TrigonometryService : ITrigonometryService
 
         if (tensor.RequiresGradient)
         {
-            ((ITensor<TNumber>)result).AddParent(tensor, _ => tensor.Sinh());
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Multiply(tensor.Sinh()));
         }
 
         return result;
@@ -163,17 +173,17 @@ internal class TrigonometryService : ITrigonometryService
         {
             ((ITensor<TNumber>)result).AddParent(
                 tensor,
-                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().TanhBackwards(tensor));
+                grad => TensorServiceProvider.GetTensorOperationServiceProvider().GetTrigonometryService().TanhBackwards(tensor, grad));
         }
 
         return result;
     }
 
-    public ITensor<TNumber> TanhBackwards<TNumber>(ITensor<TNumber> tensor)
+    public ITensor<TNumber> TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend, false);
-        result.Backend.Trigonometry.TanhBackwards(tensor, result, tensor.Shape.ElementCount);
+        result.Backend.Trigonometry.TanhBackwards(tensor, gradient, result, tensor.Shape.ElementCount);
 
         return result;
     }

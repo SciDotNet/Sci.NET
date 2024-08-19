@@ -26,6 +26,30 @@
           <Generator>TextTemplatingFileGenerator</Generator>
           <LastGenOutput>ActivationFunctionBackwardsTests.cs</LastGenOutput>
         </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[0]]_1.safetensors">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[0]]_2.safetensors">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1_2]_[0_1]]_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_4.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[1]]_3.safetensors">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -44,6 +68,10 @@
           <DesignTime>True</DesignTime>
           <DependentUpon>ActivationFunctionBackwardsTests.tt</DependentUpon>
         </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Tensors\LinearAlgebra\Examples\" />
     </ItemGroup>
 
 </Project>

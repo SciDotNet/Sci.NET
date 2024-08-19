@@ -16,7 +16,7 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
         _guardService = provider.GetDeviceGuardService();
     }
 
-    public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
+    public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, bool? requiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -29,9 +29,23 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
 
         var resultShape = new Shape(left.Rows, right.Columns);
         var resultMemory = left.Backend.Storage.Allocate<TNumber>(resultShape);
-        var result = new Matrix<TNumber>(resultShape[0], resultShape[1], resultMemory, left.Backend);
+        var result = new Matrix<TNumber>(resultShape[0], resultShape[1], resultMemory, left.Backend,  requiresGradient ?? (left.RequiresGradient || right.RequiresGradient));
 
         left.Backend.LinearAlgebra.MatrixMultiply(left, right, result);
+
+        if (requiresGradient ?? left.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                left,
+                grad => grad.ToMatrix().MatrixMultiply(right.Transpose()));
+        }
+
+        if (requiresGradient ?? right.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                right,
+                grad => left.Transpose().MatrixMultiply(grad.ToMatrix()));
+        }
 
         return result;
     }

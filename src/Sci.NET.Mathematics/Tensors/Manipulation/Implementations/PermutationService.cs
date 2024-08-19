@@ -29,10 +29,33 @@ internal class PermutationService : IPermutationService
             permutedShape[i] = tensor.Shape[permutation[i]];
         }
 
-        var result = new Tensor<TNumber>(new Shape(permutedShape), tensor.Backend);
+        var result = new Tensor<TNumber>(new Shape(permutedShape), tensor.Backend, tensor.RequiresGradient);
 
         result.Backend.Permutation.Permute(tensor, result, permutation);
 
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                tensor,
+                grad =>
+                {
+                    var inversePermutation = InversePermutation(permutation);
+                    return grad.Permute(inversePermutation);
+                });
+        }
+
         return result;
+    }
+
+    private static int[] InversePermutation(int[] permutation)
+    {
+        var inverse = new int[permutation.Length];
+
+        for (var i = 0; i < permutation.Length; i++)
+        {
+            inverse[permutation[i]] = i;
+        }
+
+        return inverse;
     }
 }

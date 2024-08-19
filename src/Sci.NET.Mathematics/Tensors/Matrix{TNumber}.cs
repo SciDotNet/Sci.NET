@@ -15,7 +15,6 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
 [PublicAPI]
-[DebuggerDisplay("{ToArray()}")]
 public sealed class Matrix<TNumber> : ITensor<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
@@ -102,8 +101,8 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public int Columns => Shape[1];
 
 #pragma warning disable IDE0051, RCS1213
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    private Array DebuggerDisplayObject => Shape.ElementCount < 10000 ? ToArray() : new[] { "The matrix too big to view" };
+    [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+    private Array Data => Shape.All(x => x < 10000) ? ToArray() : new[] { "The tensor too big to view" };
 #pragma warning restore RCS1213, IDE0051
 
     /// <inheritdoc />
@@ -357,6 +356,21 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         return left.Divide(right);
     }
 
+    /// <summary>
+    /// Transposes the <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <returns>The transposed <see cref="Matrix{TNumber}"/>.</returns>
+    public Matrix<TNumber> Transpose()
+    {
+        return ((ITensor<TNumber>)this).Transpose().ToMatrix();
+    }
+
+    /// <inheritdoc />
+    public void Backward()
+    {
+        Tensor.Backward(this);
+    }
+
     /// <inheritdoc />
     public Array ToArray()
     {
@@ -420,6 +434,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         if (disposing && IsMemoryOwner)
         {
             Memory.Dispose();
+            Gradient?.Dispose();
         }
     }
 }

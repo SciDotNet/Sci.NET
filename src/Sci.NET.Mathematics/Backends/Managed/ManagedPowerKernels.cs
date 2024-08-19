@@ -4,23 +4,15 @@
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
+using Sci.NET.Common.Numerics.Intrinsics;
+using Sci.NET.Common.Numerics.Intrinsics.Extensions;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
 
 internal class ManagedPowerKernels : IPowerKernels
 {
-    public void Pow<TNumber>(Scalar<TNumber> value, Scalar<TNumber> power, Scalar<TNumber> result)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        resultBlock[0] = TNumber.Pow(valueBlock[0], powerBlock[0]);
-    }
-
-    public void Pow<TNumber>(Tensors.Vector<TNumber> value, Scalar<TNumber> power, Tensors.Vector<TNumber> result)
+    public void Pow<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -34,7 +26,7 @@ internal class ManagedPowerKernels : IPowerKernels
             i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
     }
 
-    public void Pow<TNumber>(Matrix<TNumber> value, Scalar<TNumber> power, Matrix<TNumber> result)
+    public void PowDerivative<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power, ITensor<TNumber> result)
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -45,33 +37,10 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
+            i => resultBlock[i] = powerBlock[0] * TNumber.Pow(valueBlock[i],  powerBlock[0] - TNumber.One));
     }
 
-    public void Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power, Tensor<TNumber> result)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var powerBlock = (SystemMemoryBlock<TNumber>)power.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            valueBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Pow(valueBlock[i], powerBlock[0]));
-    }
-
-    public void Square<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        resultBlock[0] = TNumber.Abs(valueBlock[0] * valueBlock[0]);
-    }
-
-    public void Square<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
+    public void Square<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -84,78 +53,34 @@ internal class ManagedPowerKernels : IPowerKernels
             i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
     }
 
-    public void Square<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            valueBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
-    }
-
-    public void Square<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            valueBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Abs(valueBlock[i] * valueBlock[i]));
-    }
-
-    public void Exp<TNumber>(Scalar<TNumber> value, Scalar<TNumber> result)
+    public void Exp<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        var vectorSize = SimdVector.Count<TNumber>();
+        var done = 0L;
 
-        resultBlock[0] = TNumber.Exp(valueBlock[0]);
-    }
+        if (value.Shape.ElementCount > vectorSize)
+        {
+            done = LazyParallelExecutor.For(
+                0,
+                valueBlock.Length,
+                ManagedTensorBackend.ParallelizationThreshold,
+                vectorSize,
+                i =>
+                {
+                    var simdVector = valueBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                    var exp = simdVector.Exp();
 
-    public void Exp<TNumber>(Tensors.Vector<TNumber> value, Tensors.Vector<TNumber> result)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+                    resultBlock.UnsafeSetVectorUnchecked(exp, i);
+                });
+        }
 
-        _ = LazyParallelExecutor.For(
-            0,
-            valueBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
-    }
-
-    public void Exp<TNumber>(Matrix<TNumber> value, Matrix<TNumber> result)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            valueBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
-    }
-
-    public void Exp<TNumber>(Tensor<TNumber> value, Tensor<TNumber> result)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
-    {
-        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
-        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-
-        _ = LazyParallelExecutor.For(
-            0,
-            valueBlock.Length,
-            ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
+        for (var i = done; i < valueBlock.Length; i++)
+        {
+            resultBlock[i] = TNumber.Exp(valueBlock[i]);
+        }
     }
 
     public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -169,5 +94,18 @@ internal class ManagedPowerKernels : IPowerKernels
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
             i => resultBlock[i] = TNumber.Log(valueBlock[i]));
+    }
+
+    public void LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase, Tensor<TNumber> result)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+    {
+        var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.One / (valueBlock[i] * TNumber.Log(logBase)));
     }
 }

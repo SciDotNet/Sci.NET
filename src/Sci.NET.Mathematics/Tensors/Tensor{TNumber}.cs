@@ -66,7 +66,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         IsMemoryOwner = false;
         Memory.Rent(_id);
         RequiresGradient = previousTensor.RequiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, requiresGradient: false) : null;
     }
 
     /// <summary>
@@ -121,9 +121,9 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     public IDevice Device => Backend.Device;
 
 #pragma warning disable IDE0051, RCS1213
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
     [ExcludeFromCodeCoverage]
-    private Array DebuggerDisplayObject => Shape.ElementCount < 10000 ? ToArray() : new[] { "The tensor too big to view" };
+    private Array Data => Shape.All(x => x < 10000) ? ToArray() : new[] { "The tensor too big to view" };
 #pragma warning restore RCS1213, IDE0051
 
     /// <inheritdoc />
@@ -368,6 +368,12 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     }
 
     /// <inheritdoc />
+    public void Backward()
+    {
+        Tensor.Backward(this);
+    }
+
+    /// <inheritdoc />
     public Array ToArray()
     {
         return Tensor.ToArray(this);
@@ -430,6 +436,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         if (disposing && IsMemoryOwner)
         {
             Memory.Dispose();
+            Gradient?.Dispose();
         }
     }
 }

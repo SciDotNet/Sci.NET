@@ -120,7 +120,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
 
 #pragma warning disable IDE0051, RCS1213
     [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    private Array DebuggerDisplayObject => ToArray();
+    private Array DebuggerDisplayObject => new[] { Value };
 #pragma warning restore RCS1213, IDE0051
 
     /// <inheritdoc />
@@ -374,6 +374,12 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
     }
 
     /// <inheritdoc />
+    public void Backward()
+    {
+        Tensor.Backward(this);
+    }
+
+    /// <inheritdoc />
     public Array ToArray()
     {
         return Tensor.ToArray(this);
@@ -436,6 +442,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         if (disposing && IsMemoryOwner)
         {
             Memory.Dispose();
+            Gradient?.Dispose();
         }
     }
 }

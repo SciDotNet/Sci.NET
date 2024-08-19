@@ -179,6 +179,27 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
+    /// Creates a new <see cref="Shape"/> with the given dimensions.
+    /// </summary>
+    /// <param name="axes">The axes to expand the dimensions by.</param>
+    /// <returns>The new <see cref="Shape"/>.</returns>
+    public Shape ExpandDims(int[] axes)
+    {
+        var sortedAxes = axes.OrderBy(x => x).ToArray();
+        var newShape = new List<int>(Dimensions);
+
+        foreach (var axis in sortedAxes)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(axis, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(axis, newShape.Count);
+
+            newShape.Insert(axis, 1);
+        }
+
+        return new Shape(newShape.ToArray(), DataOffset);
+    }
+
+    /// <summary>
     /// Gets the multi dimensional indices of the element at the given linear index.
     /// </summary>
     /// <param name="linearIndex">The linear index.</param>

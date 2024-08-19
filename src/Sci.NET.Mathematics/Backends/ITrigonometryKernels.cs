@@ -52,10 +52,11 @@ public interface ITrigonometryKernels
     /// Computes the element-wise derivative of the cosine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="gradient">The gradient <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+    public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -71,10 +72,11 @@ public interface ITrigonometryKernels
     /// Computes the element-wise derivative of the cosine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="gradient">The gradient <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+    public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -90,10 +92,11 @@ public interface ITrigonometryKernels
     /// Computes the element-wise derivative of the tangent squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="gradient">The gradient <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+    public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
@@ -127,10 +130,11 @@ public interface ITrigonometryKernels
     /// Computes the element-wise hyperbolic sine squared of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The input <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="gradient">The gradient <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="elementCount">The number of elements in the <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result, long elementCount)
+    public void TanhBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result, long elementCount)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>;
 
     /// <summary>

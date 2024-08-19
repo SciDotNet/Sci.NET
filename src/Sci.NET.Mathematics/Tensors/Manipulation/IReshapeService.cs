@@ -16,10 +16,11 @@ public interface IReshapeService
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to reshape.</param>
     /// <param name="shape">The new shape of the <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="requiresGradient">Whether the new <see cref="ITensor{TNumber}"/> requires a gradient.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The reshaped <see cref="ITensor{TNumber}"/>.</returns>
     /// <exception cref="ArgumentException">Throws if the new <paramref name="shape"/> is incompatible with
     /// the <see cref="ITensor{TNumber}"/>.</exception>
-    public ITensor<TNumber> Reshape<TNumber>(ITensor<TNumber> tensor, Shape shape)
+    public ITensor<TNumber> Reshape<TNumber>(ITensor<TNumber> tensor, Shape shape, bool? requiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>;
 }

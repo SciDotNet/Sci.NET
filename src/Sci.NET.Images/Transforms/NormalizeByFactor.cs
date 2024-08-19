@@ -31,7 +31,7 @@ public class NormalizeByFactor<TNumber> : IImageTransform<TNumber>
     /// <inheritdoc />
     public ITensor<TNumber> Execute(ITensor<TNumber> tensor)
     {
-        using var scale = new Scalar<TNumber>(Scale, tensor.Backend);
+        using var scale = new Scalar<TNumber>(Scale, tensor.Backend, requiresGradient: tensor.RequiresGradient);
         return tensor.Multiply(scale);
     }
 }

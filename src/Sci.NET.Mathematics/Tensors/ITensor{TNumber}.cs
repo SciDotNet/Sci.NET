@@ -73,14 +73,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     /// <summary>
     /// Propagates the gradient backward through the computation graph.
     /// </summary>
-    public void Backward()
-    {
-        if (RequiresGradient)
-        {
-            Gradient?.Memory.Fill(TNumber.One);
-            BackwardInternal();
-        }
-    }
+    public void Backward();
 
     /// <summary>
     /// Adds a parent node to the <see cref="ITensor{TNumber}"/>.
@@ -90,6 +83,15 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     public void AddParent(ITensor<TNumber> parent, Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunc)
     {
         Parents.Add((parent, gradientFunc));
+    }
+
+    /// <summary>
+    /// Recreates the <see cref="ITensor{TNumber}"/> with a new gradient requirement.
+    /// </summary>
+    /// <returns>The recreated <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> RecreateWithGradient()
+    {
+        return new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: true);
     }
 
     /// <summary>
@@ -114,7 +116,14 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         DetachMemory();
 
-        return new Scalar<TNumber>(Memory, Backend);
+        var result = new Scalar<TNumber>(Memory, Backend, RequiresGradient);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -133,16 +142,24 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         DetachMemory();
 
-        return new Vector<TNumber>(Shape.Dimensions[0], Memory, Backend);
+        var result = new Vector<TNumber>(Shape.Dimensions[0], Memory, Backend, RequiresGradient);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
     /// Creates an instance of <see cref="Matrix{TNumber}"/> from the <see cref="ITensor{TNumber}"/>,
     /// assuming that the <see cref="ITensor{TNumber}"/> is 2-dimensional.
     /// </summary>
+    /// <param name="requiresGradient">A value indicating whether the resulting tensor requires a gradient.</param>
     /// <returns>The <see cref="ITensor{TNumber}"/> instance as a <see cref="Matrix{TNumber}"/>.</returns>
     /// <exception cref="InvalidShapeException">Throws when the shape of the <see cref="ITensor{TNumber}"/> is invalid.</exception>
-    public Matrix<TNumber> ToMatrix()
+    public Matrix<TNumber> ToMatrix(bool? requiresGradient = null)
     {
         if (!Shape.IsMatrix)
         {
@@ -152,7 +169,14 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         DetachMemory();
 
-        return new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Memory, Backend);
+        var result = new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Memory, Backend, requiresGradient ?? RequiresGradient);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -163,7 +187,14 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     {
         DetachMemory();
 
-        return new Tensor<TNumber>(this, Shape);
+        var result = new Tensor<TNumber>(this, Shape);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -210,7 +241,8 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     /// <summary>
     /// Propagates the gradient backward through the computation graph.
     /// </summary>
-    protected void BackwardInternal()
+    /// <exception cref="InvalidShapeException">Throws when the shape of the parent gradient tensor is invalid.</exception>
+    protected internal void BackwardInternal()
     {
         // First, propagate to each parent
         foreach (var (parent, gradientFunc) in Parents)
@@ -218,11 +250,6 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
             if (parent.RequiresGradient)
             {
                 var parentGradient = gradientFunc(Gradient!);
-
-                TensorServiceProvider
-                    .GetTensorOperationServiceProvider()
-                    .GetArithmeticService()
-                    .MultiplyInplace(parentGradient, Gradient!);
 
                 parent.AccumulateGradient(parentGradient);
             }

@@ -24,6 +24,13 @@ internal class PowerService : IPowerService
 
         backend.Power.Pow(value, power, result);
 
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().PowDerivative(value, power));
+        }
+
         return result;
     }
 
@@ -32,9 +39,16 @@ internal class PowerService : IPowerService
     {
         _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
-        var result = new Vector<TNumber>(value.Length, backend);
+        var result = new Vector<TNumber>(value.Length, backend, requiresGradient: value.RequiresGradient);
 
         backend.Power.Pow(value, power, result);
+
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().PowDerivative(value, power));
+        }
 
         return result;
     }
@@ -44,9 +58,16 @@ internal class PowerService : IPowerService
     {
         _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
-        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
+        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend, requiresGradient: value.RequiresGradient);
 
         backend.Power.Pow(value, power, result);
+
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().PowDerivative(value, power));
+        }
 
         return result;
     }
@@ -56,9 +77,20 @@ internal class PowerService : IPowerService
     {
         _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
-        var result = new Tensor<TNumber>(value.Shape, backend);
+        var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: value.RequiresGradient);
 
         backend.Power.Pow(value, power, result);
+
+        return result;
+    }
+
+    public ITensor<TNumber> PowDerivative<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power)
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+    {
+        _guardService.GuardBinaryOperation(value.Device, power.Device);
+        var result = new Tensor<TNumber>(value.Shape, value.Backend, requiresGradient: false);
+        var backend = value.Backend;
+        backend.Power.PowDerivative(value, power, result);
 
         return result;
     }
@@ -71,6 +103,17 @@ internal class PowerService : IPowerService
 
         backend.Power.Square(value, result);
 
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ =>
+                {
+                    using var power = new Scalar<TNumber>(TNumber.CreateChecked(2), backend, requiresGradient: false);
+                    return TensorServiceProvider.GetTensorOperationServiceProvider().GetArithmeticService().Multiply(value, power);
+                });
+        }
+
         return result;
     }
 
@@ -81,6 +124,17 @@ internal class PowerService : IPowerService
         var result = new Vector<TNumber>(value.Length, backend);
 
         backend.Power.Square(value, result);
+
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ =>
+                {
+                    using var power = new Scalar<TNumber>(TNumber.CreateChecked(2), backend, requiresGradient: false);
+                    return TensorServiceProvider.GetTensorOperationServiceProvider().GetArithmeticService().Multiply(value, power);
+                });
+        }
 
         return result;
     }
@@ -93,6 +147,17 @@ internal class PowerService : IPowerService
 
         backend.Power.Square(value, result);
 
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ =>
+                {
+                    using var power = new Scalar<TNumber>(TNumber.CreateChecked(2), backend, requiresGradient: false);
+                    return TensorServiceProvider.GetTensorOperationServiceProvider().GetArithmeticService().Multiply(value, power);
+                });
+        }
+
         return result;
     }
 
@@ -103,6 +168,17 @@ internal class PowerService : IPowerService
         var result = new Tensor<TNumber>(value.Shape, backend);
 
         backend.Power.Square(value, result);
+
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ =>
+                {
+                    using var power = new Scalar<TNumber>(TNumber.CreateChecked(2), backend, requiresGradient: false);
+                    return TensorServiceProvider.GetTensorOperationServiceProvider().GetArithmeticService().Multiply(value, power);
+                });
+        }
 
         return result;
     }
@@ -115,6 +191,13 @@ internal class PowerService : IPowerService
 
         backend.Power.Exp(value, result);
 
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().Exp(value));
+        }
+
         return result;
     }
 
@@ -125,6 +208,13 @@ internal class PowerService : IPowerService
         var result = new Vector<TNumber>(value.Length, backend);
 
         backend.Power.Exp(value, result);
+
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().Exp(value));
+        }
 
         return result;
     }
@@ -137,6 +227,13 @@ internal class PowerService : IPowerService
 
         backend.Power.Exp(value, result);
 
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().Exp(value));
+        }
+
         return result;
     }
 
@@ -148,6 +245,13 @@ internal class PowerService : IPowerService
 
         backend.Power.Exp(value, result);
 
+        if (value.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().Exp(value));
+        }
+
         return result;
     }
 
@@ -158,6 +262,24 @@ internal class PowerService : IPowerService
         var result = Tensor.CloneEmpty<ITensor<TNumber>, TNumber>(value);
 
         backend.Power.Log(value, result);
+
+        if (value.RequiresGradient)
+        {
+            result.AddParent(
+                value,
+                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().LogDerivative(value, TNumber.E));
+        }
+
+        return result;
+    }
+
+    public ITensor<TNumber> LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: false);
+
+        backend.Power.LogDerivative(value, logBase, result);
 
         return result;
     }

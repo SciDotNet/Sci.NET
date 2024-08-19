@@ -64,16 +64,16 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <summary>
     /// Asserts that the tensor has the given shape.
     /// </summary>
-    /// <param name="shape">The expected shape.</param>
+    /// <param name="elements">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
-    public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array shape)
+    public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array elements)
     {
         _ = Execute
             .Assertion
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
-            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, shape, TNumber.Zero))
-            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", shape, Subject.ToArray());
+            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, elements, TNumber.Zero))
+            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", elements, Subject.ToArray());
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
     }

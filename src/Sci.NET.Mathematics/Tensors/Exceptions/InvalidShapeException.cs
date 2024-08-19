@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Sci.NET.Mathematics.Tensors.Exceptions;
@@ -54,6 +55,24 @@ public class InvalidShapeException : Exception
         if (shapes.Distinct().Count() != 1)
         {
             throw new InvalidShapeException($"The shapes of the tensors have different element counts but should be the same. {string.Join(", ", shapes.Select(x => x.ToString()).ToArray())}");
+        }
+    }
+
+    /// <summary>
+    /// Throws an exception if the given shape is not of the specified rank.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type of the tensor.</typeparam>
+    /// <param name="tensor">The shape to check.</param>
+    /// <param name="rank">The rank to check against.</param>
+    /// <param name="argument">The argument name.</param>
+    /// <exception cref="InvalidShapeException">Throws when the shape is not of the specified rank.</exception>
+    [StackTraceHidden]
+    public static void ThrowIfNotOfRank<TNumber>(ITensor<TNumber> tensor, int rank, [CallerArgumentExpression(nameof(tensor))] string argument = "")
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (tensor.Shape.Rank != rank)
+        {
+            throw new InvalidShapeException($"The shape of the tensor {argument} is not of rank {rank}.");
         }
     }
 }

@@ -447,6 +447,16 @@ public static class Tensor
         return ConvertToString(tensor, 0, 0).TrimStart('\n');
     }
 
+    internal static void Backward<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        if (tensor.RequiresGradient)
+        {
+            tensor.Gradient?.Memory.Fill(TNumber.One);
+            tensor.BackwardInternal();
+        }
+    }
+
     private static string ConvertToString<TNumber>(ITensor<TNumber> tensor, int dimension, long index)
         where TNumber : unmanaged, INumber<TNumber>
     {

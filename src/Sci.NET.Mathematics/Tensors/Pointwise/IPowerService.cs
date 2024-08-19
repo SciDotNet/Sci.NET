@@ -52,6 +52,16 @@ public interface IPowerService
         where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
+    /// Raises a <see cref="Scalar{TNumber}"/> to the power of -1.
+    /// </summary>
+    /// <param name="value">The value to raise to the power of -1.</param>
+    /// <param name="power">The power to raise the value to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The <paramref name="value"/> raised to the power of -1.</returns>
+    public ITensor<TNumber> PowDerivative<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power)
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
     /// Raises a <see cref="Scalar{TNumber}"/> to the power of 2.
     /// </summary>
     /// <param name="value">The value to square.</param>
@@ -130,5 +140,15 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The natural logarithm of <paramref name="value"/>.</returns>
     public ITensor<TNumber> Log<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Finds the derivative of the logarithm of <paramref name="value"/> with a given base.
+    /// </summary>
+    /// <param name="value">The value to find the derivative of the logarithm of.</param>
+    /// <param name="logBase">The base of the logarithm.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The derivative of the logarithm of <paramref name="value"/>.</returns>
+    public ITensor<TNumber> LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 }

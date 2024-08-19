@@ -94,8 +94,8 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     public int Length => Shape[0];
 
 #pragma warning disable IDE0051, RCS1213
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    private Array DebuggerDisplayObject => Shape.ElementCount < 10000 ? ToArray() : new[] { "The vector too big to view" };
+    [DebuggerBrowsable(DebuggerBrowsableState.Collapsed)]
+    private Array Data => Shape.All(x => x < 10000) ? ToArray() : new[] { "The tensor too big to view" };
 #pragma warning restore RCS1213, IDE0051
 
     /// <inheritdoc />
@@ -346,6 +346,12 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     }
 
     /// <inheritdoc />
+    public void Backward()
+    {
+        Tensor.Backward(this);
+    }
+
+    /// <inheritdoc />
     public Array ToArray()
     {
         return Tensor.ToArray(this);
@@ -408,6 +414,7 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
         if (disposing && IsMemoryOwner)
         {
             Memory.Dispose();
+            Gradient?.Dispose();
         }
     }
 }

@@ -29,4 +29,14 @@ public class CompoundFunctionAutoGradTests
         a.Gradient?.Should().HaveApproximatelyEquivalentElements(new double[] { 0.8575532158463933, 0.9146533258523714, 0.5486961336030971, 0.7938734492261525 }, 1e-9);
         b.Gradient?.Should().HaveApproximatelyEquivalentElements(new double[] { 1, 1, 1, 1 }, 1e-9);
     }
+
+    [Fact]
+    public void ReduceAddTests()
+    {
+        using var tensor = Tensor.FromArray<double>(new double[] { 1, 2, 3, 4 }, requiresGradient: true);
+
+        var a = tensor.Sin().Mean();
+
+        a.Backward();
+    }
 }

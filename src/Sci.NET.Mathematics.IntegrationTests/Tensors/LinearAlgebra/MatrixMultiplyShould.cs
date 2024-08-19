@@ -5,6 +5,7 @@ using System.Numerics;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
@@ -23,6 +24,41 @@ public class MatrixMultiplyShould : IntegrationTestBase
 
         result.To<CpuComputeDevice>();
         return result.ToArray();
+    }
+
+    private static void MatrixMultiplyTestWithGrad<TNumber>(string safetensorsName, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        // Arrange
+        var loadDirectory = $@"{Path.GetDirectoryName(typeof(MatrixMultiplyShould).Assembly.Location)}\Tensors\LinearAlgebra\Examples";
+        var tensors = Tensor.LoadSafeTensors<TNumber>($"{loadDirectory}\\{safetensorsName}.safetensors");
+        var left = tensors["left"].ToMatrix(requiresGradient: true);
+        var right = tensors["right"].ToMatrix(requiresGradient: true);
+        var expectedResult = tensors["result"].ToMatrix(requiresGradient: true);
+        var expectedLeftGradient = tensors["left_grad"];
+        var expectedRightGradient = tensors["right_grad"];
+        using var resultGradient = Tensor.Ones<TNumber>(expectedResult.Shape);
+
+        left.To(device);
+        right.To(device);
+        expectedResult.To(device);
+        resultGradient.To(device);
+        expectedResult.To(device);
+        expectedLeftGradient.To(device);
+        expectedRightGradient.To(device);
+
+        // Act
+        var result = left.MatrixMultiply(right);
+        result.Backward();
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-7f));
+        result.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-7f));
+        left.Gradient!.Should().NotBeNull();
+        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-7f));
+        right.Gradient!.Should().NotBeNull();
+        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-7f));
     }
 
     [Theory]
@@ -105,5 +141,33 @@ public class MatrixMultiplyShould : IntegrationTestBase
                 device)
             .Should()
             .BeEquivalentTo(new BFloat16[,] { { 30, 30 }, { 30, 30 } });
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPyTorchExample1(IDevice device)
+    {
+        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_1", device);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPyTorchExample2(IDevice device)
+    {
+        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_2", device);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPyTorchExample3(IDevice device)
+    {
+        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_3", device);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPyTorchExample4(IDevice device)
+    {
+        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_4", device);
     }
 }
