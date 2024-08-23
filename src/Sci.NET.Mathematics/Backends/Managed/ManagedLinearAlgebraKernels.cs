@@ -18,35 +18,26 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var kLength = left.Columns;
-        var jLength = result.Columns;
-        var vectorCount = SimdVector.Count<TNumber>();
+        var leftRows = left.Rows;
+        var rightColumns = right.Columns;
+        var leftColumns = left.Columns;
 
         _ = LazyParallelExecutor.For(
             0,
-            result.Rows,
+            leftRows,
             0,
-            result.Columns,
-            ManagedTensorBackend.ParallelizationThreshold / 2,
+            rightColumns,
+            ManagedTensorBackend.ParallelizationThreshold,
             (i, j) =>
             {
                 var sum = TNumber.Zero;
-                var k = 0;
 
-                for (; k <= kLength - vectorCount; k += vectorCount)
+                for (var k = 0; k < leftColumns; k++)
                 {
-                    var leftVector = leftMemoryBlock.UnsafeGetVectorUnchecked<TNumber>((i * kLength) + k);
-                    var rightVector = rightMemoryBlock.UnsafeGetVectorUnchecked<TNumber>((k * jLength) + j);
-
-                    sum += leftVector.Dot(rightVector);
+                    sum += leftMemoryBlock[(i * leftColumns) + k] * rightMemoryBlock[(k * rightColumns) + j];
                 }
 
-                for (; k < kLength; k++)
-                {
-                    sum += leftMemoryBlock[(i * kLength) + k] * rightMemoryBlock[(k * jLength) + j];
-                }
-
-                resultMemoryBlock[(i * jLength) + j] = sum;
+                resultMemoryBlock[(i * rightColumns) + j] = sum;
             });
     }
 
