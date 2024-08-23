@@ -32,7 +32,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             {
                 var sum = TNumber.Zero;
 
-                for (int k = 0; k < leftColumns; k++)
+                for (var k = 0; k < leftColumns; k++)
                 {
                     sum += leftMemoryBlock[(i * leftColumns) + k] * rightMemoryBlock[(k * rightColumns) + j];
                 }
