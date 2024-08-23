@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -27,9 +27,7 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
                 $"The number of columns of the left matrix must match the number of rows of the right matrix but got {left.Shape} and {right.Shape}.");
         }
 
-        var resultShape = new Shape(left.Rows, right.Columns);
-        var resultMemory = left.Backend.Storage.Allocate<TNumber>(resultShape);
-        var result = new Matrix<TNumber>(resultShape[0], resultShape[1], resultMemory, left.Backend,  requiresGradient ?? (left.RequiresGradient || right.RequiresGradient));
+        var result = new Matrix<TNumber>(left.Shape.Dimensions[0], right.Shape.Dimensions[1], left.Backend);
 
         left.Backend.LinearAlgebra.MatrixMultiply(left, right, result);
 

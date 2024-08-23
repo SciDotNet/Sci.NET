@@ -1,11 +1,13 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 using Sci.NET.Mathematics.Tensors.Manipulation;
 using Sci.NET.Mathematics.Tensors.Pointwise;
+using Sci.NET.Mathematics.Tensors.Reduction;
 
 namespace Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
 
@@ -16,6 +18,7 @@ internal class ContractionService : IContractionService
     private readonly IArithmeticService _arithmeticService;
     private readonly IReshapeService _reshapeService;
     private readonly IPermutationService _permutationService;
+    private readonly IReductionService _reductionService;
 
     public ContractionService(ITensorOperationServiceProvider provider)
     {
@@ -24,8 +27,10 @@ internal class ContractionService : IContractionService
         _permutationService = provider.GetPermutationService();
         _reshapeService = provider.GetReshapeService();
         _arithmeticService = provider.GetArithmeticService();
+        _reductionService = provider.GetReductionService();
     }
 
+    [SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "Readability")]
     public ITensor<TNumber> Contract<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right,
@@ -41,29 +46,46 @@ internal class ContractionService : IContractionService
 
         for (var i = 0; i < leftIndices.Length; i++)
         {
-            ArgumentOutOfRangeException.ThrowIfNotEqual(left.Shape[leftIndices[i]], right.Shape[rightIndices[i]]);
+            var leftDimSize = left.Shape[leftIndices[i]];
+            var rightDimSize = right.Shape[rightIndices[i]];
 
-            contractedSize *= left.Shape[leftIndices[i]];
+            if (leftDimSize != rightDimSize)
+            {
+                if (leftDimSize == 1)
+                {
+                    left = _reductionService.Sum(left, new[] { leftIndices[i] }, true);
+                }
+                else if (rightDimSize == 1)
+                {
+                    right = _reductionService.Sum(right, new[] { rightIndices[i] }, true);
+                }
+                else
+                {
+                    throw new InvalidIndicesException($"The contracted dimensions need to match, but the the first has size {leftDimSize} at dimension {leftIndices[i]} and the second has {rightDimSize} at dimension {rightIndices[i]}.");
+                }
+            }
+            else
+            {
+                contractedSize *= leftDimSize;
+            }
         }
 
-        var leftContractedDims = DimListToBitset(leftIndices, left.Shape.Rank);
-        var rightContractedDims = DimListToBitset(rightIndices, right.Shape.Rank);
-        var leftPermutation = new List<int>();
-        var rightPermutation = new List<int>();
-        var resultShape = new List<int>();
-        var leftSize = 1;
-        var rightSize = 1;
+        var leftIsContracted = DimListToBitset(leftIndices, left.Shape.Rank);
+        var rightIsContracted = DimListToBitset(rightIndices, right.Shape.Rank);
+        var leftPermutation = new List<int>(left.Shape.Rank);
+        var rightPermutation = new List<int>(right.Shape.Rank);
+        var resultShape = new List<int>(left.Shape.Rank + right.Shape.Rank - leftIndices.Length);
+        var nonContractedLeft = 1;
+        var nonContractedRight = 1;
 
         for (var i = 0; i < left.Shape.Rank; i++)
         {
-            if (leftContractedDims[i])
+            if (!leftIsContracted[i])
             {
-                continue;
+                leftPermutation.Add(i);
+                nonContractedLeft *= left.Shape[i];
+                resultShape.Add(left.Shape[i]);
             }
-
-            leftPermutation.Add(i);
-            leftSize *= left.Shape[i];
-            resultShape.Add(left.Shape[i]);
         }
 
         leftPermutation.AddRange(leftIndices);
@@ -71,14 +93,12 @@ internal class ContractionService : IContractionService
 
         for (var i = 0; i < right.Shape.Rank; i++)
         {
-            if (rightContractedDims[i])
+            if (!rightIsContracted[i])
             {
-                continue;
+                rightPermutation.Add(i);
+                nonContractedRight *= right.Shape[i];
+                resultShape.Add(right.Shape[i]);
             }
-
-            rightPermutation.Add(i);
-            rightSize *= right.Shape[i];
-            resultShape.Add(right.Shape[i]);
         }
 
         using var permutedLeft = _permutationService.Permute(left, leftPermutation.ToArray());
