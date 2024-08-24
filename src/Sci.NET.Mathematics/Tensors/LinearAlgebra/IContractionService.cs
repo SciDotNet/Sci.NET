@@ -20,6 +20,7 @@ public interface IContractionService
     /// <param name="right">The right operand.</param>
     /// <param name="leftIndices">The indices of the left operand to contract over.</param>
     /// <param name="rightIndices">The indices of the right operand to contract over.</param>
+    /// <param name="overrideRequiresGradient">Overrides the <see cref="ITensor{TNumber}.RequiresGradient"/> property of the result tensor.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the contraction operation.</returns>
     /// <exception cref="ArgumentException">Throws when an argument is invalid.</exception>
@@ -27,7 +28,8 @@ public interface IContractionService
         ITensor<TNumber> left,
         ITensor<TNumber> right,
         int[] leftIndices,
-        int[] rightIndices)
+        int[] rightIndices,
+        bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>

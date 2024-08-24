@@ -35,14 +35,28 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
         {
             ((ITensor<TNumber>)result).AddParent(
                 left,
-                grad => grad.ToMatrix().MatrixMultiply(right.Transpose()));
+                grad =>
+                {
+                    var matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
+                    var gradMatrix = grad.ToMatrix();
+                    var resultGrad = matrixMultiplicationService.MatrixMultiply(gradMatrix, right.Transpose(), false);
+
+                    return ((ITensor<TNumber>)resultGrad).AsGradient();
+                });
         }
 
         if (overrideRequiresGradient ?? right.RequiresGradient)
         {
             ((ITensor<TNumber>)result).AddParent(
                 right,
-                grad => left.Transpose().MatrixMultiply(grad.ToMatrix()));
+                grad =>
+                {
+                    var matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
+                    var gradMatrix = grad.ToMatrix();
+                    var resultGrad = matrixMultiplicationService.MatrixMultiply(left.Transpose(), gradMatrix, false);
+
+                    return ((ITensor<TNumber>)resultGrad).AsGradient();
+                });
         }
 
         return result;

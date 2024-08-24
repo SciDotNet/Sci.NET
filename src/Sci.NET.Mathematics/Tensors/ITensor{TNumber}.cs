@@ -49,6 +49,11 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     public bool RequiresGradient { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the <see cref="ITensor{TNumber}"/> is a gradient.
+    /// </summary>
+    public bool IsGradient { get; }
+
+    /// <summary>
     /// Gets the parent nodes of the <see cref="ITensor{TNumber}"/>.
     /// </summary>
     protected internal ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> Parents { get; }
@@ -86,12 +91,21 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     }
 
     /// <summary>
-    /// Recreates the <see cref="ITensor{TNumber}"/> with a new gradient requirement.
+    /// Creates an instance of the <see cref="ITensor{TNumber}"/> with the gradient.
     /// </summary>
     /// <returns>The recreated <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> RecreateWithGradient()
+    public ITensor<TNumber> WithGradient()
     {
         return new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: true);
+    }
+
+    /// <summary>
+    /// Recreates the <see cref="ITensor{TNumber}"/> as a gradient.
+    /// </summary>
+    /// <returns>The recreated <see cref="ITensor{TNumber}"/> as a gradient.</returns>
+    public ITensor<TNumber> AsGradient()
+    {
+        return new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: false) { IsGradient = true };
     }
 
     /// <summary>
@@ -232,6 +246,11 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     {
         return Shape.IsTensor;
     }
+
+    /// <summary>
+    /// Forces the disposal of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    public void ForceDispose();
 
     /// <summary>
     /// Detaches the memory from the <see cref="ITensor{TNumber}"/>.

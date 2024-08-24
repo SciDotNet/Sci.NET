@@ -35,7 +35,8 @@ internal class ContractionService : IContractionService
         ITensor<TNumber> left,
         ITensor<TNumber> right,
         int[] leftIndices,
-        int[] rightIndices)
+        int[] rightIndices,
+        bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -108,12 +109,12 @@ internal class ContractionService : IContractionService
         using var mmResult = _matrixMultiplicationService.MatrixMultiply(leftReshaped, rightReshaped, overrideRequiresGradient: false);
         var result = _reshapeService.Reshape(mmResult, new Shape(resultShape.ToArray()), overrideRequiresGradient: false);
 
-        if (left.RequiresGradient || right.RequiresGradient)
+        if (overrideRequiresGradient ?? (left.RequiresGradient || right.RequiresGradient))
         {
-            result = result.RecreateWithGradient();
+            result = result.WithGradient();
         }
 
-        if (left.RequiresGradient)
+        if (overrideRequiresGradient ?? left.RequiresGradient)
         {
             result.AddParent(
                 left,
@@ -128,15 +129,16 @@ internal class ContractionService : IContractionService
                         .Where(i => !rightIndices.Contains(i))
                         .ToArray();
 
+                    var contractionService = TensorServiceProvider.GetTensorOperationServiceProvider().GetContractionService();
+                    var permutationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetPermutationService();
                     var leftInd = Enumerable.Range(nonContractedBAxes.Length, grad.Shape.Rank - nonContractedBAxes.Length).ToList();
-                    var aGrad = grad.Contract(right, leftInd.ToArray(), nonContractedBAxes.ToArray());
                     var permuteAxes = nonContractedAAxes.Concat(leftIndices).ToArray();
-
-                    return aGrad.Permute(permuteAxes);
+                    var aGrad = contractionService.Contract(grad, right, leftInd.ToArray(), nonContractedBAxes.ToArray(), overrideRequiresGradient: false);
+                    return permutationService.Permute(aGrad, permuteAxes, overrideRequiresGradient: false).AsGradient();
                 });
         }
 
-        if (right.RequiresGradient)
+        if (overrideRequiresGradient ?? right.RequiresGradient)
         {
             result.AddParent(
                 right,
@@ -151,8 +153,8 @@ internal class ContractionService : IContractionService
                         .Where(i => !rightIndices.Contains(i))
                         .ToArray();
 
-                    var rightInd = Enumerable.Range(0, grad.Shape.Rank - nonContractedAAxes.Length).ToList();
-                    var bGrad = grad.Contract(left, rightInd.ToArray(), nonContractedAAxes.ToArray());
+                    var contractionService = TensorServiceProvider.GetTensorOperationServiceProvider().GetContractionService();
+                    var permutationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetPermutationService();
                     var permuteAxes = new int[right.Shape.Rank];
                     var currentIndex = 0;
                     foreach (var axis in nonContractedBAxes)
@@ -165,7 +167,10 @@ internal class ContractionService : IContractionService
                         permuteAxes[axis] = currentIndex++;
                     }
 
-                    return bGrad.Permute(permuteAxes);
+                    var rightInd = Enumerable.Range(0, grad.Shape.Rank - nonContractedAAxes.Length).ToList();
+                    var bGrad = contractionService.Contract(grad, left, rightInd.ToArray(), nonContractedAAxes.ToArray(), overrideRequiresGradient: false);
+
+                    return permutationService.Permute(bGrad, permuteAxes, overrideRequiresGradient: false).AsGradient();
                 });
         }
 

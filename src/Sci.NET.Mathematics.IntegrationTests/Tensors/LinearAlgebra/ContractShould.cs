@@ -17,7 +17,7 @@ public class ContractShould : IntegrationTestBase
         // Arrange
         var loadDirectory = $@"{Path.GetDirectoryName(typeof(MatrixMultiplyShould).Assembly.Location)}\Tensors\LinearAlgebra\Examples";
         var tensors = Tensor.LoadSafeTensors<TNumber>($"{loadDirectory}\\{safetensorsName}.safetensors");
-        var left = tensors["left"].RecreateWithGradient();
+        var left = tensors["left"].WithGradient();
         var right = tensors["right"];
         var expectedResult = tensors["result"];
 

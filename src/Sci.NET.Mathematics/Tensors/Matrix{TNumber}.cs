@@ -88,6 +88,9 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public bool RequiresGradient { get; }
 
     /// <inheritdoc />
+    public bool IsGradient { get; init; }
+
+    /// <inheritdoc />
     ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <summary>
@@ -377,6 +380,13 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         return Tensor.ToArray(this);
     }
 
+    /// <inheritdoc />
+    public void ForceDispose()
+    {
+        Memory.Release(_id);
+        Memory.Dispose();
+    }
+
     /// <inheritdoc/>
     void ITensor<TNumber>.DetachMemory()
     {
@@ -429,12 +439,11 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     /// <param name="disposing">A value indicating whether the <see cref="Vector{TNumber}"/> is disposing.</param>
     private void Dispose(bool disposing)
     {
-        Memory.Release(_id);
-
-        if (disposing && IsMemoryOwner)
+        if (disposing && IsMemoryOwner && !IsGradient)
         {
+            Memory.Release(_id);
             Memory.Dispose();
-            Gradient?.Dispose();
+            Gradient?.ForceDispose();
         }
     }
 }
