@@ -17,10 +17,10 @@ public interface IMatrixMultiplicationService
     /// </summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
-    /// <param name="requiresGradient">Whether the result requires a gradient.</param>
+    /// <param name="overrideRequiresGradient">When not <see langword="null"/>, overrides whether the resulting tensor requires gradient.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The result of the matrix multiplication.</returns>
     /// <exception cref="InvalidShapeException">The shapes of the operands were invalid.</exception>
-    public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, bool? requiresGradient = null)
+    public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>;
 }

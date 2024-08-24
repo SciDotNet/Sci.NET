@@ -113,13 +113,13 @@ public class ContractShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnsCorrectResult_GivenPyTorchExample1(IDevice device)
     {
-        PyTorchTest<long>("Contract_[[1]_[0]]_1", device, new int[] { 1 }, new int[] { 0 });
+        PyTorchTest<int>("Contract_[[1]_[0]]_1", device, new int[] { 1 }, new int[] { 0 });
     }
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnsCorrectResult_GivenPyTorchExample2(IDevice device)
     {
-        PyTorchTest<long>("Contract_[[1]_[0]]_2", device, new int[] { 1 }, new int[] { 0 });
+        PyTorchTest<int>("Contract_[[1]_[0]]_2", device, new int[] { 1 }, new int[] { 0 });
     }
 }

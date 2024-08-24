@@ -101,14 +101,17 @@ internal class ContractionService : IContractionService
             }
         }
 
-        using var permutedLeft = _permutationService.Permute(left, leftPermutation.ToArray());
-        using var permutedRight = _permutationService.Permute(right, rightPermutation.ToArray());
-        using var reshapeLeft = _reshapeService.Reshape(permutedLeft, new Shape(leftSize, contractedSize));
-        using var reshapeLeftMatrix = reshapeLeft.ToMatrix(requiresGradient: false);
-        using var reshapeRight = _reshapeService.Reshape(permutedRight, new Shape(contractedSize, rightSize));
-        using var reshapeRightMatrix = reshapeRight.ToMatrix(requiresGradient: false);
-        using var mm = _matrixMultiplicationService.MatrixMultiply(reshapeLeftMatrix, reshapeRightMatrix, requiresGradient: false);
-        var result = _reshapeService.Reshape(mm, new Shape(resultShape.ToArray()), requiresGradient: false).RecreateWithGradient();
+        using var leftPermuted = _permutationService.Permute(left, leftPermutation.ToArray(), overrideRequiresGradient: false);
+        using var rightPermuted = _permutationService.Permute(right, rightPermutation.ToArray(), overrideRequiresGradient: false);
+        using var leftReshaped = _reshapeService.Reshape(leftPermuted, new Shape(nonContractedLeft, contractedSize)).ToMatrix(false);
+        using var rightReshaped = _reshapeService.Reshape(rightPermuted, new Shape(contractedSize, nonContractedRight)).ToMatrix(false);
+        using var mmResult = _matrixMultiplicationService.MatrixMultiply(leftReshaped, rightReshaped, overrideRequiresGradient: false);
+        var result = _reshapeService.Reshape(mmResult, new Shape(resultShape.ToArray()), overrideRequiresGradient: false);
+
+        if (left.RequiresGradient || right.RequiresGradient)
+        {
+            result = result.RecreateWithGradient();
+        }
 
         if (left.RequiresGradient)
         {
@@ -137,9 +140,32 @@ internal class ContractionService : IContractionService
         {
             result.AddParent(
                 right,
-                _ =>
+                grad =>
                 {
-                    throw new NotImplementedException();
+                    var nonContractedAAxes = Enumerable
+                        .Range(0, left.Shape.Rank)
+                        .Where(i => !leftIndices.Contains(i))
+                        .ToArray();
+                    var nonContractedBAxes = Enumerable
+                        .Range(0, right.Shape.Rank)
+                        .Where(i => !rightIndices.Contains(i))
+                        .ToArray();
+
+                    var rightInd = Enumerable.Range(0, grad.Shape.Rank - nonContractedAAxes.Length).ToList();
+                    var bGrad = grad.Contract(left, rightInd.ToArray(), nonContractedAAxes.ToArray());
+                    var permuteAxes = new int[right.Shape.Rank];
+                    var currentIndex = 0;
+                    foreach (var axis in nonContractedBAxes)
+                    {
+                        permuteAxes[axis] = currentIndex++;
+                    }
+
+                    foreach (var axis in rightIndices)
+                    {
+                        permuteAxes[axis] = currentIndex++;
+                    }
+
+                    return bGrad.Permute(permuteAxes);
                 });
         }
 
@@ -205,17 +231,5 @@ internal class ContractionService : IContractionService
         }
 
         return bits;
-    }
-
-    private static int[] InversePermutation(int[] perm)
-    {
-        var inversePerm = new int[perm.Length];
-
-        for (int i = 0; i < perm.Length; i++)
-        {
-            inversePerm[perm[i]] = i;
-        }
-
-        return inversePerm;
     }
 }

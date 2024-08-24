@@ -7,7 +7,7 @@ namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 internal class PermutationService : IPermutationService
 {
-    public ITensor<TNumber> Permute<TNumber>(ITensor<TNumber> tensor, int[] permutation)
+    public ITensor<TNumber> Permute<TNumber>(ITensor<TNumber> tensor, int[] permutation, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         if (permutation.Distinct().Count() != tensor.Shape.Rank)
@@ -29,7 +29,7 @@ internal class PermutationService : IPermutationService
             permutedShape[i] = tensor.Shape[permutation[i]];
         }
 
-        var result = new Tensor<TNumber>(new Shape(permutedShape), tensor.Backend, tensor.RequiresGradient);
+        var result = new Tensor<TNumber>(new Shape(permutedShape), tensor.Backend, overrideRequiresGradient ?? tensor.RequiresGradient);
 
         result.Backend.Permutation.Permute(tensor, result, permutation);
 

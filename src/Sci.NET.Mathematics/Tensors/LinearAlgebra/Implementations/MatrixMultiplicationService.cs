@@ -16,7 +16,7 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
         _guardService = provider.GetDeviceGuardService();
     }
 
-    public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, bool? requiresGradient = null)
+    public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         _guardService.GuardBinaryOperation(left.Device, right.Device);
@@ -27,18 +27,18 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
                 $"The number of columns of the left matrix must match the number of rows of the right matrix but got {left.Shape} and {right.Shape}.");
         }
 
-        var result = new Matrix<TNumber>(left.Shape.Dimensions[0], right.Shape.Dimensions[1], left.Backend);
+        var result = new Matrix<TNumber>(left.Shape.Dimensions[0], right.Shape.Dimensions[1], left.Backend, overrideRequiresGradient ?? (left.RequiresGradient || right.RequiresGradient));
 
         left.Backend.LinearAlgebra.MatrixMultiply(left, right, result);
 
-        if (requiresGradient ?? left.RequiresGradient)
+        if (overrideRequiresGradient ?? left.RequiresGradient)
         {
             ((ITensor<TNumber>)result).AddParent(
                 left,
                 grad => grad.ToMatrix().MatrixMultiply(right.Transpose()));
         }
 
-        if (requiresGradient ?? right.RequiresGradient)
+        if (overrideRequiresGradient ?? right.RequiresGradient)
         {
             ((ITensor<TNumber>)result).AddParent(
                 right,

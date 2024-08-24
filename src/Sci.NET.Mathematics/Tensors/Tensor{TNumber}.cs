@@ -53,7 +53,8 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     /// </summary>
     /// <param name="previousTensor">The previous tensor to copy.</param>
     /// <param name="newShape">The new shape of the <see cref="Tensor{TNumber}"/>.</param>
-    public Tensor(ITensor<TNumber> previousTensor, Shape newShape)
+    /// <param name="overrideRequiresGradient">A value indicating whether the <see cref="Tensor{TNumber}"/> requires a gradient, this overrides the <paramref name="previousTensor"/> value.</param>
+    public Tensor(ITensor<TNumber> previousTensor, Shape newShape, bool? overrideRequiresGradient = null)
     {
         if (newShape.ElementCount != previousTensor.Shape.ElementCount)
         {
@@ -66,7 +67,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         IsMemoryOwner = false;
         Memory.Rent(_id);
         RequiresGradient = previousTensor.RequiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, requiresGradient: false) : null;
+        Gradient = overrideRequiresGradient ?? RequiresGradient ? new Tensor<TNumber>(Shape, Backend, requiresGradient: false) : null;
     }
 
     /// <summary>
