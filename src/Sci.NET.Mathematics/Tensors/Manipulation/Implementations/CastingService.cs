@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
@@ -16,6 +17,11 @@ internal class CastingService : ICastingService
 
         input.Backend.Casting.Cast(input, result);
 
+        if (input.RequiresGradient)
+        {
+            throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+        }
+
         return result;
     }
 
@@ -27,6 +33,11 @@ internal class CastingService : ICastingService
 
         input.Backend.Casting.Cast(input, result);
 
+        if (input.RequiresGradient)
+        {
+            throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+        }
+
         return result;
     }
 
@@ -37,6 +48,11 @@ internal class CastingService : ICastingService
         var result = new Matrix<TOut>(input.Rows, input.Columns, input.Backend);
 
         input.Backend.Casting.Cast(input, result);
+
+        if (input.RequiresGradient)
+        {
+            throw new AutoDiffNotSupportedException(nameof(Cast));
+        }
 
         return result;
     }
@@ -53,12 +69,22 @@ internal class CastingService : ICastingService
                 .ToSystemMemory()
                 .DangerousReinterpretCast<TOut>();
 
+            if (input.RequiresGradient)
+            {
+                throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+            }
+
             return new Tensor<TOut>(newMemoryBlock, input.Shape, input.Backend, input.RequiresGradient);
         }
 
         var result = new Tensor<TOut>(input.Shape, input.Backend);
 
         input.Backend.Casting.Cast(input, result);
+
+        if (input.RequiresGradient)
+        {
+            throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+        }
 
         return result;
     }

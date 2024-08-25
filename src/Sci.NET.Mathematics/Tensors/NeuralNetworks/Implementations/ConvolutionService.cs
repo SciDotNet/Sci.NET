@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.NeuralNetworks.Implementations;
 
@@ -58,6 +59,16 @@ internal class ConvolutionService : IConvolutionService
             dilationX,
             dilationY);
 
+        if (input.RequiresGradient)
+        {
+            ((ITensor<TNumber>)input).AddParent(output, _ => throw new AutoDiffNotSupportedException(nameof(Conv2D)));
+        }
+
+        if (kernels.RequiresGradient)
+        {
+            ((ITensor<TNumber>)kernels).AddParent(output, _ => throw new AutoDiffNotSupportedException(nameof(Conv2D)));
+        }
+
         return output;
     }
 
@@ -69,6 +80,14 @@ internal class ConvolutionService : IConvolutionService
         int dilation)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return Conv2D(input, kernels, stride, stride, padding, padding, dilation, dilation);
+        return Conv2D(
+            input,
+            kernels,
+            stride,
+            stride,
+            padding,
+            padding,
+            dilation,
+            dilation);
     }
 }

@@ -37,6 +37,13 @@ internal class NormalisationService : INormalisationService
             min,
             max);
 
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(
+                tensor,
+                grad => grad.Clip(min, max));
+        }
+
         return result;
     }
 }

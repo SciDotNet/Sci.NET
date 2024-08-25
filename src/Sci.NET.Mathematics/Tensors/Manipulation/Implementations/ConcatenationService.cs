@@ -94,6 +94,14 @@ internal class ConcatenationService : IConcatenationService
             result.Memory.BlockCopyFrom(tensors.ElementAt(i).Memory, 0, i * shape.ElementCount, shape.ElementCount);
         }
 
+        foreach (var tensor in tensors)
+        {
+            if (tensor.RequiresGradient)
+            {
+                tensor.AddParent(result, _ => throw new AutoDiffNotSupportedException(nameof(Concatenate)));
+            }
+        }
+
         return result;
     }
 

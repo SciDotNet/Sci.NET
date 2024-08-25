@@ -70,9 +70,12 @@ internal class ReductionService : IReductionService
 
             if (!keepDims)
             {
-                ((ITensor<TNumber>)result).AddParent(
-                    tensor,
-                    grad => grad.Broadcast(tensor.Shape));
+                if (tensor.RequiresGradient)
+                {
+                    ((ITensor<TNumber>)result).AddParent(
+                        tensor,
+                        grad => grad.Broadcast(tensor.Shape));
+                }
 
                 return result;
             }
@@ -224,7 +227,6 @@ internal class ReductionService : IReductionService
                     tensor,
                     grad =>
                     {
-                        // Expand dimensions for the gradient, broadcast, and scale
                         var gradExpanded = grad.Broadcast(tensor.Shape);
                         var reductionSize = axes.Aggregate(1, (prod, axis) => prod * tensor.Shape.Dimensions[axis]);
                         var scale = TNumber.One / TNumber.CreateChecked(reductionSize);
