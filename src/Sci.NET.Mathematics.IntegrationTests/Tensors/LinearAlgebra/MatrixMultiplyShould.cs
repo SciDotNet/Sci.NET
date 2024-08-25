@@ -12,23 +12,43 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
 
 public class MatrixMultiplyShould : IntegrationTestBase
 {
+    private readonly string _safetensorsLoadDirectory;
+
+    public MatrixMultiplyShould()
+    {
+        _safetensorsLoadDirectory = $@"{Path.GetDirectoryName(typeof(MatrixMultiplyShould).Assembly.Location)}\Tensors\LinearAlgebra\Examples\";
+    }
+
     private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var leftScalar = Tensor.FromArray<TNumber>(left).ToMatrix();
-        var rightVector = Tensor.FromArray<TNumber>(right).ToMatrix();
-        leftScalar.To(device);
-        rightVector.To(device);
+        var leftTensor = Tensor.FromArray<TNumber>(left).ToMatrix();
+        var rightTensor = Tensor.FromArray<TNumber>(right).ToMatrix();
+        leftTensor.To(device);
+        rightTensor.To(device);
 
-        var result = leftScalar.MatrixMultiply(rightVector);
+        var result = leftTensor.MatrixMultiply(rightTensor);
 
         result.To<CpuComputeDevice>();
         return result.ToArray();
     }
 
+    private static void MatrixMatrixTest<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> expectedResult, IDevice device)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        left.To(device);
+        right.To(device);
+
+        var result = left.MatrixMultiply(right);
+
+        result.To<CpuComputeDevice>();
+
+        result.Should().HaveEquivalentElements(expectedResult.ToArray());
+    }
+
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenMatrixAndMatrix(IDevice device)
+    public void ReturnExpectedResult_GivenFloatMatrixAndMatrix(IDevice device)
     {
         MatrixMatrixTest<float>(
                 new float[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
@@ -36,70 +56,120 @@ public class MatrixMultiplyShould : IntegrationTestBase
                 device)
             .Should()
             .BeEquivalentTo(new float[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenDoubleMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<double>(
                 new double[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new double[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new double[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenByteMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<byte>(
                 new byte[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new byte[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new byte[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenSByteMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<sbyte>(
                 new sbyte[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new sbyte[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new sbyte[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenUShortMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<ushort>(
                 new ushort[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new ushort[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new ushort[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenShortMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<short>(
                 new short[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new short[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new short[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenUIntMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<uint>(
                 new uint[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new uint[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new uint[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenIntMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<int>(
                 new int[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new int[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new int[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenULongMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<ulong>(
                 new ulong[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new ulong[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new ulong[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenLongMatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<long>(
                 new long[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new long[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
                 device)
             .Should()
             .BeEquivalentTo(new long[,] { { 30, 30 }, { 30, 30 } });
+    }
 
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenBFloat16MatrixAndMatrix(IDevice device)
+    {
         MatrixMatrixTest<BFloat16>(
                 new BFloat16[,] { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } },
                 new BFloat16[,] { { 1, 1 }, { 2, 2 }, { 3, 3 }, { 4, 4 } },
@@ -112,18 +182,59 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenExample1(IDevice device)
     {
-        using var leftTensor = Tensor
-            .FromArray<int>(new int[,] { { 0, 4, 8, 12, 16, 20, 24, 28, 32, 36 }, { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37 }, { 2, 6, 10, 14, 18, 22, 26, 30, 34, 38 }, { 3, 7, 11, 15, 19, 23, 27, 31, 35, 39 } })
-            .ToMatrix();
-        using var rightTensor = Tensor
-            .FromArray<int>(new int[,] { { 0, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 }, { 8, 9 }, { 10, 11 }, { 12, 13 }, { 14, 15 }, { 16, 17 }, { 18, 19 } })
-            .ToMatrix();
+        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_1.safetensors");
+        var left = tensors["left"].ToMatrix();
+        var right = tensors["right"].ToMatrix();
+        var expected = tensors["result"].ToMatrix();
 
-        leftTensor.To(device);
-        rightTensor.To(device);
+        MatrixMatrixTest(left, right, expected, device);
+    }
 
-        var result = leftTensor.MatrixMultiply(rightTensor);
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenExample2(IDevice device)
+    {
+        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_2.safetensors");
+        var left = tensors["left"].ToMatrix();
+        var right = tensors["right"].ToMatrix();
+        var expected = tensors["result"].ToMatrix();
 
-        result.Should().HaveEquivalentElements(new int[,] { { 2280, 2460 }, { 2370, 2560 }, { 2460, 2660 }, { 2550, 2760 } });
+        MatrixMatrixTest(left, right, expected, device);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenExample3(IDevice device)
+    {
+        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_3.safetensors");
+        var left = tensors["left"].ToMatrix();
+        var right = tensors["right"].ToMatrix();
+        var expected = tensors["result"].ToMatrix();
+
+        MatrixMatrixTest(left, right, expected, device);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenExample4(IDevice device)
+    {
+        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_4.safetensors");
+        var left = tensors["left"].ToMatrix();
+        var right = tensors["right"].ToMatrix();
+        var expected = tensors["result"].ToMatrix();
+
+        MatrixMatrixTest(left, right, expected, device);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenExample5(IDevice device)
+    {
+        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_5.safetensors");
+        var left = tensors["left"].ToMatrix();
+        var right = tensors["right"].ToMatrix();
+        var expected = tensors["result"].ToMatrix();
+
+        MatrixMatrixTest(left, right, expected, device);
     }
 }

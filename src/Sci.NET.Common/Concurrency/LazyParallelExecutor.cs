@@ -36,7 +36,12 @@ public static class LazyParallelExecutor
     /// <param name="increment">The increment to use for the loop.</param>
     /// <param name="body">The body of the for loop.</param>
     /// <returns>The number of iterations executed.</returns>
-    public static long For(long fromInclusive, long toExclusive, long parallelizationThreshold, long increment, Action<long> body)
+    public static long For(
+        long fromInclusive,
+        long toExclusive,
+        long parallelizationThreshold,
+        long increment,
+        Action<long> body)
     {
         if (toExclusive - fromInclusive < parallelizationThreshold)
         {
@@ -49,78 +54,17 @@ public static class LazyParallelExecutor
 
             return i;
         }
-        else
-        {
-            _ = Parallel.For(
-                fromInclusive,
-                (toExclusive - fromInclusive) / increment,
-                i =>
-                {
-                    var idx = fromInclusive + (i * increment);
-                    body(idx);
-                });
-
-            return (toExclusive - fromInclusive + increment - 1) / increment;
-        }
-    }
-
-    /// <summary>
-    /// Iterates from <paramref name="fromInclusive"/> to <paramref name="toExclusive"/> with an offset of <paramref name="vectorCount"/>
-    /// and fills in the remaining, non-vectorised, elements with the final body.
-    /// </summary>
-    /// <param name="fromInclusive">The index to start from (inclusive).</param>
-    /// <param name="toExclusive">The index to iterate to (exclusive).</param>
-    /// <param name="parallelizationThreshold">The threshold before the loop is executed in parallel.</param>
-    /// <param name="vectorCount">The vector size increment to use for the loop.</param>
-    /// <param name="bodyVector">The body of the for vectorised part of the loop.</param>
-    /// <param name="bodyScalar">The body of the for scalar part of the loop.</param>
-    public static void VectorFor(int fromInclusive, long toExclusive, int parallelizationThreshold, int vectorCount, Action<long> bodyVector, Action<long> bodyScalar)
-    {
-        var startIdx = fromInclusive;
-        var length = toExclusive - fromInclusive;
-
-        if (length < vectorCount)
-        {
-            for (var i = startIdx; i < toExclusive; i++)
-            {
-                bodyScalar(i);
-            }
-
-            return;
-        }
-
-        if (length < parallelizationThreshold)
-        {
-            var i = startIdx;
-
-            for (; i < toExclusive; i += vectorCount)
-            {
-                bodyVector(i);
-            }
-
-            for (; i < toExclusive; i++)
-            {
-                bodyScalar(i);
-            }
-
-            return;
-        }
 
         _ = Parallel.For(
             fromInclusive,
-            (toExclusive - fromInclusive) / vectorCount,
+            (toExclusive - fromInclusive) / increment,
             i =>
             {
-                var idx = fromInclusive + (i * vectorCount);
-                bodyVector(idx);
+                var idx = fromInclusive + (i * increment);
+                body(idx);
             });
 
-        var done = (toExclusive - fromInclusive + vectorCount - 1) / vectorCount;
-
-        for (var i = done; i < toExclusive; i++)
-        {
-            bodyScalar(i);
-        }
+        return (toExclusive - fromInclusive + increment - 1) / increment;
     }
 
     /// <summary>
@@ -146,16 +90,14 @@ public static class LazyParallelExecutor
         Action<long, long> body)
     {
         var loopIterations = (iToExclusive - iFromInclusive) * (jToExclusive - jFromInclusive);
-        var i = iFromInclusive;
-        var j = jFromInclusive;
+        var iRange = iToExclusive - iFromInclusive;
+        var jRange = jToExclusive - jFromInclusive;
 
         if (loopIterations < parallelizationThreshold)
         {
-            for (; i < iToExclusive; i += iIncrement)
+            for (var i = iFromInclusive; i < iToExclusive; i += iIncrement)
             {
-                j = 0;
-
-                for (; j < jToExclusive; j += jIncrement)
+                for (var j = jFromInclusive; j < jToExclusive; j += jIncrement)
                 {
                     body(i, j);
                 }
@@ -163,14 +105,20 @@ public static class LazyParallelExecutor
         }
         else
         {
-            var partitioner = new TwoDimensionalPartitioner(
+            var shouldParallelizeOuter = iRange >= jRange;
+
+            _ = Parallel.For(
                 iFromInclusive,
                 iToExclusive,
-                jFromInclusive,
-                jToExclusive,
-                iIncrement,
-                jIncrement);
-            _ = Parallel.ForEach(partitioner, pair => body(pair.Item1, pair.Item2));
+                new ParallelOptions { MaxDegreeOfParallelism = shouldParallelizeOuter ? Environment.ProcessorCount : 1 },
+                i =>
+                {
+                    _ = Parallel.For(
+                        jFromInclusive,
+                        jToExclusive,
+                        new ParallelOptions { MaxDegreeOfParallelism = shouldParallelizeOuter ? 1 : Environment.ProcessorCount },
+                        jj => body(i, jj));
+                });
         }
 
         var iCount = (iToExclusive - iFromInclusive + iIncrement - 1) / iIncrement;
