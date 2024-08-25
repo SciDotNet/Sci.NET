@@ -92,7 +92,5 @@ public class ContractShould : IntegrationTestBase
 
         // Assert
         result.Should().HaveEquivalentElements(expected);
-
-        // This actually found {{1720, 1900}, {1782, 1972}, {1844, 2044}, {1906, 2116}}
     }
 }
