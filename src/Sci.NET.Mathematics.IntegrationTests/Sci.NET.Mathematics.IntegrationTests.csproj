@@ -17,4 +17,26 @@
       <PackageReference Include="JetBrains.dotMemoryUnit" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Tensors\LinearAlgebra\Examples\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="Tensors\LinearAlgebra\Examples\matmul_1.safetensors">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Tensors\LinearAlgebra\Examples\matmul_2.safetensors">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Tensors\LinearAlgebra\Examples\matmul_3.safetensors">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Tensors\LinearAlgebra\Examples\matmul_4.safetensors">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Tensors\LinearAlgebra\Examples\matmul_5.safetensors">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
