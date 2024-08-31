@@ -47,33 +47,16 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <summary>
     /// Asserts that the tensor has the given shape.
     /// </summary>
-    /// <param name="shape">The expected shape.</param>
+    /// <param name="array">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
-    public AndConstraint<TensorAssertions<TNumber>> HaveShape(Shape shape)
-    {
-        _ = Execute
-            .Assertion
-            .BecauseOf(string.Empty, Array.Empty<object>())
-            .Given(() => Subject.Shape)
-            .ForCondition(tensorShape => tensorShape.SequenceEqual(shape))
-            .FailWith("Expected tensor to have shape {0}{reason}, but found {1}.", shape, Subject.Shape);
-
-        return new AndConstraint<TensorAssertions<TNumber>>(this);
-    }
-
-    /// <summary>
-    /// Asserts that the tensor has the given shape.
-    /// </summary>
-    /// <param name="shape">The expected shape.</param>
-    /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
-    public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array shape)
+    public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array array)
     {
         _ = Execute
             .Assertion
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
-            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, shape, TNumber.Zero))
-            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", shape, Subject.ToArray());
+            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, array, TNumber.Zero))
+            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", array, Subject.ToArray());
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
     }

@@ -16,6 +16,23 @@ namespace Sci.NET.Mathematics.Tensors;
 public static class CastingExtensions
 {
     /// <summary>
+    /// Casts an <see cref="ITensor{TNumber}"/> to a new type.
+    /// </summary>
+    /// <param name="tensor">The tensor to cast.</param>
+    /// <typeparam name="TIn">The input number type.</typeparam>
+    /// <typeparam name="TOut">The output number type.</typeparam>
+    /// <returns>The input cast to <typeparamref name="TOut"/>.</returns>
+    public static ITensor<TOut> Cast<TIn, TOut>(this ITensor<TIn> tensor)
+        where TIn : unmanaged, System.Numerics.INumber<TIn>
+        where TOut : unmanaged, System.Numerics.INumber<TOut>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetCastingService()
+            .Cast<TIn, TOut>(tensor.ToTensor());
+    }
+
+    /// <summary>
     /// Casts a <see cref="Scalar{TNumber}"/> to a new type.
     /// </summary>
     /// <param name="input">The <see cref="Scalar{TNumber}"/> to cast.</param>
