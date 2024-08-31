@@ -15,15 +15,8 @@ Sci.NET is a scientific computing library for .NET with a familiar API similar t
 
 Currently, only the managed CPU backend is working which is used as a proof of concept and regression testing for other backends.
 
-The subset of working features include:
-* Most Tensor Operations (Arithmetic, Trigonometry, etc.)
-* Most Tensor Transformations (Reshape, Transpose, Permute, etc.)
-* Most Contraction aliases (Contract, Dot Product, Matrix Multiply, Inner Product)
-
 Known to be broken:
 * Most of the Machine Learning API
-
-The library is designed to be extensible, easy to use and hardware agnostic with a focus on performance and heterogeneous computing.
 
 ## License
 
@@ -68,16 +61,11 @@ Or to build a release version:
 
 
 ## Roadmap
-- Working build pipeline.
-- Full testing of `Sci.NET.Mathematics`.
 - More comprehensive machine learning API for `Sci.NET.MachineLearning`.
 - Better hardware acceleration using intrinsics.
 - CUDA, Vulkan and MKL backend.
 - More comprehensive documentation.
-- Better support for datasets.
-
-Far in the future
-- Native image processing library.
+- Better support for datasets and data loading.
 
 
 ## Third Party
