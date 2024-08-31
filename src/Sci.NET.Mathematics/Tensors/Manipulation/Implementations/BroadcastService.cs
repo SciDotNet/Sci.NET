@@ -34,11 +34,6 @@ internal class BroadcastService : IBroadcastService
         return true;
     }
 
-    public bool CanBroadcastBinaryOp(Shape left, Shape right)
-    {
-        return left.Rank > right.Rank ? CanBroadcastTo(right, left) : CanBroadcastTo(left, right);
-    }
-
     public ITensor<TNumber> Broadcast<TNumber>(ITensor<TNumber> tensor, Shape targetShape)
         where TNumber : unmanaged, INumber<TNumber>
     {

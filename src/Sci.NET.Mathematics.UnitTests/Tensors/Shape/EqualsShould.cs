@@ -30,6 +30,28 @@ public class EqualsShould
     }
 
     [Fact]
+    public void ReturnFalse_GivenEqualElementCountDifferentDimensionCount()
+    {
+        // Arrange
+        var shape1 = new Sut(3, 4, 5);
+        var shape2 = new Sut(3, 20);
+
+        // Act & Assert
+        shape1.Equals(shape2).Should().BeFalse();
+    }
+
+    [Fact]
+    public void ReturnFalse_GivenEqualElementCount_ReorderedDimensions()
+    {
+        // Arrange
+        var shape1 = new Sut(3, 4, 5);
+        var shape2 = new Sut(4, 5, 3);
+
+        // Act & Assert
+        shape1.Equals(shape2).Should().BeFalse();
+    }
+
+    [Fact]
     public void ReturnFalse_GivenOtherObject()
     {
         // Arrange

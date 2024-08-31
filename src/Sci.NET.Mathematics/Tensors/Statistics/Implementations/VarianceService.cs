@@ -7,7 +7,7 @@ namespace Sci.NET.Mathematics.Tensors.Statistics.Implementations;
 
 internal class VarianceService : IVarianceService
 {
-    public ITensor<TNumber> Variance<TNumber>(ITensor<TNumber> value, int? axis)
+    public ITensor<TNumber> Variance<TNumber>(ITensor<TNumber> value, int? axis = null)
         where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>
     {
         var concreteAxis = axis ?? 0;
