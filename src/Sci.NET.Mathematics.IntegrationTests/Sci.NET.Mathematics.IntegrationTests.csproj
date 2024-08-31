@@ -19,6 +19,7 @@
 
     <ItemGroup>
       <Folder Include="Tensors\LinearAlgebra\Examples\" />
+      <Folder Include="Tensors\Manipulation\Reshaping\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,6 +36,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="Tensors\LinearAlgebra\Examples\matmul_5.safetensors">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Tensors\NeuralNetworks\Examples\conv2d_1_1.safetensors">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

@@ -622,6 +622,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         if (!IsDisposed && isDisposing)
         {
             IsDisposed = true;
+            _rentals.Dispose();
         }
     }
 
