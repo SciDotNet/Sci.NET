@@ -20,7 +20,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static TNumber PowScalarTest<TNumber>(TNumber value, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var scalar = new Scalar<TNumber>(value);
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -41,7 +41,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static Array PowVectorTest<TNumber>(TNumber[] values, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values).ToVector();
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -66,7 +66,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static Array PowMatrixTest<TNumber>(TNumber[,] values, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values).ToMatrix();
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -91,7 +91,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static Array PowTensorTest<TNumber>(TNumber[,,] values, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values);
         var exponentScalar = new Scalar<TNumber>(exponent);

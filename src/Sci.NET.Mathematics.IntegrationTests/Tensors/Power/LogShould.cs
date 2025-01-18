@@ -20,7 +20,7 @@ public class LogShould : IntegrationTestBase
     }
 
     private static TNumber LogScalarTest<TNumber>(TNumber value, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var scalar = new Scalar<TNumber>(value);
 
@@ -43,7 +43,7 @@ public class LogShould : IntegrationTestBase
     }
 
     private static Array LogVectorTest<TNumber>(TNumber[] values, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values).ToVector();
 
@@ -66,7 +66,7 @@ public class LogShould : IntegrationTestBase
     }
 
     private static Array LogMatrixTest<TNumber>(TNumber[,] values, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values).ToMatrix();
 
@@ -97,7 +97,7 @@ public class LogShould : IntegrationTestBase
     }
 
     private static Array LogTensorTest<TNumber>(TNumber[,,] values, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values);
 
