@@ -25,7 +25,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Scalar<TNumber> Pow<TNumber>(this Scalar<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -42,7 +42,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Vector<TNumber> Pow<TNumber>(this Vector<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -59,7 +59,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Matrix<TNumber> Pow<TNumber>(this Matrix<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -76,7 +76,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Tensor<TNumber> Pow<TNumber>(this Tensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -93,7 +93,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static ITensor<TNumber> Pow<TNumber>(this ITensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
