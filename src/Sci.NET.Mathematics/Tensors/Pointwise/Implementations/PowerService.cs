@@ -18,7 +18,7 @@ internal class PowerService : IPowerService
     }
 
     public Scalar<TNumber> Pow<TNumber>(Scalar<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         _ = _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
@@ -38,7 +38,7 @@ internal class PowerService : IPowerService
     }
 
     public Vector<TNumber> Pow<TNumber>(Vector<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         _ = _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
@@ -58,7 +58,7 @@ internal class PowerService : IPowerService
     }
 
     public Matrix<TNumber> Pow<TNumber>(Matrix<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         _ = _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
@@ -77,7 +77,7 @@ internal class PowerService : IPowerService
     }
 
     public Tensor<TNumber> Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         _ = _guardService.GuardBinaryOperation(value.Device, power.Device);
         var backend = value.Backend;
@@ -181,43 +181,41 @@ internal class PowerService : IPowerService
     }
 
     public Scalar<TNumber> Exp<TNumber>(Scalar<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var backend = value.Backend;
         var result = new Scalar<TNumber>(backend);
 
         backend.Power.Exp(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().Exp(value));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(result));
 
         return result;
     }
 
     public Vector<TNumber> Exp<TNumber>(Vector<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var backend = value.Backend;
         var result = new Vector<TNumber>(value.Length, backend);
 
         backend.Power.Exp(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => TensorServiceProvider.GetTensorOperationServiceProvider().GetPowerService().Exp(value));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(result));
 
         return result;
     }
 
     public Matrix<TNumber> Exp<TNumber>(Matrix<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var backend = value.Backend;
         var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
@@ -234,7 +232,7 @@ internal class PowerService : IPowerService
     }
 
     public Tensor<TNumber> Exp<TNumber>(Tensor<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend);
@@ -251,7 +249,7 @@ internal class PowerService : IPowerService
     }
 
     public ITensor<TNumber> Log<TNumber>(ITensor<TNumber> value)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var backend = value.Backend;
         var result = Tensor.CloneEmpty<ITensor<TNumber>, TNumber>(value);
@@ -262,12 +260,15 @@ internal class PowerService : IPowerService
             ref result,
             value,
             null,
-            grad => grad.Multiply(result));
+            grad => grad.Multiply(LogDerivative(value, TNumber.E)));
+
         return result;
     }
 
+#pragma warning disable CA1822
     public ITensor<TNumber> LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+#pragma warning restore CA1822
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var backend = value.Backend;
         var result = new Tensor<TNumber>(value.Shape, backend, requiresGradient: false);

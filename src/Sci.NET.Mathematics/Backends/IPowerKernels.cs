@@ -48,7 +48,7 @@ public interface IPowerKernels
     /// <param name="result">The <see cref="Tensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Exp<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Finds the natural logarithm of <paramref name="value"/> and stores the result in <paramref name="result"/>.
@@ -57,7 +57,7 @@ public interface IPowerKernels
     /// <param name="result">The <see cref="Scalar{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Finds the derivative of the natural logarithm of <paramref name="value"/> and stores the result in <paramref name="result"/>.
@@ -67,5 +67,5 @@ public interface IPowerKernels
     /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase, Tensor<TNumber> result)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 }

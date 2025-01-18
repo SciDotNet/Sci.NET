@@ -37,7 +37,7 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = powerBlock[0] * TNumber.Pow(valueBlock[i],  powerBlock[0] - TNumber.One));
+            i => resultBlock[i] = powerBlock[0] * TNumber.Pow(valueBlock[i], powerBlock[0] - TNumber.One));
     }
 
     public void Square<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
@@ -54,7 +54,7 @@ internal class ManagedPowerKernels : IPowerKernels
     }
 
     public void Exp<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -84,7 +84,7 @@ internal class ManagedPowerKernels : IPowerKernels
     }
 
     public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -93,11 +93,11 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.Log(valueBlock[i]));
+            i => resultBlock[i] = resultBlock[i] >= TNumber.Zero ? TNumber.Log(valueBlock[i]) : TNumber.NaN);
     }
 
     public void LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase, Tensor<TNumber> result)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -106,6 +106,6 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = TNumber.One / (valueBlock[i] * TNumber.Log(logBase)));
+            i => resultBlock[i] = valueBlock[i] > TNumber.Zero ? TNumber.One / (valueBlock[i] * TNumber.Log(logBase)) : TNumber.NaN);
     }
 }
