@@ -419,6 +419,40 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         }
     }
 
+    public void AbsGradient<TNumber>(IMemoryBlock<TNumber> tensor, IMemoryBlock<TNumber> gradient, IMemoryBlock<TNumber> result, long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
+        var gradientBlock = (SystemMemoryBlock<TNumber>)gradient;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result;
+
+        var i = LazyParallelExecutor.For(
+            0,
+            n,
+            ManagedTensorBackend.ParallelizationThreshold,
+            1,
+            i =>
+            {
+                var tensorValue = tensorBlock[i];
+                var gradientValue = gradientBlock[i];
+
+                if (tensorValue > TNumber.Zero)
+                {
+                    resultBlock[i] = gradientValue;
+                }
+#pragma warning disable IDE0045 // Conflicting warnings
+                else if (tensorValue < TNumber.Zero)
+#pragma warning restore IDE0045
+                {
+                    resultBlock[i] = TNumber.Zero - gradientValue;
+                }
+                else
+                {
+                    resultBlock[i] = TNumber.Zero;
+                }
+            });
+    }
+
     public void AbsoluteDifference<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {

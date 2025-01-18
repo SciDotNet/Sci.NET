@@ -3,6 +3,8 @@
 
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Common.Implementations;
+using Sci.NET.Mathematics.Tensors.Equality;
+using Sci.NET.Mathematics.Tensors.Equality.Implementations;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
 using Sci.NET.Mathematics.Tensors.Manipulation;
@@ -26,141 +28,155 @@ namespace Sci.NET.Mathematics.Tensors;
 
 internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
 {
-    private readonly IMatrixMultiplicationService _matrixMultiplicationService;
-    private readonly IDeviceGuardService _deviceGuardService;
-    private readonly IPermutationService _permutationService;
-    private readonly IReshapeService _reshapeService;
-    private readonly IContractionService _contractionService;
-    private readonly IArithmeticService _arithmeticService;
-    private readonly IPowerService _powerService;
-    private readonly IReductionService _reductionService;
-    private readonly ITrigonometryService _trigonometryService;
-    private readonly ISerializationService _serializationService;
-    private readonly ICastingService _castingService;
-    private readonly IConvolutionService _convolutionService;
-    private readonly IConcatenationService _concatenationService;
-    private readonly IActivationFunctionService _activationFunctionService;
-    private readonly IBroadcastService _broadcastService;
-    private readonly IVectorOperationsService _vectorOperationsService;
-    private readonly IRandomService _randomService;
-    private readonly INormalisationService _normalisationService;
-    private readonly IVarianceService _varianceService;
+    private readonly Lazy<DeviceGuardService> _deviceGuardService;
+    private readonly Lazy<PermutationService> _permutationService;
+    private readonly Lazy<ReshapeService> _reshapeService;
+    private readonly Lazy<ActivationFunctionService> _activationFunctionService;
+    private readonly Lazy<BroadcastService> _broadcastService;
+    private readonly Lazy<VectorOperationsService> _vectorOperationsService;
+    private readonly Lazy<RandomService> _randomService;
+    private readonly Lazy<NormalisationService> _normalisationService;
+    private readonly Lazy<VarianceService> _varianceService;
+    private readonly Lazy<GradientAppenderService> _gradientAppenderService;
+    private readonly Lazy<TrigonometryService> _trigonometryService;
+    private readonly Lazy<SerializationService> _serializationService;
+    private readonly Lazy<CastingService> _castingService;
+    private readonly Lazy<ContractionService> _contractionService;
+    private readonly Lazy<ArithmeticService> _arithmeticService;
+    private readonly Lazy<PowerService> _powerService;
+    private readonly Lazy<ReductionService> _reductionService;
+    private readonly Lazy<MatrixMultiplicationService> _matrixMultiplicationService;
+    private readonly Lazy<ConvolutionService> _convolutionService;
+    private readonly Lazy<ConcatenationService> _concatenationService;
+    private readonly Lazy<TensorEqualityOperationService> _tensorEqualityOperationService;
 
     public TensorOperationServiceProvider()
     {
-        _broadcastService = new BroadcastService();
-        _reshapeService = new ReshapeService();
-        _deviceGuardService = new DeviceGuardService();
-        _reductionService = new ReductionService();
-        _trigonometryService = new TrigonometryService();
-        _serializationService = new SerializationService();
-        _castingService = new CastingService();
-        _activationFunctionService = new ActivationFunctionService();
-        _permutationService = new PermutationService();
-        _powerService = new PowerService(this);
-        _matrixMultiplicationService = new MatrixMultiplicationService(this);
-        _arithmeticService = new ArithmeticService(this);
-        _contractionService = new ContractionService(this);
-        _convolutionService = new ConvolutionService(this);
-        _concatenationService = new ConcatenationService(this);
-        _vectorOperationsService = new VectorOperationsService();
-        _randomService = new RandomService();
-        _normalisationService = new NormalisationService();
-        _varianceService = new VarianceService();
+        _broadcastService = new Lazy<BroadcastService>(() => new BroadcastService());
+        _reshapeService = new Lazy<ReshapeService>(() => new ReshapeService());
+        _deviceGuardService = new Lazy<DeviceGuardService>(() => new DeviceGuardService());
+        _vectorOperationsService = new Lazy<VectorOperationsService>(() => new VectorOperationsService());
+        _randomService = new Lazy<RandomService>(() => new RandomService());
+        _normalisationService = new Lazy<NormalisationService>(() => new NormalisationService());
+        _varianceService = new Lazy<VarianceService>(() => new VarianceService());
+        _gradientAppenderService = new Lazy<GradientAppenderService>(() => new GradientAppenderService());
+        _trigonometryService = new Lazy<TrigonometryService>(() => new TrigonometryService());
+        _serializationService = new Lazy<SerializationService>(() => new SerializationService());
+        _castingService = new Lazy<CastingService>(() => new CastingService());
+        _activationFunctionService = new Lazy<ActivationFunctionService>(() => new ActivationFunctionService());
+        _permutationService = new Lazy<PermutationService>(() => new PermutationService());
+        _arithmeticService = new Lazy<ArithmeticService>(() => new ArithmeticService());
+        _contractionService = new Lazy<ContractionService>(() => new ContractionService());
+        _convolutionService = new Lazy<ConvolutionService>(() => new ConvolutionService());
+        _concatenationService = new Lazy<ConcatenationService>(() => new ConcatenationService());
+        _tensorEqualityOperationService = new Lazy<TensorEqualityOperationService>(() => new TensorEqualityOperationService());
+        _matrixMultiplicationService = new Lazy<MatrixMultiplicationService>(() => new MatrixMultiplicationService());
+        _powerService = new Lazy<PowerService>(() => new PowerService());
+        _reductionService = new Lazy<ReductionService>(() => new ReductionService());
     }
 
     public IMatrixMultiplicationService GetMatrixMultiplicationService()
     {
-        return _matrixMultiplicationService;
+        return _matrixMultiplicationService.Value;
     }
 
     public IDeviceGuardService GetDeviceGuardService()
     {
-        return _deviceGuardService;
+        return _deviceGuardService.Value;
     }
 
     public IPermutationService GetPermutationService()
     {
-        return _permutationService;
+        return _permutationService.Value;
     }
 
     public IReshapeService GetReshapeService()
     {
-        return _reshapeService;
+        return _reshapeService.Value;
     }
 
     public IContractionService GetContractionService()
     {
-        return _contractionService;
+        return _contractionService.Value;
     }
 
     public IArithmeticService GetArithmeticService()
     {
-        return _arithmeticService;
+        return _arithmeticService.Value;
     }
 
     public IPowerService GetPowerService()
     {
-        return _powerService;
+        return _powerService.Value;
     }
 
     public IReductionService GetReductionService()
     {
-        return _reductionService;
+        return _reductionService.Value;
     }
 
     public ITrigonometryService GetTrigonometryService()
     {
-        return _trigonometryService;
+        return _trigonometryService.Value;
     }
 
     public ISerializationService GetSerializationService()
     {
-        return _serializationService;
+        return _serializationService.Value;
     }
 
     public ICastingService GetCastingService()
     {
-        return _castingService;
+        return _castingService.Value;
     }
 
     public IConvolutionService GetConvolutionService()
     {
-        return _convolutionService;
+        return _convolutionService.Value;
     }
 
     public IConcatenationService GetConcatenationService()
     {
-        return _concatenationService;
+        return _concatenationService.Value;
     }
 
     public IActivationFunctionService GetActivationFunctionService()
     {
-        return _activationFunctionService;
+        return _activationFunctionService.Value;
     }
 
     public IBroadcastService GetBroadcastingService()
     {
-        return _broadcastService;
+        return _broadcastService.Value;
     }
 
     public IVectorOperationsService GetVectorOperationsService()
     {
-        return _vectorOperationsService;
+        return _vectorOperationsService.Value;
     }
 
     public IRandomService GetRandomService()
     {
-        return _randomService;
+        return _randomService.Value;
     }
 
     public INormalisationService GetNormalisationService()
     {
-        return _normalisationService;
+        return _normalisationService.Value;
     }
 
     public IVarianceService GetVarianceService()
     {
-        return _varianceService;
+        return _varianceService.Value;
+    }
+
+    public IGradientAppenderService GetGradientAppenderService()
+    {
+        return _gradientAppenderService.Value;
+    }
+
+    public ITensorEqualityOperationService GetEqualityOperationService()
+    {
+        return _tensorEqualityOperationService.Value;
     }
 }

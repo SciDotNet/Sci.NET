@@ -10,16 +10,18 @@ namespace Sci.NET.Mathematics.Tensors.LinearAlgebra.Implementations;
 internal class MatrixMultiplicationService : IMatrixMultiplicationService
 {
     private readonly IDeviceGuardService _guardService;
+    private readonly IGradientAppenderService _gradientAppenderService;
 
-    public MatrixMultiplicationService(ITensorOperationServiceProvider provider)
+    public MatrixMultiplicationService()
     {
-        _guardService = provider.GetDeviceGuardService();
+        _guardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
     }
 
     public Matrix<TNumber> MatrixMultiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = _guardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Shape.Dimensions[1] != right.Shape.Dimensions[0])
         {
@@ -27,37 +29,33 @@ internal class MatrixMultiplicationService : IMatrixMultiplicationService
                 $"The number of columns of the left matrix must match the number of rows of the right matrix but got {left.Shape} and {right.Shape}.");
         }
 
-        var result = new Matrix<TNumber>(left.Shape.Dimensions[0], right.Shape.Dimensions[1], left.Backend, overrideRequiresGradient ?? (left.RequiresGradient || right.RequiresGradient));
+        var result = new Matrix<TNumber>(left.Shape.Dimensions[0], right.Shape.Dimensions[1], backend, overrideRequiresGradient ?? (left.RequiresGradient || right.RequiresGradient));
 
-        left.Backend.LinearAlgebra.MatrixMultiply(left, right, result);
+        backend.LinearAlgebra.MatrixMultiply(left, right, result);
 
-        if (overrideRequiresGradient ?? left.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                left,
-                grad =>
-                {
-                    var matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
-                    var gradMatrix = grad.ToMatrix();
-                    var resultGrad = matrixMultiplicationService.MatrixMultiply(gradMatrix, right.Transpose(), false);
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            overrideRequiresGradient,
+            grad =>
+            {
+                var matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
+                using var gradMatrix = grad.ToMatrix();
+                using var rightTransposed = right.Transpose();
+                var resultGrad = matrixMultiplicationService.MatrixMultiply(gradMatrix, rightTransposed, false);
 
-                    return ((ITensor<TNumber>)resultGrad).AsGradient();
-                });
-        }
+                return ((ITensor<TNumber>)resultGrad).AsGradient();
+            },
+            grad =>
+            {
+                var matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
+                using var gradMatrix = grad.ToMatrix();
+                using var leftTransposed = left.Transpose();
+                var resultGrad = matrixMultiplicationService.MatrixMultiply(leftTransposed, gradMatrix, false);
 
-        if (overrideRequiresGradient ?? right.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                right,
-                grad =>
-                {
-                    var matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
-                    var gradMatrix = grad.ToMatrix();
-                    var resultGrad = matrixMultiplicationService.MatrixMultiply(left.Transpose(), gradMatrix, false);
-
-                    return ((ITensor<TNumber>)resultGrad).AsGradient();
-                });
-        }
+                return ((ITensor<TNumber>)resultGrad).AsGradient();
+            });
 
         return result;
     }

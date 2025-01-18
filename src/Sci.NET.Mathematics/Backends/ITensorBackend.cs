@@ -80,4 +80,9 @@ public interface ITensorBackend
     /// Gets the <see cref="INormalisationKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public INormalisationKernels Normalisation { get; }
+
+    /// <summary>
+    /// Gets the <see cref="IEqualityOperationKernels"/> instance for the <see cref="ITensorBackend"/>.
+    /// </summary>
+    public IEqualityOperationKernels EqualityOperations { get; }
 }

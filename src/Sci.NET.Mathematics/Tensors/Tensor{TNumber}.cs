@@ -34,7 +34,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         IsMemoryOwner = true;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         IsMemoryOwner = false;
         Memory.Rent(_id);
         RequiresGradient = previousTensor.RequiresGradient;
-        Gradient = overrideRequiresGradient ?? RequiresGradient ? new Tensor<TNumber>(Shape, Backend, requiresGradient: false) : null;
+        Gradient = overrideRequiresGradient ?? RequiresGradient ? new Tensor<TNumber>(Shape, Backend, requiresGradient: false) { IsGradient = true } : null;
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
         IsMemoryOwner = false;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
 
     /// <summary>

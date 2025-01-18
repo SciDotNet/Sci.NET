@@ -2,12 +2,20 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Reduction.Implementations;
 
 internal class ReductionService : IReductionService
 {
+    private readonly IGradientAppenderService _gradientAppenderService;
+
+    public ReductionService()
+    {
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
+    }
+
     public ITensor<TNumber> ReduceToShape<TNumber>(ITensor<TNumber> tensor, Shape targetShape)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -63,115 +71,89 @@ internal class ReductionService : IReductionService
     public ITensor<TNumber> Sum<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        if (axes is not null && axes.Length > tensor.Shape.Rank)
         {
-            var result = new Scalar<TNumber>(tensor.Backend, requiresGradient: tensor.RequiresGradient);
+            throw new InvalidShapeException($"The number of axes to sum over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+        }
+
+        if (axes is null || axes.Length == 0 || axes.Length == tensor.Shape.Rank)
+        {
+            var result = new Scalar<TNumber>(
+                tensor.Backend,
+                requiresGradient: tensor.RequiresGradient);
+
             tensor.Backend.Reduction.ReduceAddAll(tensor, result);
 
             if (!keepDims)
             {
-                if (tensor.RequiresGradient)
-                {
-                    ((ITensor<TNumber>)result).AddParent(
-                        tensor,
-                        grad => grad.Broadcast(tensor.Shape));
-                }
-
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
+                    tensor,
+                    null,
+                    grad => grad.Broadcast(tensor.Shape));
                 return result;
             }
-
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
-
-            if (tensor.RequiresGradient)
+            else
             {
-                resultTensor.AddParent(
-                    tensor,
-                    grad =>
-                    {
-                        var outShape = grad.Shape.ExpandDims(axes ?? Array.Empty<int>());
-                        return grad.Broadcast(outShape);
-                    });
-            }
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
 
-            return resultTensor;
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad => grad.Broadcast(tensor.Shape));
+                return resultTensor;
+            }
         }
         else
         {
-            if (axes.Length > tensor.Shape.Dimensions.Length)
-            {
-                throw new InvalidShapeException($"The number of axes to sum over cannot exceed the number of dimensions in shape {tensor.Shape}.");
-            }
-
             if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
             {
                 throw new InvalidShapeException($"The axes to sum over must be within the bounds of the tensor with shape {tensor.Shape}.");
             }
 
             var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
-            var result = new Tensor<TNumber>(resultShape, tensor.Backend, requiresGradient: tensor.RequiresGradient);
+
+            var result = new Tensor<TNumber>(
+                resultShape,
+                tensor.Backend,
+                requiresGradient: tensor.RequiresGradient);
+
             tensor.Backend.Reduction.ReduceAddAxis(tensor, axes, result);
 
-            if (keepDims)
-            {
-                if (tensor.RequiresGradient)
-                {
-                    ((ITensor<TNumber>)result).AddParent(
-                        tensor,
-                        grad =>
-                        {
-                            var outShape = grad.Shape.ExpandDims(axes);
-                            return grad.Broadcast(outShape);
-                        });
-                }
-
-                return result;
-            }
-
-            if (tensor.RequiresGradient)
-            {
-                ((ITensor<TNumber>)result).AddParent(
-                    tensor,
-                    grad => grad.Broadcast(tensor.Shape));
-            }
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                tensor,
+                null,
+                grad => grad.Broadcast(tensor.Shape));
 
             return result;
         }
     }
 
-    public ITensor<TNumber> Mean<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+    public ITensor<TNumber> Mean<TNumber>(
+        ITensor<TNumber> tensor,
+        int[]? axes = null,
+        bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        if (axes is not null && axes.Length > tensor.Shape.Rank)
+        {
+            throw new InvalidShapeException($"The number of axes to find the mean over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+        }
+
+        if (axes is null || axes.Length == 0 || axes.Length == tensor.Shape.Rank)
         {
             var result = new Scalar<TNumber>(tensor.Backend, requiresGradient: tensor.RequiresGradient);
             tensor.Backend.Reduction.ReduceMeanAll(tensor, result);
 
             if (!keepDims)
             {
-                if (tensor.RequiresGradient)
-                {
-                    ((ITensor<TNumber>)result).AddParent(
-                        tensor,
-                        grad =>
-                        {
-                            var gradExpanded = grad.Broadcast(tensor.Shape);
-                            var scale = TNumber.One / TNumber.CreateChecked(tensor.Shape.ElementCount);
-                            using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
-                            return gradExpanded.Multiply(scaleTensor);
-                        });
-                }
-
-                return result;
-            }
-
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
-
-            if (tensor.RequiresGradient)
-            {
-                resultTensor.AddParent(
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
                     tensor,
+                    null,
                     grad =>
                     {
                         var gradExpanded = grad.Broadcast(tensor.Shape);
@@ -179,17 +161,31 @@ internal class ReductionService : IReductionService
                         using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
                         return gradExpanded.Multiply(scaleTensor);
                     });
-            }
 
-            return resultTensor;
+                return result;
+            }
+            else
+            {
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
+
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        var scale = TNumber.One / TNumber.CreateChecked(tensor.Shape.ElementCount);
+                        using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
+                        return gradExpanded.Multiply(scaleTensor);
+                    });
+
+                return resultTensor;
+            }
         }
         else
         {
-            if (axes.Length > tensor.Shape.Dimensions.Length)
-            {
-                throw new InvalidShapeException($"The number of axes to find the mean over cannot exceed the number of dimensions in shape {tensor.Shape}.");
-            }
-
             if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
             {
                 throw new InvalidShapeException($"The axes to find the mean over must be within the bounds of the tensor with shape {tensor.Shape}.");
@@ -197,34 +193,15 @@ internal class ReductionService : IReductionService
 
             var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
             var result = new Tensor<TNumber>(resultShape, tensor.Backend, requiresGradient: tensor.RequiresGradient);
+
             tensor.Backend.Reduction.ReduceMeanAxis(tensor, axes, result);
 
             if (!keepDims)
             {
-                if (tensor.RequiresGradient)
-                {
-                    ((ITensor<TNumber>)result).AddParent(
-                        tensor,
-                        grad =>
-                        {
-                            var gradExpanded = grad.Broadcast(tensor.Shape);
-                            var reductionSize = axes.Aggregate(1, (prod, axis) => prod * tensor.Shape.Dimensions[axis]);
-                            var scale = TNumber.One / TNumber.CreateChecked(reductionSize);
-                            using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
-                            return gradExpanded.Multiply(scaleTensor);
-                        });
-                }
-
-                return result;
-            }
-
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
-
-            if (tensor.RequiresGradient)
-            {
-                resultTensor.AddParent(
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
                     tensor,
+                    null,
                     grad =>
                     {
                         var gradExpanded = grad.Broadcast(tensor.Shape);
@@ -233,113 +210,238 @@ internal class ReductionService : IReductionService
                         using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
                         return gradExpanded.Multiply(scaleTensor);
                     });
-            }
 
-            return resultTensor;
+                return result;
+            }
+            else
+            {
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
+
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        var reductionSize = axes.Aggregate(1, (prod, axis) => prod * tensor.Shape.Dimensions[axis]);
+                        var scale = TNumber.One / TNumber.CreateChecked(reductionSize);
+                        using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
+                        return gradExpanded.Multiply(scaleTensor);
+                    });
+
+                return resultTensor;
+            }
         }
     }
 
-    public ITensor<TNumber> Max<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+    public ITensor<TNumber> Max<TNumber>(
+        ITensor<TNumber> tensor,
+        int[]? axes = null,
+        bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        if (axes is not null && axes.Length > tensor.Shape.Rank)
         {
-            var result = new Scalar<TNumber>(tensor.Backend);
+            throw new InvalidShapeException($"The number of axes to find the max over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+        }
+
+        if (axes is null || axes.Length == 0 || axes.Length == tensor.Shape.Rank)
+        {
+            var result = new Scalar<TNumber>(tensor.Backend, requiresGradient: tensor.RequiresGradient);
             tensor.Backend.Reduction.ReduceMaxAll(tensor, result);
 
             if (!keepDims)
             {
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        using var broadcastedMax = result.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(broadcastedMax);
+
+                        return gradExpanded.Multiply(mask);
+                    });
+
                 return result;
             }
+            else
+            {
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
 
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
-            return resultTensor;
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(resultTensor);
+                        return gradExpanded.Multiply(mask);
+                    });
+
+                return resultTensor;
+            }
         }
         else
         {
-            if (axes.Length > tensor.Shape.Dimensions.Length)
-            {
-                throw new InvalidShapeException($"The number of axes to find the max over cannot exceed the number of dimensions in shape {tensor.Shape}.");
-            }
-
             if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
             {
-                throw new InvalidShapeException($"The axes to find the max over must be within the bounds of the tensor with shape {tensor.Shape}.");
+                throw new InvalidShapeException($"The axes to find the max over must be valid indices for a tensor with shape {tensor.Shape}.");
             }
 
             var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
-            var result = new Tensor<TNumber>(resultShape, tensor.Backend);
+            var result = new Tensor<TNumber>(resultShape, tensor.Backend, requiresGradient: tensor.RequiresGradient);
+
             tensor.Backend.Reduction.ReduceMaxAxis(tensor, axes, result);
 
             if (!keepDims)
             {
-                return result;
-            }
-
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
-
-            if (tensor.RequiresGradient)
-            {
-                resultTensor.AddParent(
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
                     tensor,
+                    null,
                     grad =>
                     {
                         var gradExpanded = grad.Broadcast(tensor.Shape);
-                        var reductionSize = axes.Aggregate(1, (prod, axis) => prod * tensor.Shape.Dimensions[axis]);
-                        var scale = TNumber.One / TNumber.CreateChecked(reductionSize);
-                        using var scaleTensor = new Scalar<TNumber>(scale, tensor.Backend, requiresGradient: false);
-                        return gradExpanded.Multiply(scaleTensor);
-                    });
-            }
+                        using var broadcastedMax = result.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(broadcastedMax);
 
-            return resultTensor;
+                        return gradExpanded.Multiply(mask);
+                    });
+
+                return result;
+            }
+            else
+            {
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
+
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(resultTensor);
+                        return gradExpanded.Multiply(mask);
+                    });
+
+                return resultTensor;
+            }
         }
     }
 
-    public ITensor<TNumber> Min<TNumber>(ITensor<TNumber> tensor, int[]? axes = null, bool keepDims = false)
+    public ITensor<TNumber> Min<TNumber>(
+        ITensor<TNumber> tensor,
+        int[]? axes = null,
+        bool keepDims = false)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (axes is null || axes.Length == 0 || tensor.Shape.Rank - axes.Length <= 0)
+        if (axes is not null && axes.Length > tensor.Shape.Rank)
         {
-            var result = new Scalar<TNumber>(tensor.Backend);
-            tensor.Backend.Reduction.ReduceMinAll(tensor, result);
+            throw new InvalidShapeException(
+                $"The number of axes to find the min over cannot exceed the number of dimensions in shape {tensor.Shape}.");
+        }
+
+        var backend = tensor.Backend;
+
+        if (axes is null || axes.Length == 0 || axes.Length == tensor.Shape.Rank)
+        {
+            var result = new Scalar<TNumber>(backend, requiresGradient: tensor.RequiresGradient);
+            backend.Reduction.ReduceMinAll(tensor, result);
 
             if (!keepDims)
             {
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
+                    tensor,
+                    null, // no second input
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+
+                        using var broadcastedMin = result.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(broadcastedMin);
+
+                        return gradExpanded.Multiply(mask);
+                    });
+
                 return result;
             }
+            else
+            {
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
 
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
-            return resultTensor;
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(resultTensor);
+                        return gradExpanded.Multiply(mask);
+                    });
+
+                return resultTensor;
+            }
         }
         else
         {
-            if (axes.Length > tensor.Shape.Dimensions.Length)
-            {
-                throw new InvalidShapeException($"The number of axes to find the min over cannot exceed the number of dimensions in shape {tensor.Shape}.");
-            }
-
+            // 3) Otherwise, partial reduction along the specified axes.
             if (axes.Any(x => x < 0 || x >= tensor.Shape.Rank))
             {
                 throw new InvalidShapeException($"The axes to find the min over must be within the bounds of the tensor with shape {tensor.Shape}.");
             }
 
             var resultShape = CalculateResultShape(tensor.Shape.Dimensions, axes, keepDims);
-            var result = new Tensor<TNumber>(resultShape, tensor.Backend);
-            tensor.Backend.Reduction.ReduceMinAxis(tensor, axes, result);
+            var result = new Tensor<TNumber>(resultShape, backend, requiresGradient: tensor.RequiresGradient);
+
+            backend.Reduction.ReduceMinAxis(tensor, axes, result);
 
             if (!keepDims)
             {
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref result,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        using var broadcastedMin = result.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(broadcastedMin);
+
+                        return gradExpanded.Multiply(mask);
+                    });
+
                 return result;
             }
+            else
+            {
+                var resultTensor = result.Broadcast(tensor.Shape);
+                result.Dispose();
 
-            var resultTensor = result.Broadcast(tensor.Shape);
-            result.Dispose();
+                _gradientAppenderService.AddGradientIfRequired(
+                    ref resultTensor,
+                    tensor,
+                    null,
+                    grad =>
+                    {
+                        var gradExpanded = grad.Broadcast(tensor.Shape);
+                        using var mask = tensor.PointwiseEquals(resultTensor);
+                        return gradExpanded.Multiply(mask);
+                    });
 
-            return resultTensor;
+                return resultTensor;
+            }
         }
     }
 

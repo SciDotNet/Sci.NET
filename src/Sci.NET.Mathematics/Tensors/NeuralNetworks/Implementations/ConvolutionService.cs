@@ -11,9 +11,9 @@ internal class ConvolutionService : IConvolutionService
 {
     private readonly IDeviceGuardService _deviceGuardService;
 
-    public ConvolutionService(ITensorOperationServiceProvider tensorOperationServiceProvider)
+    public ConvolutionService()
     {
-        _deviceGuardService = tensorOperationServiceProvider.GetDeviceGuardService();
+        _deviceGuardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
     }
 
     public Tensor<TNumber> Conv2D<TNumber>(
@@ -37,9 +37,8 @@ internal class ConvolutionService : IConvolutionService
         var outputChannels = kernels.Shape[3];
         var outputHeight = ((inputHeight + (2 * paddingY) - (dilationY * (kernelHeight - 1)) - 1) / strideY) + 1;
         var outputWidth = ((inputWidth + (2 * paddingX) - (dilationX * (kernelWidth - 1)) - 1) / strideX) + 1;
-        var backend = input.Backend;
 
-        _deviceGuardService.GuardMultiParameterOperation(input.Device, kernels.Device);
+        var backend = _deviceGuardService.GuardMultiParameterOperation(input.Device, kernels.Device);
 
         if (inputChannels != kernelChannels)
         {
@@ -61,7 +60,7 @@ internal class ConvolutionService : IConvolutionService
 
         if (input.RequiresGradient)
         {
-            ((ITensor<TNumber>)input).AddParent(output, _ => throw new AutoDiffNotSupportedException(nameof(Conv2D)));
+            ((ITensor<TNumber>)kernels).AddParent(output, _ => throw new AutoDiffNotSupportedException(nameof(Conv2D)));
         }
 
         if (kernels.RequiresGradient)

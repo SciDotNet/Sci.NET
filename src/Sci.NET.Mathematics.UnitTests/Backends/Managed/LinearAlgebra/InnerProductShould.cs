@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Managed;
 using Sci.NET.Mathematics.Tensors;
 
@@ -9,7 +8,7 @@ namespace Sci.NET.Mathematics.UnitTests.Backends.Managed.LinearAlgebra;
 
 public class InnerProductShould
 {
-    private readonly ITensorBackend _sut;
+    private readonly ManagedTensorBackend _sut;
 
     public InnerProductShould()
     {

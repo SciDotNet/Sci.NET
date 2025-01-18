@@ -15,7 +15,9 @@ namespace Sci.NET.Mathematics.Benchmarks.SIMD;
 [NativeMemoryProfiler]
 [MemoryDiagnoser]
 [SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable", Justification = "Benchmark class")]
+#pragma warning disable CA1515
 public class ActivationFunctionBenchmarks
+#pragma warning restore CA1515
 {
     private const int Count = 10000;
     private SystemMemoryBlock<float> _input = null!;

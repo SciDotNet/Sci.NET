@@ -185,7 +185,7 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <returns>The new <see cref="Shape"/>.</returns>
     public Shape ExpandDims(int[] axes)
     {
-        var sortedAxes = axes.OrderBy(x => x).ToArray();
+        var sortedAxes = axes.Order().ToArray();
         var newShape = new List<int>(Dimensions);
 
         foreach (var axis in sortedAxes)

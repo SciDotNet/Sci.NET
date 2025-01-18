@@ -38,12 +38,13 @@ public interface IContractionService
     /// </summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
+    /// <param name="overrideRequiresGradient">Overrides the <see cref="ITensor{TNumber}.RequiresGradient"/> property of the result tensor.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of the inner product operation.</returns>
     /// <exception cref="ArgumentException">Throws when the operand shapes are incompatible with the
     /// inner product operation.</exception>
     /// <exception cref="InvalidShapeException">The given shapes were not compatible with the inner product operation.</exception>
-    public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
+    public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>

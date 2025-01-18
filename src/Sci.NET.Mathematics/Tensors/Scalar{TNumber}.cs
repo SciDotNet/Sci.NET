@@ -33,7 +33,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         IsMemoryOwner = true;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         IsMemoryOwner = true;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
 
         using var systemMemory = new SystemMemoryBlock<TNumber>(1);
         systemMemory[0] = value;
@@ -72,7 +72,7 @@ public sealed class Scalar<TNumber> : ITensor<TNumber>
         IsMemoryOwner = false;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
 
     /// <summary>

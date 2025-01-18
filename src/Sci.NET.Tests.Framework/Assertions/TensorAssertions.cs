@@ -15,13 +15,17 @@ namespace Sci.NET.Tests.Framework.Assertions;
 public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber>, TensorAssertions<TNumber>>
     where TNumber : unmanaged, INumber<TNumber>
 {
+    private readonly AssertionChain _assertionChain;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TensorAssertions{TNumber}"/> class.
     /// </summary>
     /// <param name="subject">The tensor to create assertions for.</param>
-    public TensorAssertions(ITensor<TNumber> subject)
-        : base(subject)
+    /// <param name="chain">The assertion chain.</param>
+    public TensorAssertions(ITensor<TNumber> subject, AssertionChain chain)
+        : base(subject, chain)
     {
+        _assertionChain = chain;
     }
 
     /// <inheritdoc />
@@ -32,10 +36,10 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// </summary>
     /// <param name="shape">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    [CustomAssertion]
     public AndConstraint<TensorAssertions<TNumber>> HaveShape(params int[] shape)
     {
-        _ = Execute
-            .Assertion
+        _ = _assertionChain
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.Shape)
             .ForCondition(tensorShape => tensorShape.SequenceEqual(shape))
@@ -49,10 +53,10 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// </summary>
     /// <param name="shape">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    [CustomAssertion]
     public AndConstraint<TensorAssertions<TNumber>> HaveShape(Shape shape)
     {
-        _ = Execute
-            .Assertion
+        _ = _assertionChain
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.Shape)
             .ForCondition(tensorShape => tensorShape.SequenceEqual(shape))
@@ -66,10 +70,10 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// </summary>
     /// <param name="elements">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    [CustomAssertion]
     public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array elements)
     {
-        _ = Execute
-            .Assertion
+        _ = _assertionChain
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
             .ForCondition(tensorElements => AreEquivalentElements(tensorElements, elements, TNumber.Zero))
@@ -84,12 +88,12 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <param name="values">The expected shape.</param>
     /// <param name="tolerance">The tolerance for the comparison.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    [CustomAssertion]
     public AndConstraint<TensorAssertions<TNumber>> HaveApproximatelyEquivalentElements(Array values, TNumber tolerance)
     {
         if (Subject.IsScalar())
         {
-            _ = Execute
-                .Assertion
+            _ = _assertionChain
                 .BecauseOf(string.Empty, Array.Empty<object>())
                 .Given(() => Subject.Memory[0])
                 .ForCondition(tensorElements => TNumber.Abs(tensorElements - (TNumber)(values.GetValue(0) ?? throw new InvalidOperationException())) <= tolerance)
@@ -97,8 +101,7 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
         }
         else
         {
-            _ = Execute
-                .Assertion
+            _ = _assertionChain
                 .BecauseOf(string.Empty, Array.Empty<object>())
                 .Given(() => Subject.ToArray())
                 .ForCondition(tensorElements => AreEquivalentElements(tensorElements, values, tolerance))
@@ -114,10 +117,10 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <param name="expected">The expected value.</param>
     /// <param name="tolerance">The tolerance for the comparison.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
+    [CustomAssertion]
     public AndConstraint<TensorAssertions<TNumber>> HaveAllElementsApproximately(TNumber expected, TNumber tolerance)
     {
-        _ = Execute
-            .Assertion
+        _ = _assertionChain
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
             .ForCondition(tensorElements => CompareElements(tensorElements, expected, tolerance))

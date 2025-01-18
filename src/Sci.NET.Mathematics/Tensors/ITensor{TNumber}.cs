@@ -67,15 +67,6 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 #pragma warning restore CA1043
 
     /// <summary>
-    /// Gets the transpose of the <see cref="ITensor{TNumber}"/>.
-    /// </summary>
-    /// <returns>The transpose of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> Transpose()
-    {
-        return new Tensor<TNumber>(this, new Shape(Shape.Dimensions.Reverse().ToArray()));
-    }
-
-    /// <summary>
     /// Propagates the gradient backward through the computation graph.
     /// </summary>
     public void Backward();
@@ -105,7 +96,15 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     /// <returns>The recreated <see cref="ITensor{TNumber}"/> as a gradient.</returns>
     public ITensor<TNumber> AsGradient()
     {
-        return new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: false) { IsGradient = true };
+        var value = new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: false) { IsGradient = true };
+
+        if (RequiresGradient)
+        {
+            value.Gradient?.Parents.Clear();
+            value.Gradient?.Dispose();
+        }
+
+        return value;
     }
 
     /// <summary>

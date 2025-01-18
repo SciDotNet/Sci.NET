@@ -19,7 +19,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Scalar<TNumber> Pow<TNumber>(Scalar<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Vector{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
@@ -29,7 +29,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Vector<TNumber> Pow<TNumber>(Vector<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Matrix{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
@@ -39,7 +39,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Matrix<TNumber> Pow<TNumber>(Matrix<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Tensor{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
@@ -49,17 +49,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Tensor<TNumber> Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
-
-    /// <summary>
-    /// Raises a <see cref="Scalar{TNumber}"/> to the power of -1.
-    /// </summary>
-    /// <param name="value">The value to raise to the power of -1.</param>
-    /// <param name="power">The power to raise the value to.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The <paramref name="value"/> raised to the power of -1.</returns>
-    public ITensor<TNumber> PowDerivative<TNumber>(ITensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Scalar{TNumber}"/> to the power of 2.

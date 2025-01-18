@@ -12,13 +12,17 @@ namespace Sci.NET.Tests.Framework.Assertions;
 /// </summary>
 public class BFloat16Assertions : NumericAssertions<BFloat16, BFloat16Assertions>
 {
+    private readonly AssertionChain _assertionChain;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BFloat16Assertions"/> class.
     /// </summary>
     /// <param name="value">The value to create assertions for.</param>
-    public BFloat16Assertions(BFloat16 value)
-        : base(value)
+    /// <param name="chain">The chain of assertions.</param>
+    public BFloat16Assertions(BFloat16 value, AssertionChain chain)
+        : base(value, chain)
     {
+        _assertionChain = chain;
     }
 
     /// <summary>
@@ -29,11 +33,11 @@ public class BFloat16Assertions : NumericAssertions<BFloat16, BFloat16Assertions
     /// <param name="becauseArgs">Zero or more objects to format using the placeholders in <paramref name="because" />.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
     [PublicAPI]
+    [CustomAssertion]
     public new AndConstraint<BFloat16Assertions> Be(BFloat16 expected, string because = "", params object[] becauseArgs)
     {
-        _ = Execute
-            .Assertion
-            .ForCondition(Subject?.Equals(expected) ?? false)
+        _ = _assertionChain
+            .ForCondition(Subject.Equals(expected))
             .BecauseOf(because, becauseArgs)
             .FailWith("Expected {context:value} to be approximately {0}{reason}, but found {1}.", expected, Subject);
 
@@ -50,14 +54,10 @@ public class BFloat16Assertions : NumericAssertions<BFloat16, BFloat16Assertions
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
     /// <exception cref="InvalidOperationException">Thrown when the subject is <see langword="null" /> or not comparable (I.E. infinite, NaN).</exception>
     [PublicAPI]
+    [CustomAssertion]
     public AndConstraint<BFloat16Assertions> BeApproximately(BFloat16 expected, float tolerance, string because = "", params object[] becauseArgs)
     {
-        if (!Subject.HasValue)
-        {
-            throw new InvalidOperationException("Cannot assert that a null value is approximately equal to another value.");
-        }
-
-        if (BFloat16.IsNaN(Subject.Value))
+        if (BFloat16.IsNaN(Subject))
         {
             throw new InvalidOperationException("Cannot assert that a NaN value is approximately equal to another value.");
         }
@@ -67,7 +67,7 @@ public class BFloat16Assertions : NumericAssertions<BFloat16, BFloat16Assertions
             throw new InvalidOperationException("Cannot assert that a value is approximately equal to a NaN value.");
         }
 
-        if (BFloat16.IsPositiveInfinity(Subject.Value) || BFloat16.IsNegativeInfinity(Subject.Value))
+        if (BFloat16.IsPositiveInfinity(Subject) || BFloat16.IsNegativeInfinity(Subject))
         {
             throw new InvalidOperationException("Cannot assert that an infinity value is approximately equal to another value.");
         }
@@ -77,9 +77,8 @@ public class BFloat16Assertions : NumericAssertions<BFloat16, BFloat16Assertions
             throw new InvalidOperationException("Cannot assert that a value is approximately equal to an infinity value.");
         }
 
-        _ = Execute
-            .Assertion
-            .ForCondition(float.Abs((float)Subject.Value - (float)expected) <= tolerance)
+        _ = _assertionChain
+            .ForCondition(float.Abs((float)Subject - (float)expected) <= tolerance)
             .BecauseOf(because, becauseArgs)
             .FailWith(
                 "Expected {context:value} to be approximately {0} +/- {1}{reason}, but found {2}.",

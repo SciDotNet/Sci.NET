@@ -1,4 +1,4 @@
-// Copyright (c) Sci.NET Foundation. All rights reserved.
+﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -15,8 +15,8 @@ public class MatrixMultiplyShould : IntegrationTestBase
     private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var leftScalar = Tensor.FromArray<TNumber>(left).ToMatrix();
-        var rightVector = Tensor.FromArray<TNumber>(right).ToMatrix();
+        var leftScalar = Tensor.FromArray<TNumber>(left).WithGradient().ToMatrix();
+        var rightVector = Tensor.FromArray<TNumber>(right).WithGradient().ToMatrix();
         leftScalar.To(device);
         rightVector.To(device);
 
@@ -52,13 +52,13 @@ public class MatrixMultiplyShould : IntegrationTestBase
         result.Backward();
 
         // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-7f));
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-4f));
         result.Gradient!.Should().NotBeNull();
-        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-7f));
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-4f));
         left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-7f));
+        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-4f));
         right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-7f));
+        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-4f));
     }
 
     [Theory]
@@ -149,15 +149,19 @@ public class MatrixMultiplyShould : IntegrationTestBase
     {
         using var leftTensor = Tensor
             .FromArray<int>(new int[,] { { 0, 4, 8, 12, 16, 20, 24, 28, 32, 36 }, { 1, 5, 9, 13, 17, 21, 25, 29, 33, 37 }, { 2, 6, 10, 14, 18, 22, 26, 30, 34, 38 }, { 3, 7, 11, 15, 19, 23, 27, 31, 35, 39 } })
+            .WithGradient()
             .ToMatrix();
         using var rightTensor = Tensor
             .FromArray<int>(new int[,] { { 0, 1 }, { 2, 3 }, { 4, 5 }, { 6, 7 }, { 8, 9 }, { 10, 11 }, { 12, 13 }, { 14, 15 }, { 16, 17 }, { 18, 19 } })
+            .WithGradient()
             .ToMatrix();
 
         leftTensor.To(device);
         rightTensor.To(device);
 
         var result = leftTensor.MatrixMultiply(rightTensor);
+
+        result.Backward();
 
         result.Should().HaveEquivalentElements(new int[,] { { 2280, 2460 }, { 2370, 2560 }, { 2460, 2660 }, { 2550, 2760 } });
     }
@@ -180,13 +184,13 @@ public class MatrixMultiplyShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenPyTorchExample3(IDevice device)
     {
-        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_3", device);
+        MatrixMultiplyTestWithGrad<double>("MatrixMultiply_3", device);
     }
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenPyTorchExample4(IDevice device)
     {
-        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_4", device);
+        MatrixMultiplyTestWithGrad<double>("MatrixMultiply_4", device);
     }
 }

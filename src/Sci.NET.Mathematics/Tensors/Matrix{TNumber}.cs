@@ -35,7 +35,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         IsMemoryOwner = true;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
         IsMemoryOwner = false;
         Memory.Rent(_id);
         RequiresGradient = requiresGradient;
-        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) : null;
+        Gradient = RequiresGradient ? new Tensor<TNumber>(Shape, Backend, false) { IsGradient = true } : null;
     }
 
     /// <summary>
@@ -357,15 +357,6 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public static Tensor<TNumber> operator /(Matrix<TNumber> left, Tensor<TNumber> right)
     {
         return left.Divide(right);
-    }
-
-    /// <summary>
-    /// Transposes the <see cref="Matrix{TNumber}"/>.
-    /// </summary>
-    /// <returns>The transposed <see cref="Matrix{TNumber}"/>.</returns>
-    public Matrix<TNumber> Transpose()
-    {
-        return ((ITensor<TNumber>)this).Transpose().ToMatrix();
     }
 
     /// <inheritdoc />

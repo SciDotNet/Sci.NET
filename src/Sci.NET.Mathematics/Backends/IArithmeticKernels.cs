@@ -258,6 +258,21 @@ public interface IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Calculates the gradient of the absolute value of a <see cref="IMemoryBlock{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="IMemoryBlock{TNumber}"/> to take the absolute value of.</param>
+    /// <param name="gradient">The incoming gradient.</param>
+    /// <param name="result">The result of the gradient calculation.</param>
+    /// <param name="n">The number of elements to calculate the gradient of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
+    public void AbsGradient<TNumber>(
+        IMemoryBlock<TNumber> tensor,
+        IMemoryBlock<TNumber> gradient,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Finds the absolute difference between two <see cref="IMemoryBlock{TNumber}"/>s.
     /// </summary>
     /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to subtract from.</param>

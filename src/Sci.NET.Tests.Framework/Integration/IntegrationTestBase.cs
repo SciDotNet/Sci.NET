@@ -8,7 +8,9 @@ namespace Sci.NET.Tests.Framework.Integration;
 /// <summary>
 /// Base class for integration tests.
 /// </summary>
+#pragma warning disable CA1515
 public abstract class IntegrationTestBase
+#pragma warning restore CA1515
 {
     /// <summary>
     /// Gets the devices to use for integration tests.
