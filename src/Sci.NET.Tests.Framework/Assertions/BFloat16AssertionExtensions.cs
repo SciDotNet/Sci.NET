@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using FluentAssertions.Execution;
 using Sci.NET.Common.Numerics;
 
 namespace Sci.NET.Tests.Framework.Assertions;
@@ -19,6 +18,6 @@ public static class BFloat16AssertionExtensions
     /// <returns>A <see cref="BFloat16Assertions" /> object for the given <see cref="BFloat16" />.</returns>
     public static BFloat16Assertions Should(this BFloat16 bfloat16)
     {
-        return new(bfloat16, AssertionChain.GetOrCreate());
+        return new(bfloat16);
     }
 }
