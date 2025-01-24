@@ -50,6 +50,33 @@
         <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[1]]_3.safetensors">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="Tensors\Arithmetic\Examples\Add_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Add_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Add_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Multiply_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Multiply_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Multiply_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Subtract_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Subtract_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Subtract_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>

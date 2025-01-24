@@ -21,13 +21,11 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var leftBlock = (SystemMemoryBlock<TNumber>)left;
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            n - vectorCount,
+            n,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
             i =>
             {
                 var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
@@ -36,11 +34,6 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
 
                 resultBlock.UnsafeSetVectorUnchecked(resultVector, i);
             });
-
-        for (; i < n; i++)
-        {
-            resultBlock[i] = leftBlock[i] + rightBlock[i];
-        }
     }
 
     public void AddTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, long n)
@@ -48,13 +41,11 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
     {
         var leftBlock = (SystemMemoryBlock<TNumber>)left;
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            n - vectorCount,
+            n,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
             i =>
             {
                 var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
@@ -63,11 +54,6 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
 
                 leftBlock.UnsafeSetVectorUnchecked(resultVector, i);
             });
-
-        for (; i < n; i++)
-        {
-            leftBlock[i] += rightBlock[i];
-        }
     }
 
     public void AddTensorBroadcastTensor<TNumber>(

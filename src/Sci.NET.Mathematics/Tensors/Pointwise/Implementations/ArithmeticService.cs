@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
@@ -9,6 +10,7 @@ using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 
+[SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "The concrete type is not known at compile time.")]
 internal class ArithmeticService : IArithmeticService
 {
     private readonly IDeviceGuardService _deviceGuardService;
@@ -1881,6 +1883,12 @@ internal class ArithmeticService : IArithmeticService
         }
     }
 
+    public ITensor<TNumber> Abs<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Abs(value.ToTensor());
+    }
+
     public ITensor<TNumber> Multiply<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -2623,6 +2631,30 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
+    public Scalar<TNumber> Sqrt<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToScalar();
+    }
+
+    public Vector<TNumber> Sqrt<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToVector();
+    }
+
+    public Matrix<TNumber> Sqrt<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToMatrix();
+    }
+
+    public Tensor<TNumber> Sqrt<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToTensor();
+    }
+
     public Scalar<TNumber> Negate<TNumber>(Scalar<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -2735,6 +2767,12 @@ internal class ArithmeticService : IArithmeticService
         return result;
     }
 
+    public ITensor<TNumber> Negate<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Negate(value.ToTensor());
+    }
+
     public Scalar<TNumber> Abs<TNumber>(Scalar<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -2840,6 +2878,12 @@ internal class ArithmeticService : IArithmeticService
     }
 
     public ITensor<TNumber> Sqrt<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(tensor);
+    }
+
+    private ITensor<TNumber> SqrtGeneric<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = tensor.Backend;

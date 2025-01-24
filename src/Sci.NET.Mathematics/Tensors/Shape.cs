@@ -200,6 +200,23 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
+    /// Pads the shape with leading dimensions of 1 to the given rank.
+    /// </summary>
+    /// <param name="rank">The rank to pad the shape to.</param>
+    /// <returns>The new <see cref="Shape"/>.</returns>
+    public Shape PadShape(int rank)
+    {
+        var newShape = new List<int>(Dimensions);
+
+        while (newShape.Count < rank)
+        {
+            newShape.Insert(0, 1);
+        }
+
+        return new Shape(newShape.ToArray(), DataOffset);
+    }
+
+    /// <summary>
     /// Gets the multi dimensional indices of the element at the given linear index.
     /// </summary>
     /// <param name="linearIndex">The linear index.</param>

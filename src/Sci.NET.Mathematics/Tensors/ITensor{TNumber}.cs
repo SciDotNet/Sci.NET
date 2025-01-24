@@ -298,10 +298,12 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         if (RequiresGradient)
         {
-            TensorServiceProvider
+            using var newTensor = TensorServiceProvider
                 .GetTensorOperationServiceProvider()
                 .GetArithmeticService()
-                .AddInplace(Gradient, parentGradient);
+                .Add(Gradient, parentGradient);
+
+            newTensor.Memory.CopyTo(Gradient.Memory);
         }
     }
 }

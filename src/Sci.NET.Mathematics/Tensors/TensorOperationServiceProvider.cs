@@ -42,7 +42,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly Lazy<SerializationService> _serializationService;
     private readonly Lazy<CastingService> _castingService;
     private readonly Lazy<ContractionService> _contractionService;
-    private readonly Lazy<ArithmeticService> _arithmeticService;
+    private readonly Lazy<ArithmeticServiceV2> _arithmeticService;
     private readonly Lazy<PowerService> _powerService;
     private readonly Lazy<ReductionService> _reductionService;
     private readonly Lazy<MatrixMultiplicationService> _matrixMultiplicationService;
@@ -65,7 +65,7 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _castingService = new Lazy<CastingService>(() => new CastingService());
         _activationFunctionService = new Lazy<ActivationFunctionService>(() => new ActivationFunctionService());
         _permutationService = new Lazy<PermutationService>(() => new PermutationService());
-        _arithmeticService = new Lazy<ArithmeticService>(() => new ArithmeticService());
+        _arithmeticService = new Lazy<ArithmeticServiceV2>(() => new ArithmeticServiceV2());
         _contractionService = new Lazy<ContractionService>(() => new ContractionService());
         _convolutionService = new Lazy<ConvolutionService>(() => new ConvolutionService());
         _concatenationService = new Lazy<ConcatenationService>(() => new ConcatenationService());

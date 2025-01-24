@@ -856,6 +856,15 @@ public interface IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Negates the values of the <paramref name="value"/> tensor element-wise.
+    /// </summary>
+    /// <param name="value">The tensor whose elements are to be negated.</param>
+    /// <typeparam name="TNumber">The numeric type of the tensor elements.</typeparam>
+    /// <returns>A new tensor with each element being the negation of the corresponding element in the input tensor.</returns>
+    public ITensor<TNumber> Negate<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Finds the absolute value of the <paramref name="value"/>.
     /// </summary>
     /// <param name="value">The value to find the absolute value of.</param>
@@ -892,6 +901,15 @@ public interface IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Finds the absolute value of the <paramref name="value"/>.
+    /// </summary>
+    /// <param name="value">The value to find the absolute value of.</param>
+    /// <typeparam name="TNumber">The number type of the <paramref name="value"/>.</typeparam>
+    /// <returns>The absolute value of the <paramref name="value"/>.</returns>
+    public ITensor<TNumber> Abs<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Finds the element-wise product of the <paramref name="left"/> and <paramref name="right"/> <see cref="ITensor{TNumber}"/>s.
     /// </summary>
     /// <param name="left">The left operand.</param>
@@ -909,6 +927,42 @@ public interface IArithmeticService
     /// <typeparam name="TNumber">The number type of the operands.</typeparam>
     /// <returns>A new <see cref="ITensor{TNumber}"/> containing the element-wise quotient of the <paramref name="left"/> and <paramref name="right"/> operands.</returns>
     public ITensor<TNumber> Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Computes the square root of the given <paramref name="value"/> <see cref="Scalar{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The scalar value for which to calculate the square root.</param>
+    /// <typeparam name="TNumber">The number type of the scalar value.</typeparam>
+    /// <returns>The square root of the <paramref name="value"/> as a <see cref="Scalar{TNumber}"/>.</returns>
+    public Scalar<TNumber> Sqrt<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Computes the square root of each component in the given <paramref name="value"/> <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The vector whose components' square roots are to be calculated.</param>
+    /// <typeparam name="TNumber">The numerical type of the vector components.</typeparam>
+    /// <returns>A new <see cref="Vector{TNumber}"/> where each component is the square root of the corresponding component in the <paramref name="value"/>.</returns>
+    public Vector<TNumber> Sqrt<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Computes the square root of each element in the specified <paramref name="value"/> <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The matrix whose elements' square roots are to be computed.</param>
+    /// <typeparam name="TNumber">The numeric type of the matrix elements.</typeparam>
+    /// <returns>A new <see cref="Matrix{TNumber}"/> where each element is the square root of the corresponding element in <paramref name="value"/>.</returns>
+    public Matrix<TNumber> Sqrt<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Computes the element-wise square root of the provided <paramref name="value"/> tensor.
+    /// </summary>
+    /// <param name="value">The tensor whose elements are to be square rooted.</param>
+    /// <typeparam name="TNumber">The numeric type of the tensor's elements.</typeparam>
+    /// <returns>A tensor where each element is the square root of the corresponding element in the <paramref name="value"/> tensor.</returns>
+    public Tensor<TNumber> Sqrt<TNumber>(Tensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
