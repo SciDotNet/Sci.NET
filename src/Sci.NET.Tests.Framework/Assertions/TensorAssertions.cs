@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -33,23 +33,6 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <param name="shape">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
     public AndConstraint<TensorAssertions<TNumber>> HaveShape(params int[] shape)
-    {
-        _ = Execute
-            .Assertion
-            .BecauseOf(string.Empty, Array.Empty<object>())
-            .Given(() => Subject.Shape)
-            .ForCondition(tensorShape => tensorShape.SequenceEqual(shape))
-            .FailWith("Expected tensor to have shape {0}{reason}, but found {1}.", shape, Subject.Shape);
-
-        return new AndConstraint<TensorAssertions<TNumber>>(this);
-    }
-
-    /// <summary>
-    /// Asserts that the tensor has the given shape.
-    /// </summary>
-    /// <param name="shape">The expected shape.</param>
-    /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
-    public AndConstraint<TensorAssertions<TNumber>> HaveShape(Shape shape)
     {
         _ = Execute
             .Assertion

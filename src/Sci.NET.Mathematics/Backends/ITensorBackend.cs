@@ -57,11 +57,6 @@ public interface ITensorBackend
     public ICastingKernels Casting { get; }
 
     /// <summary>
-    /// Gets the <see cref="INeuralNetworkKernels"/> instance for the <see cref="ITensorBackend"/>.
-    /// </summary>
-    public INeuralNetworkKernels NeuralNetworks { get; }
-
-    /// <summary>
     /// Gets the <see cref="IActivationFunctionKernels"/> instance for the <see cref="ITensorBackend"/>.
     /// </summary>
     public IActivationFunctionKernels ActivationFunctions { get; }

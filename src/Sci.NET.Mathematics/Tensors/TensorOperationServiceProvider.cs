@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Mathematics.Tensors.Common;
@@ -46,7 +46,6 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     private readonly Lazy<PowerService> _powerService;
     private readonly Lazy<ReductionService> _reductionService;
     private readonly Lazy<MatrixMultiplicationService> _matrixMultiplicationService;
-    private readonly Lazy<ConvolutionService> _convolutionService;
     private readonly Lazy<ConcatenationService> _concatenationService;
     private readonly Lazy<TensorEqualityOperationService> _tensorEqualityOperationService;
 
@@ -67,7 +66,6 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
         _permutationService = new Lazy<PermutationService>(() => new PermutationService());
         _arithmeticService = new Lazy<ArithmeticServiceV2>(() => new ArithmeticServiceV2());
         _contractionService = new Lazy<ContractionService>(() => new ContractionService());
-        _convolutionService = new Lazy<ConvolutionService>(() => new ConvolutionService());
         _concatenationService = new Lazy<ConcatenationService>(() => new ConcatenationService());
         _tensorEqualityOperationService = new Lazy<TensorEqualityOperationService>(() => new TensorEqualityOperationService());
         _matrixMultiplicationService = new Lazy<MatrixMultiplicationService>(() => new MatrixMultiplicationService());
@@ -128,11 +126,6 @@ internal class TensorOperationServiceProvider : ITensorOperationServiceProvider
     public ICastingService GetCastingService()
     {
         return _castingService.Value;
-    }
-
-    public IConvolutionService GetConvolutionService()
-    {
-        return _convolutionService.Value;
     }
 
     public IConcatenationService GetConcatenationService()

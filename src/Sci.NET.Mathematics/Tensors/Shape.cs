@@ -383,21 +383,16 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        var result = ElementCount - DataOffset;
-        var shift = 0;
+        var result = 0;
 
-        foreach (var dim in Dimensions)
+        for (var index = 0; index < Dimensions.Length; index++)
         {
-            shift = (shift + 11) % 21;
-            result ^= (dim + 1024) << shift;
+            var dim = Dimensions[index];
+            var stride = Strides[index];
+            result = HashCode.Combine(result, stride, dim);
         }
 
-        while (result > int.MaxValue)
-        {
-            result = (result >> 32) ^ (result & int.MaxValue);
-        }
-
-        return (int)result;
+        return HashCode.Combine(result, DataOffset);
     }
 
     /// <inheritdoc/>

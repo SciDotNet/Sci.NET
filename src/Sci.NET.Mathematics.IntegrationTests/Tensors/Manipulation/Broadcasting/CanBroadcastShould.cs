@@ -46,12 +46,10 @@ public class CanBroadcastShould
     public void ReturnExpectedResult_GivenTwoShapes(Shape original, Shape target, bool expected)
     {
         // Arrange
-        var broadcastingService = TensorServiceProvider
-            .GetTensorOperationServiceProvider()
-            .GetBroadcastingService();
+        var tensor = Tensor.Ones<int>(original);
 
         // Act
-        var actual = broadcastingService.CanBroadcastTo(original, target);
+        var actual = tensor.CanBroadcastTo(target);
 
         // Assert
         actual.Should().Be(expected);

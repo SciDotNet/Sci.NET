@@ -2,10 +2,6 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
-using Sci.NET.Common.Concurrency;
-#pragma warning disable RCS1056
-using ReaderWriterLock = Sci.NET.Common.Concurrency.ReaderWriterLock;
-#pragma warning restore RCS1056
 
 namespace Sci.NET.Common.Collections;
 
@@ -14,9 +10,9 @@ namespace Sci.NET.Common.Collections;
 /// </summary>
 /// <typeparam name="T">The type of the elements in the list.</typeparam>
 [PublicAPI]
-public class ConcurrentList<T>
+public class ConcurrentList<T> : IDisposable
 {
-    private readonly IReaderWriterLock _lock;
+    private readonly ReaderWriterLockSlim _lock;
     private readonly List<T> _list;
 
     /// <summary>
@@ -26,7 +22,7 @@ public class ConcurrentList<T>
     [ExcludeFromCodeCoverage]
     public ConcurrentList(int capacity = 0)
     {
-        _lock = new ReaderWriterLock();
+        _lock = new ReaderWriterLockSlim();
         _list = new List<T>(capacity);
     }
 
@@ -35,7 +31,7 @@ public class ConcurrentList<T>
     /// </summary>
     /// <param name="readerWriterLock">The reader-writer lock to use for thread safety.</param>
     /// <param name="capacity">The initial capacity of the list.</param>
-    public ConcurrentList(IReaderWriterLock readerWriterLock, int capacity = 0)
+    public ConcurrentList(ReaderWriterLockSlim readerWriterLock, int capacity = 0)
     {
         _lock = readerWriterLock;
         _list = new List<T>(capacity);
@@ -62,7 +58,7 @@ public class ConcurrentList<T>
     /// <param name="item">The element to add.</param>
     public void Add(T item)
     {
-        _lock.AcquireWriterLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterWriteLock();
 
         try
         {
@@ -70,7 +66,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseWriterLock();
+            _lock.ExitWriteLock();
         }
     }
 
@@ -80,7 +76,7 @@ public class ConcurrentList<T>
     /// <param name="items">The elements to add.</param>
     public void AddRange(IEnumerable<T> items)
     {
-        _lock.AcquireWriterLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterWriteLock();
 
         try
         {
@@ -88,7 +84,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseWriterLock();
+            _lock.ExitWriteLock();
         }
     }
 
@@ -99,7 +95,7 @@ public class ConcurrentList<T>
     /// <param name="item">The element to insert.</param>
     public void Insert(int index, T item)
     {
-        _lock.AcquireWriterLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterWriteLock();
 
         try
         {
@@ -107,7 +103,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseWriterLock();
+            _lock.ExitWriteLock();
         }
     }
 
@@ -118,7 +114,7 @@ public class ConcurrentList<T>
     /// <returns>The element at the specified index.</returns>
     public T ElementAt(int index)
     {
-        _lock.AcquireReaderLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterReadLock();
 
         try
         {
@@ -126,7 +122,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseReaderLock();
+            _lock.ExitReadLock();
         }
     }
 
@@ -137,7 +133,7 @@ public class ConcurrentList<T>
     /// <param name="item">The element to replace.</param>
     public void ReplaceAt(int index, T item)
     {
-        _lock.AcquireWriterLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterWriteLock();
 
         try
         {
@@ -145,7 +141,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseWriterLock();
+            _lock.ExitWriteLock();
         }
     }
 
@@ -156,7 +152,7 @@ public class ConcurrentList<T>
     /// <returns>True if the list contains the element, false otherwise.</returns>
     public bool Contains(T item)
     {
-        _lock.AcquireReaderLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterReadLock();
 
         try
         {
@@ -164,7 +160,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseReaderLock();
+            _lock.ExitReadLock();
         }
     }
 
@@ -175,7 +171,7 @@ public class ConcurrentList<T>
     /// <returns>True if the element was removed, false otherwise.</returns>
     public bool Remove(T element)
     {
-        _lock.AcquireWriterLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterWriteLock();
 
         try
         {
@@ -183,13 +179,32 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseWriterLock();
+            _lock.ExitWriteLock();
+        }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Disposes of the resources used by the <see cref="ConcurrentList{T}"/>.
+    /// </summary>
+    /// <param name="disposing">True if disposing, false otherwise.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _lock.Dispose();
         }
     }
 
     private int GetCount()
     {
-        _lock.AcquireReaderLock(Timeout.InfiniteTimeSpan);
+        _lock.EnterReadLock();
 
         try
         {
@@ -197,7 +212,7 @@ public class ConcurrentList<T>
         }
         finally
         {
-            _lock.ReleaseReaderLock();
+            _lock.ExitReadLock();
         }
     }
 }

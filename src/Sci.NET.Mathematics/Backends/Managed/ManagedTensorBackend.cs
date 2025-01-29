@@ -27,7 +27,6 @@ public class ManagedTensorBackend : ITensorBackend
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
         Casting = new ManagedCastingKernels();
-        NeuralNetworks = new ManagedNeuralNetworkKernels();
         ActivationFunctions = new ManagedActivationFunctionKernels();
         Broadcasting = new ManagedBroadcastingKernels();
         Permutation = new ManagedPermutationKernels();
@@ -66,9 +65,6 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public ICastingKernels Casting { get; }
-
-    /// <inheritdoc />
-    public INeuralNetworkKernels NeuralNetworks { get; }
 
     /// <inheritdoc />
     public IActivationFunctionKernels ActivationFunctions { get; }

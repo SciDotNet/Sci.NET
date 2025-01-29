@@ -89,15 +89,9 @@ public interface ITensorOperationServiceProvider
     public ICastingService GetCastingService();
 
     /// <summary>
-    /// Gets an instance of the <see cref="IConvolutionService"/>.
-    /// </summary>
-    /// <returns>An instance of the <see cref="IConvolutionService"/>.</returns>
-    public IConvolutionService GetConvolutionService();
-
-    /// <summary>
     /// Gets an instance of the <see cref="IConcatenationService"/>.
     /// </summary>
-    /// <returns>An instance of the <see cref="IConvolutionService"/>.</returns>
+    /// <returns>An instance of the <see cref="IConcatenationService"/>.</returns>
     public IConcatenationService GetConcatenationService();
 
     /// <summary>
