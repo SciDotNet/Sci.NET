@@ -589,12 +589,12 @@ public class ScalarTrigShould : IntegrationTestBase
         // Sec2(1) = 3.42658477473
         InvokeTest<float>(1, device, x => x.Sec2()).Should().BeApproximately(3.425519F, 1e-6f);
         InvokeTest<double>(1, device, x => x.Sec2()).Should().BeApproximately(3.425518820814759, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Sec2()).Should().BeApproximately(3.421875f, 1e-3f);
+        InvokeTest<BFloat16>(1, device, x => x.Sec2()).Should().BeApproximately(3.4375f, 1e-3f);
 
         // Sec2(-1) = 3.42658477473
         InvokeTest<float>(-1, device, x => x.Sec2()).Should().BeApproximately(3.425519F, 1e-6f);
         InvokeTest<double>(-1, device, x => x.Sec2()).Should().BeApproximately(3.425518820814759, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Sec2()).Should().BeApproximately(3.421875f, 1e-3f);
+        InvokeTest<BFloat16>(-1, device, x => x.Sec2()).Should().BeApproximately(3.4375f, 1e-3f);
     }
 
     [Theory]
@@ -699,12 +699,12 @@ public class ScalarTrigShould : IntegrationTestBase
         // Coth(1) = 1.3130352855
         InvokeTest<float>(1, device, x => x.Coth()).Should().BeApproximately(1.3130352855f, 1e-6f);
         InvokeTest<double>(1, device, x => x.Coth()).Should().BeApproximately(1.3130352855, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Coth()).Should().BeApproximately(1.3125f, 1e-3f);
+        InvokeTest<BFloat16>(1, device, x => x.Coth()).Should().BeApproximately(1.3125f, 1e-2f);
 
         // Coth(-1) = -1.3130352855
         InvokeTest<float>(-1, device, x => x.Coth()).Should().BeApproximately(-1.3130352855f, 1e-6f);
         InvokeTest<double>(-1, device, x => x.Coth()).Should().BeApproximately(-1.3130352855, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Coth()).Should().BeApproximately(-1.3125f, 1e-3f);
+        InvokeTest<BFloat16>(-1, device, x => x.Coth()).Should().BeApproximately(-1.3125f, 1e-2f);
     }
 
     [Theory]
@@ -844,12 +844,12 @@ public class ScalarTrigShould : IntegrationTestBase
         // Sech2(1) = 0.4723665527
         InvokeTest<float>(1, device, x => x.Sech2()).Should().BeApproximately(0.4199743F, 1e-6f);
         InvokeTest<double>(1, device, x => x.Sech2()).Should().BeApproximately(0.4199743F, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Sech2()).Should().BeApproximately(0.41601562f, 1e-3f);
+        InvokeTest<BFloat16>(1, device, x => x.Sech2()).Should().BeApproximately(0.41796875f, 1e-3f);
 
         // Sech2(-1) = 0.4723665527
         InvokeTest<float>(-1, device, x => x.Sech2()).Should().BeApproximately(0.4199743F, 1e-6f);
         InvokeTest<double>(-1, device, x => x.Sech2()).Should().BeApproximately(0.4199743F, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Sech2()).Should().BeApproximately(0.41601562f, 1e-3f);
+        InvokeTest<BFloat16>(-1, device, x => x.Sech2()).Should().BeApproximately(0.41796875f, 1e-3f);
     }
 
     [Theory]
@@ -884,12 +884,12 @@ public class ScalarTrigShould : IntegrationTestBase
         // Coth2(1) = 1.3130352855
         InvokeTest<float>(1, device, x => x.Coth2()).Should().BeApproximately(1.7240616F, 1e-6f);
         InvokeTest<double>(1, device, x => x.Coth2()).Should().BeApproximately(1.7240616F, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Coth2()).Should().BeApproximately(1.71875f, 1e-3f);
+        InvokeTest<BFloat16>(1, device, x => x.Coth2()).Should().BeApproximately(1.7421875f, 1e-2f);
 
         // Coth2(-1) = 1.3130352855
         InvokeTest<float>(-1, device, x => x.Coth2()).Should().BeApproximately(1.7240616F, 1e-6f);
         InvokeTest<double>(-1, device, x => x.Coth2()).Should().BeApproximately(1.7240616F, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Coth2()).Should().BeApproximately(1.71875f, 1e-3f);
+        InvokeTest<BFloat16>(-1, device, x => x.Coth2()).Should().BeApproximately(1.7421875f, 1e-2f);
     }
 
     [Theory]

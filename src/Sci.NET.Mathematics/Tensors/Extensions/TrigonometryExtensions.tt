@@ -3,77 +3,75 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".cs" #>
 <#
-    var functions = new List<(string FunctionName, string Description, string TypeConstraints)>
+    var functions = new List<TrigFunctionTemplate>
     {
-        ("Sin", "Sine", "ITrigonometricFunctions<TNumber>"),
-        ("Cos", "Cosine", "ITrigonometricFunctions<TNumber>"),
-        ("Tan", "Tangent", "ITrigonometricFunctions<TNumber>"),
-        ("Sin2", "Sine Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Cos2", "Cosine Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Tan2", "Tangent Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Sinh", "Hyperbolic Sine", "IHyperbolicFunctions<TNumber>"),
-        ("Cosh", "Hyperbolic Cosine", "IHyperbolicFunctions<TNumber>"),
-        ("Tanh", "Hyperbolic Tangent", "IHyperbolicFunctions<TNumber>"),
-        ("Sinh2", "Hyperbolic Sine Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Cosh2", "Hyperbolic Cosine Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Tanh2", "Hyperbolic Tangent Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Asin", "Inverse Sine", "ITrigonometricFunctions<TNumber>"),
-        ("Acos", "Inverse Cosine", "ITrigonometricFunctions<TNumber>"),
-        ("Atan", "Inverse Tangent", "ITrigonometricFunctions<TNumber>"),
-        ("Asin2", "Inverse Sine Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Acos2", "Inverse Cosine Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Atan2", "Inverse Tangent Squared", "ITrigonometricFunctions<TNumber>"),
-        ("ASinh", "Hyperbolic Inverse Sine", "IHyperbolicFunctions<TNumber>"),
-        ("ACosh", "Hyperbolic Inverse Cosine", "IHyperbolicFunctions<TNumber>"),
-        ("ATanh", "Hyperbolic Inverse Tangent", "IHyperbolicFunctions<TNumber>"),
-        ("ASinh2", "Hyperbolic Inverse Sine Squared", "IHyperbolicFunctions<TNumber>"),
-        ("ACosh2", "Hyperbolic Inverse Cosine Squared", "IHyperbolicFunctions<TNumber>"),
-        ("ATanh2", "Hyperbolic Inverse Tangent Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Csc", "Cosecant", "ITrigonometricFunctions<TNumber>"),
-        ("Sec", "Secant", "ITrigonometricFunctions<TNumber>"),
-        ("Cot", "Cotangent", "ITrigonometricFunctions<TNumber>"),
-        ("Csc2", "Cosecant Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Sec2", "Secant Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Cot2", "Cotangent Squared", "ITrigonometricFunctions<TNumber>"),
-        ("Csch", "Hyperbolic Cosecant", "IHyperbolicFunctions<TNumber>"),
-        ("Sech", "Hyperbolic Secant", "IHyperbolicFunctions<TNumber>"),
-        ("Coth", "Hyperbolic Cotangent", "IHyperbolicFunctions<TNumber>"),
-        ("Csch2", "Hyperbolic Cosecant Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Sech2", "Hyperbolic Secant Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Coth2", "Hyperbolic Cotangent Squared", "IHyperbolicFunctions<TNumber>"),
-        ("Acsc", "Inverse Cosecant", "ITrigonometricFunctions<TNumber>"),
-        ("Asec", "Inverse Secant", "ITrigonometricFunctions<TNumber>"),
-        ("Acot", "Inverse Cotangent", "ITrigonometricFunctions<TNumber>"),
-        ("ACsc2", "Inverse Cosecant Squared", "ITrigonometricFunctions<TNumber>"),
-        ("ASec2", "Inverse Secant Squared", "ITrigonometricFunctions<TNumber>"),
-        ("ACot2", "Inverse Cotangent Squared", "ITrigonometricFunctions<TNumber>"),
-        ("ACsch", "Hyperbolic Inverse Cosecant", "IHyperbolicFunctions<TNumber>"),
-        ("ASech", "Hyperbolic Inverse Secant", "IHyperbolicFunctions<TNumber>"),
-        ("ACoth", "Hyperbolic Inverse Cotangent", "IHyperbolicFunctions<TNumber>"),
-        ("ACsch2", "Hyperbolic Inverse Cosecant Squared", "IHyperbolicFunctions<TNumber>"),
-        ("ASech2", "Hyperbolic Inverse Secant Squared", "IHyperbolicFunctions<TNumber>"),
-        ("ACoth2", "Hyperbolic Inverse Cotangent Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sin", "Sine", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Cos", "Cosine", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Tan", "Tangent", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sin2", "Sine Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Cos2", "Cosine Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Tan2", "Tangent Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sinh", "Hyperbolic Sine", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Cosh", "Hyperbolic Cosine", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Tanh", "Hyperbolic Tangent", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sinh2", "Hyperbolic Sine Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Cosh2", "Hyperbolic Cosine Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Tanh2", "Hyperbolic Tangent Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asin", "Inverse Sine", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acos", "Inverse Cosine", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Atan", "Inverse Tangent", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asin2", "Inverse Sine Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acos2", "Inverse Cosine Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Atan2", "Inverse Tangent Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("ASinh", "Hyperbolic Inverse Sine", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACosh", "Hyperbolic Inverse Cosine", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ATanh", "Hyperbolic Inverse Tangent", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ASinh2", "Hyperbolic Inverse Sine Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACosh2", "Hyperbolic Inverse Cosine Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ATanh2", "Hyperbolic Inverse Tangent Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Csc", "Cosecant", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sec", "Secant", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Cot", "Cotangent", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Csc2", "Cosecant Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sec2", "Secant Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Cot2", "Cotangent Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Csch", "Hyperbolic Cosecant", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sech", "Hyperbolic Secant", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Coth", "Hyperbolic Cotangent", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Csch2", "Hyperbolic Cosecant Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Sech2", "Hyperbolic Secant Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Coth2", "Hyperbolic Cotangent Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acsc", "Inverse Cosecant", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Asec", "Inverse Secant", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("Acot", "Inverse Cotangent", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACsc2", "Inverse Cosecant Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("ASec2", "Inverse Secant Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACot2", "Inverse Cotangent Squared", "ITrigonometricFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACsch", "Hyperbolic Inverse Cosecant", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ASech", "Hyperbolic Inverse Secant", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACoth", "Hyperbolic Inverse Cotangent", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACsch2", "Hyperbolic Inverse Cosecant Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ASech2", "Hyperbolic Inverse Secant Squared", "IHyperbolicFunctions<TNumber>"),
+        new TrigFunctionTemplate("ACoth2", "Hyperbolic Inverse Cotangent Squared", "IHyperbolicFunctions<TNumber>"),
     };
 
-    var tensorTypes = new List<(string Name, string ToFunction)>
+    var tensorTypes = new List<TensorTypeTemplate>
     {
-        ("Scalar", ".ToScalar()"),
-        ("Vector", ".ToVector()"),
-        ("Matrix", ".ToMatrix()"),
-        ("Tensor", ".ToTensor()"),
-        ("ITensor", ""),
+        new TensorTypeTemplate("Scalar", ".ToScalar()"),
+        new TensorTypeTemplate("Vector", ".ToVector()"),
+        new TensorTypeTemplate("Matrix", ".ToMatrix()"),
+        new TensorTypeTemplate("Tensor", ".ToTensor()"),
+        new TensorTypeTemplate("ITensor", ""),
     };
 #>
 // Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+// <auto-generated />
 
 using System.Diagnostics;
 using System.Numerics;
 
-// ReSharper disable once CheckNamespace
-#pragma warning disable IDE0130
 namespace Sci.NET.Mathematics.Tensors;
-#pragma warning restore IDE0130
 
 /// <summary>
 /// A class containing extension methods for trigonometric functions.
@@ -82,20 +80,26 @@ namespace Sci.NET.Mathematics.Tensors;
 public static class TrigonometryExtensions
 {
 <#
-    foreach (var (functionName, description, constraints) in functions)
+    foreach (var function in functions)
     {
-        foreach (var (tensorType, toFunction) in tensorTypes)
+        var functionName = function.FunctionName;
+        var description = function.Description;
+        var constraints = function.TypeConstraints;
+        
+        foreach (var type in tensorTypes)
         {
+            var tensorType = type.Name;
+            var toFunction = type.ToFunction;
 #>
     /// <summary>
-    /// Computes the <#= description #> of the specified <see cref="<#=tensorType#>{TNumber}"/>.
+    /// Computes the <#= description #> of the specified <see cref="<#= tensorType #>{TNumber}"/>.
     /// </summary>
-    /// <param name="tensor">The tensor to calculate the <#=description#> of.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="<#=tensorType#>{TNumber}"/>.</typeparam>
-    /// <returns>The <#= description #> of the specified <see cref="<#=tensorType#>{TNumber}"/>.</returns>
+    /// <param name="tensor">The tensor to calculate the <#= description #> of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="<#= tensorType #>{TNumber}"/>.</typeparam>
+    /// <returns>The <#= description #> of the specified <see cref="<#= tensorType #>{TNumber}"/>.</returns>
     [DebuggerStepThrough]
     public static <#= tensorType #><TNumber> <#= functionName #><TNumber>(this <#= tensorType #><TNumber> tensor)
-        where TNumber : unmanaged, INumber<TNumber>, <#= constraints #>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, <#= constraints #>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -108,7 +112,33 @@ public static class TrigonometryExtensions
         }
     }
 #>
-#pragma warning disable RCS1036
+}<#+
+    public class TrigFunctionTemplate
+    {
+        public string FunctionName { get; set; }
 
-#pragma warning restore RCS1036
-}
+        public string Description { get; set; }
+
+        public string TypeConstraints { get; set; }
+
+        public TrigFunctionTemplate(string functionName, string description, string typeConstraints)
+        {
+            FunctionName = functionName;
+            Description = description;
+            TypeConstraints = typeConstraints;
+        }
+    }
+
+    public class TensorTypeTemplate
+    {
+        public string Name { get; set; }
+
+        public string ToFunction { get; set; }
+
+        public TensorTypeTemplate(string name, string toFunction)
+        {
+            Name = name;
+            ToFunction = toFunction;
+        }
+    }
+#>
