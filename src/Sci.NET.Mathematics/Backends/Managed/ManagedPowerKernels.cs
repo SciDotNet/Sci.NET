@@ -4,8 +4,6 @@
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics.Intrinsics;
-using Sci.NET.Common.Numerics.Intrinsics.Extensions;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -58,29 +56,12 @@ internal class ManagedPowerKernels : IPowerKernels
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
         var resultBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var vectorSize = SimdVector.Count<TNumber>();
-        var done = 0L;
 
-        if (value.Shape.ElementCount > vectorSize)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                valueBlock.Length,
-                ManagedTensorBackend.ParallelizationThreshold,
-                vectorSize,
-                i =>
-                {
-                    var simdVector = valueBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-                    var exp = simdVector.Exp();
-
-                    resultBlock.UnsafeSetVectorUnchecked(exp, i);
-                });
-        }
-
-        for (var i = done; i < valueBlock.Length; i++)
-        {
-            resultBlock[i] = TNumber.Exp(valueBlock[i]);
-        }
+        _ = LazyParallelExecutor.For(
+            0,
+            valueBlock.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => resultBlock[i] = TNumber.Exp(valueBlock[i]));
     }
 
     public void Log<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
