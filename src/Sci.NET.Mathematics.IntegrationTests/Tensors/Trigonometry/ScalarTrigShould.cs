@@ -267,19 +267,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForAsin(IDevice device)
     {
         // Asin(0) = 0
-        InvokeTest<float>(0.0f, device, x => x.Asin()).Should().BeApproximately(0.0f, 1e-6f);
-        InvokeTest<double>(0.0, device, x => x.Asin()).Should().BeApproximately(0.0, 1e-6);
-        InvokeTest<BFloat16>(0.0f, device, x => x.Asin()).Should().BeApproximately(0.0f, 1e-3f);
+        InvokeTest<float>(0.0f, device, x => x.ASin()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ASin()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ASin()).Should().BeApproximately(0.0f, 1e-3f);
 
         // Asin(1) = π/2
-        InvokeTest<float>(1.0f, device, x => x.Asin()).Should().BeApproximately(float.Pi / 2.0f, 1e-6f);
-        InvokeTest<double>(1.0, device, x => x.Asin()).Should().BeApproximately(double.Pi / 2.0, 1e-6);
-        InvokeTest<BFloat16>(1.0f, device, x => x.Asin()).Should().BeApproximately(BFloat16.Pi / 2.0f, 1e-3f);
+        InvokeTest<float>(1.0f, device, x => x.ASin()).Should().BeApproximately(float.Pi / 2.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ASin()).Should().BeApproximately(double.Pi / 2.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ASin()).Should().BeApproximately(BFloat16.Pi / 2.0f, 1e-3f);
 
         // Asin(-1) = -π/2
-        InvokeTest<float>(-1.0f, device, x => x.Asin()).Should().BeApproximately(-float.Pi / 2.0f, 1e-6f);
-        InvokeTest<double>(-1.0, device, x => x.Asin()).Should().BeApproximately(-double.Pi / 2.0, 1e-6);
-        InvokeTest<BFloat16>(-1.0f, device, x => x.Asin()).Should().BeApproximately(-BFloat16.Pi / 2.0f, 1e-3f);
+        InvokeTest<float>(-1.0f, device, x => x.ASin()).Should().BeApproximately(-float.Pi / 2.0f, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.ASin()).Should().BeApproximately(-double.Pi / 2.0, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ASin()).Should().BeApproximately(-BFloat16.Pi / 2.0f, 1e-3f);
     }
 
     [Theory]
@@ -287,19 +287,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForAcos(IDevice device)
     {
         // Acos(0) = π/2
-        InvokeTest<float>(0.0f, device, x => x.Acos()).Should().BeApproximately(float.Pi / 2.0f, 1e-6f);
-        InvokeTest<double>(0.0, device, x => x.Acos()).Should().BeApproximately(double.Pi / 2.0, 1e-6);
-        InvokeTest<BFloat16>(0.0f, device, x => x.Acos()).Should().BeApproximately(BFloat16.Pi / 2.0f, 1e-3f);
+        InvokeTest<float>(0.0f, device, x => x.ACos()).Should().BeApproximately(float.Pi / 2.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ACos()).Should().BeApproximately(double.Pi / 2.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ACos()).Should().BeApproximately(BFloat16.Pi / 2.0f, 1e-3f);
 
         // Acos(1) = 0
-        InvokeTest<float>(1.0f, device, x => x.Acos()).Should().BeApproximately(0.0f, 1e-6f);
-        InvokeTest<double>(1.0, device, x => x.Acos()).Should().BeApproximately(0.0, 1e-6);
-        InvokeTest<BFloat16>(1.0f, device, x => x.Acos()).Should().BeApproximately(0.0f, 1e-3f);
+        InvokeTest<float>(1.0f, device, x => x.ACos()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ACos()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ACos()).Should().BeApproximately(0.0f, 1e-3f);
 
         // Acos(-1) = π
-        InvokeTest<float>(-1.0f, device, x => x.Acos()).Should().BeApproximately(float.Pi, 1e-6f);
-        InvokeTest<double>(-1.0, device, x => x.Acos()).Should().BeApproximately(double.Pi, 1e-6);
-        InvokeTest<BFloat16>(-1.0f, device, x => x.Acos()).Should().BeApproximately(BFloat16.Pi, 1e-3f);
+        InvokeTest<float>(-1.0f, device, x => x.ACos()).Should().BeApproximately(float.Pi, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.ACos()).Should().BeApproximately(double.Pi, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ACos()).Should().BeApproximately(BFloat16.Pi, 1e-3f);
     }
 
     [Theory]
@@ -307,19 +307,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForAtan(IDevice device)
     {
         // Atan(0) = 0
-        InvokeTest<float>(0.0f, device, x => x.Atan()).Should().BeApproximately(0.0f, 1e-6f);
-        InvokeTest<double>(0.0, device, x => x.Atan()).Should().BeApproximately(0.0, 1e-6);
-        InvokeTest<BFloat16>(0.0f, device, x => x.Atan()).Should().BeApproximately(0.0f, 1e-3f);
+        InvokeTest<float>(0.0f, device, x => x.ATan()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ATan()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ATan()).Should().BeApproximately(0.0f, 1e-3f);
 
         // Atan(1) = π/4
-        InvokeTest<float>(1.0f, device, x => x.Atan()).Should().BeApproximately(float.Pi / 4.0f, 1e-6f);
-        InvokeTest<double>(1.0, device, x => x.Atan()).Should().BeApproximately(double.Pi / 4.0, 1e-6);
-        InvokeTest<BFloat16>(1.0f, device, x => x.Atan()).Should().BeApproximately(BFloat16.Pi / 4.0f, 1e-3f);
+        InvokeTest<float>(1.0f, device, x => x.ATan()).Should().BeApproximately(float.Pi / 4.0f, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ATan()).Should().BeApproximately(double.Pi / 4.0, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ATan()).Should().BeApproximately(BFloat16.Pi / 4.0f, 1e-3f);
 
         // Atan(-1) = -π/4
-        InvokeTest<float>(-1.0f, device, x => x.Atan()).Should().BeApproximately(-float.Pi / 4.0f, 1e-6f);
-        InvokeTest<double>(-1.0, device, x => x.Atan()).Should().BeApproximately(-double.Pi / 4.0, 1e-6);
-        InvokeTest<BFloat16>(-1.0f, device, x => x.Atan()).Should().BeApproximately(-BFloat16.Pi / 4.0f, 1e-3f);
+        InvokeTest<float>(-1.0f, device, x => x.ATan()).Should().BeApproximately(-float.Pi / 4.0f, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.ATan()).Should().BeApproximately(-double.Pi / 4.0, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ATan()).Should().BeApproximately(-BFloat16.Pi / 4.0f, 1e-3f);
     }
 
     [Theory]
@@ -447,19 +447,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForASin2(IDevice device)
     {
         // Asin2(0) = 0
-        InvokeTest<float>(0.0f, device, x => x.Asin2()).Should().BeApproximately(0.0f, 1e-6f);
-        InvokeTest<double>(0.0, device, x => x.Asin2()).Should().BeApproximately(0.0, 1e-6);
-        InvokeTest<BFloat16>(0.0f, device, x => x.Asin2()).Should().BeApproximately(0.0f, 1e-3f);
+        InvokeTest<float>(0.0f, device, x => x.ASin2()).Should().BeApproximately(0.0f, 1e-6f);
+        InvokeTest<double>(0.0, device, x => x.ASin2()).Should().BeApproximately(0.0, 1e-6);
+        InvokeTest<BFloat16>(0.0f, device, x => x.ASin2()).Should().BeApproximately(0.0f, 1e-3f);
 
         // Asin2(1) = π/2
-        InvokeTest<float>(1.0f, device, x => x.Asin2()).Should().BeApproximately(2.4674013F, 1e-6f);
-        InvokeTest<double>(1.0, device, x => x.Asin2()).Should().BeApproximately(2.4674013F, 1e-6);
-        InvokeTest<BFloat16>(1.0f, device, x => x.Asin2()).Should().BeApproximately(2.4674013F, 1e-3f);
+        InvokeTest<float>(1.0f, device, x => x.ASin2()).Should().BeApproximately(2.4674013F, 1e-6f);
+        InvokeTest<double>(1.0, device, x => x.ASin2()).Should().BeApproximately(2.4674013F, 1e-6);
+        InvokeTest<BFloat16>(1.0f, device, x => x.ASin2()).Should().BeApproximately(2.4674013F, 1e-3f);
 
         // Asin2(-1) = -π/2
-        InvokeTest<float>(-1.0f, device, x => x.Asin2()).Should().BeApproximately(2.4674013F, 1e-6f);
-        InvokeTest<double>(-1.0, device, x => x.Asin2()).Should().BeApproximately(2.4674013F, 1e-6);
-        InvokeTest<BFloat16>(-1.0f, device, x => x.Asin2()).Should().BeApproximately(2.4674013F, 1e-3f);
+        InvokeTest<float>(-1.0f, device, x => x.ASin2()).Should().BeApproximately(2.4674013F, 1e-6f);
+        InvokeTest<double>(-1.0, device, x => x.ASin2()).Should().BeApproximately(2.4674013F, 1e-6);
+        InvokeTest<BFloat16>(-1.0f, device, x => x.ASin2()).Should().BeApproximately(2.4674013F, 1e-3f);
     }
 
     [Theory]
@@ -467,19 +467,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForACos2(IDevice device)
     {
         // Acos2(0) = π/2
-        InvokeTest<float>(-1, device, x => x.Acos2()).Should().BeApproximately(9.869605F, 1e-6f);
-        InvokeTest<double>(-1, device, x => x.Acos2()).Should().BeApproximately(9.869605F, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Acos2()).Should().BeApproximately(9.869605F, 1e-3f);
+        InvokeTest<float>(-1, device, x => x.ACos2()).Should().BeApproximately(9.869605F, 1e-6f);
+        InvokeTest<double>(-1, device, x => x.ACos2()).Should().BeApproximately(9.869605F, 1e-6);
+        InvokeTest<BFloat16>(-1, device, x => x.ACos2()).Should().BeApproximately(9.869605F, 1e-3f);
 
         // Acos2(1) = 0
-        InvokeTest<float>(0, device, x => x.Acos2()).Should().BeApproximately(2.4674013F, 1e-6f);
-        InvokeTest<double>(0, device, x => x.Acos2()).Should().BeApproximately(2.4674013F, 1e-6);
-        InvokeTest<BFloat16>(0, device, x => x.Acos2()).Should().BeApproximately(2.4674013F, 1e-3f);
+        InvokeTest<float>(0, device, x => x.ACos2()).Should().BeApproximately(2.4674013F, 1e-6f);
+        InvokeTest<double>(0, device, x => x.ACos2()).Should().BeApproximately(2.4674013F, 1e-6);
+        InvokeTest<BFloat16>(0, device, x => x.ACos2()).Should().BeApproximately(2.4674013F, 1e-3f);
 
         // Acos2(-1) = π
-        InvokeTest<float>(1, device, x => x.Acos2()).Should().BeApproximately(0, 1e-6f);
-        InvokeTest<double>(1, device, x => x.Acos2()).Should().BeApproximately(0, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Acos2()).Should().BeApproximately(0, 1e-3f);
+        InvokeTest<float>(1, device, x => x.ACos2()).Should().BeApproximately(0, 1e-6f);
+        InvokeTest<double>(1, device, x => x.ACos2()).Should().BeApproximately(0, 1e-6);
+        InvokeTest<BFloat16>(1, device, x => x.ACos2()).Should().BeApproximately(0, 1e-3f);
     }
 
     [Theory]
@@ -487,19 +487,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForATan2(IDevice device)
     {
         // Atan2(0) = 0
-        InvokeTest<float>(-10, device, x => x.Atan2()).Should().BeApproximately(2.1642165F, 1e-6f);
-        InvokeTest<double>(-10, device, x => x.Atan2()).Should().BeApproximately(2.1642166341023152, 1e-6);
-        InvokeTest<BFloat16>(-10, device, x => x.Atan2()).Should().BeApproximately(2.15625f, 1e-3f);
+        InvokeTest<float>(-10, device, x => x.ATan2()).Should().BeApproximately(2.1642165F, 1e-6f);
+        InvokeTest<double>(-10, device, x => x.ATan2()).Should().BeApproximately(2.1642166341023152, 1e-6);
+        InvokeTest<BFloat16>(-10, device, x => x.ATan2()).Should().BeApproximately(2.15625f, 1e-3f);
 
         // Atan2(1) = π/4
-        InvokeTest<float>(0, device, x => x.Atan2()).Should().BeApproximately(0, 1e-6f);
-        InvokeTest<double>(0, device, x => x.Atan2()).Should().BeApproximately(0, 1e-6);
-        InvokeTest<BFloat16>(0, device, x => x.Atan2()).Should().BeApproximately(0, 1e-3f);
+        InvokeTest<float>(0, device, x => x.ATan2()).Should().BeApproximately(0, 1e-6f);
+        InvokeTest<double>(0, device, x => x.ATan2()).Should().BeApproximately(0, 1e-6);
+        InvokeTest<BFloat16>(0, device, x => x.ATan2()).Should().BeApproximately(0, 1e-3f);
 
         // Atan2(-1) = -π/4
-        InvokeTest<float>(10, device, x => x.Atan2()).Should().BeApproximately(2.1642165F, 1e-6f);
-        InvokeTest<double>(10, device, x => x.Atan2()).Should().BeApproximately(2.1642166341023152, 1e-6);
-        InvokeTest<BFloat16>(10, device, x => x.Atan2()).Should().BeApproximately(2.15625f, 1e-3f);
+        InvokeTest<float>(10, device, x => x.ATan2()).Should().BeApproximately(2.1642165F, 1e-6f);
+        InvokeTest<double>(10, device, x => x.ATan2()).Should().BeApproximately(2.1642166341023152, 1e-6);
+        InvokeTest<BFloat16>(10, device, x => x.ATan2()).Should().BeApproximately(2.15625f, 1e-3f);
     }
 
     [Theory]
@@ -712,24 +712,24 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForASec(IDevice device)
     {
         // Asec(-1) = π
-        InvokeTest<float>(-1, device, x => x.Asec()).Should().BeApproximately(float.Pi, 1e-6f);
-        InvokeTest<double>(-1, device, x => x.Asec()).Should().BeApproximately(double.Pi, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Asec()).Should().BeApproximately(BFloat16.Pi, 1e-3f);
+        InvokeTest<float>(-1, device, x => x.ASec()).Should().BeApproximately(float.Pi, 1e-6f);
+        InvokeTest<double>(-1, device, x => x.ASec()).Should().BeApproximately(double.Pi, 1e-6);
+        InvokeTest<BFloat16>(-1, device, x => x.ASec()).Should().BeApproximately(BFloat16.Pi, 1e-3f);
 
         // Asec(1) = 0
-        InvokeTest<float>(1, device, x => x.Asec()).Should().BeApproximately(0, 1e-6f);
-        InvokeTest<double>(1, device, x => x.Asec()).Should().BeApproximately(0, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Asec()).Should().BeApproximately(0, 1e-3f);
+        InvokeTest<float>(1, device, x => x.ASec()).Should().BeApproximately(0, 1e-6f);
+        InvokeTest<double>(1, device, x => x.ASec()).Should().BeApproximately(0, 1e-6);
+        InvokeTest<BFloat16>(1, device, x => x.ASec()).Should().BeApproximately(0, 1e-3f);
 
         // Asec(1) = 0
-        InvokeTest<float>(1, device, x => x.Asec()).Should().BeApproximately(0, 1e-6f);
-        InvokeTest<double>(1, device, x => x.Asec()).Should().BeApproximately(0, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Asec()).Should().BeApproximately(0, 1e-3f);
+        InvokeTest<float>(1, device, x => x.ASec()).Should().BeApproximately(0, 1e-6f);
+        InvokeTest<double>(1, device, x => x.ASec()).Should().BeApproximately(0, 1e-6);
+        InvokeTest<BFloat16>(1, device, x => x.ASec()).Should().BeApproximately(0, 1e-3f);
 
         // Asec(2) = 1.047197551
-        InvokeTest<float>(2, device, x => x.Asec()).Should().BeApproximately(1.047197551f, 1e-6f);
-        InvokeTest<double>(2, device, x => x.Asec()).Should().BeApproximately(1.047197551, 1e-6);
-        InvokeTest<BFloat16>(2, device, x => x.Asec()).Should().BeApproximately(1.046875f, 1e-3f);
+        InvokeTest<float>(2, device, x => x.ASec()).Should().BeApproximately(1.047197551f, 1e-6f);
+        InvokeTest<double>(2, device, x => x.ASec()).Should().BeApproximately(1.047197551, 1e-6);
+        InvokeTest<BFloat16>(2, device, x => x.ASec()).Should().BeApproximately(1.046875f, 1e-3f);
     }
 
     [Theory]
@@ -737,19 +737,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForACsc(IDevice device)
     {
         // Acsc(-1) = -π/2
-        InvokeTest<float>(-1, device, x => x.Acsc()).Should().BeApproximately(-float.Pi / 2, 1e-6f);
-        InvokeTest<double>(-1, device, x => x.Acsc()).Should().BeApproximately(-double.Pi / 2, 1e-6);
-        InvokeTest<BFloat16>(-1, device, x => x.Acsc()).Should().BeApproximately(-BFloat16.Pi / 2, 1e-3f);
+        InvokeTest<float>(-1, device, x => x.ACsc()).Should().BeApproximately(-float.Pi / 2, 1e-6f);
+        InvokeTest<double>(-1, device, x => x.ACsc()).Should().BeApproximately(-double.Pi / 2, 1e-6);
+        InvokeTest<BFloat16>(-1, device, x => x.ACsc()).Should().BeApproximately(-BFloat16.Pi / 2, 1e-3f);
 
         // Acsc(1) = π/2
-        InvokeTest<float>(1, device, x => x.Acsc()).Should().BeApproximately(float.Pi / 2, 1e-6f);
-        InvokeTest<double>(1, device, x => x.Acsc()).Should().BeApproximately(double.Pi / 2, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Acsc()).Should().BeApproximately(BFloat16.Pi / 2, 1e-3f);
+        InvokeTest<float>(1, device, x => x.ACsc()).Should().BeApproximately(float.Pi / 2, 1e-6f);
+        InvokeTest<double>(1, device, x => x.ACsc()).Should().BeApproximately(double.Pi / 2, 1e-6);
+        InvokeTest<BFloat16>(1, device, x => x.ACsc()).Should().BeApproximately(BFloat16.Pi / 2, 1e-3f);
 
         // Acsc(2) = 0.5235987756
-        InvokeTest<float>(2, device, x => x.Acsc()).Should().BeApproximately(0.5235987756f, 1e-6f);
-        InvokeTest<double>(2, device, x => x.Acsc()).Should().BeApproximately(0.5235987756, 1e-6);
-        InvokeTest<BFloat16>(2, device, x => x.Acsc()).Should().BeApproximately(0.5234375f, 1e-3f);
+        InvokeTest<float>(2, device, x => x.ACsc()).Should().BeApproximately(0.5235987756f, 1e-6f);
+        InvokeTest<double>(2, device, x => x.ACsc()).Should().BeApproximately(0.5235987756, 1e-6);
+        InvokeTest<BFloat16>(2, device, x => x.ACsc()).Should().BeApproximately(0.5234375f, 1e-3f);
     }
 
     [Theory]
@@ -757,19 +757,19 @@ public class ScalarTrigShould : IntegrationTestBase
     public void ReturnsCorrectResult_ForACot(IDevice device)
     {
         // Acot(1) = π/4
-        InvokeTest<float>(1, device, x => x.Acot()).Should().BeApproximately(float.Pi / 4, 1e-6f);
-        InvokeTest<double>(1, device, x => x.Acot()).Should().BeApproximately(double.Pi / 4, 1e-6);
-        InvokeTest<BFloat16>(1, device, x => x.Acot()).Should().BeApproximately(BFloat16.Pi / 4, 1e-3f);
+        InvokeTest<float>(1, device, x => x.ACot()).Should().BeApproximately(float.Pi / 4, 1e-6f);
+        InvokeTest<double>(1, device, x => x.ACot()).Should().BeApproximately(double.Pi / 4, 1e-6);
+        InvokeTest<BFloat16>(1, device, x => x.ACot()).Should().BeApproximately(BFloat16.Pi / 4, 1e-3f);
 
         // Acot(0) = π/2
-        InvokeTest<float>(0, device, x => x.Acot()).Should().BeApproximately(float.Pi / 2, 1e-6f);
-        InvokeTest<double>(0, device, x => x.Acot()).Should().BeApproximately(double.Pi / 2, 1e-6);
-        InvokeTest<BFloat16>(0, device, x => x.Acot()).Should().BeApproximately(BFloat16.Pi / 2, 1e-3f);
+        InvokeTest<float>(0, device, x => x.ACot()).Should().BeApproximately(float.Pi / 2, 1e-6f);
+        InvokeTest<double>(0, device, x => x.ACot()).Should().BeApproximately(double.Pi / 2, 1e-6);
+        InvokeTest<BFloat16>(0, device, x => x.ACot()).Should().BeApproximately(BFloat16.Pi / 2, 1e-3f);
 
         // Acot(2) = 0.463647609
-        InvokeTest<float>(2, device, x => x.Acot()).Should().BeApproximately(0.463647609f, 1e-6f);
-        InvokeTest<double>(2, device, x => x.Acot()).Should().BeApproximately(0.463647609, 1e-6);
-        InvokeTest<BFloat16>(2, device, x => x.Acot()).Should().BeApproximately(0.46289062f, 1e-3f);
+        InvokeTest<float>(2, device, x => x.ACot()).Should().BeApproximately(0.463647609f, 1e-6f);
+        InvokeTest<double>(2, device, x => x.ACot()).Should().BeApproximately(0.463647609, 1e-6);
+        InvokeTest<BFloat16>(2, device, x => x.ACot()).Should().BeApproximately(0.46289062f, 1e-3f);
     }
 
     [Theory]

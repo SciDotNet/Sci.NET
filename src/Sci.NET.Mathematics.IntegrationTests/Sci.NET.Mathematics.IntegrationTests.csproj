@@ -77,6 +77,10 @@
         <None Update="Tensors\Arithmetic\Examples\Subtract_3.safetensors">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="Tensors\Trigonometry\TrigWithBackwardsShould.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>TrigWithBackwardsShould.cs</LastGenOutput>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -94,6 +98,11 @@
           <AutoGen>True</AutoGen>
           <DesignTime>True</DesignTime>
           <DependentUpon>ActivationFunctionBackwardsTests.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Tensors\Trigonometry\TrigWithBackwardsShould.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>TrigWithBackwardsShould.tt</DependentUpon>
         </Compile>
     </ItemGroup>
 

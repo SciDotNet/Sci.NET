@@ -1,0 +1,176 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+    var testCases = new List<TrigPrimalAndDerivativeState>()
+    {
+        new TrigPrimalAndDerivativeState("Sin","0","0.841470984807897","1.00000000000000","0","-1.00000000000000","0","1.00000000000000","0.540302305868140","0","-1.00000000000000","0","1.00000000000000"),
+        new TrigPrimalAndDerivativeState("Cos","1.00000000000000","0.540302305868140","0","-1.00000000000000","0","1.00000000000000","0","-0.841470984807897","-1.00000000000000","0","1.00000000000000","0"),
+        new TrigPrimalAndDerivativeState("Tan","0","1.55740772465490","NaN","0","NaN","0","1.00000000000000","3.42551882081476","NaN","1.00000000000000","NaN","1.00000000000000"),
+        new TrigPrimalAndDerivativeState("Sin2","0","0.708073418273571","1.00000000000000","0","1.00000000000000","0","0","0.909297426825682","0","0","0","0"),
+        new TrigPrimalAndDerivativeState("Cos2","1.00000000000000","0.291926581726429","0","1.00000000000000","0","1.00000000000000","0","-0.909297426825682","0","0","0","0"),
+        new TrigPrimalAndDerivativeState("Tan2","0","2.42551882081476","NaN","0","NaN","0","0","10.6698589449753","NaN","0","NaN","0"),
+        new TrigPrimalAndDerivativeState("Sinh","0","1.17520119364380","2.30129890230729","11.5487393572577","55.6543975994175","267.744894041016","1.00000000000000","1.54308063481524","2.50917847865806","11.5919532755215","55.6633808904387","267.746761483748"),
+        new TrigPrimalAndDerivativeState("Cosh","1.00000000000000","1.54308063481524","2.50917847865806","11.5919532755215","55.6633808904387","267.746761483748","0","1.17520119364380","2.30129890230729","11.5487393572577","55.6543975994175","267.744894041016"),
+        new TrigPrimalAndDerivativeState("Tanh","0","0.761594155955765","0.917152335667274","0.996272076220750","0.999838613988633","0.999993025339611","1.00000000000000","0.419974341614026","0.158831593180063","0.00744195014279621","0.000322745977290033","1.39492721328912e-5"),
+        new TrigPrimalAndDerivativeState("Sinh2","0","1.38109784554182","5.29597663776076","133.373380741874","3097.41197215405","71687.3282850352","0","3.62686040784702","11.5487393572577","267.744894041016","6195.82386360859","143375.656566583"),
+        new TrigPrimalAndDerivativeState("Cosh2","1.00000000000000","2.38109784554182","6.29597663776076","134.373380741874","3098.41197215405","71688.3282850352","0","3.62686040784702","11.5487393572577","267.744894041016","6195.82386360859","143375.656566583"),
+        new TrigPrimalAndDerivativeState("Tanh2","0","0.580025658385974","0.841168406819937","0.992558049857204","0.999677254022710","0.999986050727867","0","0.639700008449224","0.291345533325699","0.0148284142397898","0.000645387781208148","2.78983496829109e-5"),
+        new TrigPrimalAndDerivativeState("ASin","0","1.57079632679490","1.57079632679490","1.57079632679490","1.57079632679490","1.57079632679490","1.00000000000000","NaN","0","0","0","0"),
+        new TrigPrimalAndDerivativeState("ACos","1.57079632679490","0","0","0","0","0","-1.00000000000000","NaN","0","0","0","0"),
+        new TrigPrimalAndDerivativeState("ATan","0","0.785398163397448","1.00388482185389","1.26262725567891","1.36169168297116","1.41296513650674","1.00000000000000","0.500000000000000","0.288400439142001","0.0919996683503752","0.0430911711880149","0.0247045230318576"),
+        new TrigPrimalAndDerivativeState("ASin2","0","2.46740110027234","1.42040662741756","-0.814226335543573","-2.51392853764383","-3.90635886880375","0","NaN","-1.68938163989722","-1.21652911591502","-0.969319641182289","-0.813990330610181"),
+        new TrigPrimalAndDerivativeState("ACos2","2.46740110027234","0","-1.04699447285478","-3.28162743581591","-4.98132963791617","-6.37375996907609","-3.14159265358979","NaN","-1.68938163989722","-1.21652911591502","-0.969319641182289","-0.813990330610181"),
+        new TrigPrimalAndDerivativeState("ATan2","0","0.616850275068085","1.00778473554861","1.59422758678326","1.85420423947284","1.99647047698350","0","0.785398163397448","0.579041646941301","0.232322577545209","0.117353778832413","0.0698132595160851"),
+        new TrigPrimalAndDerivativeState("ASinh","0","0.881373587019543","1.23340311751122","1.86229574331085","2.25441459299271","2.53729750137336","1.00000000000000","0.707106781186548","0.537029272146315","0.303314471053353","0.207584130385766","0.157176725477590"),
+        new TrigPrimalAndDerivativeState("ACosh","0","0","1.02322747854755","1.81152627246085","2.23188925305808","2.52463065993347","0","NaN","0.825516161027683","0.335774626735729","0.217152271299785","0.161209784767415"),
+        new TrigPrimalAndDerivativeState("ATanh","0","∞","0.752469267141927","0.329765314956699","0.215480861058658","0.160519557507885","1.00000000000000","NaN","-0.681476932117883","-0.112744599959518","-0.0471551089306556","-0.0259885947047562"),
+        new TrigPrimalAndDerivativeState("ASinh2","0","0.776819399895696","1.52128325028639","3.46814543555370","5.08238515709851","6.43787861047550","0","1.24645048028046","1.32474715692009","1.12972249665448","0.935961385630749","0.797608225656671"),
+        new TrigPrimalAndDerivativeState("ACosh2","-2.46740110027234","0","1.04699447285478","3.28162743581591","4.98132963791617","6.37375996907609","3.14159265358979","NaN","1.68938163989722","1.21652911591502","0.969319641182289","0.813990330610181"),
+        new TrigPrimalAndDerivativeState("ATanh2","0","∞","-1.90119110227923","-2.35865593732385","-2.42096909878976","-2.44163457192981","0","NaN","-1.02558089536974","-0.0743585170306350","-0.0203220469513850","-0.00834335544451847"),
+        new TrigPrimalAndDerivativeState("Csc","NaN","1.18839510577812","1.00000000000000","NaN","-1.00000000000000","NaN","NaN","-0.763059722232630","0","NaN","0","NaN"),
+        new TrigPrimalAndDerivativeState("Sec","1.00000000000000","1.85081571768093","NaN","-1.00000000000000","NaN","1.00000000000000","0","2.88247469562898","NaN","0","NaN","0"),
+        new TrigPrimalAndDerivativeState("Cot","NaN","0.642092615934331","0","NaN","0","NaN","NaN","-1.41228292743739","-1.00000000000000","NaN","-1.00000000000000","NaN"),
+        new TrigPrimalAndDerivativeState("Csc2","NaN","1.41228292743739","1.00000000000000","NaN","1.00000000000000","NaN","NaN","-1.81363287863534","0","NaN","0","NaN"),
+        new TrigPrimalAndDerivativeState("Sec2","1.00000000000000","3.42551882081476","NaN","1.00000000000000","NaN","1.00000000000000","0","10.6698589449753","NaN","0","NaN","0"),
+        new TrigPrimalAndDerivativeState("Cot2","NaN","0.412282927437392","0","NaN","0","NaN","NaN","-1.81363287863534","0","NaN","0","NaN"),
+        new TrigPrimalAndDerivativeState("Csch","NaN","0.850918128239322","0.434537208094696","0.0865895375300469","0.0179680320537773","0.00373489848828567","NaN","-1.11728552744927","-0.473789567115422","-0.0869135445996991","-0.0179709323108635","-0.00373492453811591"),
+        new TrigPrimalAndDerivativeState("Sech","1.00000000000000","0.648054273663885","0.398536815338387","0.0862667383340544","0.0179651322647520","0.00373487243863713","0","-0.493554347564573","-0.365518971036999","-0.0859451425088606","-0.0179622329437121","-0.00373484638917027"),
+        new TrigPrimalAndDerivativeState("Coth","NaN","1.31303528549933","1.09033141072737","1.00374187319732","1.00016141206102","1.00000697470904","NaN","-0.724061660966310","-0.188822585218733","-0.00749774800966741","-0.000322850175885568","-1.39494667177986e-5"),
+        new TrigPrimalAndDerivativeState("Csch2","NaN","0.724061660966310","0.188822585218733","0.00749774800966741","0.000322850175885568","1.39494667177986e-5","NaN","-1.90143701945204","-0.411758391437460","-0.0150516072639701","-0.000645804575595714","-2.78991280225403e-5"),
+        new TrigPrimalAndDerivativeState("Sech2","1.00000000000000","0.419974341614026","0.158831593180063","0.00744195014279621","0.000322745977290033","1.39492721328912e-5","0","-0.639700008449224","-0.291345533325699","-0.0148284142397898","-0.000645387781208148","-2.78983496829109e-5"),
+        new TrigPrimalAndDerivativeState("Coth2","NaN","1.72406166096631","1.18882258521873","1.00749774800967","1.00032285017589","1.00001394946672","NaN","-1.90143701945204","-0.411758391437460","-0.0150516072639701","-0.000645804575595714","-2.78991280225403e-5"),
+        new TrigPrimalAndDerivativeState("ACsc","NaN","1.57079632679490","0.690107091374540","0.323946106931981","0.213832425883772","0.159834626385137","NaN","NaN","-0.525539910519203","-0.106880383219655","-0.0460811431746576","-0.0256573341205146"),
+        new TrigPrimalAndDerivativeState("ASec","NaN","0","0.880689235420357","1.24685021986292","1.35696390091112","1.41096170040976","NaN","NaN","0.525539910519203","0.106880383219655","0.0460811431746576","0.0256573341205146"),
+        new TrigPrimalAndDerivativeState("ACot","1.57079632679490","0.785398163397448","0.566911504941009","0.308169071115985","0.209104643823733","0.157831190288159","-1.00000000000000","-0.500000000000000","-0.288400439142001","-0.0919996683503752","-0.0430911711880149","-0.0247045230318576"),
+        new TrigPrimalAndDerivativeState("ACsc2","NaN","2.46740110027234","0.476247797565428","0.104941080196386","0.0457243063593390","0.0255471077916763","NaN","NaN","-0.725357638099286","-0.0692469681028106","-0.0197072852650689","-0.00820186082638215"),
+        new TrigPrimalAndDerivativeState("ASec2","NaN","0","0.775613529385292","1.55463547077220","1.84135102837594","1.99081292002320","NaN","NaN","0.925674683956079","0.266527658632918","0.125060895601455","0.0724030315573252"),
+        new TrigPrimalAndDerivativeState("ACot2","2.46740110027234","0.616850275068085","0.321388654434480","0.0949681763924890","0.0437247520686503","0.0249106846277770","-3.14159265358979","-0.785398163397448","-0.326995053959280","-0.0567029046770276","-0.0180211280064347","-0.00779828855123865"),
+        new TrigPrimalAndDerivativeState("ACsch","NaN","0.881373587019543","0.599971479517857","0.313165880450868","0.210645357198105","0.158490581423507","NaN","-0.707106781186548","-0.341883452988515","-0.0965479947588894","-0.0440507206111030","-0.0250154527987563"),
+        new TrigPrimalAndDerivativeState("ASech","∞","0","0","0","0","0","NaN","NaN","0","0","0","0"),
+        new TrigPrimalAndDerivativeState("ACoth","0","∞","0.752469267141927","0.329765314956699","0.215480861058658","0.160519557507885","1.00000000000000","NaN","-0.681476932117883","-0.112744599959518","-0.0471551089306556","-0.0259885947047562"),
+        new TrigPrimalAndDerivativeState("ACsch2","NaN","0.776819399895696","0.359965776234846","0.0980728686785676","0.0443714665091173","0.0251192643999613","NaN","-1.24645048028046","-0.410240642224386","-0.0604710755688669","-0.0185581595559194","-0.00792942731729435"),
+        new TrigPrimalAndDerivativeState("ASech2","∞","0","-0.775613529385292","-1.55463547077220","-1.84135102837594","-1.99081292002320","NaN","NaN","-0.925674683956079","-0.266527658632918","-0.125060895601455","-0.0724030315573252"),
+        new TrigPrimalAndDerivativeState("ACoth2","-2.46740110027234","∞","0.566209997993109","0.108745162948491","0.0464320014825807","0.0257665283425273","0","NaN","-1.02558089536974","-0.0743585170306350","-0.0203220469513850","-0.00834335544451847")
+    };
+#>// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+// <auto-generated />
+
+using System.Numerics;
+using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
+using Sci.NET.Tests.Framework.Integration;
+
+namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Trigonometry;
+
+public class TrigWithBackwardsShould : IntegrationTestBase
+{
+<#
+    foreach (var function in testCases)
+    {
+#>
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnCorrectResult_For<#= function.FunctionName #>(IDevice device)
+    {
+        // Arrange
+        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
+        var expectedOutput = new[] { <#= TrigPrimalAndDerivativeState.Parse(function.ZeroPrimal) #>, <#= TrigPrimalAndDerivativeState.Parse(function.OnePrimal) #>, <#= TrigPrimalAndDerivativeState.Parse(function.HalfPiPrimal) #>, <#= TrigPrimalAndDerivativeState.Parse(function.PiPrimal) #>, <#= TrigPrimalAndDerivativeState.Parse(function.ThreeHalvesPiPrimal) #>, <#= TrigPrimalAndDerivativeState.Parse(function.TwoPiPrimal) #> };
+        var expectedGradient = new[] { <#= TrigPrimalAndDerivativeState.Parse(function.ZeroDerivative) #>, <#= TrigPrimalAndDerivativeState.Parse(function.OneDerivative) #>, <#= TrigPrimalAndDerivativeState.Parse(function.HalfPiDerivative) #>, <#= TrigPrimalAndDerivativeState.Parse(function.PiDerivative) #>, <#= TrigPrimalAndDerivativeState.Parse(function.ThreeHalvesPiDerivative) #>, <#= TrigPrimalAndDerivativeState.Parse(function.TwoPiDerivative) #> };
+        input.To(device);
+
+        // Act
+        var result = input.<#= function.FunctionName #>();
+        
+        result.Backward();
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedOutput, 1e-5);
+        input.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedGradient, 1e-5);
+    }
+
+<#
+    }
+#>}
+<#+
+    public class TrigPrimalAndDerivativeState
+    {
+        public string FunctionName { get; set; }
+
+        public string ZeroPrimal { get; set; }
+
+        public string OnePrimal { get; set; }
+
+        public string HalfPiPrimal { get; set; }
+
+        public string PiPrimal { get; set; }
+
+        public string ThreeHalvesPiPrimal { get; set; }
+
+        public string TwoPiPrimal { get; set; }
+
+        public string ZeroDerivative { get; set; }
+
+        public string OneDerivative { get; set; }
+
+        public string HalfPiDerivative { get; set; }
+
+        public string PiDerivative { get; set; }
+
+        public string ThreeHalvesPiDerivative { get; set; }
+
+        public string TwoPiDerivative { get; set; }
+
+        public TrigPrimalAndDerivativeState(
+            string functionName,
+            string zeroPrimal,
+            string onePrimal,
+            string halfPiPrimal,
+            string piPrimal,
+            string threeHalvesPiPrimal,
+            string twoPiPrimal,
+            string zeroDerivative,
+            string oneDerivative,
+            string halfPiDerivative,
+            string piDerivative,
+            string threeHalvesPiDerivative,
+            string twoPiDerivative)
+        {
+            FunctionName = functionName;
+            ZeroPrimal = zeroPrimal;
+            OnePrimal = onePrimal;
+            HalfPiPrimal = halfPiPrimal;
+            PiPrimal = piPrimal;
+            ThreeHalvesPiPrimal = threeHalvesPiPrimal;
+            TwoPiPrimal = twoPiPrimal;
+            ZeroDerivative = zeroDerivative;
+            OneDerivative = oneDerivative;
+            HalfPiDerivative = halfPiDerivative;
+            PiDerivative = piDerivative;
+            ThreeHalvesPiDerivative = threeHalvesPiDerivative;
+            TwoPiDerivative = twoPiDerivative;
+        }
+
+        public static string Parse(string value)
+        {
+            var result = double.Parse(value);
+            
+            if (double.IsPositiveInfinity(result))
+            {
+                return "double.PositiveInfinity";
+            }
+            if (double.IsNegativeInfinity(result))
+            {
+                return "double.NegativeInfinity";
+            }
+            if (double.IsNaN(result))
+            {
+                return "double.NaN";
+            }
+            return result.ToString("R");
+        }
+    }
+#>
