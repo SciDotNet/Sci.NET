@@ -27,7 +27,9 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
             leftRows,
             0,
             rightColumns,
-            ManagedTensorBackend.ParallelizationThreshold,
+            ManagedTensorBackend.ParallelizationThreshold / 2,
+            1,
+            1,
             (i, j) =>
             {
                 var sum = TNumber.Zero;

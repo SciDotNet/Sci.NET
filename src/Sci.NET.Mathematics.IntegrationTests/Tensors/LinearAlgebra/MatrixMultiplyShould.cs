@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
@@ -12,18 +12,11 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
 
 public class MatrixMultiplyShould : IntegrationTestBase
 {
-    private readonly string _safetensorsLoadDirectory;
-
-    public MatrixMultiplyShould()
-    {
-        _safetensorsLoadDirectory = $@"{Path.GetDirectoryName(typeof(MatrixMultiplyShould).Assembly.Location)}\Tensors\LinearAlgebra\Examples\";
-    }
-
     private static Array MatrixMatrixTest<TNumber>(TNumber[,] left, TNumber[,] right, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var leftTensor = Tensor.FromArray<TNumber>(left).ToMatrix();
-        var rightTensor = Tensor.FromArray<TNumber>(right).ToMatrix();
+        var leftTensor = Tensor.FromArray<TNumber>(left).WithGradient().ToMatrix();
+        var rightTensor = Tensor.FromArray<TNumber>(right).WithGradient().ToMatrix();
         leftTensor.To(device);
         rightTensor.To(device);
 
@@ -33,17 +26,39 @@ public class MatrixMultiplyShould : IntegrationTestBase
         return result.ToArray();
     }
 
-    private static void MatrixMatrixTest<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right, Matrix<TNumber> expectedResult, IDevice device)
+    private static void MatrixMultiplyTestWithGrad<TNumber>(string safetensorsName, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        // Arrange
+        var loadDirectory = $@"{Path.GetDirectoryName(typeof(MatrixMultiplyShould).Assembly.Location)}\Tensors\LinearAlgebra\Examples";
+        var tensors = Tensor.LoadSafeTensors<TNumber>($"{loadDirectory}\\{safetensorsName}.safetensors");
+        var left = tensors["left"].ToMatrix(requiresGradient: true);
+        var right = tensors["right"].ToMatrix(requiresGradient: true);
+        var expectedResult = tensors["result"].ToMatrix(requiresGradient: true);
+        var expectedLeftGradient = tensors["left_grad"];
+        var expectedRightGradient = tensors["right_grad"];
+        using var resultGradient = Tensor.Ones<TNumber>(expectedResult.Shape);
+
         left.To(device);
         right.To(device);
+        expectedResult.To(device);
+        resultGradient.To(device);
+        expectedResult.To(device);
+        expectedLeftGradient.To(device);
+        expectedRightGradient.To(device);
 
+        // Act
         var result = left.MatrixMultiply(right);
+        result.Backward();
 
-        result.To<CpuComputeDevice>();
-
-        result.Should().HaveEquivalentElements(expectedResult.ToArray());
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-4f));
+        result.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(resultGradient.ToArray(), TNumber.CreateChecked(1e-4f));
+        left.Gradient!.Should().NotBeNull();
+        left.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedLeftGradient.ToArray(), TNumber.CreateChecked(1e-4f));
+        right.Gradient!.Should().NotBeNull();
+        right.Gradient!.Should().HaveApproximatelyEquivalentElements(expectedRightGradient.ToArray(), TNumber.CreateChecked(1e-4f));
     }
 
     [Theory]
@@ -180,61 +195,29 @@ public class MatrixMultiplyShould : IntegrationTestBase
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenExample1(IDevice device)
+    public void ReturnExpectedResult_GivenPyTorchExample1(IDevice device)
     {
-        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_1.safetensors");
-        var left = tensors["left"].ToMatrix();
-        var right = tensors["right"].ToMatrix();
-        var expected = tensors["result"].ToMatrix();
-
-        MatrixMatrixTest(left, right, expected, device);
+        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_1", device);
     }
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenExample2(IDevice device)
+    public void ReturnExpectedResult_GivenPyTorchExample2(IDevice device)
     {
-        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_2.safetensors");
-        var left = tensors["left"].ToMatrix();
-        var right = tensors["right"].ToMatrix();
-        var expected = tensors["result"].ToMatrix();
-
-        MatrixMatrixTest(left, right, expected, device);
+        MatrixMultiplyTestWithGrad<float>("MatrixMultiply_2", device);
     }
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenExample3(IDevice device)
+    public void ReturnExpectedResult_GivenPyTorchExample3(IDevice device)
     {
-        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_3.safetensors");
-        var left = tensors["left"].ToMatrix();
-        var right = tensors["right"].ToMatrix();
-        var expected = tensors["result"].ToMatrix();
-
-        MatrixMatrixTest(left, right, expected, device);
+        MatrixMultiplyTestWithGrad<double>("MatrixMultiply_3", device);
     }
 
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenExample4(IDevice device)
+    public void ReturnExpectedResult_GivenPyTorchExample4(IDevice device)
     {
-        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_4.safetensors");
-        var left = tensors["left"].ToMatrix();
-        var right = tensors["right"].ToMatrix();
-        var expected = tensors["result"].ToMatrix();
-
-        MatrixMatrixTest(left, right, expected, device);
-    }
-
-    [Theory]
-    [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenExample5(IDevice device)
-    {
-        var tensors = Tensor.LoadSafeTensors<long>($"{_safetensorsLoadDirectory}matmul_5.safetensors");
-        var left = tensors["left"].ToMatrix();
-        var right = tensors["right"].ToMatrix();
-        var expected = tensors["result"].ToMatrix();
-
-        MatrixMatrixTest(left, right, expected, device);
+        MatrixMultiplyTestWithGrad<double>("MatrixMultiply_4", device);
     }
 }

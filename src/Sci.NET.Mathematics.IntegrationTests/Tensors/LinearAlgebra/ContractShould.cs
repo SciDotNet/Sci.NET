@@ -1,24 +1,37 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using JetBrains.dotMemoryUnit;
+using System.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
 using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
-using Xunit.Abstractions;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.LinearAlgebra;
 
 public class ContractShould : IntegrationTestBase
 {
-    private readonly ITestOutputHelper _output;
-
-    public ContractShould(ITestOutputHelper output)
+    private static void PyTorchTest<TNumber>(string safetensorsName, IDevice device, int[] leftIndices, int[] rightIndices)
+        where TNumber : unmanaged, INumber<TNumber>
     {
-        _output = output;
+        // Arrange
+        var loadDirectory = $@"{Path.GetDirectoryName(typeof(MatrixMultiplyShould).Assembly.Location)}\Tensors\LinearAlgebra\Examples";
+        var tensors = Tensor.LoadSafeTensors<TNumber>($"{loadDirectory}\\{safetensorsName}.safetensors");
+        var left = tensors["left"].WithGradient();
+        var right = tensors["right"];
+        var expectedResult = tensors["result"];
 
-        DotMemoryUnitTestOutput.SetOutputMethod(_output.WriteLine);
+        left.To(device);
+        right.To(device);
+        expectedResult.To(device);
+        expectedResult.To(device);
+
+        // Act
+        var result = left.Contract(right, leftIndices, rightIndices);
+        result.Backward();
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), TNumber.CreateChecked(1e-7f));
     }
 
     [Theory]
@@ -92,5 +105,19 @@ public class ContractShould : IntegrationTestBase
 
         // Assert
         result.Should().HaveEquivalentElements(expected);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_GivenPyTorchExample1(IDevice device)
+    {
+        PyTorchTest<int>("Contract_[[1]_[0]]_1", device, new int[] { 1 }, new int[] { 0 });
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnsCorrectResult_GivenPyTorchExample2(IDevice device)
+    {
+        PyTorchTest<int>("Contract_[[1]_[0]]_2", device, new int[] { 1 }, new int[] { 0 });
     }
 }

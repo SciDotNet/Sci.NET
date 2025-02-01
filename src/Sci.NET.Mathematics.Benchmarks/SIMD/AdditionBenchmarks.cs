@@ -14,7 +14,9 @@ namespace Sci.NET.Mathematics.Benchmarks.SIMD;
 /// </summary>
 [NativeMemoryProfiler]
 [MemoryDiagnoser]
+#pragma warning disable CA1515
 public class AdditionBenchmarks
+#pragma warning restore CA1515
 {
     private const int N = 50;
 

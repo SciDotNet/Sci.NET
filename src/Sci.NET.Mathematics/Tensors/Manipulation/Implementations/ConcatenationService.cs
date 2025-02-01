@@ -11,9 +11,9 @@ internal class ConcatenationService : IConcatenationService
 {
     private readonly IDeviceGuardService _deviceGuardService;
 
-    public ConcatenationService(ITensorOperationServiceProvider tensorOperationServiceProvider)
+    public ConcatenationService()
     {
-        _deviceGuardService = tensorOperationServiceProvider.GetDeviceGuardService();
+        _deviceGuardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
     }
 
     public Vector<TNumber> Concatenate<TNumber>(ICollection<Scalar<TNumber>> scalars)
@@ -75,7 +75,7 @@ internal class ConcatenationService : IConcatenationService
         where TNumber : unmanaged, INumber<TNumber>
     {
         EnsureSameShape<TTensor, TNumber>(tensors);
-        EnsureOnSameDevice<TTensor, TNumber>(tensors);
+        var backend = _deviceGuardService.GuardMultiParameterOperation(tensors.Select(x => x.Device).ToArray());
 
         var shape = tensors.First().Shape;
         var newShapeDims = new int[shape.Rank + 1];
@@ -87,25 +87,21 @@ internal class ConcatenationService : IConcatenationService
         }
 
         var newShape = new Shape(newShapeDims);
-        var result = new Tensor<TNumber>(newShape, tensors.First().Device.GetTensorBackend());
+        var result = new Tensor<TNumber>(newShape, backend);
 
         for (var i = 0; i < tensors.Count; i++)
         {
             result.Memory.BlockCopyFrom(tensors.ElementAt(i).Memory, 0, i * shape.ElementCount, shape.ElementCount);
         }
 
-        return result;
-    }
-
-    private void EnsureOnSameDevice<TTensor, TNumber>(ICollection<TTensor> tensors)
-        where TTensor : ITensor<TNumber>
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var device = tensors.First().Device;
-
         foreach (var tensor in tensors)
         {
-            _deviceGuardService.GuardBinaryOperation(device, tensor.Device);
+            if (tensor.RequiresGradient)
+            {
+                tensor.AddParent(result, _ => throw new AutoDiffNotSupportedException(nameof(Concatenate)));
+            }
         }
+
+        return result;
     }
 }

@@ -25,7 +25,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Scalar<TNumber> Pow<TNumber>(this Scalar<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -42,7 +42,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Vector<TNumber> Pow<TNumber>(this Vector<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -59,7 +59,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Matrix<TNumber> Pow<TNumber>(this Matrix<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -76,7 +76,7 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static Tensor<TNumber> Pow<TNumber>(this Tensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -93,32 +93,8 @@ public static class PowerExtensions
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     [DebuggerStepThrough]
     public static ITensor<TNumber> Pow<TNumber>(this ITensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
-        if (value.IsScalar())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Pow(value.ToScalar(), power);
-        }
-
-        if (value.IsVector())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Pow(value.ToVector(), power);
-        }
-
-        if (value.IsMatrix())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Pow(value.ToMatrix(), power);
-        }
-
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
@@ -199,30 +175,6 @@ public static class PowerExtensions
     public static ITensor<TNumber> Square<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (value.IsScalar())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Square(value.ToScalar());
-        }
-
-        if (value.IsVector())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Square(value.ToVector());
-        }
-
-        if (value.IsMatrix())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Square(value.ToMatrix());
-        }
-
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
@@ -236,7 +188,7 @@ public static class PowerExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
     public static Scalar<TNumber> Exp<TNumber>(this Scalar<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -251,7 +203,7 @@ public static class PowerExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
     public static Vector<TNumber> Exp<TNumber>(this Vector<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -266,7 +218,7 @@ public static class PowerExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
     public static Matrix<TNumber> Exp<TNumber>(this Matrix<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -281,7 +233,7 @@ public static class PowerExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
     public static Tensor<TNumber> Exp<TNumber>(this Tensor<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
@@ -296,32 +248,8 @@ public static class PowerExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
     public static ITensor<TNumber> Exp<TNumber>(this ITensor<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
-        if (value.IsScalar())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Exp(value.ToScalar());
-        }
-
-        if (value.IsVector())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Exp(value.ToVector());
-        }
-
-        if (value.IsMatrix())
-        {
-            return TensorServiceProvider
-                .GetTensorOperationServiceProvider()
-                .GetPowerService()
-                .Exp(value.ToMatrix());
-        }
-
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
@@ -335,7 +263,7 @@ public static class PowerExtensions
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
     public static ITensor<TNumber> Log<TNumber>(this ITensor<TNumber> tensor)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()

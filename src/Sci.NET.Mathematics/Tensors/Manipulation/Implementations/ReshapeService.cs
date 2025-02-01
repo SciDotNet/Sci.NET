@@ -7,7 +7,7 @@ namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 internal class ReshapeService : IReshapeService
 {
-    public ITensor<TNumber> Reshape<TNumber>(ITensor<TNumber> tensor, Shape shape)
+    public ITensor<TNumber> Reshape<TNumber>(ITensor<TNumber> tensor, Shape shape, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         switch (shape.Count(x => x == -1))
@@ -26,8 +26,15 @@ internal class ReshapeService : IReshapeService
 
         tensor.DetachMemory();
 
-        return shape.ElementCount != tensor.Shape.ElementCount
+        var returnValue = shape.ElementCount != tensor.Shape.ElementCount
             ? throw new ArgumentException("The number of elements in a reshape operation must not change.")
-            : new Tensor<TNumber>(tensor, shape);
+            : new Tensor<TNumber>(tensor, shape, overrideRequiresGradient);
+
+        if (overrideRequiresGradient ?? tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)returnValue).AddParent(tensor, grad => grad.Reshape(tensor.Shape));
+        }
+
+        return returnValue;
     }
 }

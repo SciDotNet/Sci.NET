@@ -19,7 +19,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Scalar<TNumber> Pow<TNumber>(Scalar<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Vector{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
@@ -29,7 +29,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Vector<TNumber> Pow<TNumber>(Vector<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Matrix{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
@@ -39,7 +39,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Matrix<TNumber> Pow<TNumber>(Matrix<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Tensor{TNumber}"/> to the power of a <see cref="Scalar{TNumber}"/>.
@@ -49,7 +49,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>s.</typeparam>
     /// <returns>The base (<paramref name="value"/>) raised to the given <paramref name="power"/>.</returns>
     public Tensor<TNumber> Pow<TNumber>(Tensor<TNumber> value, Scalar<TNumber> power)
-        where TNumber : unmanaged, IPowerFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IPowerFunctions<TNumber>, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises a <see cref="Scalar{TNumber}"/> to the power of 2.
@@ -94,7 +94,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>e raised to the power of <paramref name="value"/>.</returns>
     public Scalar<TNumber> Exp<TNumber>(Scalar<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises e to the power of <paramref name="value"/>.
@@ -103,7 +103,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>e raised to the power of <paramref name="value"/>.</returns>
     public Vector<TNumber> Exp<TNumber>(Vector<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises e to the power of <paramref name="value"/>.
@@ -112,7 +112,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>e raised to the power of <paramref name="value"/>.</returns>
     public Matrix<TNumber> Exp<TNumber>(Matrix<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Raises e to the power of <paramref name="value"/>.
@@ -121,7 +121,7 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>e raised to the power of <paramref name="value"/>.</returns>
     public Tensor<TNumber> Exp<TNumber>(Tensor<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 
     /// <summary>
     /// Finds the natural logarithm of <paramref name="value"/>.
@@ -130,5 +130,5 @@ public interface IPowerService
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>The natural logarithm of <paramref name="value"/>.</returns>
     public ITensor<TNumber> Log<TNumber>(ITensor<TNumber> value)
-        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, INumber<TNumber>;
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 }
