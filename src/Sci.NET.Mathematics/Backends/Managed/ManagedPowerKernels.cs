@@ -77,7 +77,7 @@ internal class ManagedPowerKernels : IPowerKernels
             i => resultBlock[i] = resultBlock[i] >= TNumber.Zero ? TNumber.Log(valueBlock[i]) : TNumber.NaN);
     }
 
-    public void LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase, Tensor<TNumber> result)
+    public void LogDerivative<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var valueBlock = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -87,6 +87,6 @@ internal class ManagedPowerKernels : IPowerKernels
             0,
             valueBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => resultBlock[i] = valueBlock[i] > TNumber.Zero ? TNumber.One / (valueBlock[i] * TNumber.Log(logBase)) : TNumber.NaN);
+            i => resultBlock[i] = valueBlock[i] <= TNumber.Zero ? TNumber.NaN : TNumber.One / valueBlock[i]);
     }
 }

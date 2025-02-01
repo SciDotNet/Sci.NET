@@ -63,9 +63,8 @@ public interface IPowerKernels
     /// Finds the derivative of the natural logarithm of <paramref name="value"/> and stores the result in <paramref name="result"/>.
     /// </summary>
     /// <param name="value">The value to find the derivative of the natural logarithm of.</param>
-    /// <param name="logBase">The base of the logarithm.</param>
     /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result in.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void LogDerivative<TNumber>(ITensor<TNumber> value, TNumber logBase, Tensor<TNumber> result)
+    public void LogDerivative<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>;
 }

@@ -19,7 +19,7 @@ internal class CastingService : ICastingService
 
         if (input.RequiresGradient)
         {
-            throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+            throw new AutoDiffNotSupportedException(nameof(Cast));
         }
 
         return result;
@@ -35,7 +35,7 @@ internal class CastingService : ICastingService
 
         if (input.RequiresGradient)
         {
-            throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+            throw new AutoDiffNotSupportedException(nameof(Cast));
         }
 
         return result;
@@ -71,7 +71,7 @@ internal class CastingService : ICastingService
 
             if (input.RequiresGradient)
             {
-                throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+                throw new AutoDiffNotSupportedException(nameof(Cast));
             }
 
             return new Tensor<TOut>(newMemoryBlock, input.Shape, input.Backend, input.RequiresGradient);
@@ -83,7 +83,7 @@ internal class CastingService : ICastingService
 
         if (input.RequiresGradient)
         {
-            throw new InvalidOperationException("Cannot perform a cast operation on a tensor that requires a gradient.");
+            throw new AutoDiffNotSupportedException(nameof(Cast));
         }
 
         return result;

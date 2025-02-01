@@ -30,7 +30,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Pow(value, power);
+            .Pow(value, power)
+            .ToScalar();
     }
 
     /// <summary>
@@ -47,7 +48,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Pow(value, power);
+            .Pow(value, power)
+            .ToVector();
     }
 
     /// <summary>
@@ -64,7 +66,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Pow(value, power);
+            .Pow(value, power)
+            .ToMatrix();
     }
 
     /// <summary>
@@ -81,7 +84,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Pow(value, power);
+            .Pow(value, power)
+            .ToTensor();
     }
 
     /// <summary>
@@ -98,7 +102,7 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Pow(value.ToTensor(), power);
+            .Pow(value, power);
     }
 
     /// <summary>
@@ -114,7 +118,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Square(value);
+            .Square(value)
+            .ToScalar();
     }
 
     /// <summary>
@@ -130,7 +135,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Square(value);
+            .Square(value)
+            .ToVector();
     }
 
     /// <summary>
@@ -146,7 +152,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Square(value);
+            .Square(value)
+            .ToMatrix();
     }
 
     /// <summary>
@@ -162,7 +169,8 @@ public static class PowerExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Square(value);
+            .Square(value)
+            .ToTensor();
     }
 
     /// <summary>
@@ -187,13 +195,15 @@ public static class PowerExtensions
     /// <param name="value">The exponent.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
+    [DebuggerStepThrough]
     public static Scalar<TNumber> Exp<TNumber>(this Scalar<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Exp(value);
+            .Exp(value)
+            .ToScalar();
     }
 
     /// <summary>
@@ -202,13 +212,15 @@ public static class PowerExtensions
     /// <param name="value">The exponent.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
+    [DebuggerStepThrough]
     public static Vector<TNumber> Exp<TNumber>(this Vector<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Exp(value);
+            .Exp(value)
+            .ToVector();
     }
 
     /// <summary>
@@ -217,13 +229,15 @@ public static class PowerExtensions
     /// <param name="value">The exponent.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
+    [DebuggerStepThrough]
     public static Matrix<TNumber> Exp<TNumber>(this Matrix<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Exp(value);
+            .Exp(value)
+            .ToMatrix();
     }
 
     /// <summary>
@@ -232,7 +246,25 @@ public static class PowerExtensions
     /// <param name="value">The exponent.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
     /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
+    [DebuggerStepThrough]
     public static Tensor<TNumber> Exp<TNumber>(this Tensor<TNumber> value)
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPowerService()
+            .Exp(value)
+            .ToTensor();
+    }
+
+    /// <summary>
+    /// Raises e to the power of <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The exponent.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
+    [DebuggerStepThrough]
+    public static ITensor<TNumber> Exp<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
@@ -242,18 +274,71 @@ public static class PowerExtensions
     }
 
     /// <summary>
-    /// Raises e to the power of <see cref="ITensor{TNumber}"/>.
+    /// Finds the natural logarithm of a <see cref="Scalar{TNumber}"/>.
     /// </summary>
-    /// <param name="value">The exponent.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    /// <returns>The result of e raised to the given <paramref name="value"/>.</returns>
-    public static ITensor<TNumber> Exp<TNumber>(this ITensor<TNumber> value)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
+    /// <param name="tensor">The <see cref="Scalar{TNumber}"/> to find the natural logarithm of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
+    /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
+    [DebuggerStepThrough]
+    public static Scalar<TNumber> Log<TNumber>(this Scalar<TNumber> tensor)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetPowerService()
-            .Exp(value.ToTensor());
+            .Log(tensor)
+            .ToScalar();
+    }
+
+    /// <summary>
+    /// Finds the natural logarithm of a <see cref="Vector{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Vector{TNumber}"/> to find the natural logarithm of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Vector{TNumber}"/>.</typeparam>
+    /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
+    [DebuggerStepThrough]
+    public static Vector<TNumber> Log<TNumber>(this Vector<TNumber> tensor)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPowerService()
+            .Log(tensor)
+            .ToVector();
+    }
+
+    /// <summary>
+    /// Finds the natural logarithm of a <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Matrix{TNumber}"/> to find the natural logarithm of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
+    [DebuggerStepThrough]
+    public static Matrix<TNumber> Log<TNumber>(this Matrix<TNumber> tensor)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPowerService()
+            .Log(tensor)
+            .ToMatrix();
+    }
+
+    /// <summary>
+    /// Finds the natural logarithm of a <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to find the natural logarithm of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
+    [DebuggerStepThrough]
+    public static Tensor<TNumber> Log<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPowerService()
+            .Log(tensor)
+            .ToTensor();
     }
 
     /// <summary>
@@ -262,6 +347,7 @@ public static class PowerExtensions
     /// <param name="tensor">The <see cref="Scalar{TNumber}"/> to find the natural logarithm of.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="Scalar{TNumber}"/>.</typeparam>
     /// <returns>The natural logarithm of the <paramref name="tensor"/>.</returns>
+    [DebuggerStepThrough]
     public static ITensor<TNumber> Log<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {

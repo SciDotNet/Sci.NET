@@ -16,17 +16,22 @@ public class MinShould : IntegrationTestBase
     public void MinAllElements_GivenFloatMatrixAndNoAxis(IDevice computeDevice)
     {
         // Arrange
-        using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } });
+        using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } }, requiresGradient: true);
+        var expectedGrad = new float[,] { { 1, 0 }, { 0, 0 }, { 0, 0 } };
         tensor.To(computeDevice);
 
         // Act
         using var result = tensor.Min();
+
+        result.Backward();
 
         result.To<CpuComputeDevice>();
 
         // Assert
         result.IsScalar().Should().BeTrue();
         result.ToScalar().Value.Should().Be(1);
+        tensor.Gradient?.Should().NotBeNull();
+        tensor.Gradient?.Should().HaveEquivalentElements(expectedGrad);
     }
 
     [Theory]
@@ -35,6 +40,7 @@ public class MinShould : IntegrationTestBase
     {
         // Arrange
         using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } });
+        var expectedGrad = new float[,] { { 1, 1 }, { 0, 0 }, { 0, 0 } };
         tensor.To(computeDevice);
 
         // Act
@@ -45,6 +51,8 @@ public class MinShould : IntegrationTestBase
         // Assert
         result.IsVector().Should().BeTrue();
         result.ToVector().ToArray().Should().BeEquivalentTo(new float[] { 1, 2 });
+        tensor.Gradient?.Should().NotBeNull();
+        tensor.Gradient?.Should().HaveEquivalentElements(expectedGrad);
     }
 
     [Theory]

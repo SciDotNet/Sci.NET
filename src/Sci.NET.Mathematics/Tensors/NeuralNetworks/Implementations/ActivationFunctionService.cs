@@ -2,23 +2,30 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Common;
 
 namespace Sci.NET.Mathematics.Tensors.NeuralNetworks.Implementations;
 
 internal class ActivationFunctionService : IActivationFunctionService
 {
+    private readonly IGradientAppenderService _gradientAppenderService;
+
+    public ActivationFunctionService()
+    {
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
+    }
+
     public ITensor<TNumber> Sigmoid<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, value.RequiresGradient);
         value.Backend.ActivationFunctions.Sigmoid(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.SigmoidPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.SigmoidPrime()));
 
         return result;
     }
@@ -38,12 +45,11 @@ internal class ActivationFunctionService : IActivationFunctionService
         var result = new Tensor<TNumber>(value.Shape, value.Backend, value.RequiresGradient);
         value.Backend.ActivationFunctions.ReLU(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.ReLUPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.ReLUPrime()));
 
         return result;
     }
@@ -65,12 +71,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.Softmax(value, sumBuffer, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.SoftmaxPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.SoftmaxPrime()));
 
         return result;
     }
@@ -80,7 +85,7 @@ internal class ActivationFunctionService : IActivationFunctionService
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
         using var softmaxValue = value.Softmax();
-        value.Backend.ActivationFunctions.SoftmaxPrime(value,  softmaxValue, result);
+        value.Backend.ActivationFunctions.SoftmaxPrime(value, softmaxValue, result);
 
         return result;
     }
@@ -92,12 +97,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.LeakyReLU(value, result, alpha);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.LeakyReLUPrime(alpha));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.LeakyReLUPrime(alpha)));
 
         return result;
     }
@@ -119,12 +123,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.Elu(value, result, alpha);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.EluPrime(alpha));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.EluPrime(alpha)));
 
         return result;
     }
@@ -146,12 +149,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.Celu(value, result, alpha);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.CeluPrime(alpha));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.CeluPrime(alpha)));
 
         return result;
     }
@@ -173,12 +175,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.Swish(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.SwishPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.SwishPrime()));
 
         return result;
     }
@@ -200,12 +201,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.Mish(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.MishPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.MishPrime()));
 
         return result;
     }
@@ -231,12 +231,11 @@ internal class ActivationFunctionService : IActivationFunctionService
             min,
             max);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.HardTanhPrime(min, max));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.HardTanhPrime(min, max)));
 
         return result;
     }
@@ -262,12 +261,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.HardSigmoid(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.HardSigmoidPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.HardSigmoidPrime()));
 
         return result;
     }
@@ -289,12 +287,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.LogSigmoid(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.LogSigmoidPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.LogSigmoidPrime()));
 
         return result;
     }
@@ -316,12 +313,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.GELU(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.GELUPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.GELUPrime()));
 
         return result;
     }
@@ -343,12 +339,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.SoftPlus(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.SoftPlusPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.SoftPlusPrime()));
 
         return result;
     }
@@ -370,12 +365,11 @@ internal class ActivationFunctionService : IActivationFunctionService
 
         value.Backend.ActivationFunctions.SoftSign(value, result);
 
-        if (value.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                value,
-                _ => value.SoftSignPrime());
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Multiply(value.SoftSignPrime()));
 
         return result;
     }

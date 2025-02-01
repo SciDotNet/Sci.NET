@@ -147,7 +147,7 @@ internal class GradientAppenderService : IGradientAppenderService
                 input,
                 grad =>
                 {
-                    var resultGrad = gradientFunction(grad);
+                    var resultGrad = gradientFunction(grad.AsGradient());
                     return resultGrad.AsGradient();
                 });
         }

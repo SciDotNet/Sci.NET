@@ -2,11 +2,19 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Common;
 
 namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 internal class ReshapeService : IReshapeService
 {
+    private readonly IGradientAppenderService _gradientAppenderService;
+
+    public ReshapeService()
+    {
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
+    }
+
     public ITensor<TNumber> Reshape<TNumber>(ITensor<TNumber> tensor, Shape shape, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -30,10 +38,11 @@ internal class ReshapeService : IReshapeService
             ? throw new ArgumentException("The number of elements in a reshape operation must not change.")
             : new Tensor<TNumber>(tensor, shape, overrideRequiresGradient);
 
-        if (overrideRequiresGradient ?? tensor.RequiresGradient)
-        {
-            ((ITensor<TNumber>)returnValue).AddParent(tensor, grad => grad.Reshape(tensor.Shape));
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref returnValue,
+            tensor,
+            overrideRequiresGradient,
+            grad => grad.Reshape(tensor.Shape));
 
         return returnValue;
     }
