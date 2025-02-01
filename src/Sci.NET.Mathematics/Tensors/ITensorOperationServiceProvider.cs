@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Mathematics.Tensors.Common;
+using Sci.NET.Mathematics.Tensors.Equality;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.Manipulation;
 using Sci.NET.Mathematics.Tensors.NeuralNetworks;
@@ -128,6 +129,18 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="IVarianceService"/>.</returns>
     public IVarianceService GetVarianceService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IGradientAppenderService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IGradientAppenderService"/>.</returns>
+    public IGradientAppenderService GetGradientAppenderService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="ITensorEqualityOperationService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ITensorEqualityOperationService"/>.</returns>
+    public ITensorEqualityOperationService GetEqualityOperationService();
 
 #pragma warning restore CA1024
 }

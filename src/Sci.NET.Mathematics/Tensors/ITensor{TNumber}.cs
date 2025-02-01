@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Mathematics.Backends;
@@ -13,7 +14,7 @@ namespace Sci.NET.Mathematics.Tensors;
 /// </summary>
 /// <typeparam name="TNumber">The type of the numbers stored in the <see cref="ITensor{TNumber}"/>.</typeparam>
 [PublicAPI]
-public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
+public interface ITensor<TNumber> : ITensorLocalityOperations
     where TNumber : unmanaged, INumber<TNumber>
 {
     /// <summary>
@@ -37,6 +38,27 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     public bool IsMemoryOwner { get; }
 
     /// <summary>
+    /// Gets the gradient of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    [MemberNotNullWhen(true, nameof(RequiresGradient))]
+    public ITensor<TNumber>? Gradient { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="ITensor{TNumber}"/> requires a gradient.
+    /// </summary>
+    public bool RequiresGradient { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the <see cref="ITensor{TNumber}"/> is a gradient.
+    /// </summary>
+    public bool IsGradient { get; }
+
+    /// <summary>
+    /// Gets the parent nodes of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    protected internal ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> Parents { get; }
+
+    /// <summary>
     /// Gets the slice of the <see cref="ITensor{TNumber}"/> at the specified indices.
     /// </summary>
     /// <param name="indices">The indices of the <see cref="ITensor{TNumber}"/> to slice.</param>
@@ -45,12 +67,44 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 #pragma warning restore CA1043
 
     /// <summary>
-    /// Gets the transpose of the <see cref="ITensor{TNumber}"/>.
+    /// Propagates the gradient backward through the computation graph.
     /// </summary>
-    /// <returns>The transpose of the <see cref="ITensor{TNumber}"/>.</returns>
-    public ITensor<TNumber> Transpose()
+    public void Backward();
+
+    /// <summary>
+    /// Adds a parent node to the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="parent">The parent node to add.</param>
+    /// <param name="gradientFunc">The gradient function to apply to the parent node.</param>
+    public void AddParent(ITensor<TNumber> parent, Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunc)
     {
-        return new Tensor<TNumber>(this, new Shape(Shape.Dimensions.Reverse().ToArray()));
+        Parents.Add((parent, gradientFunc));
+    }
+
+    /// <summary>
+    /// Creates an instance of the <see cref="ITensor{TNumber}"/> with the gradient.
+    /// </summary>
+    /// <returns>The recreated <see cref="ITensor{TNumber}"/>.</returns>
+    public ITensor<TNumber> WithGradient()
+    {
+        return new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: true);
+    }
+
+    /// <summary>
+    /// Recreates the <see cref="ITensor{TNumber}"/> as a gradient.
+    /// </summary>
+    /// <returns>The recreated <see cref="ITensor{TNumber}"/> as a gradient.</returns>
+    public ITensor<TNumber> AsGradient()
+    {
+        var value = new Tensor<TNumber>(Memory, Shape, Backend, requiresGradient: false) { IsGradient = true };
+
+        if (RequiresGradient)
+        {
+            value.Gradient?.Parents.Clear();
+            value.Gradient?.Dispose();
+        }
+
+        return value;
     }
 
     /// <summary>
@@ -75,7 +129,14 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 
         DetachMemory();
 
-        return new Scalar<TNumber>(Memory, Backend);
+        var result = new Scalar<TNumber>(Memory, Backend, RequiresGradient);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -94,16 +155,24 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 
         DetachMemory();
 
-        return new Vector<TNumber>(Shape.Dimensions[0], Memory, Backend);
+        var result = new Vector<TNumber>(Shape.Dimensions[0], Memory, Backend, RequiresGradient);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
     /// Creates an instance of <see cref="Matrix{TNumber}"/> from the <see cref="ITensor{TNumber}"/>,
     /// assuming that the <see cref="ITensor{TNumber}"/> is 2-dimensional.
     /// </summary>
+    /// <param name="requiresGradient">A value indicating whether the resulting tensor requires a gradient.</param>
     /// <returns>The <see cref="ITensor{TNumber}"/> instance as a <see cref="Matrix{TNumber}"/>.</returns>
     /// <exception cref="InvalidShapeException">Throws when the shape of the <see cref="ITensor{TNumber}"/> is invalid.</exception>
-    public Matrix<TNumber> ToMatrix()
+    public Matrix<TNumber> ToMatrix(bool? requiresGradient = null)
     {
         if (!Shape.IsMatrix)
         {
@@ -113,7 +182,14 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
 
         DetachMemory();
 
-        return new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Memory, Backend);
+        var result = new Matrix<TNumber>(Shape.Dimensions[0], Shape.Dimensions[1], Memory, Backend, requiresGradient ?? RequiresGradient);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -124,7 +200,14 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     {
         DetachMemory();
 
-        return new Tensor<TNumber>(this, Shape);
+        var result = new Tensor<TNumber>(this, Shape);
+
+        foreach (var parent in Parents)
+        {
+            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -164,7 +247,63 @@ public interface ITensor<TNumber> : ITensorLocalityOperations, IDisposable
     }
 
     /// <summary>
+    /// Forces the disposal of the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    public void ForceDispose();
+
+    /// <summary>
     /// Detaches the memory from the <see cref="ITensor{TNumber}"/>.
     /// </summary>
     protected internal void DetachMemory();
+
+    /// <summary>
+    /// Propagates the gradient backward through the computation graph.
+    /// </summary>
+    /// <exception cref="InvalidShapeException">Throws when the shape of the parent gradient tensor is invalid.</exception>
+    protected internal void BackwardInternal()
+    {
+        // First, propagate to each parent
+        foreach (var (parent, gradientFunc) in Parents)
+        {
+            if (parent.RequiresGradient)
+            {
+                var parentGradient = gradientFunc(Gradient!);
+
+                parent.AccumulateGradient(parentGradient);
+            }
+        }
+
+        // Ensure each parent node gets its accumulated gradient and continues to propagate
+        foreach (var (parent, _) in Parents)
+        {
+            parent.BackwardInternal();
+        }
+    }
+
+    /// <summary>
+    /// Accumulates the gradient of the parent node.
+    /// </summary>
+    /// <param name="parentGradient">The gradient of the parent node.</param>
+    /// <exception cref="InvalidShapeException">Throws when the shape of the parent gradient tensor is invalid.</exception>
+    protected void AccumulateGradient(ITensor<TNumber> parentGradient)
+    {
+        ArgumentNullException.ThrowIfNull(Gradient);
+        InvalidShapeException.ThrowIfDifferentShape(Gradient.Shape, parentGradient.Shape);
+
+        if (parentGradient.Shape != Shape)
+        {
+            throw new InvalidShapeException(
+                $"The shape of the parent gradient tensor must be the same as the shape of the tensor, but got {parentGradient.Shape} and {Shape}");
+        }
+
+        if (RequiresGradient)
+        {
+            using var newTensor = TensorServiceProvider
+                .GetTensorOperationServiceProvider()
+                .GetArithmeticService()
+                .Add(Gradient, parentGradient);
+
+            newTensor.Memory.CopyTo(Gradient.Memory);
+        }
+    }
 }

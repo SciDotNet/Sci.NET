@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Sci.NET.Common.Numerics.Intrinsics;
 
 namespace Sci.NET.Common.Numerics;
 
@@ -73,6 +74,7 @@ public static class GenericMath
             double d => (TNumber)(object)Math.Sqrt(d),
             BFloat16 b => (TNumber)(object)BFloat16.Sqrt(b),
             Half h => (TNumber)(object)Half.Sqrt(h),
+            Complex c => (TNumber)(object)Complex.Sqrt(c),
             byte b => (TNumber)(object)(byte)MathF.Sqrt(b),
             short s => (TNumber)(object)(short)MathF.Sqrt(s),
             int i => (TNumber)(object)(int)Math.Sqrt(i),
@@ -105,5 +107,36 @@ public static class GenericMath
         }
 
         return epsilon;
+    }
+
+    /// <summary>
+    /// Finds the absolute value of the provided scalar.
+    /// </summary>
+    /// <param name="scalar">The scalar to find the absolute value of.</param>
+    /// <typeparam name="TNumber">The number type.</typeparam>
+    /// <returns>The absolute value of the provided scalar.</returns>
+    /// <exception cref="NotSupportedException">Thrown if the number type is not supported.</exception>
+    public static ISimdVector<TNumber> Abs<TNumber>(TNumber scalar)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return scalar switch
+        {
+            BFloat16 bfloat16 => new SimdScalarBackend<TNumber>((TNumber)(object)BFloat16.Abs(bfloat16)),
+            Half half => new SimdScalarBackend<TNumber>((TNumber)(object)Half.Abs(half)),
+            Complex complex => new SimdScalarBackend<TNumber>((TNumber)(object)Complex.Abs(complex)),
+            float single => new SimdScalarBackend<TNumber>((TNumber)(object)float.Abs(single)),
+            double @double => new SimdScalarBackend<TNumber>((TNumber)(object)double.Abs(@double)),
+            byte byteValue => new SimdScalarBackend<TNumber>((TNumber)(object)byteValue),
+            ushort ushortValue => new SimdScalarBackend<TNumber>((TNumber)(object)ushortValue),
+            uint uintValue => new SimdScalarBackend<TNumber>((TNumber)(object)uintValue),
+            ulong ulongValue => new SimdScalarBackend<TNumber>((TNumber)(object)ulongValue),
+            sbyte sbyteValue => new SimdScalarBackend<TNumber>((TNumber)(object)sbyte.Abs(sbyteValue)),
+            short shortValue => new SimdScalarBackend<TNumber>((TNumber)(object)short.Abs(shortValue)),
+            int intValue => new SimdScalarBackend<TNumber>((TNumber)(object)int.Abs(intValue)),
+            long longValue => new SimdScalarBackend<TNumber>((TNumber)(object)long.Abs(longValue)),
+            nint nintValue => new SimdScalarBackend<TNumber>((TNumber)(object)nint.Abs(nintValue)),
+            nuint nuintValue => new SimdScalarBackend<TNumber>((TNumber)(object)nuintValue),
+            _ => throw new NotSupportedException("Type not supported for absolute value."),
+        };
     }
 }

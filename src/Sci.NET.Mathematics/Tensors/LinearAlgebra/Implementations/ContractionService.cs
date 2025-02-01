@@ -1,4 +1,4 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -19,15 +19,17 @@ internal class ContractionService : IContractionService
     private readonly IReshapeService _reshapeService;
     private readonly IPermutationService _permutationService;
     private readonly IReductionService _reductionService;
+    private readonly IGradientAppenderService _gradientAppenderService;
 
-    public ContractionService(ITensorOperationServiceProvider provider)
+    public ContractionService()
     {
-        _guardService = provider.GetDeviceGuardService();
-        _matrixMultiplicationService = provider.GetMatrixMultiplicationService();
-        _permutationService = provider.GetPermutationService();
-        _reshapeService = provider.GetReshapeService();
-        _arithmeticService = provider.GetArithmeticService();
-        _reductionService = provider.GetReductionService();
+        _guardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
+        _matrixMultiplicationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetMatrixMultiplicationService();
+        _permutationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetPermutationService();
+        _reshapeService = TensorServiceProvider.GetTensorOperationServiceProvider().GetReshapeService();
+        _arithmeticService = TensorServiceProvider.GetTensorOperationServiceProvider().GetArithmeticService();
+        _reductionService = TensorServiceProvider.GetTensorOperationServiceProvider().GetReductionService();
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
     }
 
     [SuppressMessage("Style", "IDE0045:Convert to conditional expression", Justification = "Readability")]
@@ -35,17 +37,15 @@ internal class ContractionService : IContractionService
         ITensor<TNumber> left,
         ITensor<TNumber> right,
         int[] leftIndices,
-        int[] rightIndices)
+        int[] rightIndices,
+        bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _guardService.GuardBinaryOperation(left.Device, right.Device);
 
         var contractedSize = 1;
 
-        if (leftIndices.Length != rightIndices.Length)
-        {
-            throw new ArgumentException("The number of left and right indices must be equal.");
-        }
+        ArgumentOutOfRangeException.ThrowIfNotEqual(leftIndices.Length, rightIndices.Length);
 
         for (var i = 0; i < leftIndices.Length; i++)
         {
@@ -104,32 +104,111 @@ internal class ContractionService : IContractionService
             }
         }
 
-        using var leftPermuted = _permutationService.Permute(left, leftPermutation.ToArray());
-        using var rightPermuted = _permutationService.Permute(right, rightPermutation.ToArray());
-        using var leftReshaped = _reshapeService.Reshape(leftPermuted, new Shape(nonContractedLeft, contractedSize)).ToMatrix();
-        using var rightReshaped = _reshapeService.Reshape(rightPermuted, new Shape(contractedSize, nonContractedRight)).ToMatrix();
-        using var mmResult = _matrixMultiplicationService.MatrixMultiply(leftReshaped, rightReshaped);
+        using var leftPermuted = _permutationService.Permute(left, leftPermutation.ToArray(), overrideRequiresGradient: false);
+        using var rightPermuted = _permutationService.Permute(right, rightPermutation.ToArray(), overrideRequiresGradient: false);
+        using var leftReshaped = _reshapeService.Reshape(leftPermuted, new Shape(nonContractedLeft, contractedSize)).ToMatrix(false);
+        using var rightReshaped = _reshapeService.Reshape(rightPermuted, new Shape(contractedSize, nonContractedRight)).ToMatrix(false);
+        using var mmResult = _matrixMultiplicationService.MatrixMultiply(leftReshaped, rightReshaped, overrideRequiresGradient: false);
+        var result = _reshapeService.Reshape(mmResult, new Shape(resultShape.ToArray()), overrideRequiresGradient: false);
 
-        return _reshapeService.Reshape(mmResult, new Shape(resultShape.ToArray()));
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            overrideRequiresGradient,
+            grad =>
+            {
+                var nonContractedAAxes = Enumerable
+                    .Range(0, left.Shape.Rank)
+                    .Where(i => !leftIndices.Contains(i))
+                    .ToArray();
+                var nonContractedBAxes = Enumerable
+                    .Range(0, right.Shape.Rank)
+                    .Where(i => !rightIndices.Contains(i))
+                    .ToArray();
+
+                var contractionService = TensorServiceProvider.GetTensorOperationServiceProvider().GetContractionService();
+                var permutationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetPermutationService();
+                var leftInd = Enumerable.Range(nonContractedBAxes.Length, grad.Shape.Rank - nonContractedBAxes.Length).ToList();
+                var permuteAxes = nonContractedAAxes.Concat(leftIndices).ToArray();
+                var aGrad = contractionService.Contract(grad, right, leftInd.ToArray(), nonContractedBAxes.ToArray(), overrideRequiresGradient: false);
+                return permutationService.Permute(aGrad, permuteAxes, overrideRequiresGradient: false);
+            },
+            grad =>
+            {
+                var nonContractedAAxes = Enumerable
+                    .Range(0, left.Shape.Rank)
+                    .Where(i => !leftIndices.Contains(i))
+                    .ToArray();
+                var nonContractedBAxes = Enumerable
+                    .Range(0, right.Shape.Rank)
+                    .Where(i => !rightIndices.Contains(i))
+                    .ToArray();
+
+                var contractionService = TensorServiceProvider.GetTensorOperationServiceProvider().GetContractionService();
+                var permutationService = TensorServiceProvider.GetTensorOperationServiceProvider().GetPermutationService();
+                var permuteAxes = new int[right.Shape.Rank];
+                var currentIndex = 0;
+                foreach (var axis in nonContractedBAxes)
+                {
+                    permuteAxes[axis] = currentIndex++;
+                }
+
+                foreach (var axis in rightIndices)
+                {
+                    permuteAxes[axis] = currentIndex++;
+                }
+
+                var rightInd = Enumerable.Range(0, grad.Shape.Rank - nonContractedAAxes.Length).ToList();
+                var bGrad = contractionService.Contract(grad, left, rightInd.ToArray(), nonContractedAAxes.ToArray(), overrideRequiresGradient: false);
+
+                return permutationService.Permute(bGrad, permuteAxes, overrideRequiresGradient: false);
+            });
+
+        return result;
     }
 
-    public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
+    public Scalar<TNumber> Inner<TNumber>(Vector<TNumber> left, Vector<TNumber> right, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = _guardService.GuardBinaryOperation(left.Device, right.Device);
 
-        if (left.Shape[^1] != right.Shape[^1])
+        ArgumentOutOfRangeException.ThrowIfNotEqual(left.Shape[^1], right.Shape[^1]);
+        InvalidShapeException.ThrowIfNotOfRank(left, 1);
+        InvalidShapeException.ThrowIfNotOfRank(right, 1);
+
+        var result = new Scalar<TNumber>(backend);
+        backend.LinearAlgebra.InnerProduct(left, right, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            overrideRequiresGradient,
+            grad =>
+            {
+                var gradVector = right.Multiply(grad);
+                return gradVector.AsGradient();
+            },
+            grad =>
+            {
+                var gradVector = left.Multiply(grad);
+                return gradVector.AsGradient();
+            });
+
+        if (overrideRequiresGradient ?? left.RequiresGradient)
         {
-            throw new ArgumentException("The last dimensions of the left and right operands must be equal.", nameof(right));
+            ((ITensor<TNumber>)result).AddParent(
+                left,
+                _ => ((ITensor<TNumber>)right).AsGradient());
         }
 
-        if (left.Shape.Rank != 1 || right.Shape.Rank != 1)
+        if (overrideRequiresGradient ?? right.RequiresGradient)
         {
-            throw new InvalidShapeException($"Inner product is only defined for vectors, but got shapes {left.Shape} and {right.Shape}.");
+            ((ITensor<TNumber>)result).AddParent(
+                right,
+                _ => ((ITensor<TNumber>)left).AsGradient());
         }
-
-        var result = new Scalar<TNumber>(left.Backend);
-        left.Backend.LinearAlgebra.InnerProduct(left, right, result);
 
         return result;
     }
@@ -137,8 +216,6 @@ internal class ContractionService : IContractionService
     public ITensor<TNumber> Dot<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-
         if (left.IsVector() && right.IsVector())
         {
             return Inner(left.ToVector(), right.ToVector());
@@ -156,16 +233,10 @@ internal class ContractionService : IContractionService
 
         if (right.IsVector())
         {
-            return left.Contract(
-                right,
-                new int[] { left.Shape.Rank - 1 },
-                new int[] { right.Shape.Rank - 1 });
+            return left.Contract(right, [left.Shape.Rank - 1], [right.Shape.Rank - 1]);
         }
 
-        return left.Contract(
-            right,
-            new int[] { left.Shape.Rank - 1 },
-            new int[] { right.Shape.Rank - 2 });
+        return left.Contract(right, [left.Shape.Rank - 1], [right.Shape.Rank - 2]);
     }
 
     private static bool[] DimListToBitset(IEnumerable<int> leftIndices, int leftRank)

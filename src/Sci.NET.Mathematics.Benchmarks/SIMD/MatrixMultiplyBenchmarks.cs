@@ -15,7 +15,9 @@ namespace Sci.NET.Mathematics.Benchmarks.SIMD;
 /// </summary>
 [MemoryDiagnoser]
 [NativeMemoryProfiler]
+#pragma warning disable CA1515
 public class MatrixMultiplyBenchmarks
+#pragma warning restore CA1515
 {
     private const int N = 512;
     private const int M = 768;

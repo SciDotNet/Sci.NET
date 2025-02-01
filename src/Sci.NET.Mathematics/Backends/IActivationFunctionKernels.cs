@@ -49,6 +49,26 @@ public interface IActivationFunctionKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Computes the softmax activation function on the given <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The value to compute the softmax function on.</param>
+    /// <param name="sumBuffer">The buffer to store the sum of the exponential scores.</param>
+    /// <param name="result">The result of the softmax function.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void Softmax<TNumber>(ITensor<TNumber> value, Scalar<TNumber> sumBuffer, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
+
+    /// <summary>
+    /// Computes the 1st derivative of the softmax function on the given <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="value">The value to compute the softmax derivative function on.</param>
+    /// <param name="softmaxValue">The result of the softmax function.</param>
+    /// <param name="result">The result of the softmax derivative function.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    public void SoftmaxPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> softmaxValue, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
+
+    /// <summary>
     /// Computes the Leaky ReLU activation function on the given <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="value">The value to compute the Leaky ReLU function on.</param>

@@ -4,6 +4,7 @@
 using System.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Power;
@@ -19,7 +20,7 @@ public class ExpShould : IntegrationTestBase
     }
 
     private static TNumber ExpScalarTest<TNumber>(TNumber number, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var scalar = new Scalar<TNumber>(number);
 
@@ -34,12 +35,12 @@ public class ExpShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenVector(IDevice device)
     {
-        ExpVectorTest<float>(new float[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new float[] { 2.718281828459045f, 7.38905609893065f, 20.085536923187668f });
-        ExpVectorTest<double>(new double[] { 1, 2, 3 }, device).Should().BeEquivalentTo(new double[] { 2.718281828459045d, 7.38905609893065d, 20.085536923187668d });
+        ExpVectorTest<float>([1, 2, 3], device).Should().BeEquivalentTo(new float[] { 2.718281828459045f, 7.38905609893065f, 20.085536923187668f });
+        ExpVectorTest<double>([1, 2, 3], device).Should().BeEquivalentTo(new double[] { 2.718281828459045d, 7.38905609893065d, 20.085536923187668d });
     }
 
     private static Array ExpVectorTest<TNumber>(TNumber[] numbers, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var vector = Tensor.FromArray<TNumber>(numbers).ToVector();
 
@@ -54,12 +55,16 @@ public class ExpShould : IntegrationTestBase
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenMatrix(IDevice device)
     {
-        ExpMatrixTest<float>(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new float[,] { { 2.718281828459045f, 7.38905609893065f, 20.085536923187668f }, { 54.598150033144236f, 148.4131591025766f, 403.4287934927351f } });
-        ExpMatrixTest<double>(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device).Should().BeEquivalentTo(new double[,] { { 2.718281828459045d, 7.38905609893065d, 20.085536923187668d }, { 54.598150033144236d, 148.4131591025766d, 403.4287934927351d } });
+        ExpMatrixTest<float>(new float[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device)
+            .Should()
+            .BeEquivalentTo(new float[,] { { 2.718281828459045f, 7.38905609893065f, 20.085536923187668f }, { 54.598150033144236f, 148.4131591025766f, 403.4287934927351f } });
+        ExpMatrixTest<double>(new double[,] { { 1, 2, 3 }, { 4, 5, 6 } }, device)
+            .Should()
+            .BeEquivalentTo(new double[,] { { 2.718281828459045d, 7.38905609893065d, 20.085536923187668d }, { 54.598150033144236d, 148.4131591025766d, 403.4287934927351d } });
     }
 
     private static Array ExpMatrixTest<TNumber>(TNumber[,] numbers, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var matrix = Tensor.FromArray<TNumber>(numbers).ToMatrix();
 
@@ -93,7 +98,7 @@ public class ExpShould : IntegrationTestBase
     }
 
     private static Array ExpTensorTest<TNumber>(TNumber[,,] numbers, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(numbers);
 
@@ -102,5 +107,27 @@ public class ExpShould : IntegrationTestBase
         var result = tensor.Exp();
 
         return result.ToArray();
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResultAndGradient_GivenMatrix(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } }, requiresGradient: true);
+
+        tensor.To(device);
+
+        // Act
+        using var result = tensor.Exp();
+
+        result.Backward();
+
+        result.To<CpuComputeDevice>();
+
+        // Assert
+        result.Should().HaveApproximatelyEquivalentElements(new float[,] { { 2.7182817F, 7.389056F }, { 20.085537F, 54.59815F }, { 148.41316F, 403.4288F } }, 1e-4f);
+        tensor.Gradient!.Should().NotBeNull();
+        tensor.Gradient?.Should().HaveEquivalentElements(new float[,] { { 2.7182817F, 7.389056F }, { 20.085537F, 54.59815F }, { 148.41316F, 403.4288F } });
     }
 }

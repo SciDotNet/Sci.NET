@@ -4,6 +4,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Sci.NET.Common.Attributes;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed;
@@ -43,11 +44,12 @@ public static class Tensor
     /// </summary>
     /// <param name="shape">The <see cref="Shape"/> of the <see cref="ITensor{TNumber}"/>.</param>
     /// <param name="array">The array of values for the <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="requiresGradient">Whether the <see cref="ITensor{TNumber}"/> requires a gradient.</param>
     /// <param name="backend">The backend instance for the <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     /// <returns>A <see cref="ITensor{TNumber}"/> with the given values and shape.</returns>
     /// <exception cref="ArgumentException">Throws when the array does not contain the same number of elements as the shape.</exception>
-    public static ITensor<TNumber> FromArray<TNumber>(Shape shape, TNumber[] array, ITensorBackend? backend = null)
+    public static ITensor<TNumber> FromArray<TNumber>(Shape shape, TNumber[] array, bool requiresGradient = false, ITensorBackend? backend = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
         backend ??= DefaultBackend;
@@ -60,13 +62,14 @@ public static class Tensor
         var handle = backend.Storage.Allocate<TNumber>(shape);
         handle.CopyFrom(array);
 
-        return new Tensor<TNumber>(handle, shape, backend);
+        return new Tensor<TNumber>(handle, shape, backend, requiresGradient);
     }
 
     /// <summary>
     /// Creates a tensor with the specified dimensions and values.
     /// </summary>
     /// <param name="array">The values to assign to the <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="requiresGradient">Whether the <see cref="ITensor{TNumber}"/> requires a gradient.</param>
     /// <param name="backend">The <see cref="ITensorBackend"/> to use.</param>
     /// <typeparam name="TNumber">The type of element in the <see cref="Array"/>.</typeparam>
     /// <returns>The <see cref="Array"/> as a <see cref="ITensor{TNumber}"/>.</returns>
@@ -74,6 +77,7 @@ public static class Tensor
     /// the same as <typeparamref name="TNumber"/>.</exception>
     public static ITensor<TNumber> FromArray<TNumber>(
         Array array,
+        bool requiresGradient = false,
         ITensorBackend? backend = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -99,7 +103,7 @@ public static class Tensor
                     nameof(array));
         }
 
-        return FromArray(shape, flattened, backend);
+        return FromArray(shape, flattened, requiresGradient, backend);
     }
 
     /// <summary>
@@ -257,7 +261,7 @@ public static class Tensor
         where TNumber : unmanaged, INumber<TNumber>
     {
         device ??= new CpuComputeDevice();
-        return new Tensor<TNumber>(shape, device.GetTensorBackend());
+        return new Tensor<TNumber>(shape, device.GetTensorBackend(), false);
     }
 
     /// <summary>
@@ -442,6 +446,19 @@ public static class Tensor
         }
 
         return ConvertToString(tensor, 0, 0).TrimStart('\n');
+    }
+
+    [PreviewFeature]
+    internal static void Backward<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        PreviewFeatureNotEnabledException.ThrowIfNotEnabled(SciDotNetConfiguration.PreviewFeatures.AutoGradEnabled, "AutoGrad");
+
+        if (tensor.RequiresGradient)
+        {
+            tensor.Gradient?.Memory.Fill(TNumber.One);
+            tensor.BackwardInternal();
+        }
     }
 
     private static string ConvertToString<TNumber>(ITensor<TNumber> tensor, int dimension, long index)

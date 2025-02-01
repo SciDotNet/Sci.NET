@@ -1,0 +1,206 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+    var functions = new List<BackwardFunctionTestCollection>
+    {
+        new()
+        {
+            FunctionName = "Sigmoid",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 0.7310585786300049, Derivative = 0.19661193324148185 }
+                ]
+        },
+        new()
+        {
+            FunctionName = "Tanh",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 0.7615941559557649, Derivative = 0.41997434161402614 }
+                ]
+        },
+        new()
+        {
+            FunctionName = "ReLU",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 1.0d, Derivative = 1.0d },
+                new() { Input = -1.0d, Parameters = "", Primal = 0.0d, Derivative = 0.0d },
+                new() { Input = 0.0d, Parameters = "", Primal = 0.0d, Derivative = 0.0d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "LeakyReLU",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "0.01", Primal = 1.0d, Derivative = 1.0d },
+                new() { Input = -1.0d, Parameters = "0.01", Primal = -0.01d, Derivative = 0.01d },
+                new() { Input = 0.0d, Parameters = "0.01", Primal = 0.0d, Derivative = 0.01d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "Softmax",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 1.0d, Derivative = 0.0d },
+                new() { Input = 2.0d, Parameters = "", Primal = 1.0d, Derivative = 0.0d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "Elu",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "1.0", Primal = 1.0d, Derivative = 1.0d },
+                new() { Input = -1.0d, Parameters = "1.0", Primal = -0.6321205588285577, Derivative = 0.36787944117144233 },
+                new() { Input = 0.0d, Parameters = "1.0", Primal = 0.0d, Derivative = 1.0d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "Celu",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "1.0", Primal = 1.0d, Derivative = 1.0d },
+                new() { Input = -1.0d, Parameters = "1.0", Primal = -0.6321205588285577, Derivative = 0.36787944117144233 },
+                new() { Input = 0.0d, Parameters = "1.0", Primal = 0.0d, Derivative = 1.0d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "Swish",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 0.7310585786300049, Derivative = 0.9276705118714867 },
+                new() { Input = -1.0d, Parameters = "", Primal = -0.2689414213699951, Derivative = 0.07232948812851327 },
+                new() { Input = 0.0d, Parameters = "", Primal = 0.0d, Derivative = 0.5d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "Mish",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 0.8650983882673103, Derivative = 1.0490362200997922 },
+                new() { Input = -1.0d, Parameters = "", Primal = -0.30340146137410895, Derivative = 0.05921675587739489 },
+                new() { Input = 0.0d, Parameters = "", Primal = 0.0d, Derivative = 0.6d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "HardTanh",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "-1.0d, 1.0d", Primal = 1.0d, Derivative = 0.0d },
+                new () { Input = 0.5d, Parameters = "-1.0d, 1.0d", Primal = 0.5d, Derivative = 1.0d },
+                new() { Input = -1.0d, Parameters = "-1.0d, 1.0d", Primal = -1.0d, Derivative = 0.0d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "HardSigmoid",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 1.0d, Derivative = 0.0d },
+                new() { Input = -1.0d, Parameters = "", Primal = 0.0d, Derivative = 0.0d },
+                new() { Input = 0.5d, Parameters = "", Primal = 0.25d, Derivative = 0.5d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "LogSigmoid",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = -0.31326168751822286, Derivative = 0.2689414213699951 },
+                new() { Input = -1.0d, Parameters = "", Primal = -1.3132616875182228, Derivative = 0.7310585786300049 },
+                ]
+        },
+        new()
+        {
+            FunctionName = "SoftPlus",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 1.3132616875182228, Derivative = 0.7310585786300049 },
+                new() { Input = -1.0d, Parameters = "", Primal = 0.31326168751822286, Derivative = 0.2689414213699951 },
+                new() { Input = 0.0d, Parameters = "", Primal = 0.6931471805599453, Derivative = 0.5 }
+                ]
+        },
+        new()
+        {
+            FunctionName = "SoftSign",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 0.5d, Derivative = 0.25d },
+                new() { Input = -1.0d, Parameters = "", Primal = -0.5d, Derivative = 0.25d },
+                new() { Input = 0.0d, Parameters = "", Primal = 0.0d, Derivative = 1.0d }
+                ]
+        },
+        new()
+        {
+            FunctionName = "GELU",
+            Parameters = [
+                new() { Input = 1.0d, Parameters = "", Primal = 0.841191990608276, Derivative = 1.0850864475321376 },
+                new() { Input = -1.0d, Parameters = "", Primal = -0.15880800939172324, Derivative = -0.08508644753213751 },
+                new() { Input = 0.0d, Parameters = "", Primal = 0.0d, Derivative = 0.5d }
+                ]
+        }
+    };
+#>
+// <auto-generated />
+// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
+
+using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Mathematics.Backends.Devices;
+using Sci.NET.Tests.Framework.Assertions;
+using Sci.NET.Tests.Framework.Integration;
+
+namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Differentiation;
+
+public class ActivationFunctionsBackwardsTests : IntegrationTestBase
+{
+<#
+    foreach (var function in functions)
+    {
+        foreach (var testParameters in function.Parameters)
+        {
+#>
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void <#= function.GetFunctionName(testParameters) #>(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<double>(new double[] { <#= testParameters.Input #> }, requiresGradient: true);
+        tensor.To(device);
+        var result = tensor.<#= function.FunctionName #>(<#= testParameters.Parameters #>);
+
+        // Act
+        result.Backward();
+
+        // Assert
+        tensor.Gradient!.Should().NotBeNull();
+        result.Gradient!.Should().NotBeNull();
+
+        tensor.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { <#= testParameters.Derivative #> }, 1e-9);
+        result.Gradient!.Should().HaveApproximatelyEquivalentElements(new double[] { 1.0d }, 1e-9);
+        result.Should().HaveApproximatelyEquivalentElements(new double[] { <#= testParameters.Primal #> }, 1e-9);
+    }
+
+<#
+        }
+    }
+#>
+}<#+
+    public class BackwardFunctionTestCollection
+    {
+        public string FunctionName { get; set; }
+
+        public List<BackwardFunctionTestParameters> Parameters { get; set; }
+
+        public string GetFunctionName(BackwardFunctionTestParameters parameters)
+        {
+            return $"{FunctionName}_Example_{Parameters.IndexOf(parameters) + 1}_Backwards";
+        }
+    }
+
+    public class BackwardFunctionTestParameters
+    {
+        public double Input { get; set; }
+
+        public string Parameters { get; set; }
+
+        public double Primal { get; set; }
+
+        public double Derivative { get; set; }
+    }
+#>

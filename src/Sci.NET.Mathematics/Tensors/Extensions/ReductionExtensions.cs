@@ -17,6 +17,38 @@ namespace Sci.NET.Mathematics.Tensors;
 public static class ReductionExtensions
 {
     /// <summary>
+    /// Reduces a <see cref="ITensor{TNumber}"/> to a given shape.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to reduce.</param>
+    /// <param name="targetShape">The shape to reduce the <see cref="ITensor{TNumber}"/> to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The reduced <see cref="ITensor{TNumber}"/>.</returns>
+    public static ITensor<TNumber> ReduceToShape<TNumber>(this ITensor<TNumber> tensor, Shape targetShape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetReductionService()
+            .ReduceToShape(tensor, targetShape);
+    }
+
+    /// <summary>
+    /// Determines if a <see cref="ITensor{TNumber}"/> can be reduced to a given shape.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to reduce.</param>
+    /// <param name="shape">The shape to reduce the <see cref="ITensor{TNumber}"/> to.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>A value indicating whether the <see cref="ITensor{TNumber}"/> can be reduced to the given shape.</returns>
+    public static bool CanReduceToShape<TNumber>(this ITensor<TNumber> tensor, Shape shape)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetReductionService()
+            .CanReduceToShape(tensor, shape);
+    }
+
+    /// <summary>
     /// Computes the sum of a <see cref="ITensor{TNumber}"/>.
     /// </summary>
     /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to sum.</param>
