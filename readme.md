@@ -9,13 +9,20 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SciDotNet_Sci.NET&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=SciDotNet_Sci.NET)
 
-# Sci.NET
+# Sci.NET (Early Development)
 
 Sci.NET is a scientific computing library for .NET with a familiar API similar to NumPy and PyTorch. Currently, the
 library is in early development and is not ready for production use.
 
 Currently, only the managed CPU backend is working which is used as a proof of concept and regression testing for other
 backends.
+
+### Currently Supported Features:
+- Arithmetic operations
+- Contractions
+- Reductions
+- Trigonometric functions
+- Automatic differentiation (Reverse Mode, WIP)
 
 ## License
 
@@ -28,10 +35,7 @@ backends.
 ### Base Requirements
 
 - .NET 8 SDK
-
-### Development Requirements
-
-- CUDA 12.3
+- That's it!
 
 ## Packages
 
@@ -39,8 +43,6 @@ There are a number of packages offered with Sci.NET. The base package is the `Sc
 
 Work has been started on the CUDA backend, but is not yet ready. There will be redistributable packages for CUDA for
 Windows and Linux.
-
-The `Sci.NET.CUDA.Redist-*platform*` packages include the CUDA Runtime. *See third-party licences*.
 
 ## Build Locally
 
@@ -65,10 +67,10 @@ Or to build a release version:
 [Documentation](http://docs.scidotnet.org/) (Not yet available, depends on the build pipeline)
 
 ## Roadmap
-
-- More comprehensive machine learning API for `Sci.NET.MachineLearning`.
+- Vectorized operations for CPU backend.
+- Re-implement the machine learning API for `Sci.NET.MachineLearning`.
 - Better hardware acceleration using intrinsics.
-- CUDA, Vulkan and MKL backend.
+- CUDA, Vulkan and MKL backend (quite far in the future).
 - More comprehensive documentation.
 - Better support for datasets and data loading.
 
