@@ -4,6 +4,7 @@
 using System.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Power;
@@ -20,7 +21,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static TNumber PowScalarTest<TNumber>(TNumber value, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var scalar = new Scalar<TNumber>(value);
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -41,7 +42,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static Array PowVectorTest<TNumber>(TNumber[] values, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values).ToVector();
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -66,7 +67,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static Array PowMatrixTest<TNumber>(TNumber[,] values, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values).ToMatrix();
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -91,7 +92,7 @@ public class PowShould : IntegrationTestBase
     }
 
     private static Array PowTensorTest<TNumber>(TNumber[,,] values, TNumber exponent, IDevice device)
-        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IPowerFunctions<TNumber>, IFloatingPointIeee754<TNumber>, ILogarithmicFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values);
         var exponentScalar = new Scalar<TNumber>(exponent);
@@ -100,5 +101,55 @@ public class PowShould : IntegrationTestBase
         exponentScalar.To(device);
 
         return tensor.Pow(exponentScalar).ToArray();
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResultAndGradient_GivenPower2(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } });
+        var expectedGrad = new float[,] { { 2, 4 }, { 6, 8 }, { 10, 12 } };
+
+        tensor.To(device);
+
+        // Act
+        using var result = tensor.Pow(2);
+
+        tensor.Backward();
+
+        result.To<CpuComputeDevice>();
+
+        // Assert
+        result.IsMatrix().Should().BeTrue();
+        result.Should().HaveEquivalentElements(new float[,] { { 1, 4 }, { 9, 16 }, { 25, 36 } });
+
+        tensor.Gradient?.Should().NotBeNull();
+        tensor.Gradient?.Should().HaveEquivalentElements(expectedGrad);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResultAndGradient_GivenPower3(IDevice device)
+    {
+        // Arrange
+        using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } });
+        var expectedGrad = new float[,] { { 3, 12 }, { 27, 48 }, { 75, 108 } };
+
+        tensor.To(device);
+
+        // Act
+        using var result = tensor.Pow(3);
+
+        tensor.Backward();
+
+        result.To<CpuComputeDevice>();
+
+        // Assert
+        result.IsMatrix().Should().BeTrue();
+        result.Should().HaveEquivalentElements(new float[,] { { 1, 8 }, { 27, 64 }, { 125, 216 } });
+
+        tensor.Gradient?.Should().NotBeNull();
+        tensor.Gradient?.Should().HaveEquivalentElements(expectedGrad);
     }
 }

@@ -8,7 +8,5 @@ using Sci.NET.Mathematics.Benchmarks.SIMD;
 [assembly:ExcludeFromCodeCoverage]
 
 BenchmarkRunner.Run<AdditionBenchmarks>();
-
 BenchmarkRunner.Run<ReduceAddBenchmarks>();
-
 BenchmarkRunner.Run<MatrixMultiplyBenchmarks>();

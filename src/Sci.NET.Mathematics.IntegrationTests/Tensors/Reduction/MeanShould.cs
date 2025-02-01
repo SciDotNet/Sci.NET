@@ -3,6 +3,7 @@
 
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Reduction;
@@ -15,16 +16,21 @@ public class MeanShould : IntegrationTestBase
     {
         // Arrange
         using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } });
+        var expectedGrad = new float[,] { { 5 / 3f, 5 / 3f }, { 5 / 3f, 5 / 3f }, { 5 / 3f, 5 / 3f } };
         tensor.To(computeDevice);
 
         // Act
         using var result = tensor.Mean();
+
+        result.Backward();
 
         result.To<CpuComputeDevice>();
 
         // Assert
         result.IsScalar().Should().BeTrue();
         result.ToScalar().Value.Should().Be(3.5f);
+        result.Gradient?.Should().NotBeNull();
+        result.Gradient?.Should().HaveEquivalentElements(expectedGrad);
     }
 
     [Theory]
@@ -33,6 +39,7 @@ public class MeanShould : IntegrationTestBase
     {
         // Arrange
         using var tensor = Tensor.FromArray<float>(new float[,] { { 1, 2 }, { 3, 4 }, { 5, 6 } });
+        var expectedGrad = new float[,] { { 1 / 3f, 0 }, { 1 / 3f, 0 }, { 1 / 3f, 0 } };
         tensor.To(computeDevice);
 
         // Act

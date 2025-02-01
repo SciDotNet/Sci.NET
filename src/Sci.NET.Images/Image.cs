@@ -33,7 +33,8 @@ public static class Image
         return new Tensor<byte>(
             convertedMemory,
             new Shape(3, image.Height, image.Width),
-            ManagedTensorBackend.Instance);
+            ManagedTensorBackend.Instance,
+            requiresGradient: false);
     }
 
     /// <summary>
@@ -55,7 +56,8 @@ public static class Image
         return new Tensor<ushort>(
             convertedMemory,
             new Shape(3, image.Height, image.Width),
-            ManagedTensorBackend.Instance);
+            ManagedTensorBackend.Instance,
+            requiresGradient: false);
     }
 
     /// <summary>
@@ -77,7 +79,8 @@ public static class Image
         return new Tensor<byte>(
             convertedMemory,
             new Shape(4, image.Height, image.Width),
-            ManagedTensorBackend.Instance);
+            ManagedTensorBackend.Instance,
+            requiresGradient: false);
     }
 
     /// <summary>
@@ -99,7 +102,8 @@ public static class Image
         return new Tensor<ushort>(
             convertedMemory,
             new Shape(4, image.Height, image.Width),
-            ManagedTensorBackend.Instance);
+            ManagedTensorBackend.Instance,
+            requiresGradient: false);
     }
 
     /// <summary>
@@ -121,7 +125,8 @@ public static class Image
         return new Tensor<byte>(
             convertedMemory,
             new Shape(1, image.Height, image.Width),
-            ManagedTensorBackend.Instance);
+            ManagedTensorBackend.Instance,
+            requiresGradient: false);
     }
 
     /// <summary>
@@ -143,6 +148,7 @@ public static class Image
         return new Tensor<ushort>(
             convertedMemory,
             new Shape(1, image.Height, image.Width),
-            ManagedTensorBackend.Instance);
+            ManagedTensorBackend.Instance,
+            requiresGradient: false);
     }
 }

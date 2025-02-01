@@ -34,4 +34,70 @@ public static class PermutationExtensions
             .GetPermutationService()
             .Permute(tensor, permutation);
     }
+
+    /// <summary>
+    /// Transposes the <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to transpose.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The transposed <see cref="ITensor{TNumber}"/>.</returns>
+    public static ITensor<TNumber> Transpose<TNumber>(this ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var transposeIndices = Enumerable.Range(0, tensor.Shape.Rank).Reverse().ToArray();
+
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPermutationService()
+            .Permute(tensor, transposeIndices);
+    }
+
+    /// <summary>
+    /// Transposes the <see cref="ITensor{TNumber}"/> using the specified permutation.
+    /// </summary>
+    /// <param name="tensor">The <see cref="ITensor{TNumber}"/> to transpose.</param>
+    /// <param name="permutation">The permutation to use for the transpose.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
+    /// <returns>The transposed <see cref="ITensor{TNumber}"/>.</returns>
+    /// <remarks>This is an alias for <see cref="Permute{TNumber}(ITensor{TNumber},int[])"/>.</remarks>
+    public static ITensor<TNumber> Transpose<TNumber>(this ITensor<TNumber> tensor, int[] permutation)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPermutationService()
+            .Permute(tensor, permutation);
+    }
+
+    /// <summary>
+    /// Transposes the <see cref="Matrix{TNumber}"/>.
+    /// </summary>
+    /// <param name="matrix">The <see cref="Matrix{TNumber}"/> to transpose.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Matrix{TNumber}"/>.</typeparam>
+    /// <returns>The transposed <see cref="Matrix{TNumber}"/>.</returns>
+    public static Matrix<TNumber> Transpose<TNumber>(this Matrix<TNumber> matrix)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPermutationService()
+            .Permute(matrix, new[] { 1, 0 })
+            .ToMatrix();
+    }
+
+    /// <summary>
+    /// Transposes the <see cref="Tensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="Tensor{TNumber}"/> to transpose.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="Tensor{TNumber}"/>.</typeparam>
+    /// <returns>The transposed <see cref="Tensor{TNumber}"/>.</returns>
+    public static Tensor<TNumber> Transpose<TNumber>(this Tensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TensorServiceProvider
+            .GetTensorOperationServiceProvider()
+            .GetPermutationService()
+            .Permute(tensor, Enumerable.Range(0, tensor.Shape.Rank).Reverse().ToArray())
+            .ToTensor();
+    }
 }

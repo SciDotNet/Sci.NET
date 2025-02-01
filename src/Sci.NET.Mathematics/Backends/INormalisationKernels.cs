@@ -47,4 +47,15 @@ public interface INormalisationKernels
         Matrix<TNumber> result,
         Scalar<TNumber> epsilon)
         where TNumber : unmanaged, IRootFunctions<TNumber>, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs a backward pass of a 1D batch normalization operation.
+    /// </summary>
+    /// <param name="tensor">The tensor to operate on.</param>
+    /// <param name="result">The result tensor.</param>
+    /// <param name="min">The minimum value to clip to.</param>
+    /// <param name="max">The maximum value to clip to.</param>
+    /// <typeparam name="TNumber">The number type of the operation.</typeparam>
+    public void ClipPrime<TNumber>(ITensor<TNumber> tensor, Tensor<TNumber> result, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>;
 }

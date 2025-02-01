@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
+using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
@@ -21,7 +22,8 @@ public interface IDeviceGuardService
     /// <param name="left">The left operand device.</param>
     /// <param name="right">The right operand device.</param>
     /// <exception cref="TensorDataLocalityException">Throws when the devices are not compatible.</exception>
-    public void GuardBinaryOperation(IDevice left, IDevice right);
+    /// <returns>The backend used by the <paramref name="left"/> and <paramref name="right"/> devices.</returns>
+    public ITensorBackend GuardBinaryOperation(IDevice left, IDevice right);
 
     /// <summary>
     /// Determines if all operands of a multi-parameter operation are stored on the
@@ -29,5 +31,6 @@ public interface IDeviceGuardService
     /// </summary>
     /// <param name="devices">The devices for each parameter.</param>
     /// <exception cref="TensorDataLocalityException">Throws when the devices are not compatible.</exception>
-    public void GuardMultiParameterOperation(params IDevice[] devices);
+    /// <returns>The backend used by the <paramref name="devices"/>.</returns>
+    public ITensorBackend GuardMultiParameterOperation(params IDevice[] devices);
 }
