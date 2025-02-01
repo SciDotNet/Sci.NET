@@ -31,6 +31,7 @@ public class ManagedTensorBackend : ITensorBackend
         Broadcasting = new ManagedBroadcastingKernels();
         Permutation = new ManagedPermutationKernels();
         Normalisation = new ManagedNormalisationKernels();
+        EqualityOperations = new ManagedEqualityOperationKernels();
     }
 
     /// <summary>
@@ -76,4 +77,7 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public INormalisationKernels Normalisation { get; }
+
+    /// <inheritdoc />
+    public IEqualityOperationKernels EqualityOperations { get; }
 }

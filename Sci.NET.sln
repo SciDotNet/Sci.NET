@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.Benchmarks", "src\Sci.NET.Mathematics.Benchmarks\Sci.NET.Mathematics.Benchmarks.csproj", "{2C72FFC2-F938-4A08-85E5-19DB2066C61A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{E435E549-ABAE-44E2-BD1F-FC6090A7EAD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

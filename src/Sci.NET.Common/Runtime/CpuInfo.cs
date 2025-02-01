@@ -18,8 +18,8 @@ public static class CpuInfo
 {
     static CpuInfo()
     {
-        var vendor = string.Empty;
-        var model = string.Empty;
+        var vendor = "Unknown Vendor";
+        var model = "Unknown Model";
         var clockSpeed = 0.0d;
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
