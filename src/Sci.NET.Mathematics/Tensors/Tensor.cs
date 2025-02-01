@@ -4,6 +4,7 @@
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Sci.NET.Common.Attributes;
 using Sci.NET.Mathematics.Backends;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Backends.Managed;
@@ -447,9 +448,12 @@ public static class Tensor
         return ConvertToString(tensor, 0, 0).TrimStart('\n');
     }
 
+    [PreviewFeature]
     internal static void Backward<TNumber>(this ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        PreviewFeatureNotEnabledException.ThrowIfNotEnabled(SciDotNetConfiguration.PreviewFeatures.AutoGradEnabled, "AutoGrad");
+
         if (tensor.RequiresGradient)
         {
             tensor.Gradient?.Memory.Fill(TNumber.One);

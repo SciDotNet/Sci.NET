@@ -4,6 +4,7 @@
 using System.Numerics;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
+using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Tests.Framework.Assertions;
@@ -183,6 +184,14 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
                 return false;
             }
 
+            if (CheckInfinityAndNaN<BFloat16>(tensor1, tensor2, indices) ||
+                CheckInfinityAndNaN<Half>(tensor1, tensor2, indices) ||
+                CheckInfinityAndNaN<float>(tensor1, tensor2, indices) ||
+                CheckInfinityAndNaN<double>(tensor1, tensor2, indices))
+            {
+                return true;
+            }
+
             return TNumber.Abs(leftValue.Value - rightValue.Value) <= TNumber.Abs(tolerance);
         }
 
@@ -203,6 +212,30 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
         }
 
         return true;
+    }
+
+    private static bool CheckInfinityAndNaN<T>(Array tensor1, Array tensor2, int[] indices)
+        where T : unmanaged, INumber<T>, IFloatingPointIeee754<T>
+    {
+        if (tensor1.GetValue(indices) is T leftBf16 && tensor2.GetValue(indices) is T rightBf16)
+        {
+            if (T.IsPositiveInfinity(leftBf16) && T.IsPositiveInfinity(rightBf16))
+            {
+                return true;
+            }
+
+            if (T.IsNegativeInfinity(leftBf16) && T.IsNegativeInfinity(rightBf16))
+            {
+                return true;
+            }
+
+            if (T.IsNaN(leftBf16) && T.IsNaN(rightBf16))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool CompareElementsRecursive(

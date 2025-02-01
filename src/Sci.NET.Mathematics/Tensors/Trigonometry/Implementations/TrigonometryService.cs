@@ -462,6 +462,20 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Atan2(tensor, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            tensor,
+            null,
+            grad =>
+            {
+                InvalidShapeException.ThrowIfDifferentElementCount(tensor.Shape, grad.Shape);
+                var gradient = new Tensor<TNumber>(tensor.Shape, tensor.Backend, requiresGradient: false) { IsGradient = true };
+                tensor.Backend.Trigonometry.Atan2Backwards(tensor, grad, gradient);
+
+                return gradient;
+            });
+
         return result;
     }
 
@@ -800,6 +814,20 @@ internal class TrigonometryService : ITrigonometryService
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
         result.Backend.Trigonometry.Acsc(tensor, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            tensor,
+            null,
+            grad =>
+            {
+                InvalidShapeException.ThrowIfDifferentElementCount(tensor.Shape, grad.Shape);
+                var gradient = new Tensor<TNumber>(tensor.Shape, tensor.Backend, requiresGradient: false) { IsGradient = true };
+                tensor.Backend.Trigonometry.AcscBackwards(tensor, grad, gradient);
+
+                return gradient;
+            });
+
         return result;
     }
 

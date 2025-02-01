@@ -18,9 +18,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSin(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.841470984807897, 1, 0, -1, 0 };
-        var expectedGradient = new[] { 1, 0.54030230586814, 0, -1, 0, 1 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.909297426825682, -0.841470984807897, 0, 0.841470984807897, 0.909297426825682 };
+        var expectedGradient = new[] { -0.416146836547142, 0.54030230586814, 1, 0.54030230586814, -0.416146836547142 };
         input.To(device);
 
         // Act
@@ -38,9 +38,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCos(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 0.54030230586814, 0, -1, 0, 1 };
-        var expectedGradient = new[] { 0, -0.841470984807897, -1, 0, 1, 0 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.416146836547142, 0.54030230586814, 1, 0.54030230586814, -0.416146836547142 };
+        var expectedGradient = new[] { 0.909297426825682, 0.841470984807897, 0, -0.841470984807897, -0.909297426825682 };
         input.To(device);
 
         // Act
@@ -58,9 +58,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForTan(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 1.5574077246549, double.NaN, 0, double.NaN, 0 };
-        var expectedGradient = new[] { 1, 3.42551882081476, double.NaN, 1, double.NaN, 1 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 2.18503986326152, -1.5574077246549, 0, 1.5574077246549, -2.18503986326152 };
+        var expectedGradient = new[] { 5.77439920404192, 3.42551882081476, 1, 3.42551882081476, 5.77439920404192 };
         input.To(device);
 
         // Act
@@ -78,9 +78,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSin2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.708073418273571, 1, 0, 1, 0 };
-        var expectedGradient = new[] { 0, 0.909297426825682, 0, 0, 0, 0 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.826821810431806, 0.708073418273571, 0, 0.708073418273571, 0.826821810431806 };
+        var expectedGradient = new[] { 0.756802495307928, -0.909297426825682, 0, 0.909297426825682, -0.756802495307928 };
         input.To(device);
 
         // Act
@@ -98,9 +98,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCos2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 0.291926581726429, 0, 1, 0, 1 };
-        var expectedGradient = new[] { 0, -0.909297426825682, 0, 0, 0, 0 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.173178189568194, 0.291926581726429, 1, 0.291926581726429, 0.173178189568194 };
+        var expectedGradient = new[] { -0.756802495307928, 0.909297426825682, 0, -0.909297426825682, 0.756802495307928 };
         input.To(device);
 
         // Act
@@ -118,9 +118,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForTan2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 2.42551882081476, double.NaN, 0, double.NaN, 0 };
-        var expectedGradient = new[] { 0, 10.6698589449753, double.NaN, 0, double.NaN, 0 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 4.77439920404192, 2.42551882081476, 0, 2.42551882081476, 4.77439920404192 };
+        var expectedGradient = new[] { 25.2345848944344, -10.6698589449753, 0, 10.6698589449753, -25.2345848944344 };
         input.To(device);
 
         // Act
@@ -138,9 +138,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSinh(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 1.1752011936438, 2.30129890230729, 11.5487393572577, 55.6543975994175, 267.744894041016 };
-        var expectedGradient = new[] { 1, 1.54308063481524, 2.50917847865806, 11.5919532755215, 55.6633808904387, 267.746761483748 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -3.62686040784702, -1.1752011936438, 0, 1.1752011936438, 3.62686040784702 };
+        var expectedGradient = new[] { 3.76219569108363, 1.54308063481524, 1, 1.54308063481524, 3.76219569108363 };
         input.To(device);
 
         // Act
@@ -158,9 +158,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCosh(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 1.54308063481524, 2.50917847865806, 11.5919532755215, 55.6633808904387, 267.746761483748 };
-        var expectedGradient = new[] { 0, 1.1752011936438, 2.30129890230729, 11.5487393572577, 55.6543975994175, 267.744894041016 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 3.76219569108363, 1.54308063481524, 1, 1.54308063481524, 3.76219569108363 };
+        var expectedGradient = new[] { -3.62686040784702, -1.1752011936438, 0, 1.1752011936438, 3.62686040784702 };
         input.To(device);
 
         // Act
@@ -178,9 +178,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForTanh(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.761594155955765, 0.917152335667274, 0.99627207622075, 0.999838613988633, 0.999993025339611 };
-        var expectedGradient = new[] { 1, 0.419974341614026, 0.158831593180063, 0.00744195014279621, 0.000322745977290033, 1.39492721328912E-05 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.964027580075817, -0.761594155955765, 0, 0.761594155955765, 0.964027580075817 };
+        var expectedGradient = new[] { 0.0706508248531645, 0.419974341614026, 1, 0.419974341614026, 0.0706508248531645 };
         input.To(device);
 
         // Act
@@ -198,9 +198,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSinh2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 1.38109784554182, 5.29597663776076, 133.373380741874, 3097.41197215405, 71687.3282850352 };
-        var expectedGradient = new[] { 0, 3.62686040784702, 11.5487393572577, 267.744894041016, 6195.82386360859, 143375.656566583 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 13.1541164180082, 1.38109784554182, 0, 1.38109784554182, 13.1541164180082 };
+        var expectedGradient = new[] { -27.2899171971278, -3.62686040784702, 0, 3.62686040784702, 27.2899171971278 };
         input.To(device);
 
         // Act
@@ -218,9 +218,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCosh2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 2.38109784554182, 6.29597663776076, 134.373380741874, 3098.41197215405, 71688.3282850352 };
-        var expectedGradient = new[] { 0, 3.62686040784702, 11.5487393572577, 267.744894041016, 6195.82386360859, 143375.656566583 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 14.1541164180082, 2.38109784554182, 1, 2.38109784554182, 14.1541164180082 };
+        var expectedGradient = new[] { -27.2899171971278, -3.62686040784702, 0, 3.62686040784702, 27.2899171971278 };
         input.To(device);
 
         // Act
@@ -238,9 +238,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForTanh2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.580025658385974, 0.841168406819937, 0.992558049857204, 0.99967725402271, 0.999986050727867 };
-        var expectedGradient = new[] { 0, 0.639700008449224, 0.291345533325699, 0.0148284142397898, 0.000645387781208148, 2.78983496829109E-05 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.929349175146836, 0.580025658385974, 0, 0.580025658385974, 0.929349175146836 };
+        var expectedGradient = new[] { -0.136218687427113, -0.639700008449224, 0, 0.639700008449224, 0.136218687427113 };
         input.To(device);
 
         // Act
@@ -258,9 +258,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASin(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 1.5707963267949, 1.5707963267949, 1.5707963267949, 1.5707963267949, 1.5707963267949 };
-        var expectedGradient = new[] { 1, double.NaN, 0, 0, 0, 0 };
+        using var input = Tensor.FromArray<double>(new[] { -1.0, -0.5, 0.0, 0.5, 1.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -1.5707963267949, -0.523598775598299, 0, 0.523598775598299, 1.5707963267949 };
+        var expectedGradient = new[] { double.PositiveInfinity, 1.15470053837925, 1, 1.15470053837925, double.PositiveInfinity };
         input.To(device);
 
         // Act
@@ -278,9 +278,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACos(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1.5707963267949, 0, 0, 0, 0, 0 };
-        var expectedGradient = new[] { -1, double.NaN, 0, 0, 0, 0 };
+        using var input = Tensor.FromArray<double>(new[] { -1.0, -0.5, 0.0, 0.5, 1.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 3.14159265358979, 2.09439510239319, 1.5707963267948966, 1.0471975511965979, 0 };
+        var expectedGradient = new[] { double.NegativeInfinity, -1.1547005383792517, -1, -1.1547005383792517, double.NegativeInfinity };
         input.To(device);
 
         // Act
@@ -298,9 +298,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForATan(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.785398163397448, 1.00388482185389, 1.26262725567891, 1.36169168297116, 1.41296513650674 };
-        var expectedGradient = new[] { 1, 0.5, 0.288400439142001, 0.0919996683503752, 0.0430911711880149, 0.0247045230318576 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -1.10714871779409, -0.785398163397448, 0, 0.785398163397448, 1.10714871779409 };
+        var expectedGradient = new[] { 0.2, 0.5, 1, 0.5, 0.2 };
         input.To(device);
 
         // Act
@@ -318,9 +318,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASin2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 2.46740110027234, 1.42040662741756, -0.814226335543573, -2.51392853764383, -3.90635886880375 };
-        var expectedGradient = new[] { 0, double.NaN, -1.68938163989722, -1.21652911591502, -0.969319641182289, -0.813990330610181 };
+        using var input = Tensor.FromArray<double>(new[] { -1.0, -0.5, 0.0, 0.5, 1.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 2.46740110027234, 0.274155677808038, 0, 0.274155677808038, 2.46740110027234 };
+        var expectedGradient = new[] { double.NegativeInfinity, -1.20919957615615, 0, 1.20919957615615, double.PositiveInfinity };
         input.To(device);
 
         // Act
@@ -338,9 +338,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACos2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 2.46740110027234, 0, -1.04699447285478, -3.28162743581591, -4.98132963791617, -6.37375996907609 };
-        var expectedGradient = new[] { -3.14159265358979, double.NaN, -1.68938163989722, -1.21652911591502, -0.969319641182289, -0.813990330610181 };
+        using var input = Tensor.FromArray<double>(new[] { -1.0, -0.5, 0.0, 0.5, 1.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 9.86960440108936, 4.3864908449286, 2.46740110027234, 1.09662271123215, 0 };
+        var expectedGradient = new[] { double.NegativeInfinity, -4.83679830462458, -3.14159265358979, -2.41839915231229, double.NaN };
         input.To(device);
 
         // Act
@@ -358,9 +358,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForATan2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.616850275068085, 1.00778473554861, 1.59422758678326, 1.85420423947284, 1.9964704769835 };
-        var expectedGradient = new[] { 0, 0.785398163397448, 0.579041646941301, 0.232322577545209, 0.117353778832413, 0.0698132595160851 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 1.2257782833131, 0.616850275068085, 0, 0.616850275068085, 1.2257782833131 };
+        var expectedGradient = new[] { -0.442859487117636, -0.785398163397448, 0, 0.785398163397448, 0.442859487117636 };
         input.To(device);
 
         // Act
@@ -378,9 +378,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASinh(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.881373587019543, 1.23340311751122, 1.86229574331085, 2.25441459299271, 2.53729750137336 };
-        var expectedGradient = new[] { 1, 0.707106781186548, 0.537029272146315, 0.303314471053353, 0.207584130385766, 0.15717672547759 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -1.44363547517881, -0.881373587019543, 0, 0.881373587019543, 1.44363547517881 };
+        var expectedGradient = new[] { 0.447213595499958, 0.707106781186548, 1, 0.707106781186548, 0.447213595499958 };
         input.To(device);
 
         // Act
@@ -398,9 +398,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACosh(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0, 1.02322747854755, 1.81152627246085, 2.23188925305808, 2.52463065993347 };
-        var expectedGradient = new[] { 0, double.NaN, 0.825516161027683, 0.335774626735729, 0.217152271299785, 0.161209784767415 };
+        using var input = Tensor.FromArray<double>(new[] { 1.0, 2.0, 3.0, 4.0, 5.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0, 1.31695789692482, 1.76274717403909, 2.06343706889556, 2.29243166956118 };
+        var expectedGradient = new[] { double.PositiveInfinity, 0.577350269189626, 0.353553390593274, 0.258198889747161, 0.204124145231932 };
         input.To(device);
 
         // Act
@@ -418,9 +418,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForATanh(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, double.PositiveInfinity, 0.752469267141927, 0.329765314956699, 0.215480861058658, 0.160519557507885 };
-        var expectedGradient = new[] { 1, double.NaN, -0.681476932117883, -0.112744599959518, -0.0471551089306556, -0.0259885947047562 };
+        using var input = Tensor.FromArray<double>(new[] { -0.9, -0.5, 0.0, 0.5, 0.9 }, requiresGradient: true);
+        var expectedOutput = new[] { -1.47221948958322, -0.549306144334055, 0, 0.549306144334055, 1.47221948958322 };
+        var expectedGradient = new[] { 5.26315789473684, 1.33333333333333, 1, 1.33333333333333, 5.26315789473684 };
         input.To(device);
 
         // Act
@@ -438,9 +438,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASinh2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, 0.776819399895696, 1.52128325028639, 3.4681454355537, 5.08238515709851, 6.4378786104755 };
-        var expectedGradient = new[] { 0, 1.24645048028046, 1.32474715692009, 1.12972249665448, 0.935961385630749, 0.797608225656671 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 2.08408338519475, 0.776819399895696, 0, 0.776819399895696, 2.08408338519475 };
+        var expectedGradient = new[] { -1.29122682289201, -1.24645048028046, 0, 1.24645048028046, 1.29122682289201 };
         input.To(device);
 
         // Act
@@ -458,9 +458,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACosh2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { -2.46740110027234, 0, 1.04699447285478, 3.28162743581591, 4.98132963791617, 6.37375996907609 };
-        var expectedGradient = new[] { 3.14159265358979, double.NaN, 1.68938163989722, 1.21652911591502, 0.969319641182289, 0.813990330610181 };
+        using var input = Tensor.FromArray<double>(new[] { 1.0, 2.0, 3.0, 4.0, 5.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0, 1.73437810227264, 3.10727759958278, 4.2577725372923, 5.25524295960705 };
+        var expectedGradient = new[] { double.NaN, 1.52069199260189, 1.24645048028046, 1.06555432050394, 0.93588131010357 };
         input.To(device);
 
         // Act
@@ -478,9 +478,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForATanh2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, double.PositiveInfinity, -1.90119110227923, -2.35865593732385, -2.42096909878976, -2.44163457192981 };
-        var expectedGradient = new[] { 0, double.NaN, -1.02558089536974, -0.074358517030635, -0.020322046951385, -0.00834335544451847 };
+        using var input = Tensor.FromArray<double>(new[] { -0.9, -0.5, 0.0, 0.5, 0.9 }, requiresGradient: true);
+        var expectedOutput = new[] { 2.16743022550868, 0.301737240203146, 0, 0.301737240203146, 2.16743022550868 };
+        var expectedGradient = new[] { -15.4970472587707, -1.46481638489081, 0, 1.46481638489081, 15.4970472587707 };
         input.To(device);
 
         // Act
@@ -498,9 +498,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCsc(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 1.18839510577812, 1, double.NaN, -1, double.NaN };
-        var expectedGradient = new[] { double.NaN, -0.76305972223263, 0, double.NaN, 0, double.NaN };
+        using var input = Tensor.FromArray<double>(new[] { 0.523598775598299, 1.04719755119660, 2.09439510239320, 2.35619449019234, 2.61799387799149 }, requiresGradient: true);
+        var expectedOutput = new[] { 2, 1.15470053837925, 1.15470053837925, 1.4142135623731, 2 };
+        var expectedGradient = new[] { -3.46410161513775, -0.666666666666667, 0.666666666666667, 1.4142135623731, 3.46410161513775 };
         input.To(device);
 
         // Act
@@ -518,9 +518,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSec(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 1.85081571768093, double.NaN, -1, double.NaN, 1 };
-        var expectedGradient = new[] { 0, 2.88247469562898, double.NaN, 0, double.NaN, 0 };
+        using var input = Tensor.FromArray<double>(new[] { 0.523598775598299, 1.04719755119660, 2.09439510239320, 2.35619449019234, 2.61799387799149 }, requiresGradient: true);
+        var expectedOutput = new[] { 1.15470053837925, 2, -2, -1.4142135623731, -1.15470053837925 };
+        var expectedGradient = new[] { 0.666666666666667, 3.46410161513775, 3.46410161513775, 1.4142135623731, 0.666666666666667 };
         input.To(device);
 
         // Act
@@ -538,9 +538,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCot(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0.642092615934331, 0, double.NaN, 0, double.NaN };
-        var expectedGradient = new[] { double.NaN, -1.41228292743739, -1, double.NaN, -1, double.NaN };
+        using var input = Tensor.FromArray<double>(new[] { 0.523598775598299, 1.04719755119660, 2.09439510239320, 2.35619449019234, 2.61799387799149 }, requiresGradient: true);
+        var expectedOutput = new[] { 1.73205080756888, 0.577350269189626, -0.577350269189626, -1, -1.73205080756888 };
+        var expectedGradient = new[] { -4, -1.33333333333333, -1.33333333333333, -2, -4 };
         input.To(device);
 
         // Act
@@ -558,9 +558,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCsc2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 1.41228292743739, 1, double.NaN, 1, double.NaN };
-        var expectedGradient = new[] { double.NaN, -1.81363287863534, 0, double.NaN, 0, double.NaN };
+        using var input = Tensor.FromArray<double>(new[] { 0.523598775598299, 1.04719755119660, 2.09439510239320, 2.35619449019234, 2.61799387799149 }, requiresGradient: true);
+        var expectedOutput = new[] { 4, 1.33333333333333, 1.33333333333333, 2, 4 };
+        var expectedGradient = new[] { -13.856406460551, -1.539600717839, 1.539600717839, 4, 13.856406460551 };
         input.To(device);
 
         // Act
@@ -578,9 +578,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSec2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 3.42551882081476, double.NaN, 1, double.NaN, 1 };
-        var expectedGradient = new[] { 0, 10.6698589449753, double.NaN, 0, double.NaN, 0 };
+        using var input = Tensor.FromArray<double>(new[] { 0.523598775598299, 1.04719755119660, 2.09439510239320, 2.35619449019234, 2.61799387799149 }, requiresGradient: true);
+        var expectedOutput = new[] { 1.33333333333333, 4, 4, 2, 1.33333333333333 };
+        var expectedGradient = new[] { 1.539600717839, 13.856406460551, -13.856406460551, -4, -1.539600717839 };
         input.To(device);
 
         // Act
@@ -598,9 +598,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCot2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0.412282927437392, 0, double.NaN, 0, double.NaN };
-        var expectedGradient = new[] { double.NaN, -1.81363287863534, 0, double.NaN, 0, double.NaN };
+        using var input = Tensor.FromArray<double>(new[] { 0.523598775598299, 1.04719755119660, 2.09439510239320, 2.35619449019234, 2.61799387799149 }, requiresGradient: true);
+        var expectedOutput = new[] { 3, 0.333333333333333, 0.333333333333333, 1, 3 };
+        var expectedGradient = new[] { -13.856406460551, -1.539600717839, 1.539600717839, 4, 13.856406460551 };
         input.To(device);
 
         // Act
@@ -618,9 +618,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCsch(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0.850918128239322, 0.434537208094696, 0.0865895375300469, 0.0179680320537773, 0.00373489848828567 };
-        var expectedGradient = new[] { double.NaN, -1.11728552744927, -0.473789567115422, -0.0869135445996991, -0.0179709323108635, -0.00373492453811591 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.275720564771783, -0.850918128239322, double.PositiveInfinity, 0.850918128239322, 0.275720564771783 };
+        var expectedGradient = new[] { -0.286009000645084, -1.11728552744927, double.NegativeInfinity, -1.11728552744927, -0.286009000645084 };
         input.To(device);
 
         // Act
@@ -638,9 +638,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSech(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 0.648054273663885, 0.398536815338387, 0.0862667383340544, 0.017965132264752, 0.00373487243863713 };
-        var expectedGradient = new[] { 0, -0.493554347564573, -0.365518971036999, -0.0859451425088606, -0.0179622329437121, -0.00373484638917027 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.26580222883408, 0.648054273663885, 1, 0.648054273663885, 0.26580222883408 };
+        var expectedGradient = new[] { 0.256240679441676, 0.493554347564573, 0, -0.493554347564573, -0.256240679441676 };
         input.To(device);
 
         // Act
@@ -658,9 +658,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCoth(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 1.31303528549933, 1.09033141072737, 1.00374187319732, 1.00016141206102, 1.00000697470904 };
-        var expectedGradient = new[] { double.NaN, -0.72406166096631, -0.188822585218733, -0.00749774800966741, -0.000322850175885568, -1.39494667177986E-05 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -1.03731472072755, -1.31303528549933, double.PositiveInfinity, 1.31303528549933, 1.03731472072755 };
+        var expectedGradient = new[] { -0.0760218298380711, -0.72406166096631, double.NegativeInfinity, -0.72406166096631, -0.0760218298380711 };
         input.To(device);
 
         // Act
@@ -678,9 +678,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCsch2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0.72406166096631, 0.188822585218733, 0.00749774800966741, 0.000322850175885568, 1.39494667177986E-05 };
-        var expectedGradient = new[] { double.NaN, -1.90143701945204, -0.41175839143746, -0.0150516072639701, -0.000645804575595714, -2.78991280225403E-05 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.0760218298380711, 0.72406166096631, double.PositiveInfinity, 0.72406166096631, 0.0760218298380711 };
+        var expectedGradient = new[] { 0.157717126375352, 1.90143701945204, double.NegativeInfinity, -1.90143701945204, -0.157717126375352 };
         input.To(device);
 
         // Act
@@ -698,9 +698,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForSech2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1, 0.419974341614026, 0.158831593180063, 0.00744195014279621, 0.000322745977290033, 1.39492721328912E-05 };
-        var expectedGradient = new[] { 0, -0.639700008449224, -0.291345533325699, -0.0148284142397898, -0.000645387781208148, -2.78983496829109E-05 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.0706508248531645, 0.419974341614026, 1, 0.419974341614026, 0.0706508248531645 };
+        var expectedGradient = new[] { 0.136218687427113, 0.639700008449224, 0, -0.639700008449224, -0.136218687427113 };
         input.To(device);
 
         // Act
@@ -718,9 +718,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForCoth2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 1.72406166096631, 1.18882258521873, 1.00749774800967, 1.00032285017589, 1.00001394946672 };
-        var expectedGradient = new[] { double.NaN, -1.90143701945204, -0.41175839143746, -0.0150516072639701, -0.000645804575595714, -2.78991280225403E-05 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 1.07602182983807, 1.72406166096631, double.PositiveInfinity, 1.72406166096631, 1.07602182983807 };
+        var expectedGradient = new[] { 0.157717126375352, 1.90143701945204, double.NegativeInfinity, -1.90143701945204, -0.157717126375352 };
         input.To(device);
 
         // Act
@@ -738,9 +738,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACsc(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 1.5707963267949, 0.69010709137454, 0.323946106931981, 0.213832425883772, 0.159834626385137 };
-        var expectedGradient = new[] { double.NaN, double.NaN, -0.525539910519203, -0.106880383219655, -0.0460811431746576, -0.0256573341205146 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.523598775598299, -1.5707963267949, 1.5707963267949, 0.523598775598299, 0.339836909454122 };
+        var expectedGradient = new[] { -0.288675134594813, double.NegativeInfinity, double.NegativeInfinity, -0.288675134594813, -0.117851130197758 };
         input.To(device);
 
         // Act
@@ -758,9 +758,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASec(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0, 0.880689235420357, 1.24685021986292, 1.35696390091112, 1.41096170040976 };
-        var expectedGradient = new[] { double.NaN, double.NaN, 0.525539910519203, 0.106880383219655, 0.0460811431746576, 0.0256573341205146 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 2.0943951023932, 3.14159265358979, 0, 1.0471975511966, 1.23095941734077 };
+        var expectedGradient = new[] { 0.288675134594813, double.PositiveInfinity, double.PositiveInfinity, 0.288675134594813, 0.117851130197758 };
         input.To(device);
 
         // Act
@@ -778,9 +778,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACot(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 1.5707963267949, 0.785398163397448, 0.566911504941009, 0.308169071115985, 0.209104643823733, 0.157831190288159 };
-        var expectedGradient = new[] { -1, -0.5, -0.288400439142001, -0.0919996683503752, -0.0430911711880149, -0.0247045230318576 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.463647609000806, -0.785398163397448, 1.5707963267949, 0.785398163397448, 0.463647609000806 };
+        var expectedGradient = new[] { -0.2, -0.5, -1, -0.5, -0.2 };
         input.To(device);
 
         // Act
@@ -798,9 +798,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACsc2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 2.46740110027234, 0.476247797565428, 0.104941080196386, 0.045724306359339, 0.0255471077916763 };
-        var expectedGradient = new[] { double.NaN, double.NaN, -0.725357638099286, -0.0692469681028106, -0.0197072852650689, -0.00820186082638215 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.274155677808038, 2.46740110027234, 2.46740110027234, 0.274155677808038, 0.115489125027329 };
+        var expectedGradient = new[] { 0.302299894039036, double.PositiveInfinity, double.NegativeInfinity, -0.302299894039036, -0.0801003277241628 };
         input.To(device);
 
         // Act
@@ -818,9 +818,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASec2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0, 0.775613529385292, 1.5546354707722, 1.84135102837594, 1.9908129200232 };
-        var expectedGradient = new[] { double.NaN, double.NaN, 0.925674683956079, 0.266527658632918, 0.125060895601455, 0.0724030315573252 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 4.3864908449286, 9.86960440108936, 0, 1.09662271123215, 1.51526108713994 };
+        var expectedGradient = new[] { 1.20919957615615, double.PositiveInfinity, double.NaN, 0.604599788078073, 0.290139917122368 };
         input.To(device);
 
         // Act
@@ -838,9 +838,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACot2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 2.46740110027234, 0.616850275068085, 0.32138865443448, 0.094968176392489, 0.0437247520686503, 0.024910684627777 };
-        var expectedGradient = new[] { -3.14159265358979, -0.785398163397448, -0.32699505395928, -0.0567029046770276, -0.0180211280064347, -0.00779828855123865 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 0.0, 1.0, 2.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.214969105332164, 0.616850275068085, 2.46740110027234, 0.616850275068085, 0.214969105332164 };
+        var expectedGradient = new[] { 0.185459043600322, 0.785398163397448, -3.14159265358979, -0.785398163397448, -0.185459043600322 };
         input.To(device);
 
         // Act
@@ -858,9 +858,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACsch(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0.881373587019543, 0.599971479517857, 0.313165880450868, 0.210645357198105, 0.158490581423507 };
-        var expectedGradient = new[] { double.NaN, -0.707106781186548, -0.341883452988515, -0.0965479947588894, -0.044050720611103, -0.0250154527987563 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.481211825059603, -0.881373587019543, 0.881373587019543, 0.481211825059603, 0.327450150237258 };
+        var expectedGradient = new[] { -0.223606797749979, -0.707106781186548, -0.707106781186548, -0.223606797749979, -0.105409255338946 };
         input.To(device);
 
         // Act
@@ -878,9 +878,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASech(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.PositiveInfinity, 0, 0, 0, 0, 0 };
-        var expectedGradient = new[] { double.NaN, double.NaN, 0, 0, 0, 0 };
+        using var input = Tensor.FromArray<double>(new[] { 0.2, 0.3, 0.5, 0.8, 1.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 2.29243166956118, 1.87382024252741, 1.31695789692482, 0.693147180559945, 0 };
+        var expectedGradient = new[] { -5.10310363079829, -3.49428278907306, -2.3094010767585, -2.08333333333333, double.NegativeInfinity };
         input.To(device);
 
         // Act
@@ -898,9 +898,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACoth(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { 0, double.PositiveInfinity, 0.752469267141927, 0.329765314956699, 0.215480861058658, 0.160519557507885 };
-        var expectedGradient = new[] { 1, double.NaN, -0.681476932117883, -0.112744599959518, -0.0471551089306556, -0.0259885947047562 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { -0.549306144334055, double.NegativeInfinity, double.PositiveInfinity, 0.549306144334055, 0.346573590279973 };
+        var expectedGradient = new[] { -0.333333333333333, double.NegativeInfinity, double.NegativeInfinity, -0.333333333333333, -0.125 };
         input.To(device);
 
         // Act
@@ -918,9 +918,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACsch2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.NaN, 0.776819399895696, 0.359965776234846, 0.0980728686785676, 0.0443714665091173, 0.0251192643999613 };
-        var expectedGradient = new[] { double.NaN, -1.24645048028046, -0.410240642224386, -0.0604710755688669, -0.0185581595559194, -0.00792942731729435 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.231564820577194, 0.776819399895696, 0.776819399895696, 0.231564820577194, 0.107223600890403 };
+        var expectedGradient = new[] { 0.215204470482002, 1.24645048028046, -1.24645048028046, -0.215204470482002, -0.0690325529942708 };
         input.To(device);
 
         // Act
@@ -938,9 +938,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForASech2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { double.PositiveInfinity, 0, -0.775613529385292, -1.5546354707722, -1.84135102837594, -1.9908129200232 };
-        var expectedGradient = new[] { double.NaN, double.NaN, -0.925674683956079, -0.266527658632918, -0.125060895601455, -0.0724030315573252 };
+        using var input = Tensor.FromArray<double>(new[] { 0.2, 0.3, 0.5, 0.8, 1.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 5.25524295960705, 3.5112023013055, 1.73437810227264, 0.480453013918201, 0 };
+        var expectedGradient = new[] { -23.3970327525893, -13.0953156465605, -6.08276797040757, -2.88811325233311, double.NaN };
         input.To(device);
 
         // Act
@@ -958,9 +958,9 @@ public class TrigWithBackwardsShould : IntegrationTestBase
     public void ReturnCorrectResult_ForACoth2(IDevice device)
     {
         // Arrange
-        using var input = Tensor.FromArray<double>(new[] { 0, 1, double.Pi / 2, double.Pi, 1.5 * double.Pi, 2 * double.Pi }, requiresGradient: true);
-        var expectedOutput = new[] { -2.46740110027234, double.PositiveInfinity, 0.566209997993109, 0.108745162948491, 0.0464320014825807, 0.0257665283425273 };
-        var expectedGradient = new[] { 0, double.NaN, -1.02558089536974, -0.074358517030635, -0.020322046951385, -0.00834335544451847 };
+        using var input = Tensor.FromArray<double>(new[] { -2.0, -1.0, 1.0, 2.0, 3.0 }, requiresGradient: true);
+        var expectedOutput = new[] { 0.301737240203146, double.PositiveInfinity, double.PositiveInfinity, 0.301737240203146, 0.12011325347955 };
+        var expectedGradient = new[] { 0.366204096222703, double.PositiveInfinity, double.NegativeInfinity, -0.366204096222703, -0.0866433975699932 };
         input.To(device);
 
         // Act

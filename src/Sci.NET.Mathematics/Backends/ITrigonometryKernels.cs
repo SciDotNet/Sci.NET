@@ -19,7 +19,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Sin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise cosine of a <see cref="ITensor{TNumber}"/>.
@@ -28,7 +28,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Cos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise tangent of a <see cref="ITensor{TNumber}"/>.
@@ -37,7 +37,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Tan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise sine squared of a <see cref="ITensor{TNumber}"/>.
@@ -46,7 +46,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Sin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise cosine squared of a <see cref="ITensor{TNumber}"/>.
@@ -55,7 +55,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise tangent squared of a <see cref="ITensor{TNumber}"/>.
@@ -64,7 +64,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise hyperbolic sine of a <see cref="ITensor{TNumber}"/>.
@@ -127,7 +127,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Asin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arccosine of a <see cref="ITensor{TNumber}"/>.
@@ -136,7 +136,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Acos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arctangent of a <see cref="ITensor{TNumber}"/>.
@@ -145,7 +145,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Atan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arcsine squared of a <see cref="ITensor{TNumber}"/>.
@@ -154,7 +154,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Asin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arccosine squared of a <see cref="ITensor{TNumber}"/>.
@@ -163,7 +163,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Acos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arctangent squared of a <see cref="ITensor{TNumber}"/>.
@@ -172,7 +172,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Atan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise hyperbolic arcsine of a <see cref="ITensor{TNumber}"/>.
@@ -235,7 +235,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Csc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise secant of a <see cref="ITensor{TNumber}"/>.
@@ -244,7 +244,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise cotangent of a <see cref="ITensor{TNumber}"/>.
@@ -253,7 +253,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Cot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise cosecant squared of a <see cref="ITensor{TNumber}"/>.
@@ -262,7 +262,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Csc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise secant squared of a <see cref="ITensor{TNumber}"/>.
@@ -271,7 +271,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Sec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise cotangent squared of a <see cref="ITensor{TNumber}"/>.
@@ -280,7 +280,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Cot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise hyperbolic cosecant of a <see cref="ITensor{TNumber}"/>.
@@ -343,7 +343,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Acsc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arcsecant of a <see cref="ITensor{TNumber}"/>.
@@ -352,7 +352,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Asec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arccotangent of a <see cref="ITensor{TNumber}"/>.
@@ -361,7 +361,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Acot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arccosecant squared of a <see cref="ITensor{TNumber}"/>.
@@ -370,7 +370,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Acsc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arcsecant squared of a <see cref="ITensor{TNumber}"/>.
@@ -379,7 +379,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Asec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise arccotangent squared of a <see cref="ITensor{TNumber}"/>.
@@ -388,7 +388,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/>.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Acot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the element-wise hyperbolic arccosecant of a <see cref="ITensor{TNumber}"/>.
@@ -452,7 +452,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> representing the gradient of the sine function with respect to the input tensor.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void SinBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the cosine function with respect to its input for a given <see cref="ITensor{TNumber}"/>.
@@ -462,7 +462,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output gradient <see cref="ITensor{TNumber}"/> of the cosine function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void CosBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the backwards operation of the tangent function element-wise
@@ -473,7 +473,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> after applying the backwards operation.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void TanBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the sine function with respect to its input for a <see cref="ITensor{TNumber}"/>.
@@ -483,7 +483,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> that stores the computed gradients.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the cosine function with respect to its input for a <see cref="ITensor{TNumber}"/>.
@@ -493,7 +493,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> that stores the computed gradients.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the backwards operation of the tangent function element-wise.
@@ -503,7 +503,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> after applying the backwards operation.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the hyperbolic sine function (sinh) during backpropagation.
@@ -693,7 +693,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> containing the computed gradient of the loss with respect to the input tensor.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void CscBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the secant function with respect to its input tensor during the backward pass.
@@ -703,7 +703,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> where the computed gradient with respect to the input is stored.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void SecBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the cotangent function with respect to the input tensor.
@@ -713,7 +713,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> containing the result of the cotangent backward computation.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void CotBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the backward gradient for the squared cosecant operation on a <see cref="ITensor{TNumber}"/>.
@@ -723,7 +723,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> where the computed gradient will be stored.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Csc2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the secant squared operation with respect to its input tensor.
@@ -733,7 +733,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> containing the computed gradient with respect to the input tensor.</param>
     /// <typeparam name="TNumber">The numeric type of the tensors.</typeparam>
     public void Sec2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the element-wise cotangent squared operation for the given input tensor.
@@ -743,7 +743,7 @@ public interface ITrigonometryKernels
     /// <param name="result">The output <see cref="ITensor{TNumber}"/> containing the resulting gradient.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
     public void Cot2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>;
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>;
 
     /// <summary>
     /// Computes the gradient of the element-wise hyperbolic cosecant function with respect to its input.

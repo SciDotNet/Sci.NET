@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Backends.Managed;
 internal class ManagedTrigonometryKernels : ITrigonometryKernels
 {
     public void Sin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -24,7 +24,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Cos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -37,7 +37,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Tan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -50,7 +50,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Sin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -67,7 +67,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Cos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -84,7 +84,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Tan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -191,7 +191,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Asin<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -204,7 +204,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Acos<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -213,11 +213,11 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             0,
             input.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            i => output[i] = TNumber.Acos(input[i]));
+            i => output[i] = input[i] < -TNumber.One || TNumber.NaN > TNumber.One ? TNumber.NaN : TNumber.Acos(input[i]));
     }
 
     public void Atan<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -230,7 +230,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Asin2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -247,7 +247,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Acos2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -264,7 +264,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Atan2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -371,7 +371,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Csc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -384,7 +384,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Sec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -397,7 +397,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Cot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -416,7 +416,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Csc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -433,7 +433,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Sec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -450,7 +450,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Cot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -571,7 +571,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Acsc<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -584,7 +584,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Asec<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -597,7 +597,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Acot<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -610,7 +610,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Acsc2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -627,7 +627,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Asec2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -644,7 +644,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Acot2<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -751,7 +751,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void SinBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -765,7 +765,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void CosBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -779,7 +779,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void TanBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -797,7 +797,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Sin2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -816,7 +816,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Cos2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -835,7 +835,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Tan2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1081,9 +1081,10 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             {
                 var two = TNumber.One + TNumber.One;
                 var atan = TNumber.Atan(input[i]);
-                var onePlusX2 = TNumber.One + (input[i] * input[i]);
+                var twoAtan = two * atan;
+                var x2Plus1 = (input[i] * input[i]) + TNumber.One;
 
-                output[i] = grad[i] * (two * atan / onePlusX2);
+                output[i] = grad[i] * (twoAtan / x2Plus1);
             });
     }
 
@@ -1205,7 +1206,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void CscBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1225,7 +1226,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void SecBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1245,7 +1246,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void CotBackwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1265,7 +1266,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Csc2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1279,15 +1280,15 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             {
                 var two = TNumber.One + TNumber.One;
                 var (sin, cos) = TNumber.SinCos(input[i]);
-                var csc = TNumber.One / sin;
-                var cot = cos / sin;
+                var twoCosX = two * cos;
+                var sin3 = sin * sin * sin;
 
-                output[i] = grad[i] * -two * csc * cot;
+                output[i] = grad[i] * -(twoCosX / sin3);
             });
     }
 
     public void Sec2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1309,7 +1310,7 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
     }
 
     public void Cot2Backwards<TNumber>(ITensor<TNumber> tensor, ITensor<TNumber> gradient, ITensor<TNumber> result)
-        where TNumber : unmanaged, INumber<TNumber>, ITrigonometricFunctions<TNumber>
+        where TNumber : unmanaged, INumber<TNumber>, IFloatingPointIeee754<TNumber>, ITrigonometricFunctions<TNumber>
     {
         var input = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var output = (SystemMemoryBlock<TNumber>)result.Memory;
@@ -1385,10 +1386,9 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             ManagedTensorBackend.ParallelizationThreshold,
             i =>
             {
-                var csc = TNumber.One / TNumber.Sinh(input[i]);
-                var csch2 = TNumber.One / (csc * csc);
+                var csch = TNumber.One / TNumber.Sinh(input[i]);
 
-                output[i] = grad[i] * -csch2;
+                output[i] = grad[i] * -(csch * csch);
             });
     }
 
@@ -1451,11 +1451,11 @@ internal class ManagedTrigonometryKernels : ITrigonometryKernels
             {
                 var two = TNumber.One + TNumber.One;
                 var sinh = TNumber.Sinh(input[i]);
-                var csc = TNumber.One / sinh;
-                var csch2 = TNumber.One / (csc * csc);
-                var coth = TNumber.Cosh(input[i]) / sinh;
+                var sinh2 = sinh * sinh;
+                var cosh = TNumber.Cosh(input[i]);
+                var coth = cosh / sinh;
 
-                output[i] = grad[i] * -two * csch2 * coth;
+                output[i] = grad[i] * -two * (TNumber.One / sinh2) * coth;
             });
     }
 
