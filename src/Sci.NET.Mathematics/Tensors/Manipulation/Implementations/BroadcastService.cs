@@ -51,7 +51,7 @@ internal class BroadcastService : IBroadcastService
         var padShape = Enumerable.Repeat(1, padDims).Concat(Enumerable.Repeat(0, tensor.Shape.Rank)).ToArray();
         var broadcastStrides = Enumerable.Repeat(1L, padShape.Length).ToArray();
 
-        using var result = new Tensor<TNumber>(targetShape, tensor.Backend);
+        using var result = new Tensor<TNumber>(targetShape, tensor.Backend, requiresGradient: tensor.RequiresGradient);
 
         for (var i = padShape.Length - 1; i >= 0; i--)
         {
@@ -60,6 +60,11 @@ internal class BroadcastService : IBroadcastService
 
         // TODO: We shouldn't create a new tensor here, but the old kernels dont support iterating by strides.
         tensor.Backend.Broadcasting.Broadcast(tensor, result, broadcastStrides);
+
+        if (tensor.RequiresGradient)
+        {
+            ((ITensor<TNumber>)result).AddParent(tensor, grad => grad.Broadcast(tensor.Shape));
+        }
 
         return result.Reshape(targetShape);
     }

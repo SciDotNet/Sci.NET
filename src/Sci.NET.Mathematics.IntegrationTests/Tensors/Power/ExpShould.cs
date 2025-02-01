@@ -19,7 +19,7 @@ public class ExpShould : IntegrationTestBase
     }
 
     private static TNumber ExpScalarTest<TNumber>(TNumber number, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var scalar = new Scalar<TNumber>(number);
 
@@ -39,7 +39,7 @@ public class ExpShould : IntegrationTestBase
     }
 
     private static Array ExpVectorTest<TNumber>(TNumber[] numbers, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var vector = Tensor.FromArray<TNumber>(numbers).ToVector();
 
@@ -59,7 +59,7 @@ public class ExpShould : IntegrationTestBase
     }
 
     private static Array ExpMatrixTest<TNumber>(TNumber[,] numbers, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var matrix = Tensor.FromArray<TNumber>(numbers).ToMatrix();
 
@@ -93,7 +93,7 @@ public class ExpShould : IntegrationTestBase
     }
 
     private static Array ExpTensorTest<TNumber>(TNumber[,,] numbers, IDevice device)
-        where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
+        where TNumber : unmanaged, IExponentialFunctions<TNumber>, IFloatingPointIeee754<TNumber>, INumber<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(numbers);
 

@@ -10,13 +10,16 @@ using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 
+[SuppressMessage("Performance", "CA1859:Use concrete types when possible for improved performance", Justification = "The concrete type is not known at compile time.")]
 internal class ArithmeticService : IArithmeticService
 {
-    private readonly IDeviceGuardService _guardService;
+    private readonly IDeviceGuardService _deviceGuardService;
+    private readonly IGradientAppenderService _gradientAppenderService;
 
-    public ArithmeticService(ITensorOperationServiceProvider provider)
+    public ArithmeticService()
     {
-        _guardService = provider.GetDeviceGuardService();
+        _deviceGuardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
     }
 
     public Scalar<TNumber> Add<TNumber>(
@@ -24,7 +27,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
         var result = new Scalar<TNumber>(backend);
 
@@ -34,6 +37,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -42,7 +53,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -54,6 +65,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -62,7 +81,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -74,6 +93,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -82,7 +109,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -94,6 +121,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -102,7 +137,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -114,6 +149,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -122,7 +165,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -138,6 +181,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -146,7 +197,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -163,6 +214,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Length,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -171,7 +230,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -188,6 +247,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Length,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -196,7 +263,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -208,6 +275,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -216,7 +291,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -233,6 +308,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Length,
             right.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -241,7 +324,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Rows != right.Rows || left.Columns != right.Columns)
@@ -257,6 +340,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             left.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -265,7 +356,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
@@ -282,6 +373,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Shape.ElementCount,
             left.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -290,7 +389,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -302,6 +401,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -310,7 +417,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -327,6 +434,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Length,
             right.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -335,7 +450,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Columns || left.Shape[^2] != right.Rows)
@@ -352,6 +467,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
         return result;
     }
 
@@ -360,7 +483,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -372,6 +495,14 @@ internal class ArithmeticService : IArithmeticService
                 right.Memory,
                 result.Memory,
                 left.Shape.ElementCount);
+
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                grad => grad,
+                grad => grad);
 
             return result;
         }
@@ -395,6 +526,14 @@ internal class ArithmeticService : IArithmeticService
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                grad => grad,
+                grad => grad);
+
             return result;
         }
         else
@@ -416,13 +555,18 @@ internal class ArithmeticService : IArithmeticService
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                grad => grad,
+                grad => grad);
+
             return result;
         }
     }
 
-    // For now we will exclude this method from code coverage as the method is observably correct.
-    // The later integration tests will cover this method.
-    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Add<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -511,12 +655,30 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
+    public void AddInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+
+        InvalidShapeException.ThrowIfDifferentElementCount(left.Shape, right.Shape);
+
+        left.Backend.Arithmetic.AddTensorTensorInplace(left.Memory, right.Memory, left.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref left,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+    }
+
     public Scalar<TNumber> Subtract<TNumber>(
         Scalar<TNumber> left,
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Scalar<TNumber>(backend);
@@ -527,6 +689,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -535,7 +705,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -547,6 +717,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -555,7 +733,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -567,6 +745,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -575,7 +761,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -587,6 +773,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -595,7 +789,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -607,6 +801,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -615,7 +817,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -633,6 +835,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -641,7 +851,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -660,6 +870,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Length,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -668,7 +886,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -687,6 +905,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Length,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -695,7 +921,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -707,6 +933,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -715,7 +949,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -734,6 +968,14 @@ internal class ArithmeticService : IArithmeticService
             left.Rows,
             left.Columns);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -742,7 +984,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Rows != right.Rows || left.Columns != right.Columns)
         {
@@ -760,6 +1002,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             left.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -768,7 +1018,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Columns != right.Shape[^2] || left.Rows != right.Shape[^1])
         {
@@ -787,6 +1037,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Shape.ElementCount,
             left.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -795,7 +1053,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -807,6 +1065,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -815,7 +1081,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -834,6 +1100,14 @@ internal class ArithmeticService : IArithmeticService
             right.Length,
             left.Shape.ElementCount / right.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -842,7 +1116,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
 
         if (left.Shape[^1] != right.Rows || left.Shape[^2] != right.Columns)
         {
@@ -861,6 +1135,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
         return result;
     }
 
@@ -869,7 +1151,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -881,6 +1163,14 @@ internal class ArithmeticService : IArithmeticService
                 right.Memory,
                 result.Memory,
                 left.Shape.ElementCount);
+
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                grad => grad,
+                grad => grad.Negate());
 
             return result;
         }
@@ -904,6 +1194,14 @@ internal class ArithmeticService : IArithmeticService
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                grad => grad,
+                grad => grad.Negate());
+
             return result;
         }
         else
@@ -925,13 +1223,18 @@ internal class ArithmeticService : IArithmeticService
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                grad => grad,
+                grad => grad.Negate());
+
             return result;
         }
     }
 
-    // For now we will exclude this method from code coverage as the method is observably correct.
-    // The later integration tests will cover this method.
-    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Subtract<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -1025,7 +1328,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Scalar<TNumber>(backend);
@@ -1036,6 +1339,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1044,7 +1355,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(right.Length, backend);
@@ -1055,6 +1366,15 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             right.Shape.ElementCount,
             1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1063,7 +1383,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
@@ -1075,6 +1395,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1083,7 +1411,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(right.Shape, backend);
@@ -1095,6 +1423,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1103,7 +1439,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Vector<TNumber>(left.Length, backend);
@@ -1115,6 +1451,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1123,7 +1467,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Length)
@@ -1141,6 +1485,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             left.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1149,7 +1501,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Columns)
@@ -1168,6 +1520,14 @@ internal class ArithmeticService : IArithmeticService
             left.Length,
             right.Rows);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1176,7 +1536,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Length != right.Shape[^1])
@@ -1192,6 +1552,15 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             right.Shape.ElementCount / left.Length,
             left.Length);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1200,7 +1569,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
@@ -1212,6 +1581,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1220,7 +1597,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Columns != right.Length)
@@ -1239,6 +1616,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Length,
             right.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1247,7 +1632,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape != right.Shape)
@@ -1265,6 +1650,14 @@ internal class ArithmeticService : IArithmeticService
             result.Memory,
             left.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1273,7 +1666,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
@@ -1292,6 +1685,14 @@ internal class ArithmeticService : IArithmeticService
             right.Shape.ElementCount / left.Shape.ElementCount,
             left.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1300,7 +1701,7 @@ internal class ArithmeticService : IArithmeticService
         Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         var result = new Tensor<TNumber>(left.Shape, backend);
@@ -1312,6 +1713,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount,
             1);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1320,7 +1729,7 @@ internal class ArithmeticService : IArithmeticService
         Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^1] != right.Length)
@@ -1339,6 +1748,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Length,
             right.Length);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1347,7 +1764,7 @@ internal class ArithmeticService : IArithmeticService
         Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
@@ -1366,6 +1783,14 @@ internal class ArithmeticService : IArithmeticService
             left.Shape.ElementCount / right.Shape.ElementCount,
             right.Shape.ElementCount);
 
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
         return result;
     }
 
@@ -1374,7 +1799,7 @@ internal class ArithmeticService : IArithmeticService
         Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var backend = left.Backend;
 
         if (left.Shape == right.Shape)
@@ -1387,6 +1812,14 @@ internal class ArithmeticService : IArithmeticService
                 result.Memory,
                 left.Shape.ElementCount);
 
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                right.Multiply,
+                left.Multiply);
+
             return result;
         }
 
@@ -1409,6 +1842,14 @@ internal class ArithmeticService : IArithmeticService
                 right.Shape.ElementCount,
                 left.Shape.ElementCount / right.Shape.ElementCount);
 
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                right.Multiply,
+                left.Multiply);
+
             return result;
         }
         else
@@ -1430,561 +1871,24 @@ internal class ArithmeticService : IArithmeticService
                 left.Shape.ElementCount,
                 right.Shape.ElementCount / left.Shape.ElementCount);
 
-            return result;
-        }
-    }
-
-    public Scalar<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.DivideTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            1);
-
-        return result;
-    }
-
-    public Vector<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(right.Length, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        return result;
-    }
-
-    public Vector<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length,
-            1);
-
-        return result;
-    }
-
-    public Vector<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot divide vectors with different lengths: {left.Shape} and {right.Shape}.");
-        }
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.DivideTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by matrix with shape {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by tensor with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Columns != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by vector with length {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Rows,
-            left.Columns);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-
-        var backend = left.Backend;
-
-        if (left.Rows != right.Rows || left.Columns != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot divide matrices with different shapes: {left.Shape} and {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.DivideTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Rows * left.Columns);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-
-        var backend = left.Backend;
-
-        if (left.Rows != right.Shape[^1] || left.Columns != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by tensor with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Columns,
-            right.Shape.ElementCount / left.Columns);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Scalar<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Vector<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^1] != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by vector with length {right.Length}.");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Length,
-            right.Length);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Matrix<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by matrix with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Tensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        _guardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape == right.Shape)
-        {
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.DivideTensorTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount);
-
-            return result;
-        }
-
-        if (left.Shape.ElementCount > right.Shape.ElementCount)
-        {
-            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.DivideTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                right.Shape.ElementCount,
-                left.Shape.ElementCount / right.Shape.ElementCount);
-
-            return result;
-        }
-        else
-        {
-            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(right.Shape, backend);
-
-            backend.Arithmetic.DivideTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount,
-                right.Shape.ElementCount / left.Shape.ElementCount);
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                right.Multiply,
+                left.Multiply);
 
             return result;
         }
     }
 
-    public Scalar<TNumber> Negate<TNumber>(Scalar<TNumber> value)
+    public ITensor<TNumber> Abs<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Scalar<TNumber>(newMemoryBlock, backend);
-        }
-
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        return result;
+        return Abs(value.ToTensor());
     }
 
-    public Vector<TNumber> Negate<TNumber>(Vector<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Vector<TNumber>(value.Length, newMemoryBlock, backend);
-        }
-
-        var result = new Vector<TNumber>(value.Length, backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Negate<TNumber>(Matrix<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Matrix<TNumber>(value.Rows, value.Columns, newMemoryBlock, backend);
-        }
-
-        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Negate<TNumber>(Tensor<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend);
-        }
-
-        var result = new Tensor<TNumber>(value.Shape, backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        return result;
-    }
-
-    public Scalar<TNumber> Abs<TNumber>(Scalar<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            1);
-
-        return result;
-    }
-
-    public Vector<TNumber> Abs<TNumber>(Vector<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Vector<TNumber>(value.Length, backend);
-
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            value.Length);
-
-        return result;
-    }
-
-    public Matrix<TNumber> Abs<TNumber>(Matrix<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
-
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        return result;
-    }
-
-    public Tensor<TNumber> Abs<TNumber>(Tensor<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Tensor<TNumber>(value.Shape, backend);
-
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        return result;
-    }
-
-    // For now we will exclude this method from code coverage as the method is observably correct.
-    // The later integration tests will cover this method.
-    [ExcludeFromCodeCoverage]
     public ITensor<TNumber> Multiply<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -2073,9 +1977,572 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
-    // For now we will exclude this method from code coverage as the method is observably correct.
-    // The later integration tests will cover this method.
-    [ExcludeFromCodeCoverage]
+    public void MultiplyInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+
+        InvalidShapeException.ThrowIfDifferentElementCount(left.Shape, right.Shape);
+
+        left.Backend.Arithmetic.MultiplyTensorTensorInplace(left.Memory, right.Memory, left.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref left,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+    }
+
+    public Scalar<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Arithmetic.DivideTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Vector<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Vector<TNumber>(right.Length, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            right.Shape.ElementCount,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            right.Shape.ElementCount,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Scalar<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            right.Shape.ElementCount,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Vector<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Vector<TNumber>(left.Length, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Length,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Vector<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Length != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot divide vectors with different lengths: {left.Shape} and {right.Shape}.");
+        }
+
+        var result = new Vector<TNumber>(left.Length, backend);
+
+        backend.Arithmetic.DivideTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Length);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Length != right.Columns)
+        {
+            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by matrix with shape {right.Shape}.");
+        }
+
+        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Vector<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Length != right.Shape[^1])
+        {
+            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by tensor with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            right.Shape.ElementCount / left.Length,
+            left.Length);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Shape.ElementCount,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Columns != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by vector with length {right.Shape}.");
+        }
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Rows,
+            left.Columns);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Matrix<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+
+        var backend = left.Backend;
+
+        if (left.Rows != right.Rows || left.Columns != right.Columns)
+        {
+            throw new InvalidShapeException($"Cannot divide matrices with different shapes: {left.Shape} and {right.Shape}.");
+        }
+
+        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
+
+        backend.Arithmetic.DivideTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Rows * left.Columns);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Matrix<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+
+        var backend = left.Backend;
+
+        if (left.Rows != right.Shape[^1] || left.Columns != right.Shape[^1])
+        {
+            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by tensor with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(right.Shape, backend);
+
+        backend.Arithmetic.DivideBroadcastTensorTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Columns,
+            right.Shape.ElementCount / left.Columns);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Scalar<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Shape.ElementCount,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Vector<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^1] != right.Length)
+        {
+            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by vector with length {right.Length}.");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Shape.ElementCount / right.Length,
+            right.Length);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Matrix<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
+        {
+            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by matrix with shape {right.Shape}.");
+        }
+
+        var result = new Tensor<TNumber>(left.Shape, backend);
+
+        backend.Arithmetic.DivideTensorBroadcastTensor(
+            left.Memory,
+            right.Memory,
+            result.Memory,
+            left.Shape.ElementCount / right.Shape.ElementCount,
+            right.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Divide<TNumber>(
+        Tensor<TNumber> left,
+        Tensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var backend = left.Backend;
+
+        if (left.Shape == right.Shape)
+        {
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.DivideTensorTensor(
+                left.Memory,
+                right.Memory,
+                result.Memory,
+                left.Shape.ElementCount);
+
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                right.Divide,
+                grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+            return result;
+        }
+
+        if (left.Shape.ElementCount > right.Shape.ElementCount)
+        {
+            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
+
+            var result = new Tensor<TNumber>(left.Shape, backend);
+
+            backend.Arithmetic.DivideTensorBroadcastTensor(
+                left.Memory,
+                right.Memory,
+                result.Memory,
+                right.Shape.ElementCount,
+                left.Shape.ElementCount / right.Shape.ElementCount);
+
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                right.Divide,
+                grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+            return result;
+        }
+        else
+        {
+            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
+            {
+                if (left.Shape[i] != right.Shape[i])
+                {
+                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
+                }
+            }
+
+            var result = new Tensor<TNumber>(right.Shape, backend);
+
+            backend.Arithmetic.DivideTensorBroadcastTensor(
+                left.Memory,
+                right.Memory,
+                result.Memory,
+                left.Shape.ElementCount,
+                right.Shape.ElementCount / left.Shape.ElementCount);
+
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                left,
+                right,
+                null,
+                right.Divide,
+                grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+            return result;
+        }
+    }
+
     public ITensor<TNumber> Divide<TNumber>(
         ITensor<TNumber> left,
         ITensor<TNumber> right)
@@ -2164,7 +2631,259 @@ internal class ArithmeticService : IArithmeticService
         throw new UnreachableException();
     }
 
+    public Scalar<TNumber> Sqrt<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToScalar();
+    }
+
+    public Vector<TNumber> Sqrt<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToVector();
+    }
+
+    public Matrix<TNumber> Sqrt<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToMatrix();
+    }
+
+    public Tensor<TNumber> Sqrt<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(value).ToTensor();
+    }
+
+    public Scalar<TNumber> Negate<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+
+        if (!GenericMath.IsSigned<TNumber>())
+        {
+            var newMemoryBlock = value.Memory.Copy();
+
+            return new Scalar<TNumber>(newMemoryBlock, backend);
+        }
+
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Arithmetic.Negate(
+            value.Memory,
+            result.Memory,
+            value.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Negate());
+
+        return result;
+    }
+
+    public Vector<TNumber> Negate<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+
+        if (!GenericMath.IsSigned<TNumber>())
+        {
+            var newMemoryBlock = value.Memory.Copy();
+
+            return new Vector<TNumber>(value.Length, newMemoryBlock, backend);
+        }
+
+        var result = new Vector<TNumber>(value.Length, backend);
+
+        backend.Arithmetic.Negate(
+            value.Memory,
+            result.Memory,
+            value.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Negate());
+
+        return result;
+    }
+
+    public Matrix<TNumber> Negate<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+
+        if (!GenericMath.IsSigned<TNumber>())
+        {
+            var newMemoryBlock = value.Memory.Copy();
+
+            return new Matrix<TNumber>(value.Rows, value.Columns, newMemoryBlock, backend);
+        }
+
+        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
+
+        backend.Arithmetic.Negate(
+            value.Memory,
+            result.Memory,
+            value.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Negate());
+
+        return result;
+    }
+
+    public Tensor<TNumber> Negate<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+
+        if (!GenericMath.IsSigned<TNumber>())
+        {
+            var newMemoryBlock = value.Memory.Copy();
+
+            return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend, value.RequiresGradient);
+        }
+
+        var result = new Tensor<TNumber>(value.Shape, backend);
+
+        backend.Arithmetic.Negate(
+            value.Memory,
+            result.Memory,
+            value.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad => grad.Negate());
+
+        return result;
+    }
+
+    public ITensor<TNumber> Negate<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return Negate(value.ToTensor());
+    }
+
+    public Scalar<TNumber> Abs<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Scalar<TNumber>(backend);
+
+        backend.Arithmetic.Abs(
+            value.Memory,
+            result.Memory,
+            1);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad =>
+            {
+                var gradResult = new Scalar<TNumber>(TNumber.Zero, value.Backend);
+                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
+
+                return gradResult;
+            });
+
+        return result;
+    }
+
+    public Vector<TNumber> Abs<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Vector<TNumber>(value.Length, backend);
+
+        backend.Arithmetic.Abs(
+            value.Memory,
+            result.Memory,
+            value.Length);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad =>
+            {
+                var gradResult = new Vector<TNumber>(value.Length, value.Backend);
+                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
+
+                return gradResult;
+            });
+
+        return result;
+    }
+
+    public Matrix<TNumber> Abs<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
+
+        backend.Arithmetic.Abs(
+            value.Memory,
+            result.Memory,
+            value.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad =>
+            {
+                var gradResult = new Matrix<TNumber>(value.Rows, value.Columns, value.Backend);
+                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
+
+                return gradResult;
+            });
+
+        return result;
+    }
+
+    public Tensor<TNumber> Abs<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var backend = value.Backend;
+        var result = new Tensor<TNumber>(value.Shape, backend);
+
+        backend.Arithmetic.Abs(
+            value.Memory,
+            result.Memory,
+            value.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            value,
+            null,
+            grad =>
+            {
+                var gradResult = new Tensor<TNumber>(value.Shape, value.Backend);
+                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
+
+                return gradResult;
+            });
+
+        return result;
+    }
+
     public ITensor<TNumber> Sqrt<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return SqrtGeneric(tensor);
+    }
+
+    private ITensor<TNumber> SqrtGeneric<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = tensor.Backend;
@@ -2174,6 +2893,19 @@ internal class ArithmeticService : IArithmeticService
             tensor.Memory,
             result.Memory,
             tensor.Shape.ElementCount);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            tensor,
+            null,
+            grad =>
+            {
+                using var two = new Scalar<TNumber>(TNumber.CreateChecked(2), backend);
+                using var one = new Scalar<TNumber>(TNumber.CreateChecked(1), backend);
+                using var localGradient = one.Divide(result.Multiply(two));
+
+                return grad.Multiply(localGradient);
+            });
 
         return result;
     }

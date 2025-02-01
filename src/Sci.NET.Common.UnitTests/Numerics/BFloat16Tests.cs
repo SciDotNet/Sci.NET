@@ -2,13 +2,22 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Sci.NET.Common.LowLevel;
 using Sci.NET.Common.Numerics;
+using Xunit.Abstractions;
 
 namespace Sci.NET.Common.UnitTests.Numerics;
 
 public class BFloat16Tests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public BFloat16Tests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
     [Fact]
     public void GetZero_ReturnsCorrectBits()
     {
@@ -216,5 +225,22 @@ public class BFloat16Tests
         var result = BFloat16.Parse(value);
 
         result.Should().Be(expected);
+    }
+
+    [Fact]
+    public void Something_JustATest()
+    {
+        var value = BFloat16.PositiveInfinity;
+        var value2 = BFloat16.NegativeInfinity;
+
+        BFloat16.IsInfinity(value).Should().BeTrue();
+
+        _testOutputHelper.WriteLine(value.ToString());
+        _testOutputHelper.WriteLine(value2.ToString());
+
+        BFloat16.Parse("\u221e", CultureInfo.CurrentCulture).Should().Be(BFloat16.PositiveInfinity);
+        BFloat16.Parse("-\u221e", CultureInfo.CurrentCulture).Should().Be(BFloat16.NegativeInfinity);
+
+        BFloat16.Parse("NaN", CultureInfo.CurrentCulture).Should().Be(BFloat16.NaN);
     }
 }

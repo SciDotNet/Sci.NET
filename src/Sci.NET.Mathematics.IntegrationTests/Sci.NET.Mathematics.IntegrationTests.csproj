@@ -18,29 +18,96 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Tensors\LinearAlgebra\Examples\" />
-      <Folder Include="Tensors\Manipulation\Reshaping\" />
+        <None Update="Tensors\Differentiation\TrigonometryBackwardsTests.tt">
+            <Generator>TextTemplatingFileGenerator</Generator>
+            <LastGenOutput>TrigonometryBackwardsTests.cs</LastGenOutput>
+        </None>
+        <None Update="Tensors\Differentiation\ActivationFunctionBackwardsTests.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>ActivationFunctionBackwardsTests.cs</LastGenOutput>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[0]]_1.safetensors">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[0]]_2.safetensors">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1_2]_[0_1]]_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\MatrixMultiply_4.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\LinearAlgebra\Examples\Contract_[[1]_[1]]_3.safetensors">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Add_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Add_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Add_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Multiply_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Multiply_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Multiply_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Subtract_1.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Subtract_2.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Arithmetic\Examples\Subtract_3.safetensors">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="Tensors\Trigonometry\TrigWithBackwardsShould.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>TrigWithBackwardsShould.cs</LastGenOutput>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Tensors\LinearAlgebra\Examples\matmul_1.safetensors">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Tensors\LinearAlgebra\Examples\matmul_2.safetensors">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Tensors\LinearAlgebra\Examples\matmul_3.safetensors">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Tensors\LinearAlgebra\Examples\matmul_4.safetensors">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Tensors\LinearAlgebra\Examples\matmul_5.safetensors">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Tensors\NeuralNetworks\Examples\conv2d_1_1.safetensors">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <Compile Update="Tensors\Differentiation\TrigonometryBackwardsTests.cs">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <DependentUpon>TrigonometryBackwardsTests.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Tensors\Differentiation\TrigonometryBackwardsTests.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>TrigonometryBackwardsTests.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Tensors\Differentiation\ActivationFunctionBackwardsTests.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>ActivationFunctionBackwardsTests.tt</DependentUpon>
+        </Compile>
+        <Compile Update="Tensors\Trigonometry\TrigWithBackwardsShould.cs">
+          <AutoGen>True</AutoGen>
+          <DesignTime>True</DesignTime>
+          <DependentUpon>TrigWithBackwardsShould.tt</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Tensors\LinearAlgebra\Examples\" />
     </ItemGroup>
 
 </Project>
