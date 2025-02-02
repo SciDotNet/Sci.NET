@@ -8,6 +8,11 @@ namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Differentiation;
 
 public class CompoundFunctionAutoGradTests
 {
+    public CompoundFunctionAutoGradTests()
+    {
+        SciDotNetConfiguration.PreviewFeatures.EnableAutoGrad();
+    }
+
     [Fact]
     public void CosineSinTest()
     {

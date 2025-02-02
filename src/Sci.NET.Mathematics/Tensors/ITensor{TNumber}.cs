@@ -56,7 +56,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     /// <summary>
     /// Gets the parent nodes of the <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    protected internal ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> Parents { get; }
+    protected internal ICollection<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> Parents { get; }
 
     /// <summary>
     /// Gets the slice of the <see cref="ITensor{TNumber}"/> at the specified indices.
@@ -74,11 +74,12 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     /// <summary>
     /// Adds a parent node to the <see cref="ITensor{TNumber}"/>.
     /// </summary>
+    /// <param name="name">The name of the backwards function.</param>
     /// <param name="parent">The parent node to add.</param>
     /// <param name="gradientFunc">The gradient function to apply to the parent node.</param>
-    public void AddParent(ITensor<TNumber> parent, Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunc)
+    public void AddParent(string name, ITensor<TNumber> parent, Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunc)
     {
-        Parents.Add((parent, gradientFunc));
+        Parents.Add((name, parent, gradientFunc));
     }
 
     /// <summary>
@@ -133,7 +134,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         foreach (var parent in Parents)
         {
-            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+            ((ITensor<TNumber>)result).AddParent(parent.Name, parent.Parent, parent.Gradient);
         }
 
         return result;
@@ -159,7 +160,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         foreach (var parent in Parents)
         {
-            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+            ((ITensor<TNumber>)result).AddParent(parent.Name, parent.Parent, parent.Gradient);
         }
 
         return result;
@@ -186,7 +187,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         foreach (var parent in Parents)
         {
-            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+            ((ITensor<TNumber>)result).AddParent(parent.Name, parent.Parent, parent.Gradient);
         }
 
         return result;
@@ -204,7 +205,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
 
         foreach (var parent in Parents)
         {
-            ((ITensor<TNumber>)result).AddParent(parent.Parent, parent.Gradient);
+            ((ITensor<TNumber>)result).AddParent(parent.Name, parent.Parent, parent.Gradient);
         }
 
         return result;
@@ -263,7 +264,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
     protected internal void BackwardInternal()
     {
         // First, propagate to each parent
-        foreach (var (parent, gradientFunc) in Parents)
+        foreach (var (_, parent, gradientFunc) in Parents)
         {
             if (parent.RequiresGradient)
             {
@@ -274,7 +275,7 @@ public interface ITensor<TNumber> : ITensorLocalityOperations
         }
 
         // Ensure each parent node gets its accumulated gradient and continues to propagate
-        foreach (var (parent, _) in Parents)
+        foreach (var (_, parent, _) in Parents)
         {
             parent.BackwardInternal();
         }
