@@ -2,12 +2,20 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
 internal class PermutationService : IPermutationService
 {
+    private readonly IGradientAppenderService _gradientAppenderService;
+
+    public PermutationService()
+    {
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
+    }
+
     public ITensor<TNumber> Permute<TNumber>(ITensor<TNumber> tensor, int[] permutation, bool? overrideRequiresGradient = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
@@ -39,29 +47,12 @@ internal class PermutationService : IPermutationService
 
         result.Backend.Permutation.Permute(tensor, result, permutation);
 
-        if (tensor.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                tensor,
-                grad =>
-                {
-                    var inversePermutation = InversePermutation(permutation);
-                    return grad.Permute(inversePermutation);
-                });
-        }
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            tensor,
+            overrideRequiresGradient,
+            grad => grad.Permute(permutation));
 
         return result;
-    }
-
-    private static int[] InversePermutation(int[] permutation)
-    {
-        var inverse = new int[permutation.Length];
-
-        for (var i = 0; i < permutation.Length; i++)
-        {
-            inverse[permutation[i]] = i;
-        }
-
-        return inverse;
     }
 }

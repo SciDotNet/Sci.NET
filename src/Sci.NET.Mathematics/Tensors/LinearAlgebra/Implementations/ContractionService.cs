@@ -196,20 +196,6 @@ internal class ContractionService : IContractionService
                 return gradVector.AsGradient();
             });
 
-        if (overrideRequiresGradient ?? left.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                left,
-                _ => ((ITensor<TNumber>)right).AsGradient());
-        }
-
-        if (overrideRequiresGradient ?? right.RequiresGradient)
-        {
-            ((ITensor<TNumber>)result).AddParent(
-                right,
-                _ => ((ITensor<TNumber>)left).AsGradient());
-        }
-
         return result;
     }
 

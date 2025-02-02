@@ -89,7 +89,7 @@ public sealed class Vector<TNumber> : ITensor<TNumber>
     public bool IsGradient { get; init; }
 
     /// <inheritdoc/>
-    ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
+    ICollection<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <summary>
     /// Gets the length of the <see cref="Vector{TNumber}"/>.

@@ -10,10 +10,12 @@ namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 internal class ConcatenationService : IConcatenationService
 {
     private readonly IDeviceGuardService _deviceGuardService;
+    private readonly IGradientAppenderService _gradientAppenderService;
 
     public ConcatenationService()
     {
         _deviceGuardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
     }
 
     public Vector<TNumber> Concatenate<TNumber>(ICollection<Scalar<TNumber>> scalars)
@@ -96,10 +98,11 @@ internal class ConcatenationService : IConcatenationService
 
         foreach (var tensor in tensors)
         {
-            if (tensor.RequiresGradient)
-            {
-                tensor.AddParent(result, _ => throw new AutoDiffNotSupportedException(nameof(Concatenate)));
-            }
+            _gradientAppenderService.AddGradientIfRequired(
+                ref result,
+                tensor,
+                null,
+                _ => throw new AutoDiffNotSupportedException(nameof(Concatenate)));
         }
 
         return result;
