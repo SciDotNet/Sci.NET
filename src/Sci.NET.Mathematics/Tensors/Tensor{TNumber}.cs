@@ -119,7 +119,7 @@ public sealed class Tensor<TNumber> : ITensor<TNumber>
     public bool IsGradient { get; init; }
 
     /// <inheritdoc/>
-    ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
+    ICollection<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <inheritdoc/>
     public IDevice Device => Backend.Device;

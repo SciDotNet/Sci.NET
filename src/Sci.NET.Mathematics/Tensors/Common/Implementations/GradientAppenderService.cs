@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace Sci.NET.Mathematics.Tensors.Common.Implementations;
 
@@ -13,9 +14,17 @@ internal class GradientAppenderService : IGradientAppenderService
         ITensor<TNumber> right,
         bool? overrideRequiresGradient,
         Func<ITensor<TNumber>, ITensor<TNumber>> leftGradientFunction,
-        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         if (overrideRequiresGradient ?? (left.RequiresGradient || right.RequiresGradient))
         {
             result = result.WithGradient();
@@ -24,6 +33,7 @@ internal class GradientAppenderService : IGradientAppenderService
         if (overrideRequiresGradient ?? left.RequiresGradient)
         {
             result.AddParent(
+                name,
                 left,
                 grad =>
                 {
@@ -35,6 +45,7 @@ internal class GradientAppenderService : IGradientAppenderService
         if (overrideRequiresGradient ?? right.RequiresGradient)
         {
             result.AddParent(
+                name,
                 right,
                 grad =>
                 {
@@ -50,9 +61,17 @@ internal class GradientAppenderService : IGradientAppenderService
         ITensor<TNumber> right,
         bool? overrideRequiresGradient,
         Func<ITensor<TNumber>, ITensor<TNumber>> leftGradientFunction,
-        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
@@ -61,7 +80,8 @@ internal class GradientAppenderService : IGradientAppenderService
             right,
             overrideRequiresGradient,
             leftGradientFunction,
-            rightGradientFunction);
+            rightGradientFunction,
+            name);
 
         result = resultITensor.ToScalar();
     }
@@ -72,9 +92,17 @@ internal class GradientAppenderService : IGradientAppenderService
         ITensor<TNumber> right,
         bool? overrideRequiresGradient,
         Func<ITensor<TNumber>, ITensor<TNumber>> leftGradientFunction,
-        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
@@ -83,7 +111,8 @@ internal class GradientAppenderService : IGradientAppenderService
             right,
             overrideRequiresGradient,
             leftGradientFunction,
-            rightGradientFunction);
+            rightGradientFunction,
+            name);
 
         result = resultITensor.ToVector();
     }
@@ -94,9 +123,17 @@ internal class GradientAppenderService : IGradientAppenderService
         ITensor<TNumber> right,
         bool? overrideRequiresGradient,
         Func<ITensor<TNumber>, ITensor<TNumber>> leftGradientFunction,
-        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultIt = result;
 
         AddGradientIfRequired(
@@ -105,7 +142,8 @@ internal class GradientAppenderService : IGradientAppenderService
             right,
             overrideRequiresGradient,
             leftGradientFunction,
-            rightGradientFunction);
+            rightGradientFunction,
+            name);
 
         result = resultIt.ToMatrix();
     }
@@ -116,9 +154,17 @@ internal class GradientAppenderService : IGradientAppenderService
         ITensor<TNumber> right,
         bool? overrideRequiresGradient,
         Func<ITensor<TNumber>, ITensor<TNumber>> leftGradientFunction,
-        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> rightGradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
@@ -127,7 +173,8 @@ internal class GradientAppenderService : IGradientAppenderService
             right,
             overrideRequiresGradient,
             leftGradientFunction,
-            rightGradientFunction);
+            rightGradientFunction,
+            name);
 
         result = resultITensor.ToTensor();
     }
@@ -136,14 +183,23 @@ internal class GradientAppenderService : IGradientAppenderService
         ref ITensor<TNumber> result,
         ITensor<TNumber> input,
         bool? overrideRequiresGradient,
-        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         if (overrideRequiresGradient ?? input.RequiresGradient)
         {
             result = result.WithGradient();
 
             result.AddParent(
+                name,
                 input,
                 grad =>
                 {
@@ -157,16 +213,25 @@ internal class GradientAppenderService : IGradientAppenderService
         ref Scalar<TNumber> result,
         ITensor<TNumber> input,
         bool? overrideRequiresGradient,
-        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
             ref resultITensor,
             input,
             overrideRequiresGradient,
-            gradientFunction);
+            gradientFunction,
+            name);
 
         result = resultITensor.ToScalar();
     }
@@ -175,16 +240,25 @@ internal class GradientAppenderService : IGradientAppenderService
         ref Vector<TNumber> result,
         ITensor<TNumber> input,
         bool? overrideRequiresGradient,
-        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
             ref resultITensor,
             input,
             overrideRequiresGradient,
-            gradientFunction);
+            gradientFunction,
+            name);
 
         result = resultITensor.ToVector();
     }
@@ -193,16 +267,25 @@ internal class GradientAppenderService : IGradientAppenderService
         ref Matrix<TNumber> result,
         ITensor<TNumber> input,
         bool? overrideRequiresGradient,
-        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
             ref resultITensor,
             input,
             overrideRequiresGradient,
-            gradientFunction);
+            gradientFunction,
+            name);
 
         result = resultITensor.ToMatrix();
     }
@@ -211,16 +294,25 @@ internal class GradientAppenderService : IGradientAppenderService
         ref Tensor<TNumber> result,
         ITensor<TNumber> input,
         bool? overrideRequiresGradient,
-        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction)
+        Func<ITensor<TNumber>, ITensor<TNumber>> gradientFunction,
+        [CallerMemberName] string? name = null)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        name ??= "UnknownOperation";
+
+        if (!name.EndsWith("Backward", StringComparison.InvariantCulture))
+        {
+            name = $"{name}Backward";
+        }
+
         ITensor<TNumber> resultITensor = result;
 
         AddGradientIfRequired(
             ref resultITensor,
             input,
             overrideRequiresGradient,
-            gradientFunction);
+            gradientFunction,
+            name);
 
         result = resultITensor.ToTensor();
     }

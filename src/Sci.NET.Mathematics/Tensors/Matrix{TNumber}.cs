@@ -91,7 +91,7 @@ public sealed class Matrix<TNumber> : ITensor<TNumber>
     public bool IsGradient { get; init; }
 
     /// <inheritdoc />
-    ICollection<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
+    ICollection<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)> ITensor<TNumber>.Parents { get; } = new List<(string Name, ITensor<TNumber> Parent, Func<ITensor<TNumber>, ITensor<TNumber>> Gradient)>();
 
     /// <summary>
     /// Gets the number of rows in the <see cref="Matrix{TNumber}"/>.
