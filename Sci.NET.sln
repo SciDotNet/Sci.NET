@@ -19,6 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		eng\build-props\AddCommonTestNugetPackages.props = eng\build-props\AddCommonTestNugetPackages.props
 		eng\build-props\MakeInternalsVisibleToTestProjects.props = eng\build-props\MakeInternalsVisibleToTestProjects.props
 		NuGet.config = NuGet.config
+		eng\build-props\analyzers\base.globalconfig = eng\build-props\analyzers\base.globalconfig
+		eng\build-props\analyzers\stylecop.json = eng\build-props\analyzers\stylecop.json
+		eng\build-props\analyzers\test.globalconfig = eng\build-props\analyzers\test.globalconfig
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sci.NET.Images", "src\Sci.NET.Images\Sci.NET.Images.csproj", "{F1D57C4E-4EA0-40B9-BD35-635BD3166E5C}"
@@ -34,10 +37,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Tests.Framework", "src\Sci.NET.Tests.Framework\Sci.NET.Tests.Framework.csproj", "{7D2F834F-E1DD-4F16-A8A2-6BE6167B22E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Datasets.MNIST", "src\Sci.NET.Datasets.MNIST\Sci.NET.Datasets.MNIST.csproj", "{D4667540-9853-415C-A9A4-AF24C4A8CA14}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{23D4B1C9-4CC8-4B4A-BE72-14FFAE5263B2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sci.NET.Mathematics.Benchmarks", "src\Sci.NET.Mathematics.Benchmarks\Sci.NET.Mathematics.Benchmarks.csproj", "{2C72FFC2-F938-4A08-85E5-19DB2066C61A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{E435E549-ABAE-44E2-BD1F-FC6090A7EAD0}"
 EndProject
@@ -87,17 +86,12 @@ Global
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C72FFC2-F938-4A08-85E5-19DB2066C61A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C72FFC2-F938-4A08-85E5-19DB2066C61A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C72FFC2-F938-4A08-85E5-19DB2066C61A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C72FFC2-F938-4A08-85E5-19DB2066C61A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D4667540-9853-415C-A9A4-AF24C4A8CA14} = {A89249A7-5AAC-47CF-9E3C-869FD5524A0F}
-		{2C72FFC2-F938-4A08-85E5-19DB2066C61A} = {23D4B1C9-4CC8-4B4A-BE72-14FFAE5263B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC5435D4-B949-4EC3-9C76-673335B11820}
