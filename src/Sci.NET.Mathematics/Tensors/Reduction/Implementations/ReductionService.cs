@@ -447,7 +447,7 @@ internal class ReductionService : IReductionService
 
     private static Shape CalculateResultShape(int[] shape, int[]? axes, bool keepDims)
     {
-        var axisSet = axes is not null ? new HashSet<int>(axes) : new HashSet<int>();
+        var axisSet = axes is not null ? [.. axes] : new HashSet<int>();
 
         var resultShapeDimensions = new int[shape.Length];
 
