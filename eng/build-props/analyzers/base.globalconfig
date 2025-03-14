@@ -83,7 +83,7 @@ dotnet_diagnostic.SA1633.severity = error
 dotnet_diagnostic.IDE0303.severity = none
 
 dotnet_style_readonly_field = true
-dotnet_style_require_accessibility_modifiers = for_non_interface_members
+dotnet_style_require_accessibility_modifiers = always
 csharp_prefer_static_local_function = true
 csharp_preferred_modifier_order = = public,private,protected,internal,file,static,required,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async
 dotnet_style_predefined_type_for_locals_parameters_members = true
