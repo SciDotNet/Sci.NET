@@ -1467,8 +1467,7 @@ public static class ArithmeticExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
-            .Sqrt(scalar)
-            .ToScalar();
+            .Sqrt(scalar);
     }
 
     /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
@@ -1479,8 +1478,7 @@ public static class ArithmeticExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
-            .Sqrt(vector)
-            .ToVector();
+            .Sqrt(vector);
     }
 
     /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
@@ -1491,8 +1489,7 @@ public static class ArithmeticExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
-            .Sqrt(matrix)
-            .ToMatrix();
+            .Sqrt(matrix);
     }
 
     /// <inheritdoc cref="Sqrt{TNumber}(Sci.NET.Mathematics.Tensors.ITensor{TNumber})"/>
@@ -1503,8 +1500,7 @@ public static class ArithmeticExtensions
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetArithmeticService()
-            .Sqrt(tensor)
-            .ToTensor();
+            .Sqrt(tensor);
     }
 }
 

@@ -1,9 +1,10 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
 using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
+using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Tests.Framework.Assertions;
@@ -47,33 +48,16 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
     /// <summary>
     /// Asserts that the tensor has the given shape.
     /// </summary>
-    /// <param name="shape">The expected shape.</param>
+    /// <param name="elements">The expected shape.</param>
     /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
-    public AndConstraint<TensorAssertions<TNumber>> HaveShape(Shape shape)
-    {
-        _ = Execute
-            .Assertion
-            .BecauseOf(string.Empty, Array.Empty<object>())
-            .Given(() => Subject.Shape)
-            .ForCondition(tensorShape => tensorShape.SequenceEqual(shape))
-            .FailWith("Expected tensor to have shape {0}{reason}, but found {1}.", shape, Subject.Shape);
-
-        return new AndConstraint<TensorAssertions<TNumber>>(this);
-    }
-
-    /// <summary>
-    /// Asserts that the tensor has the given shape.
-    /// </summary>
-    /// <param name="shape">The expected shape.</param>
-    /// <returns>A <see cref="AndConstraint{TAssertions}" /> object.</returns>
-    public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array shape)
+    public AndConstraint<TensorAssertions<TNumber>> HaveEquivalentElements(Array elements)
     {
         _ = Execute
             .Assertion
             .BecauseOf(string.Empty, Array.Empty<object>())
             .Given(() => Subject.ToArray())
-            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, shape, TNumber.Zero))
-            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", shape, Subject.ToArray());
+            .ForCondition(tensorElements => AreEquivalentElements(tensorElements, elements, TNumber.Zero))
+            .FailWith("Expected tensor to have elements {0}{reason}, but found {1}.", elements, Subject.ToArray());
 
         return new AndConstraint<TensorAssertions<TNumber>>(this);
     }
@@ -200,6 +184,14 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
                 return false;
             }
 
+            if (CheckInfinityAndNaN<BFloat16>(tensor1, tensor2, indices) ||
+                CheckInfinityAndNaN<Half>(tensor1, tensor2, indices) ||
+                CheckInfinityAndNaN<float>(tensor1, tensor2, indices) ||
+                CheckInfinityAndNaN<double>(tensor1, tensor2, indices))
+            {
+                return true;
+            }
+
             return TNumber.Abs(leftValue.Value - rightValue.Value) <= TNumber.Abs(tolerance);
         }
 
@@ -220,6 +212,30 @@ public class TensorAssertions<TNumber> : ReferenceTypeAssertions<ITensor<TNumber
         }
 
         return true;
+    }
+
+    private static bool CheckInfinityAndNaN<T>(Array tensor1, Array tensor2, int[] indices)
+        where T : unmanaged, INumber<T>, IFloatingPointIeee754<T>
+    {
+        if (tensor1.GetValue(indices) is T leftBf16 && tensor2.GetValue(indices) is T rightBf16)
+        {
+            if (T.IsPositiveInfinity(leftBf16) && T.IsPositiveInfinity(rightBf16))
+            {
+                return true;
+            }
+
+            if (T.IsNegativeInfinity(leftBf16) && T.IsNegativeInfinity(rightBf16))
+            {
+                return true;
+            }
+
+            if (T.IsNaN(leftBf16) && T.IsNaN(rightBf16))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool CompareElementsRecursive(

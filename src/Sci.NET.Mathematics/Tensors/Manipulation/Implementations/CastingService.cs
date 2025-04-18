@@ -1,8 +1,9 @@
-﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
+// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
+using Sci.NET.Mathematics.Tensors.Exceptions;
 
 namespace Sci.NET.Mathematics.Tensors.Manipulation.Implementations;
 
@@ -16,6 +17,11 @@ internal class CastingService : ICastingService
 
         input.Backend.Casting.Cast(input, result);
 
+        if (input.RequiresGradient)
+        {
+            throw new AutoDiffNotSupportedException(nameof(Cast));
+        }
+
         return result;
     }
 
@@ -27,6 +33,11 @@ internal class CastingService : ICastingService
 
         input.Backend.Casting.Cast(input, result);
 
+        if (input.RequiresGradient)
+        {
+            throw new AutoDiffNotSupportedException(nameof(Cast));
+        }
+
         return result;
     }
 
@@ -37,6 +48,11 @@ internal class CastingService : ICastingService
         var result = new Matrix<TOut>(input.Rows, input.Columns, input.Backend);
 
         input.Backend.Casting.Cast(input, result);
+
+        if (input.RequiresGradient)
+        {
+            throw new AutoDiffNotSupportedException(nameof(Cast));
+        }
 
         return result;
     }
@@ -53,12 +69,22 @@ internal class CastingService : ICastingService
                 .ToSystemMemory()
                 .DangerousReinterpretCast<TOut>();
 
-            return new Tensor<TOut>(newMemoryBlock, input.Shape, input.Backend);
+            if (input.RequiresGradient)
+            {
+                throw new AutoDiffNotSupportedException(nameof(Cast));
+            }
+
+            return new Tensor<TOut>(newMemoryBlock, input.Shape, input.Backend, input.RequiresGradient);
         }
 
         var result = new Tensor<TOut>(input.Shape, input.Backend);
 
         input.Backend.Casting.Cast(input, result);
+
+        if (input.RequiresGradient)
+        {
+            throw new AutoDiffNotSupportedException(nameof(Cast));
+        }
 
         return result;
     }

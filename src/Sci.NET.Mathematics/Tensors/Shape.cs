@@ -179,6 +179,44 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     }
 
     /// <summary>
+    /// Creates a new <see cref="Shape"/> with the given dimensions.
+    /// </summary>
+    /// <param name="axes">The axes to expand the dimensions by.</param>
+    /// <returns>The new <see cref="Shape"/>.</returns>
+    public Shape ExpandDims(int[] axes)
+    {
+        var sortedAxes = axes.Order().ToArray();
+        var newShape = new List<int>(Dimensions);
+
+        foreach (var axis in sortedAxes)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThan(axis, 0);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(axis, newShape.Count);
+
+            newShape.Insert(axis, 1);
+        }
+
+        return new Shape(newShape.ToArray(), DataOffset);
+    }
+
+    /// <summary>
+    /// Pads the shape with leading dimensions of 1 to the given rank.
+    /// </summary>
+    /// <param name="rank">The rank to pad the shape to.</param>
+    /// <returns>The new <see cref="Shape"/>.</returns>
+    public Shape PadShape(int rank)
+    {
+        var newShape = new List<int>(Dimensions);
+
+        while (newShape.Count < rank)
+        {
+            newShape.Insert(0, 1);
+        }
+
+        return new Shape(newShape.ToArray(), DataOffset);
+    }
+
+    /// <summary>
     /// Gets the multi dimensional indices of the element at the given linear index.
     /// </summary>
     /// <param name="linearIndex">The linear index.</param>
@@ -345,21 +383,16 @@ public sealed class Shape : IEnumerable<int>, IEquatable<Shape>, IFormattable
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        var result = ElementCount - DataOffset;
-        var shift = 0;
+        var result = 0;
 
-        foreach (var dim in Dimensions)
+        for (var index = 0; index < Dimensions.Length; index++)
         {
-            shift = (shift + 11) % 21;
-            result ^= (dim + 1024) << shift;
+            var dim = Dimensions[index];
+            var stride = Strides[index];
+            result = HashCode.Combine(result, stride, dim);
         }
 
-        while (result > int.MaxValue)
-        {
-            result = (result >> 32) ^ (result & int.MaxValue);
-        }
-
-        return (int)result;
+        return HashCode.Combine(result, DataOffset);
     }
 
     /// <inheritdoc/>

@@ -28,6 +28,19 @@ public interface IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Adds the elements of the right <see cref="IMemoryBlock{TNumber}"/> to the left <see cref="IMemoryBlock{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add to.</param>
+    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
+    /// <param name="n">The number of elements to add.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
+    public void AddTensorTensorInplace<TNumber>(
+        IMemoryBlock<TNumber> left,
+        IMemoryBlock<TNumber> right,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Adds the elements of Adds the elements of two <see cref="IMemoryBlock{TNumber}"/>s together.
     /// </summary>
     /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add.</param>
@@ -160,6 +173,16 @@ public interface IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
+    /// Multiplies the elements of two <see cref="IMemoryBlock{TNumber}"/>s in place.
+    /// </summary>
+    /// <param name="leftMemory">The left <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
+    /// <param name="rightMemory">The right <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
+    /// <param name="shapeElementCount">The number of elements to multiply.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
+    public void MultiplyTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> leftMemory, IMemoryBlock<TNumber> rightMemory, long shapeElementCount)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
     /// Divides the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
     /// </summary>
     /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
@@ -230,6 +253,21 @@ public interface IArithmeticKernels
     /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
     public void Abs<TNumber>(
         IMemoryBlock<TNumber> tensor,
+        IMemoryBlock<TNumber> result,
+        long n)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Calculates the gradient of the absolute value of a <see cref="IMemoryBlock{TNumber}"/>.
+    /// </summary>
+    /// <param name="tensor">The <see cref="IMemoryBlock{TNumber}"/> to take the absolute value of.</param>
+    /// <param name="gradient">The incoming gradient.</param>
+    /// <param name="result">The result of the gradient calculation.</param>
+    /// <param name="n">The number of elements to calculate the gradient of.</param>
+    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>.</typeparam>
+    public void AbsGradient<TNumber>(
+        IMemoryBlock<TNumber> tensor,
+        IMemoryBlock<TNumber> gradient,
         IMemoryBlock<TNumber> result,
         long n)
         where TNumber : unmanaged, INumber<TNumber>;

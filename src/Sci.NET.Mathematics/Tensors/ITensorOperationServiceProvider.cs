@@ -2,6 +2,7 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using Sci.NET.Mathematics.Tensors.Common;
+using Sci.NET.Mathematics.Tensors.Equality;
 using Sci.NET.Mathematics.Tensors.LinearAlgebra;
 using Sci.NET.Mathematics.Tensors.Manipulation;
 using Sci.NET.Mathematics.Tensors.NeuralNetworks;
@@ -88,15 +89,9 @@ public interface ITensorOperationServiceProvider
     public ICastingService GetCastingService();
 
     /// <summary>
-    /// Gets an instance of the <see cref="IConvolutionService"/>.
-    /// </summary>
-    /// <returns>An instance of the <see cref="IConvolutionService"/>.</returns>
-    public IConvolutionService GetConvolutionService();
-
-    /// <summary>
     /// Gets an instance of the <see cref="IConcatenationService"/>.
     /// </summary>
-    /// <returns>An instance of the <see cref="IConvolutionService"/>.</returns>
+    /// <returns>An instance of the <see cref="IConcatenationService"/>.</returns>
     public IConcatenationService GetConcatenationService();
 
     /// <summary>
@@ -134,6 +129,18 @@ public interface ITensorOperationServiceProvider
     /// </summary>
     /// <returns>An instance of the <see cref="IVarianceService"/>.</returns>
     public IVarianceService GetVarianceService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="IGradientAppenderService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="IGradientAppenderService"/>.</returns>
+    public IGradientAppenderService GetGradientAppenderService();
+
+    /// <summary>
+    /// Gets an instance of the <see cref="ITensorEqualityOperationService"/>.
+    /// </summary>
+    /// <returns>An instance of the <see cref="ITensorEqualityOperationService"/>.</returns>
+    public ITensorEqualityOperationService GetEqualityOperationService();
 
 #pragma warning restore CA1024
 }

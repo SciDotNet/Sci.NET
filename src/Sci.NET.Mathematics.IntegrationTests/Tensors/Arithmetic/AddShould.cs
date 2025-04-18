@@ -5,6 +5,7 @@ using System.Numerics;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Backends.Devices;
 using Sci.NET.Mathematics.Tensors;
+using Sci.NET.Tests.Framework.Assertions;
 using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Arithmetic;
@@ -25,7 +26,7 @@ public class AddShould : IntegrationTestBase, IArithmeticTests
         ScalarScalarTest<int>(1, 2, device).Should().Be(3);
         ScalarScalarTest<ulong>(1, 2, device).Should().Be(3);
         ScalarScalarTest<long>(1, 2, device).Should().Be(3);
-        ScalarScalarTest<BFloat16>(1, 2, device).Should().Be(3);
+        AssertionExtensions.Should(ScalarScalarTest<BFloat16>(1, 2, device)).Be(3);
     }
 
     private static TNumber ScalarScalarTest<TNumber>(TNumber left, TNumber right, IDevice device)
@@ -557,5 +558,26 @@ public class AddShould : IntegrationTestBase, IArithmeticTests
         var expectedArray = Enumerable.Range(0, 125000).Select(x => (long)(x * 2)).ToArray();
 
         resultArray.Should().BeEquivalentTo(expectedArray);
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPytorchExample_1(IDevice device)
+    {
+        PyTorchTestHelpers.TestForwardAndBackwardPytorchExampleBinaryOp<double>(@"Arithmetic\Examples\Add_1.safetensors", device, (x, y) => x.Add(y));
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPytorchExample_2(IDevice device)
+    {
+        PyTorchTestHelpers.TestForwardAndBackwardPytorchExampleBinaryOp<double>(@"Arithmetic\Examples\Add_2.safetensors", device, (x, y) => x.Add(y));
+    }
+
+    [Theory]
+    [MemberData(nameof(ComputeDevices))]
+    public void ReturnExpectedResult_GivenPytorchExample_3(IDevice device)
+    {
+        PyTorchTestHelpers.TestForwardAndBackwardPytorchExampleBinaryOp<double>(@"Arithmetic\Examples\Add_3.safetensors", device, (x, y) => x.Add(y));
     }
 }

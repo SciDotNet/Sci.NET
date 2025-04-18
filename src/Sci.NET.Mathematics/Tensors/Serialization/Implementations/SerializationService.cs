@@ -226,7 +226,7 @@ internal class SerializationService : ISerializationService
 
         if (header.Any(x => x.Value.Dtype != dtypeString))
         {
-            throw new NotSupportedException("The data type of the tensor does not match the data type of the serializer.");
+            throw new NotSupportedException($"The data type ({header.First().Value.Dtype}) of the tensor does not match the data type of the serializer.");
         }
 
         var tensors = header.ToDictionary(x => x.Key, x => (ITensor<TNumber>)new Tensor<TNumber>(new Shape(x.Value.Shape.ToArray())));

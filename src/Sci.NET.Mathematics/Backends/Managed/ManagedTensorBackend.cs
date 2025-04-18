@@ -27,11 +27,11 @@ public class ManagedTensorBackend : ITensorBackend
         Trigonometry = new ManagedTrigonometryKernels();
         Random = new ManagedRandomKernels();
         Casting = new ManagedCastingKernels();
-        NeuralNetworks = new ManagedNeuralNetworkKernels();
         ActivationFunctions = new ManagedActivationFunctionKernels();
         Broadcasting = new ManagedBroadcastingKernels();
         Permutation = new ManagedPermutationKernels();
         Normalisation = new ManagedNormalisationKernels();
+        EqualityOperations = new ManagedEqualityOperationKernels();
     }
 
     /// <summary>
@@ -67,9 +67,6 @@ public class ManagedTensorBackend : ITensorBackend
     public ICastingKernels Casting { get; }
 
     /// <inheritdoc />
-    public INeuralNetworkKernels NeuralNetworks { get; }
-
-    /// <inheritdoc />
     public IActivationFunctionKernels ActivationFunctions { get; }
 
     /// <inheritdoc />
@@ -80,4 +77,7 @@ public class ManagedTensorBackend : ITensorBackend
 
     /// <inheritdoc />
     public INormalisationKernels Normalisation { get; }
+
+    /// <inheritdoc />
+    public IEqualityOperationKernels EqualityOperations { get; }
 }

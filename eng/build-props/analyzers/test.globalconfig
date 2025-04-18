@@ -7,6 +7,9 @@ dotnet_diagnostic.CA1707.severity = none
 # Nested types should not be visible
 dotnet_diagnostic.CA1034.severity = none
 
+# Make public members internal
+dotnet_diagnostic.CA1515.severity = info
+
 # Exception type System.Exception is not sufficiently specific
 dotnet_diagnostic.CA2201.severity = none
 

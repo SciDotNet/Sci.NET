@@ -3,11 +3,19 @@
 
 using System.Numerics;
 using Sci.NET.Common.Numerics;
+using Sci.NET.Mathematics.Tensors.Common;
 
 namespace Sci.NET.Mathematics.Tensors.NeuralNetworks.Implementations;
 
 internal class NormalisationService : INormalisationService
 {
+    private readonly IGradientAppenderService _gradientAppenderService;
+
+    public NormalisationService()
+    {
+        _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
+    }
+
     public Matrix<TNumber> BatchNorm1dForward<TNumber>(Matrix<TNumber> input, Vector<TNumber> scale, Vector<TNumber> bias)
         where TNumber : unmanaged, INumber<TNumber>, IRootFunctions<TNumber>
     {
@@ -32,6 +40,26 @@ internal class NormalisationService : INormalisationService
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
 
         result.Backend.Normalisation.Clip(
+            tensor,
+            result,
+            min,
+            max);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            tensor,
+            null,
+            grad => grad.Multiply(ClipPrime(tensor, min, max)));
+
+        return result;
+    }
+
+    private static Tensor<TNumber> ClipPrime<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
+
+        result.Backend.Normalisation.ClipPrime(
             tensor,
             result,
             min,

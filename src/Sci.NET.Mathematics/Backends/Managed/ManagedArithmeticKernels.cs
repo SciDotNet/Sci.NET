@@ -21,13 +21,11 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var leftBlock = (SystemMemoryBlock<TNumber>)left;
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            n - vectorCount,
+            n,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
             i =>
             {
                 var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
@@ -36,11 +34,26 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
 
                 resultBlock.UnsafeSetVectorUnchecked(resultVector, i);
             });
+    }
 
-        for (; i < n; i++)
-        {
-            resultBlock[i] = leftBlock[i] + rightBlock[i];
-        }
+    public void AddTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var leftBlock = (SystemMemoryBlock<TNumber>)left;
+        var rightBlock = (SystemMemoryBlock<TNumber>)right;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            n,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                var rightVector = rightBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                var resultVector = leftVector.Add(rightVector);
+
+                leftBlock.UnsafeSetVectorUnchecked(resultVector, i);
+            });
     }
 
     public void AddTensorBroadcastTensor<TNumber>(
@@ -233,6 +246,33 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
             (i, j) => resultBlock[(i * n) + j] = leftBlock[j] * rightBlock[(i * n) + j]);
     }
 
+    public void MultiplyTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> leftMemory, IMemoryBlock<TNumber> rightMemory, long shapeElementCount)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var left = (SystemMemoryBlock<TNumber>)leftMemory;
+        var right = (SystemMemoryBlock<TNumber>)rightMemory;
+        var vectorCount = SimdVector.Count<TNumber>();
+
+        var i = LazyParallelExecutor.For(
+            0,
+            shapeElementCount - vectorCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            vectorCount,
+            i =>
+            {
+                var leftVector = left.UnsafeGetVectorUnchecked<TNumber>(i);
+                var rightVector = right.UnsafeGetVectorUnchecked<TNumber>(i);
+                var resultVector = leftVector.Multiply(rightVector);
+
+                left.UnsafeSetVectorUnchecked(resultVector, i);
+            });
+
+        for (; i < shapeElementCount; i++)
+        {
+            left[i] *= right[i];
+        }
+    }
+
     public void DivideTensorTensor<TNumber>(
         IMemoryBlock<TNumber> left,
         IMemoryBlock<TNumber> right,
@@ -363,6 +403,40 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         {
             resultBlock[i] = TNumber.Abs(tensorBlock[i]);
         }
+    }
+
+    public void AbsGradient<TNumber>(IMemoryBlock<TNumber> tensor, IMemoryBlock<TNumber> gradient, IMemoryBlock<TNumber> result, long n)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
+        var gradientBlock = (SystemMemoryBlock<TNumber>)gradient;
+        var resultBlock = (SystemMemoryBlock<TNumber>)result;
+
+        var i = LazyParallelExecutor.For(
+            0,
+            n,
+            ManagedTensorBackend.ParallelizationThreshold,
+            1,
+            i =>
+            {
+                var tensorValue = tensorBlock[i];
+                var gradientValue = gradientBlock[i];
+
+                if (tensorValue > TNumber.Zero)
+                {
+                    resultBlock[i] = gradientValue;
+                }
+#pragma warning disable IDE0045 // Conflicting warnings
+                else if (tensorValue < TNumber.Zero)
+#pragma warning restore IDE0045
+                {
+                    resultBlock[i] = TNumber.Zero - gradientValue;
+                }
+                else
+                {
+                    resultBlock[i] = TNumber.Zero;
+                }
+            });
     }
 
     public void AbsoluteDifference<TNumber>(IMemoryBlock<TNumber> left, IMemoryBlock<TNumber> right, IMemoryBlock<TNumber> result)
