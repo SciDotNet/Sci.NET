@@ -214,15 +214,6 @@ public interface IArithmeticService
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
-    /// Adds the <paramref name="right"/> <see cref="Scalar{TNumber}"/> to the <paramref name="left"/> <see cref="Scalar{TNumber}"/> in place.
-    /// </summary>
-    /// <param name="left">The left operand to add to.</param>
-    /// <param name="right">The right operand to add.</param>
-    /// <typeparam name="TNumber">The number type of the operands and result.</typeparam>
-    public void AddInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
     /// Finds the difference between the <paramref name="right"/> <see cref="Scalar{TNumber}"/> and <paramref name="left"/> <see cref="Scalar{TNumber}"/>.
     /// </summary>
     /// <param name="left">The left operand.</param>
