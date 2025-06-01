@@ -44,7 +44,7 @@ public class ManagedInnerProductBenchmarks<TNumber>
     }
 
     [Benchmark]
-    public void InnerProductDouble()
+    public void Inner()
     {
         var result = _left.Inner(_right);
 
