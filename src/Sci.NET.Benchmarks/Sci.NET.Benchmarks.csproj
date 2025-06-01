@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Sci.NET.Mathematics\Sci.NET.Mathematics.csproj" />
+    </ItemGroup>
+
+</Project>
