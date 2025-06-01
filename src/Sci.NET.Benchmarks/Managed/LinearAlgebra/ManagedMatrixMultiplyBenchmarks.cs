@@ -65,7 +65,7 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber>
     }
 
     [Benchmark]
-    public void MatrixMultiplyFloat()
+    public void MatrixMultiply()
     {
         var result = _leftMatrix.MatrixMultiply(_rightMatrix);
 
