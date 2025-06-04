@@ -8,24 +8,25 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class MishPrimeShould : IntegrationTestBase
+public class HardTanhBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnExpectedResult_GivenFloat(IDevice device)
+    public void ReturnCorrectValues_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -7, -3, -1.419f, 0, 1, 2, 3, 4 });
+        var value = Tensor.FromArray<float>(new float[] { -2, -1, 0, 1, 2, 3, 4, 5 });
+
         value.To(device);
 
         // Act
-        var result = value.MishPrime();
+        var result = value.HardTanhBackward(-2, 2);
 
         // Assert
         result
             .Should()
             .HaveShape(8)
             .And
-            .HaveApproximatelyEquivalentElements(new float[] { -0.0054659364F, -0.09339317F, -0.050504386F, 0.6f, 1.0490361F, 1.069318F, 1.0211062F, 1.0044336F }, 1e-6f);
+            .HaveEquivalentElements(new float[] { 0, 1, 1, 1, 0, 0, 0, 0 });
     }
 }

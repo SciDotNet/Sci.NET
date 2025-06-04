@@ -8,15 +8,15 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class SoftmaxPrimeShould : IntegrationTestBase
+public class SoftmaxBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenExample1(IDevice device)
     {
         // Softmax'([1, 2, 3]) = [0.090030573170380462f, 0.244728471054797646f, 0.665240955774821878f]
-        var floatResult = SoftmaxPrimeTest<float>(new float[] { 1, 2, 3 }, device) as float[];
-        var doubleResult = SoftmaxPrimeTest<double>(new double[] { 1, 2, 3 }, device) as double[];
+        var floatResult = SoftmaxBackwardTest<float>(new float[] { 1, 2, 3 }, device) as float[];
+        var doubleResult = SoftmaxBackwardTest<double>(new double[] { 1, 2, 3 }, device) as double[];
 
         floatResult![0].Should().BeApproximately(0.08192506906499322f, 1e-6f);
         floatResult[1].Should().BeApproximately(0.18483646F, 1e-6f);
@@ -27,13 +27,13 @@ public class SoftmaxPrimeShould : IntegrationTestBase
         doubleResult[2].Should().BeApproximately(0.22269542653462335, 1e-6);
     }
 
-    private static Array SoftmaxPrimeTest<TNumber>(TNumber[] values, IDevice device)
+    private static Array SoftmaxBackwardTest<TNumber>(TNumber[] values, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var tensor = Tensor.FromArray<TNumber>(values);
 
         tensor.To(device);
 
-        return tensor.SoftmaxPrime().ToArray();
+        return tensor.SoftmaxBackward().ToArray();
     }
 }

@@ -27,7 +27,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the sigmoid derivative function on.</param>
     /// <param name="result">The result of the sigmoid derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void SigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SigmoidBackard<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -45,7 +45,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the ReLU derivative function on.</param>
     /// <param name="result">The result of the ReLU derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void ReLUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void ReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -65,7 +65,7 @@ public interface IActivationFunctionKernels
     /// <param name="softmaxValue">The result of the softmax function.</param>
     /// <param name="result">The result of the softmax derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void SoftmaxPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> softmaxValue, ITensor<TNumber> result)
+    public void SoftmaxBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> softmaxValue, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -85,7 +85,7 @@ public interface IActivationFunctionKernels
     /// <param name="result">The result of the Leaky ReLU derivative function.</param>
     /// <param name="alpha">The alpha value for the Leaky ReLU function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void LeakyReLUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
+    public void LeakyReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -105,7 +105,7 @@ public interface IActivationFunctionKernels
     /// <param name="result">The result of the ELU derivative function.</param>
     /// <param name="alpha">The alpha value for the ELU function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void EluPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
+    public void EluBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
@@ -125,7 +125,7 @@ public interface IActivationFunctionKernels
     /// <param name="result">The result of the CELU derivative function.</param>
     /// <param name="alpha">The alpha value for the CELU function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void CeluPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
+    public void CeluBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>;
 
     /// <summary>
@@ -143,7 +143,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the Swish derivative function on.</param>
     /// <param name="result">The result of the Swish derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void SwishPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SwishBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -161,7 +161,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the Mish derivative function on.</param>
     /// <param name="result">The result of the Mish derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void MishPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void MishBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -183,7 +183,7 @@ public interface IActivationFunctionKernels
     /// <param name="min">The minimum value for the hard Tanh function.</param>
     /// <param name="max">The maximum value for the hard Tanh function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void HardTanhPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
+    public void HardTanhBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -201,7 +201,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the hard Sigmoid derivative function on.</param>
     /// <param name="result">The result of the hard Sigmoid derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void HardSigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void HardSigmoidBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
@@ -219,7 +219,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the log sigmoid derivative function on.</param>
     /// <param name="result">The result of the log sigmoid derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void LogSigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void LogSigmoidBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -237,7 +237,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the GELU derivative function on.</param>
     /// <param name="result">The result of the GELU derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void GELUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void GELUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -255,7 +255,7 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the softplus derivative function on.</param>
     /// <param name="result">The result of the softplus derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void SoftPlusPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SoftPlusBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>;
 
     /// <summary>
@@ -273,6 +273,6 @@ public interface IActivationFunctionKernels
     /// <param name="value">The value to compute the softsign derivative function on.</param>
     /// <param name="result">The result of the softsign derivative function.</param>
     /// <typeparam name="TNumber">The number type of the <see cref="ITensor{TNumber}"/>.</typeparam>
-    public void SoftSignPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SoftSignBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 }

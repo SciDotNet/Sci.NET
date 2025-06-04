@@ -6,16 +6,23 @@ using BenchmarkDotNet.Attributes;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
-namespace Sci.NET.Benchmarks.Managed.LinearAlgebra;
+namespace Sci.NET.Benchmarks.Managed;
 
-public class ManagedInnerProductBenchmarks<TNumber>
+public class ManagedBroadcastingBenchmarks<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
-    [Params(500, 1024, 8192, 32768)]
-    public int Length { get; set; }
+    [ParamsSource(nameof(ShapeOptions))]
+    public (Shape From, Shape To) Shapes { get; set; } = default!;
 
-    private Mathematics.Tensors.Vector<TNumber> _left = default!;
-    private Mathematics.Tensors.Vector<TNumber> _right = default!;
+    public ICollection<(Shape From, Shape To)> ShapeOptions =>
+    [
+        (new Shape(100, 200), new Shape(100, 100, 200)),
+        (new Shape(50, 100, 200), new Shape(50, 100, 100, 200)),
+        (new Shape(5000), new Shape(2, 5000)),
+    ];
+
+    private Tensor<TNumber> _tensor = default!;
+    private ITensor<TNumber> _result = default!;
 
     [GlobalSetup]
     public void GlobalSetup()
@@ -39,22 +46,19 @@ public class ManagedInnerProductBenchmarks<TNumber>
             max = TNumber.CreateChecked(10);
         }
 
-        _left = Tensor.Random.Uniform<TNumber>(new Shape(Length), min, max, seed: 123456).ToVector();
-        _right = Tensor.Random.Uniform<TNumber>(new Shape(Length), min, max, seed: 654321).ToVector();
+        _tensor = Tensor.Random.Uniform<TNumber>(Shapes.From, min, max, seed: 123456).ToTensor();
     }
 
     [Benchmark]
-    public void Inner()
+    public void Broadcast()
     {
-        var result = _left.Inner(_right);
-
-        result.Dispose();
+        _result = _tensor.Broadcast(Shapes.To);
     }
 
     [GlobalCleanup]
     public void GlobalCleanup()
     {
-        _left.Dispose();
-        _right.Dispose();
+        _tensor.Dispose();
+        _result.Dispose();
     }
 }

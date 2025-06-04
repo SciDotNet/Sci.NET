@@ -49,17 +49,17 @@ internal class NormalisationService : INormalisationService
             ref result,
             tensor,
             null,
-            grad => grad.Multiply(ClipPrime(tensor, min, max)));
+            grad => grad.Multiply(ClipBackward(tensor, min, max)));
 
         return result;
     }
 
-    private static Tensor<TNumber> ClipPrime<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
+    private static Tensor<TNumber> ClipBackward<TNumber>(ITensor<TNumber> tensor, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(tensor.Shape, tensor.Backend);
 
-        result.Backend.Normalisation.ClipPrime(
+        result.Backend.Normalisation.ClipBackward(
             tensor,
             result,
             min,

@@ -25,7 +25,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = TNumber.One / (TNumber.One + TNumber.Exp(-inputMemory[i])));
     }
 
-    public void SigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SigmoidBackard<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -55,7 +55,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = inputMemory[i] > TNumber.Zero ? inputMemory[i] : TNumber.Zero);
     }
 
-    public void ReLUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void ReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -121,7 +121,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         }
     }
 
-    public void SoftmaxPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> softmaxValue, ITensor<TNumber> result)
+    public void SoftmaxBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> softmaxValue, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -166,7 +166,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = inputMemory[i] > TNumber.Zero ? inputMemory[i] : alpha * inputMemory[i]);
     }
 
-    public void LeakyReLUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
+    public void LeakyReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -192,7 +192,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = inputMemory[i] > TNumber.Zero ? inputMemory[i] : alpha * (TNumber.Exp(inputMemory[i]) - TNumber.One));
     }
 
-    public void EluPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
+    public void EluBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -218,7 +218,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = TNumber.Max(TNumber.Zero, inputMemory[i]) + TNumber.Min(TNumber.Zero, alpha * (TNumber.Exp(inputMemory[i] / alpha) - TNumber.One)));
     }
 
-    public void CeluPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
+    public void CeluBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -244,7 +244,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = inputMemory[i] * (TNumber.One / (TNumber.One + TNumber.Exp(-inputMemory[i]))));
     }
 
-    public void SwishPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SwishBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -284,7 +284,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             });
     }
 
-    public void MishPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void MishBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -347,7 +347,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             });
     }
 
-    public void HardTanhPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
+    public void HardTanhBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -403,7 +403,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             });
     }
 
-    public void HardSigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void HardSigmoidBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -435,7 +435,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = -TNumber.Log(TNumber.One + TNumber.Exp(-inputMemory[i])));
     }
 
-    public void LogSigmoidPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void LogSigmoidBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -472,7 +472,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             });
     }
 
-    public void GELUPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void GELUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -526,7 +526,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = TNumber.Log(TNumber.One + TNumber.Exp(inputMemory[i])));
     }
 
-    public void SoftPlusPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SoftPlusBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
@@ -559,7 +559,7 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = inputMemory[i] / (TNumber.One + TNumber.Abs(inputMemory[i])));
     }
 
-    public void SoftSignPrime<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public void SoftSignBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;

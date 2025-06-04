@@ -8,7 +8,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class EluPrimeShould : IntegrationTestBase
+public class CeluBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
@@ -19,7 +19,7 @@ public class EluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.EluPrime(1.0f);
+        var result = value.CeluBackward(1.0f);
 
         // Assert
         result
@@ -38,7 +38,7 @@ public class EluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.EluPrime(1.0);
+        var result = value.CeluBackward(1.0);
 
         // Assert
         result

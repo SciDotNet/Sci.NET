@@ -8,25 +8,25 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class SoftSignPrimeShould : IntegrationTestBase
+public class HardSigmoidBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnCorrectValues_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -4, -2, -1, -0.75f, 0, 1, 2, 60 });
+        var value = Tensor.FromArray<float>(new float[] { -2, -1, -0.5f, 0, 0.5f, 1, 2 });
 
         value.To(device);
 
         // Act
-        var result = value.SoftSignPrime();
+        var result = value.HardSigmoidBackward();
 
         // Assert
         result
             .Should()
-            .HaveShape(8)
+            .HaveShape(7)
             .And
-            .HaveApproximatelyEquivalentElements(new float[] { 0.04f, 0.11111111f, 0.25f, 0.3265306f, 1f, 0.25f, 0.11111111f, 0.00026874497f }, 1e-6f);
+            .HaveEquivalentElements(new float[] { 0, 0, 0.5f, 0.5f, 0.5f, 0, 0 });
     }
 }

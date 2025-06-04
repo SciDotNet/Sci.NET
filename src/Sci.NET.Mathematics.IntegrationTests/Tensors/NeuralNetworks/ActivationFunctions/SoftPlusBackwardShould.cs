@@ -8,7 +8,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class SoftPlusPrimeShould : IntegrationTestBase
+public class SoftPlusBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
@@ -20,7 +20,7 @@ public class SoftPlusPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.SoftPlusPrime();
+        var result = value.SoftPlusBackward();
 
         // Assert
         result

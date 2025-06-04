@@ -8,7 +8,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class CeluPrimeShould : IntegrationTestBase
+public class SwishBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
@@ -19,14 +19,14 @@ public class CeluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.CeluPrime(1.0f);
+        var result = value.SwishBackward();
 
         // Assert
         result
             .Should()
             .HaveShape(8)
             .And
-            .HaveApproximatelyEquivalentElements(new float[] { 0.1353353f, 0.3678794f, 1, 1, 1, 1, 1, 1 }, 1e-6f);
+            .HaveApproximatelyEquivalentElements(new float[] { -0.090784244F, 0.07232949F, 0.5F, 0.9276706F, 1.0907842F, 1.0881042F, 1.0526646F, 1.0265474F }, 1e-6f);
     }
 
     [Theory]
@@ -38,13 +38,13 @@ public class CeluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.CeluPrime(1.0);
+        var result = value.SwishBackward();
 
         // Assert
         result
             .Should()
             .HaveShape(8)
             .And
-            .HaveApproximatelyEquivalentElements(new double[] { 0.1353352832366127, 0.3678794411714423, 1, 1, 1, 1, 1, 1 }, 1e-6);
+            .HaveApproximatelyEquivalentElements(new double[] { -0.090784244F, 0.07232949F, 0.5F, 0.9276706F, 1.0907842F, 1.0881042F, 1.0526646F, 1.0265474F }, 1e-6);
     }
 }
