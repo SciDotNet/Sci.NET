@@ -615,7 +615,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
     /// <param name="isDisposing">A value indicating if the instance is disposing.</param>
     private void Dispose(bool isDisposing)
     {
-        Debug.WriteLineIf(_rentals.Count > 0, $"Memory block has {_rentals.Count} rentals.");
+        Debug.Assert(_rentals.Count == 0, $"Memory block has {_rentals.Count} rentals.");
 
         ReleaseUnmanagedResources();
 
