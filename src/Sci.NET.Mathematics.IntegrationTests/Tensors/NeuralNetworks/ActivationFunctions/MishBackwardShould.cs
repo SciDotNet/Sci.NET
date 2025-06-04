@@ -8,25 +8,24 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class GELUPrimeShould : IntegrationTestBase
+public class MishBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
-    public void ReturnCorrectValues_GivenFloat(IDevice device)
+    public void ReturnExpectedResult_GivenFloat(IDevice device)
     {
         // Arrange
-        var value = Tensor.FromArray<float>(new float[] { -4, -2, -1, -0.75f, 0, 1, 2, 60 });
-
+        var value = Tensor.FromArray<float>(new float[] { -7, -3, -1.419f, 0, 1, 2, 3, 4 });
         value.To(device);
 
         // Act
-        var result = value.GELUPrime();
+        var result = value.MishBackward();
 
         // Assert
         result
             .Should()
             .HaveShape(8)
             .And
-            .HaveApproximatelyEquivalentElements(new float[] { -0.032137435f, -0.14650725f, -0.085086465f, 0.0026758164f, 0.5f, 1.0850865f, 1.1465073f, 1f }, 1e-6f);
+            .HaveApproximatelyEquivalentElements(new float[] { -0.0054659364F, -0.09339317F, -0.050504386F, 0.6f, 1.0490361F, 1.069318F, 1.0211062F, 1.0044336F }, 1e-6f);
     }
 }

@@ -7,7 +7,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class LeakyReluPrimeShould : IntegrationTestBase
+public class LeakyReluBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
@@ -18,7 +18,7 @@ public class LeakyReluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.LeakyReLUPrime(0.5f);
+        var result = value.LeakyReLUBackward(0.5f);
 
         // Assert
         result.ToArray().Should().BeEquivalentTo(new float[] { 0.5f, 0.5f, 0.5f, 1, 1, 1, 1, 1 });
@@ -33,7 +33,7 @@ public class LeakyReluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.LeakyReLUPrime(0.5f);
+        var result = value.LeakyReLUBackward(0.5f);
 
         // Assert
         result.ToArray().Should().BeEquivalentTo(new double[] { 0.5, 0.5, 0.5, 1, 1, 1, 1, 1 });
@@ -48,7 +48,7 @@ public class LeakyReluPrimeShould : IntegrationTestBase
         value.To(device);
 
         // Act
-        var result = value.LeakyReLUPrime(2);
+        var result = value.LeakyReLUBackward(2);
 
         // Assert
         result.ToArray().Should().BeEquivalentTo(new int[] { 2, 2, 2, 1, 1, 1, 1, 1 });

@@ -8,15 +8,15 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.NeuralNetworks.ActivationFunctions;
 
-public class ReLUPrimeShould : IntegrationTestBase
+public class ReLUBackwardShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
     public void ReturnExpectedResult_GivenHalf(IDevice device)
     {
         // ReLU'(0.5) = 1.0
-        ScalarReLUPrimeTest<float>(0.5f, device).Should().BeApproximately(1.0f, 1e-6f);
-        ScalarReLUPrimeTest<double>(0.5, device).Should().BeApproximately(1.0, 1e-6);
+        ScalarReLUBackwardTest<float>(0.5f, device).Should().BeApproximately(1.0f, 1e-6f);
+        ScalarReLUBackwardTest<double>(0.5, device).Should().BeApproximately(1.0, 1e-6);
     }
 
     [Theory]
@@ -24,8 +24,8 @@ public class ReLUPrimeShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenZero(IDevice device)
     {
         // ReLU'(0.0) = 0.0
-        ScalarReLUPrimeTest<float>(0.0f, device).Should().BeApproximately(0.0f, 1e-6f);
-        ScalarReLUPrimeTest<double>(0.0, device).Should().BeApproximately(0.0, 1e-6);
+        ScalarReLUBackwardTest<float>(0.0f, device).Should().BeApproximately(0.0f, 1e-6f);
+        ScalarReLUBackwardTest<double>(0.0, device).Should().BeApproximately(0.0, 1e-6);
     }
 
     [Theory]
@@ -33,16 +33,16 @@ public class ReLUPrimeShould : IntegrationTestBase
     public void ReturnExpectedResult_GivenNegativeHalf(IDevice device)
     {
         // ReLU'(-0.5) = 0.0
-        ScalarReLUPrimeTest<float>(-0.5f, device).Should().BeApproximately(0.0f, 1e-6f);
-        ScalarReLUPrimeTest<double>(-0.5, device).Should().BeApproximately(0.0, 1e-6);
+        ScalarReLUBackwardTest<float>(-0.5f, device).Should().BeApproximately(0.0f, 1e-6f);
+        ScalarReLUBackwardTest<double>(-0.5, device).Should().BeApproximately(0.0, 1e-6);
     }
 
-    private static TNumber ScalarReLUPrimeTest<TNumber>(TNumber value, IDevice device)
+    private static TNumber ScalarReLUBackwardTest<TNumber>(TNumber value, IDevice device)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var tensor = new Scalar<TNumber>(value);
         tensor.To(device);
 
-        return tensor.ReLUPrime().ToScalar().Value;
+        return tensor.ReLUBackward().ToScalar().Value;
     }
 }
