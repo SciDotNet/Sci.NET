@@ -27,7 +27,7 @@ jobs:
       - name: Set up DotCover
         shell: powershell
         run: |
-          dotnet tool install --global JetBrains.dotCover.GlobalTool
+          dotnet tool install --global JetBrains.dotCover.CommandLineTools
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
