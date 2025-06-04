@@ -42,13 +42,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the sigmoid derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\sigma'(x) = \sigma(x) \cdot (1 - \sigma(x))")]
-    public static ITensor<TNumber> SigmoidPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> SigmoidBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .SigmoidPrime(value);
+            .SigmoidBackward(value);
     }
 
     /// <summary>
@@ -76,13 +76,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the ReLU derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{ReLU}'(x) = \begin{cases} 0 & \text{if } x < 0 \\ 1 & \text{if } x \geq 0 \end{cases}")]
-    public static ITensor<TNumber> ReLUPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> ReLUBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .ReLUPrime(value);
+            .ReLUBackward(value);
     }
 
     /// <summary>
@@ -110,13 +110,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the softmax derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{softmax}'(x_i) = \text{softmax}(x_i) \cdot (1 - \text{softmax}(x_i))")]
-    public static ITensor<TNumber> SoftmaxPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> SoftmaxBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .SoftmaxPrime(value);
+            .SoftmaxBackward(value);
     }
 
     /// <summary>
@@ -146,13 +146,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the Leaky ReLU derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{LeakyReLU}'(x) = \begin{cases} 1 & \text{if } x \geq 0 \\ \alpha & \text{if } x < 0 \end{cases}")]
-    public static ITensor<TNumber> LeakyReLUPrime<TNumber>(this ITensor<TNumber> value, TNumber alpha)
+    public static ITensor<TNumber> LeakyReLUBackward<TNumber>(this ITensor<TNumber> value, TNumber alpha)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .LeakyReLUPrime(value, alpha);
+            .LeakyReLUBackward(value, alpha);
     }
 
     /// <summary>
@@ -182,13 +182,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the ELU derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{ELU}'(x) = \begin{cases} 1 & \text{if } x \geq 0 \\ \alpha \cdot e^x & \text{if } x < 0 \end{cases}")]
-    public static ITensor<TNumber> EluPrime<TNumber>(this ITensor<TNumber> value, TNumber alpha)
+    public static ITensor<TNumber> EluBackward<TNumber>(this ITensor<TNumber> value, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .EluPrime(value, alpha);
+            .EluBackward(value, alpha);
     }
 
     /// <summary>
@@ -218,13 +218,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the CELU derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{CELU}'(x) = \begin{cases} 1 & \text{if } x \geq 0 \\ \frac{e^{\frac{x}{\alpha}}}{\alpha + e^{\frac{x}{\alpha}}} & \text{if } x < 0 \end{cases}")]
-    public static ITensor<TNumber> CeluPrime<TNumber>(this ITensor<TNumber> value, TNumber alpha)
+    public static ITensor<TNumber> CeluBackward<TNumber>(this ITensor<TNumber> value, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .CeluPrime(value, alpha);
+            .CeluBackward(value, alpha);
     }
 
     /// <summary>
@@ -252,13 +252,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the Swish derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{Swish}'(x) = \text{Swish}(x) + \frac{1}{1 + e^{-x}} \cdot (1 - \text{Swish}(x))")]
-    public static ITensor<TNumber> SwishPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> SwishBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .SwishPrime(value);
+            .SwishBackward(value);
     }
 
     /// <summary>
@@ -288,13 +288,13 @@ public static class ActivationFunctionExtensions
     [DebuggerStepThrough]
     [MathematicExpression(0, @"mish'\left(x\right)=\tanh\left(\ln\left(1+e^{x}\right)\right)+\frac{xe^{x}\operatorname{sech}^{2}\left(\ln\left(1+e^{x}\right)\right)}{e^{x}+1}")]
     [MathematicExpression(1, @"mish'\left(x\right)=\frac{-1+\left(1+e^{x}\right)^{2}}{1+\left(1+e^{x}\right)^{2}}-\frac{2e^{x}\left(1+e^{x}\right)\left(-1+\left(1+e^{x}\right)^{2}\right)x}{\left(1+\left(1+e^{x}\right)^{2}\right)^{2}}+\frac{2e^{x}\left(1+e^{x}\right)x}{1+\left(1+e^{x}\right)^{2}}")]
-    public static ITensor<TNumber> MishPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> MishBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .MishPrime(value);
+            .MishBackward(value);
     }
 
     /// <summary>
@@ -326,13 +326,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the hard Tanh derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{HardTanh}'(x) = \begin{cases} 0 & \text{if } x < \text{min} \\ 1 & \text{if } \text{min} \leq x \leq \text{max} \\ 0 & \text{if } x > \text{max} \end{cases}")]
-    public static ITensor<TNumber> HardTanhPrime<TNumber>(this ITensor<TNumber> value, TNumber min, TNumber max)
+    public static ITensor<TNumber> HardTanhBackward<TNumber>(this ITensor<TNumber> value, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .HardTanhPrime(value, min, max);
+            .HardTanhBackward(value, min, max);
     }
 
     /// <summary>
@@ -360,13 +360,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the hard sigmoid derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{HardSigmoid}'(x) = \begin{cases} 0 & \text{if } x < -1 \\ 0 & \text{if } x > 1 \\ 0.5 & \text{if } -1 \leq x \leq 1 \end{cases}")]
-    public static ITensor<TNumber> HardSigmoidPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> HardSigmoidBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .HardSigmoidPrime(value);
+            .HardSigmoidBackward(value);
     }
 
     /// <summary>
@@ -394,13 +394,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the log sigmoid derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{LogSigmoid}'(x) = \frac{1}{1 + e^{x}}")]
-    public static ITensor<TNumber> LogSigmoidPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> LogSigmoidBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .LogSigmoidPrime(value);
+            .LogSigmoidBackward(value);
     }
 
     /// <summary>
@@ -430,13 +430,13 @@ public static class ActivationFunctionExtensions
     [DebuggerStepThrough]
     [MathematicExpression(0, @"GELU'\left(x\right)=\frac{0.3989422804014327x}{e^{\frac{x^{2}}{2}}}+0.5\left(1+\frac{2}{\sqrt{\pi}}\int_{0}^{\frac{x}{\sqrt{2}}}e^{-t^{2}}dt\right)")]
     [MathematicExpression(1, @"GELU'\left(x\right)=0.3989422804014327x\left(1+0.134145x^{2}\right)\operatorname{sech}^{2}\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)+0.5\left(1+\tanh\left(\sqrt{\frac{2}{\pi}}\left(x+0.044715x^{3}\right)\right)\right)")]
-    public static ITensor<TNumber> GELUPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> GELUBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .GELUPrime(value);
+            .GELUBackward(value);
     }
 
     /// <summary>
@@ -464,13 +464,13 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the softplus derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{SoftPlus}'(x) = \frac{e^{x}}{1 + e^{x}}")]
-    public static ITensor<TNumber> SoftPlusPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> SoftPlusBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .SoftPlusPrime(value);
+            .SoftPlusBackward(value);
     }
 
     /// <summary>
@@ -498,12 +498,12 @@ public static class ActivationFunctionExtensions
     /// <returns>The result of the softsign derivative function.</returns>
     [DebuggerStepThrough]
     [MathematicExpression(0, @"\text{SoftSign}'(x) = \frac{1}{(1 + |x|)^2}")]
-    public static ITensor<TNumber> SoftSignPrime<TNumber>(this ITensor<TNumber> value)
+    public static ITensor<TNumber> SoftSignBackward<TNumber>(this ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         return TensorServiceProvider
             .GetTensorOperationServiceProvider()
             .GetActivationFunctionService()
-            .SoftSignPrime(value);
+            .SoftSignBackward(value);
     }
 }

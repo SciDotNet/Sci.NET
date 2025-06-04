@@ -25,16 +25,16 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.SigmoidPrime()));
+            grad => grad.Multiply(value.SigmoidBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> SigmoidPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> SigmoidBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
-        value.Backend.ActivationFunctions.SigmoidPrime(value, result);
+        value.Backend.ActivationFunctions.SigmoidBackard(value, result);
 
         return result;
     }
@@ -49,16 +49,16 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.ReLUPrime()));
+            grad => grad.Multiply(value.ReLUBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> ReLUPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> ReLUBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
-        value.Backend.ActivationFunctions.ReLUPrime(value, result);
+        value.Backend.ActivationFunctions.ReLUBackward(value, result);
 
         return result;
     }
@@ -75,17 +75,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.SoftmaxPrime()));
+            grad => grad.Multiply(value.SoftmaxBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> SoftmaxPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> SoftmaxBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IExponentialFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
         using var softmaxValue = value.Softmax();
-        value.Backend.ActivationFunctions.SoftmaxPrime(value, softmaxValue, result);
+        value.Backend.ActivationFunctions.SoftmaxBackward(value, softmaxValue, result);
 
         return result;
     }
@@ -101,17 +101,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.LeakyReLUPrime(alpha)));
+            grad => grad.Multiply(value.LeakyReLUBackward(alpha)));
 
         return result;
     }
 
-    public ITensor<TNumber> LeakyReLUPrime<TNumber>(ITensor<TNumber> value, TNumber alpha)
+    public ITensor<TNumber> LeakyReLUBackward<TNumber>(ITensor<TNumber> value, TNumber alpha)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.LeakyReLUPrime(value, result, alpha);
+        value.Backend.ActivationFunctions.LeakyReLUBackward(value, result, alpha);
 
         return result;
     }
@@ -127,17 +127,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.EluPrime(alpha)));
+            grad => grad.Multiply(value.EluBackward(alpha)));
 
         return result;
     }
 
-    public ITensor<TNumber> EluPrime<TNumber>(ITensor<TNumber> value, TNumber alpha)
+    public ITensor<TNumber> EluBackward<TNumber>(ITensor<TNumber> value, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.EluPrime(value, result, alpha);
+        value.Backend.ActivationFunctions.EluBackward(value, result, alpha);
 
         return result;
     }
@@ -153,17 +153,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.CeluPrime(alpha)));
+            grad => grad.Multiply(value.CeluBackward(alpha)));
 
         return result;
     }
 
-    public ITensor<TNumber> CeluPrime<TNumber>(ITensor<TNumber> value, TNumber alpha)
+    public ITensor<TNumber> CeluBackward<TNumber>(ITensor<TNumber> value, TNumber alpha)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.CeluPrime(value, result, alpha);
+        value.Backend.ActivationFunctions.CeluBackward(value, result, alpha);
 
         return result;
     }
@@ -179,17 +179,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.SwishPrime()));
+            grad => grad.Multiply(value.SwishBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> SwishPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> SwishBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.SwishPrime(value, result);
+        value.Backend.ActivationFunctions.SwishBackward(value, result);
 
         return result;
     }
@@ -205,17 +205,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.MishPrime()));
+            grad => grad.Multiply(value.MishBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> MishPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> MishBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IHyperbolicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.MishPrime(value, result);
+        value.Backend.ActivationFunctions.MishBackward(value, result);
 
         return result;
     }
@@ -235,17 +235,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.HardTanhPrime(min, max)));
+            grad => grad.Multiply(value.HardTanhBackward(min, max)));
 
         return result;
     }
 
-    public ITensor<TNumber> HardTanhPrime<TNumber>(ITensor<TNumber> value, TNumber min, TNumber max)
+    public ITensor<TNumber> HardTanhBackward<TNumber>(ITensor<TNumber> value, TNumber min, TNumber max)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.HardTanhPrime(
+        value.Backend.ActivationFunctions.HardTanhBackward(
             value,
             result,
             min,
@@ -265,17 +265,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.HardSigmoidPrime()));
+            grad => grad.Multiply(value.HardSigmoidBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> HardSigmoidPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> HardSigmoidBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.HardSigmoidPrime(value, result);
+        value.Backend.ActivationFunctions.HardSigmoidBackward(value, result);
 
         return result;
     }
@@ -291,17 +291,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.LogSigmoidPrime()));
+            grad => grad.Multiply(value.LogSigmoidBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> LogSigmoidPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> LogSigmoidBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.LogSigmoidPrime(value, result);
+        value.Backend.ActivationFunctions.LogSigmoidBackward(value, result);
 
         return result;
     }
@@ -317,17 +317,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.GELUPrime()));
+            grad => grad.Multiply(value.GELUBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> GELUPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> GELUBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, IHyperbolicFunctions<TNumber>, IRootFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.GELUPrime(value, result);
+        value.Backend.ActivationFunctions.GELUBackward(value, result);
 
         return result;
     }
@@ -343,17 +343,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.SoftPlusPrime()));
+            grad => grad.Multiply(value.SoftPlusBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> SoftPlusPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> SoftPlusBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>, ILogarithmicFunctions<TNumber>, IExponentialFunctions<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.SoftPlusPrime(value, result);
+        value.Backend.ActivationFunctions.SoftPlusBackward(value, result);
 
         return result;
     }
@@ -369,17 +369,17 @@ internal class ActivationFunctionService : IActivationFunctionService
             ref result,
             value,
             null,
-            grad => grad.Multiply(value.SoftSignPrime()));
+            grad => grad.Multiply(value.SoftSignBackward()));
 
         return result;
     }
 
-    public ITensor<TNumber> SoftSignPrime<TNumber>(ITensor<TNumber> value)
+    public ITensor<TNumber> SoftSignBackward<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var result = new Tensor<TNumber>(value.Shape, value.Backend, false);
 
-        value.Backend.ActivationFunctions.SoftSignPrime(value, result);
+        value.Backend.ActivationFunctions.SoftSignBackward(value, result);
 
         return result;
     }
