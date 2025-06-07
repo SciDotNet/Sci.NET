@@ -5,7 +5,6 @@ using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Numerics;
-using Sci.NET.Common.Numerics.Intrinsics;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
 
@@ -19,26 +18,12 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
     {
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            n - vectorCount,
+            n,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
-            i =>
-            {
-                var tensorVector = tensorBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-
-                tensorVector = tensorVector.Negate();
-
-                resultBlock.UnsafeSetVectorUnchecked(tensorVector, i);
-            });
-
-        for (; i < n; i++)
-        {
-            resultBlock[i] = -tensorBlock[i];
-        }
+            i => resultBlock[i] = -tensorBlock[i]);
     }
 
     public void Abs<TNumber>(
@@ -49,24 +34,12 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
     {
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            n - vectorCount,
+            n,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
-            i =>
-            {
-                var tensorVector = tensorBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-                tensorVector = tensorVector.Abs();
-                resultBlock.UnsafeSetVectorUnchecked(tensorVector, i);
-            });
-
-        for (; i < n; i++)
-        {
-            resultBlock[i] = TNumber.Abs(tensorBlock[i]);
-        }
+            i => resultBlock[i] = TNumber.Abs(tensorBlock[i]));
     }
 
     public void AbsGradient<TNumber>(IMemoryBlock<TNumber> tensor, IMemoryBlock<TNumber> gradient, IMemoryBlock<TNumber> result, long n)
@@ -109,26 +82,12 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         var leftBlock = (SystemMemoryBlock<TNumber>)left;
         var rightBlock = (SystemMemoryBlock<TNumber>)right;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            resultBlock.Length - vectorCount,
+            resultBlock.Length,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
-            i =>
-            {
-                var leftVector = leftBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-                var rightVector = rightBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-                var resultVector = leftVector.Subtract(rightVector).Abs();
-
-                resultBlock.UnsafeSetVectorUnchecked(resultVector, i);
-            });
-
-        for (; i < resultBlock.Length; i++)
-        {
-            resultBlock[i] = TNumber.Abs(leftBlock[i] - rightBlock[i]);
-        }
+            i => resultBlock[i] = TNumber.Abs(leftBlock[i] - rightBlock[i]));
     }
 
     public void Sqrt<TNumber>(
@@ -139,27 +98,11 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
     {
         var tensorBlock = (SystemMemoryBlock<TNumber>)tensor;
         var resultBlock = (SystemMemoryBlock<TNumber>)result;
-        var vectorCount = SimdVector.Count<TNumber>();
 
-        var i = LazyParallelExecutor.For(
+        _ = LazyParallelExecutor.For(
             0,
-            n - vectorCount,
+            n,
             ManagedTensorBackend.ParallelizationThreshold,
-            vectorCount,
-            i =>
-            {
-                var tensorVector = tensorBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-
-                tensorVector = tensorVector.Sqrt();
-
-                resultBlock.UnsafeSetVectorUnchecked(tensorVector, i);
-            });
-
-        i *= vectorCount;
-
-        for (; i < n; i++)
-        {
-            resultBlock[i] = GenericMath.Sqrt(tensorBlock[i]);
-        }
+            i => resultBlock[i] = GenericMath.Sqrt(tensorBlock[i]));
     }
 }

@@ -4,8 +4,6 @@
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics.Intrinsics;
-using Sci.NET.Common.Numerics.Intrinsics.Extensions;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -73,52 +71,20 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-        var vectorLength = SimdVector.Count<TNumber>();
-        var done = 0L;
 
-        if (value.Shape.ElementCount > vectorLength)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                inputMemory.Length,
-                ManagedTensorBackend.ParallelizationThreshold,
-                vectorLength,
-                i =>
-                {
-                    var vector = inputMemory.UnsafeGetVectorUnchecked<TNumber>(i);
-                    var exp = vector.Exp();
-                    outputMemory.UnsafeSetVectorUnchecked(exp, i);
-                });
-        }
-
-        for (var i = done; i < inputMemory.Length; i++)
-        {
-            outputMemory[i] = TNumber.Exp(inputMemory[i]);
-        }
+        _ = LazyParallelExecutor.For(
+            0,
+            inputMemory.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => outputMemory[i] = TNumber.Exp(inputMemory[i]));
 
         sumBuffer.Backend.Reduction.ReduceAddAll(result, sumBuffer);
-        var sum = SimdVector.Create(sumBuffer.Value);
-        done = 0;
 
-        if (value.Shape.ElementCount > vectorLength)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                inputMemory.Length,
-                ManagedTensorBackend.ParallelizationThreshold,
-                vectorLength,
-                i =>
-                {
-                    var vector = outputMemory.UnsafeGetVectorUnchecked<TNumber>(i);
-                    var divided = vector.Divide(sum);
-                    outputMemory.UnsafeSetVectorUnchecked(divided, i);
-                });
-        }
-
-        for (var i = done; i < inputMemory.Length; i++)
-        {
-            outputMemory[i] /= sumBuffer.Value;
-        }
+        _ = LazyParallelExecutor.For(
+            0,
+            inputMemory.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i => outputMemory[i] /= sumBuffer.Value);
     }
 
     public void SoftmaxBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> softmaxValue, ITensor<TNumber> result)
@@ -127,30 +93,16 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var softmaxMemory = (SystemMemoryBlock<TNumber>)softmaxValue.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
-        var vectorLength = SimdVector.Count<TNumber>();
-        var oneVector = SimdVector.Create(TNumber.One);
-        var done = 0L;
 
-        if (value.Shape.ElementCount > vectorLength)
-        {
-            // Find the derivative of the softmax function
-            done = LazyParallelExecutor.For(
-                0,
-                inputMemory.Length,
-                ManagedTensorBackend.ParallelizationThreshold,
-                vectorLength,
-                i =>
-                {
-                    var softmaxVector = softmaxMemory.UnsafeGetVectorUnchecked<TNumber>(i);
-                    var derivative = softmaxVector.Multiply(oneVector.Subtract(softmaxVector));
-                    outputMemory.UnsafeSetVectorUnchecked(derivative, i);
-                });
-        }
-
-        for (var i = done; i < inputMemory.Length; i++)
-        {
-            outputMemory[i] = softmaxMemory[i] * (TNumber.One - softmaxMemory[i]);
-        }
+        _ = LazyParallelExecutor.For(
+            0,
+            inputMemory.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var softmax = softmaxMemory[i];
+                outputMemory[i] = softmax * (TNumber.One - softmax);
+            });
     }
 
     public void LeakyReLU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result, TNumber alpha)

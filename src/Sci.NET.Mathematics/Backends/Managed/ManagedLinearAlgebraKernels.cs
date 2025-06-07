@@ -1,13 +1,12 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Concurrent;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using Sci.NET.Common.Concurrency;
+using Sci.NET.Common.Intrinsics;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics.Intrinsics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -26,32 +25,31 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftRows = left.Rows;
         var rightColumns = right.Columns;
         var leftColumns = left.Columns;
-        const int iBlock = 128;
-        const int jBlock = 16;
-        var avxSupported = Vector.IsHardwareAccelerated && Avx.IsSupported;
+        const int iBlock = 128; // General block size for rows
+        const int jBlock = 16; // General block size for columns
 
-        if (typeof(TNumber) == typeof(float) && avxSupported)
+#pragma warning disable IDE0010 // Populate switch expression
+        switch (IntrinsicsHelper.AvailableInstructionSets)
+#pragma warning restore IDE0010
         {
-            MatrixMultiply8x8AvxFloatParallel(
-                (float*)leftMemoryBlockPtr,
-                (float*)rightMemoryBlockPtr,
-                (float*)resultMemoryBlockPtr,
-                leftRows,
-                rightColumns,
-                leftColumns);
-            return;
-        }
-
-        if (typeof(TNumber) == typeof(double) && avxSupported)
-        {
-            MatrixMultiply8X8AvxDoubleParallel(
-                (double*)leftMemoryBlockPtr,
-                (double*)rightMemoryBlockPtr,
-                (double*)resultMemoryBlockPtr,
-                leftRows,
-                rightColumns,
-                leftColumns);
-            return;
+            case SimdInstructionSet.Avx when typeof(TNumber) == typeof(float):
+                MatrixMultiply8x8AvxFloatParallel(
+                    (float*)leftMemoryBlockPtr,
+                    (float*)rightMemoryBlockPtr,
+                    (float*)resultMemoryBlockPtr,
+                    leftRows,
+                    rightColumns,
+                    leftColumns);
+                return;
+            case SimdInstructionSet.Avx when typeof(TNumber) == typeof(double):
+                MatrixMultiply8X8AvxDoubleParallel(
+                    (double*)leftMemoryBlockPtr,
+                    (double*)rightMemoryBlockPtr,
+                    (double*)resultMemoryBlockPtr,
+                    leftRows,
+                    rightColumns,
+                    leftColumns);
+                return;
         }
 
         LazyParallelExecutor.ForBlocked(
@@ -88,39 +86,26 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+        using var sums = new ThreadLocal<TNumber>(() => TNumber.Zero, true);
 
-        var vectorCount = SimdVector.Count<TNumber>();
-        var sums = new ConcurrentDictionary<long, ISimdVector<TNumber>>();
-        var done = 0L;
+        _ = LazyParallelExecutor.For(
+            0,
+            left.Length,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var leftVector = leftMemoryBlock[i];
+                var rightVector = rightMemoryBlock[i];
+                sums.Value += leftVector * rightVector;
+            });
 
-        if (left.Length >= vectorCount)
+        var sum = TNumber.Zero;
+        foreach (var threadSum in sums.Values)
         {
-            done = LazyParallelExecutor.For(
-                0,
-                left.Length - vectorCount,
-                ManagedTensorBackend.ParallelizationThreshold / 2,
-                vectorCount,
-                i =>
-                {
-                    var leftVector = leftMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-                    var rightVector = rightMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-
-                    _ = sums.AddOrUpdate(
-                        i / vectorCount,
-                        _ => leftVector.Multiply(rightVector),
-                        (_, sum) => sum.Add(leftVector.Multiply(rightVector)));
-                });
+            sum += threadSum;
         }
 
-        for (var i = done; i < left.Length; i++)
-        {
-            resultMemoryBlock[0] += leftMemoryBlock[i] * rightMemoryBlock[i];
-        }
-
-        if (sums.Values.Count > 0)
-        {
-            resultMemoryBlock[0] += sums.Values.Aggregate((x, y) => x.Add(y)).Sum();
-        }
+        resultMemoryBlock[0] = sum;
     }
 
     private static unsafe void MatrixMultiply8x8AvxFloatParallel(
