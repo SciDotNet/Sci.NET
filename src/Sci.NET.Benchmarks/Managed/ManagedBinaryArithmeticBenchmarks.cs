@@ -16,9 +16,9 @@ public class ManagedBinaryArithmeticBenchmarks<TNumber>
 
     public ICollection<(Shape LeftShape, Shape RightShape)> ShapeOptions =>
     [
-        (new Shape(100, 200), new Shape(100, 200)),
-        (new Shape(50, 100, 200), new Shape(100, 200)),
-        (new Shape(5000), new Shape(200, 5000)),
+        (new Shape(400, 200), new Shape(400, 200)),
+        (new Shape(400, 200, 100), new Shape(200, 100)),
+        (new Shape(400, 200, 100, 50), new Shape(200, 100, 50)),
     ];
 
     private Tensor<TNumber> _leftTensor = default!;

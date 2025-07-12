@@ -49,4 +49,9 @@ public enum SimdInstructionSet
     /// The AVX-512 instruction set is available.
     /// </summary>
     Avx512F = 1 << 6,
+
+    /// <summary>
+    /// Fused Multiply-Add (FMA) instruction set is available.
+    /// </summary>
+    Fma = 1 << 7
 }

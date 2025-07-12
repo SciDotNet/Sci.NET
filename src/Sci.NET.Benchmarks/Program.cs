@@ -9,6 +9,8 @@ BenchmarkRunner.Run<ManagedMatrixMultiplyBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedMatrixMultiplyBenchmarks<double>>();
 BenchmarkRunner.Run<ManagedInnerProductBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedInnerProductBenchmarks<double>>();
+BenchmarkRunner.Run<ManagedContractionBenchmarks<float>>();
+BenchmarkRunner.Run<ManagedContractionBenchmarks<double>>();
 
 // Arithmetic benchmarks
 BenchmarkRunner.Run<ManagedBinaryArithmeticBenchmarks<float>>();
@@ -16,7 +18,7 @@ BenchmarkRunner.Run<ManagedBinaryArithmeticBenchmarks<double>>();
 BenchmarkRunner.Run<ManagedUnaryArithmeticBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedUnaryArithmeticBenchmarks<double>>();
 
-// Activation function benchmarks
+// // Activation function benchmarks
 BenchmarkRunner.Run<ManagedActivationFunctionBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedActivationFunctionBenchmarks<double>>();
 
@@ -31,7 +33,3 @@ BenchmarkRunner.Run<ManagedEqualityBenchmarks<double>>();
 // Reshape benchmarks
 BenchmarkRunner.Run<ManagedPermutationBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedPermutationBenchmarks<double>>();
-
-// Contraction benchmarks
-BenchmarkRunner.Run<ManagedContractionBenchmarks<float>>();
-BenchmarkRunner.Run<ManagedContractionBenchmarks<double>>();

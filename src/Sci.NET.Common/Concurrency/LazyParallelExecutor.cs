@@ -182,6 +182,7 @@ public static class LazyParallelExecutor
         _ = Parallel.For(
             0,
             tileCount,
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
             flat =>
             {
                 long ti = flat / jTiles;

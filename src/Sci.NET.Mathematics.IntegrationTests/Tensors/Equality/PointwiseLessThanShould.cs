@@ -8,7 +8,7 @@ using Sci.NET.Tests.Framework.Integration;
 
 namespace Sci.NET.Mathematics.IntegrationTests.Tensors.Equality;
 
-public class PointwiseNotEqualsShould : IntegrationTestBase
+public class PointwiseLessThanShould : IntegrationTestBase
 {
     [Theory]
     [MemberData(nameof(ComputeDevices))]
@@ -16,31 +16,25 @@ public class PointwiseNotEqualsShould : IntegrationTestBase
     {
         // Arrange
         using var left = Tensor.FromArray<float>(Enumerable.Range(0, 50).Select(x => (float)x).ToArray()).Reshape(5, 10).WithGradient();
-        using var right = Tensor.FromArray<float>(Enumerable.Range(0, 50).Reverse().Select(x => (float)x).ToArray()).Reshape(5, 10).WithGradient();
+        using var right = Tensor.FromArray<float>(Enumerable.Range(0, 50).Select(x => (float)x + 50).ToArray()).Reshape(5, 10).WithGradient();
         using var expectedResult = Tensor.Ones<float>(5, 10);
 
-        left.Memory[8] = 0.0f;
-        right.Memory[8] = 0.0f;
+        left.Memory[8] = 100.0f;
         expectedResult.Memory[8] = 0.0f;
         left.Memory[25] = 100.0f;
-        right.Memory[25] = 100.0f;
         expectedResult.Memory[25] = 0.0f;
 
         left.To(device);
         right.To(device);
 
         // Act
-        var result = left.PointwiseNotEquals(right);
-
+        var result = left.PointwiseLessThan(right);
         result.Backward();
 
         // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), 1e-6f);
-
+        result.Should().HaveEquivalentElements(expectedResult.ToArray());
         left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<float>(5, 10).ToArray(), 1e-6f);
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<float>(5, 10).ToArray(), 1e-6f);
+        left.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<float>(5, 10).ToArray());
     }
 
     [Theory]
@@ -49,31 +43,25 @@ public class PointwiseNotEqualsShould : IntegrationTestBase
     {
         // Arrange
         using var left = Tensor.FromArray<float>(Enumerable.Range(0, 50000).Select(x => (float)x).ToArray()).Reshape(500, 100).WithGradient();
-        using var right = Tensor.FromArray<float>(Enumerable.Range(0, 50000).Reverse().Select(x => (float)x).ToArray()).Reshape(500, 100).WithGradient();
+        using var right = Tensor.FromArray<float>(Enumerable.Range(0, 50000).Select(x => (float)x + 50).ToArray()).Reshape(500, 100).WithGradient();
         using var expectedResult = Tensor.Ones<float>(500, 100);
 
-        left.Memory[8] = 0.0f;
-        right.Memory[8] = 0.0f;
+        left.Memory[8] = 100.0f;
         expectedResult.Memory[8] = 0.0f;
         left.Memory[25] = 100.0f;
-        right.Memory[25] = 100.0f;
         expectedResult.Memory[25] = 0.0f;
 
         left.To(device);
         right.To(device);
 
         // Act
-        var result = left.PointwiseNotEquals(right);
-
+        var result = left.PointwiseLessThan(right);
         result.Backward();
 
         // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), 1e-6f);
-
+        result.Should().HaveEquivalentElements(expectedResult.ToArray());
         left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<float>(500, 100).ToArray(), 1e-6f);
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<float>(500, 100).ToArray(), 1e-6f);
+        left.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<float>(500, 100).ToArray());
     }
 
     [Theory]
@@ -82,31 +70,25 @@ public class PointwiseNotEqualsShould : IntegrationTestBase
     {
         // Arrange
         using var left = Tensor.FromArray<double>(Enumerable.Range(0, 50).Select(x => (double)x).ToArray()).Reshape(5, 10).WithGradient();
-        using var right = Tensor.FromArray<double>(Enumerable.Range(0, 50).Reverse().Select(x => (double)x).ToArray()).Reshape(5, 10).WithGradient();
+        using var right = Tensor.FromArray<double>(Enumerable.Range(0, 50).Select(x => (double)x + 50).ToArray()).Reshape(5, 10).WithGradient();
         using var expectedResult = Tensor.Ones<double>(5, 10);
 
-        left.Memory[8] = 0.0f;
-        right.Memory[8] = 0.0f;
-        expectedResult.Memory[8] = 0.0f;
-        left.Memory[25] = 100.0f;
-        right.Memory[25] = 100.0f;
-        expectedResult.Memory[25] = 0.0f;
+        left.Memory[8] = 100.0;
+        expectedResult.Memory[8] = 0.0;
+        left.Memory[25] = 100.0;
+        expectedResult.Memory[25] = 0.0;
 
         left.To(device);
         right.To(device);
 
         // Act
-        var result = left.PointwiseNotEquals(right);
-
+        var result = left.PointwiseLessThan(right);
         result.Backward();
 
         // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), 1e-6f);
-
+        result.Should().HaveEquivalentElements(expectedResult.ToArray());
         left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<double>(5, 10).ToArray(), 1e-6f);
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<double>(5, 10).ToArray(), 1e-6f);
+        left.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<double>(5, 10).ToArray());
     }
 
     [Theory]
@@ -115,31 +97,25 @@ public class PointwiseNotEqualsShould : IntegrationTestBase
     {
         // Arrange
         using var left = Tensor.FromArray<double>(Enumerable.Range(0, 50000).Select(x => (double)x).ToArray()).Reshape(500, 100).WithGradient();
-        using var right = Tensor.FromArray<double>(Enumerable.Range(0, 50000).Reverse().Select(x => (double)x).ToArray()).Reshape(500, 100).WithGradient();
+        using var right = Tensor.FromArray<double>(Enumerable.Range(0, 50000).Select(x => (double)x + 50).ToArray()).Reshape(500, 100).WithGradient();
         using var expectedResult = Tensor.Ones<double>(500, 100);
 
-        left.Memory[8] = 0.0f;
-        right.Memory[8] = 0.0f;
-        expectedResult.Memory[8] = 0.0f;
-        left.Memory[25] = 100.0f;
-        right.Memory[25] = 100.0f;
-        expectedResult.Memory[25] = 0.0f;
+        left.Memory[8] = 100.0;
+        expectedResult.Memory[8] = 0.0;
+        left.Memory[25] = 100.0;
+        expectedResult.Memory[25] = 0.0;
 
         left.To(device);
         right.To(device);
 
         // Act
-        var result = left.PointwiseNotEquals(right);
-
+        var result = left.PointwiseLessThan(right);
         result.Backward();
 
         // Assert
-        result.Should().HaveApproximatelyEquivalentElements(expectedResult.ToArray(), 1e-6f);
-
+        result.Should().HaveEquivalentElements(expectedResult.ToArray());
         left.Gradient!.Should().NotBeNull();
-        left.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<double>(500, 100).ToArray(), 1e-6f);
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveApproximatelyEquivalentElements(Tensor.Ones<double>(500, 100).ToArray(), 1e-6f);
+        left.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<double>(500, 100).ToArray());
     }
 
     [Theory]
@@ -148,31 +124,25 @@ public class PointwiseNotEqualsShould : IntegrationTestBase
     {
         // Arrange
         using var left = Tensor.FromArray<int>(Enumerable.Range(0, 50).ToArray()).Reshape(5, 10).WithGradient();
-        using var right = Tensor.FromArray<int>(Enumerable.Range(0, 50).Reverse().ToArray()).Reshape(5, 10).WithGradient();
+        using var right = Tensor.FromArray<int>(Enumerable.Range(0, 50).Select(x => x + 50).ToArray()).Reshape(5, 10).WithGradient();
         using var expectedResult = Tensor.Ones<int>(5, 10);
 
-        left.Memory[8] = 0;
-        right.Memory[8] = 0;
+        left.Memory[8] = 100;
         expectedResult.Memory[8] = 0;
         left.Memory[25] = 100;
-        right.Memory[25] = 100;
         expectedResult.Memory[25] = 0;
 
         left.To(device);
         right.To(device);
 
         // Act
-        var result = left.PointwiseNotEquals(right);
-
+        var result = left.PointwiseLessThan(right);
         result.Backward();
 
         // Assert
         result.Should().HaveEquivalentElements(expectedResult.ToArray());
-
         left.Gradient!.Should().NotBeNull();
         left.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<int>(5, 10).ToArray());
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<int>(5, 10).ToArray());
     }
 
     [Theory]
@@ -181,30 +151,24 @@ public class PointwiseNotEqualsShould : IntegrationTestBase
     {
         // Arrange
         using var left = Tensor.FromArray<int>(Enumerable.Range(0, 50000).ToArray()).Reshape(500, 100).WithGradient();
-        using var right = Tensor.FromArray<int>(Enumerable.Range(0, 50000).Reverse().ToArray()).Reshape(500, 100).WithGradient();
+        using var right = Tensor.FromArray<int>(Enumerable.Range(0, 50000).Select(x => x + 50).ToArray()).Reshape(500, 100).WithGradient();
         using var expectedResult = Tensor.Ones<int>(500, 100);
 
-        left.Memory[8] = 0;
-        right.Memory[8] = 0;
+        left.Memory[8] = 100;
         expectedResult.Memory[8] = 0;
         left.Memory[25] = 100;
-        right.Memory[25] = 100;
         expectedResult.Memory[25] = 0;
 
         left.To(device);
         right.To(device);
 
         // Act
-        var result = left.PointwiseNotEquals(right);
-
+        var result = left.PointwiseLessThan(right);
         result.Backward();
 
         // Assert
         result.Should().HaveEquivalentElements(expectedResult.ToArray());
-
         left.Gradient!.Should().NotBeNull();
         left.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<int>(500, 100).ToArray());
-        right.Gradient!.Should().NotBeNull();
-        right.Gradient!.Should().HaveEquivalentElements(Tensor.Ones<int>(500, 100).ToArray());
     }
 }

@@ -16,9 +16,9 @@ public class ManagedPermutationBenchmarks<TNumber>
 
     public ICollection<(Shape From, int[] Permutation)> ShapeOptions =>
     [
-        (new Shape(50, 100), [1, 0]),
-        (new Shape(50, 100, 100), [2, 0, 1]),
-        (new Shape(50, 100, 100, 50), [2, 3, 0, 1]),
+        (new Shape(400, 200), [1, 0]),
+        (new Shape(400, 200, 100), [2, 0, 1]),
+        (new Shape(400, 200, 100, 50), [2, 3, 0, 1]),
     ];
 
     private Tensor<TNumber> _tensor = default!;
@@ -50,7 +50,7 @@ public class ManagedPermutationBenchmarks<TNumber>
     }
 
     [Benchmark]
-    public void Broadcast()
+    public void Permute()
     {
         _result = _tensor.Permute(OpShapes.Permutation);
     }

@@ -54,7 +54,7 @@ public sealed class SystemMemoryBlock<T> : IMemoryBlock<T>, IEquatable<SystemMem
         var totalSize = length * elementSize;
 
         Pointer = (T*)NativeMemory.AlignedAlloc(totalSize, IntrinsicsHelper.CalculateRequiredAlignment());
-        Unsafe.InitBlock(Pointer, 0, (uint)totalSize);
+        NativeMemory.Clear(Pointer, totalSize);
         Length = count;
     }
 

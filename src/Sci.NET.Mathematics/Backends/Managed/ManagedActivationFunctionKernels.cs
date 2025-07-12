@@ -2,8 +2,13 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 using Sci.NET.Common.Concurrency;
+using Sci.NET.Common.Intrinsics;
 using Sci.NET.Common.Memory;
+using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -40,11 +45,31 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             });
     }
 
-    public void ReLU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public unsafe void ReLU<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
+
+        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
+            typeof(TNumber) == typeof(float))
+        {
+            ReLUAvxFp32(
+                (float*)inputMemory.Pointer,
+                (float*)outputMemory.Pointer,
+                inputMemory.Length);
+            return;
+        }
+
+        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
+            typeof(TNumber) == typeof(double))
+        {
+            ReLUAvxFp64(
+                (double*)inputMemory.Pointer,
+                (double*)outputMemory.Pointer,
+                inputMemory.Length);
+            return;
+        }
 
         _ = LazyParallelExecutor.For(
             0,
@@ -53,11 +78,31 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
             i => outputMemory[i] = inputMemory[i] > TNumber.Zero ? inputMemory[i] : TNumber.Zero);
     }
 
-    public void ReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
+    public unsafe void ReLUBackward<TNumber>(ITensor<TNumber> value, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var inputMemory = (SystemMemoryBlock<TNumber>)value.Memory;
         var outputMemory = (SystemMemoryBlock<TNumber>)result.Memory;
+
+        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
+            typeof(TNumber) == typeof(float))
+        {
+            ReLUBackwardAvxFp32(
+                (float*)inputMemory.Pointer,
+                (float*)outputMemory.Pointer,
+                inputMemory.Length);
+            return;
+        }
+
+        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
+            typeof(TNumber) == typeof(double))
+        {
+            ReLUBackwardAvxFp64(
+                (double*)inputMemory.Pointer,
+                (double*)outputMemory.Pointer,
+                inputMemory.Length);
+            return;
+        }
 
         _ = LazyParallelExecutor.For(
             0,
@@ -528,5 +573,162 @@ internal class ManagedActivationFunctionKernels : IActivationFunctionKernels
 
                 outputMemory[i] = one / ((one + abs) * (one + abs));
             });
+    }
+
+    private static unsafe void ReLUAvxFp32(
+        float* inputMemoryPointer,
+        float* outputMemoryPointer,
+        long n)
+    {
+        var tileCount = (n + NativeBufferHelpers.TileSizeFp32 - 1) / NativeBufferHelpers.TileSizeFp32;
+
+        _ = Parallel.For(
+            0,
+            tileCount,
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+            () => (nuint)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 32),
+            (tileIdx, _, panel) =>
+            {
+                var tileStart = tileIdx * NativeBufferHelpers.TileSizeFp32;
+                var tileEnd = Math.Min(tileStart + NativeBufferHelpers.TileSizeFp32, n);
+                var count = tileEnd - tileStart;
+                var zero = Vector256<float>.Zero;
+                var bufferPtr = (float*)panel.ToPointer();
+
+                NativeBufferHelpers.Pack1dFp32Avx(inputMemoryPointer + tileStart, bufferPtr, count);
+
+                var i = 0L;
+                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
+                {
+                    var inputVector = Avx.LoadVector256(bufferPtr + i);
+                    var result = Avx.Max(inputVector, zero);
+
+                    Avx.Store(outputMemoryPointer + tileStart + i, result);
+                }
+
+                for (; i < count; ++i)
+                {
+                    outputMemoryPointer[tileStart + i] = bufferPtr[i] >= 0.0f ? bufferPtr[i] : 0.0f;
+                }
+
+                return panel;
+            },
+            data => NativeMemory.AlignedFree((float*)data));
+    }
+
+    private static unsafe void ReLUAvxFp64(double* inputMemoryPointer, double* outputMemoryPointer, long n)
+    {
+        var tileCount = (n + NativeBufferHelpers.TileSizeFp64 - 1) / NativeBufferHelpers.TileSizeFp64;
+
+        _ = Parallel.For(
+            0,
+            tileCount,
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+            () => (nuint)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 32),
+            (tileIdx, _, panel) =>
+            {
+                var tileStart = tileIdx * NativeBufferHelpers.TileSizeFp64;
+                var tileEnd = Math.Min(tileStart + NativeBufferHelpers.TileSizeFp64, n);
+                var count = tileEnd - tileStart;
+                var zero = Vector256<double>.Zero;
+                var bufferPtr = (double*)panel.ToPointer();
+
+                NativeBufferHelpers.Pack1dFp64Avx(inputMemoryPointer + tileStart, bufferPtr, count);
+
+                var i = 0L;
+                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
+                {
+                    var inputVector = Avx.LoadVector256(bufferPtr + i);
+                    var result = Avx.Max(inputVector, zero);
+
+                    Avx.Store(outputMemoryPointer + tileStart + i, result);
+                }
+
+                for (; i < count; ++i)
+                {
+                    outputMemoryPointer[tileStart + i] = bufferPtr[i] >= 0.0 ? bufferPtr[i] : 0.0;
+                }
+
+                return panel;
+            },
+            data => NativeMemory.AlignedFree((double*)data));
+    }
+
+    private static unsafe void ReLUBackwardAvxFp32(float* inputMemoryPointer, float* outputMemoryPointer, long n)
+    {
+        var tileCount = (n + NativeBufferHelpers.TileSizeFp32 - 1) / NativeBufferHelpers.TileSizeFp32;
+
+        _ = Parallel.For(
+            0,
+            tileCount,
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+            () => (nuint)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 32),
+            (tileIdx, _, panel) =>
+            {
+                var tileStart = tileIdx * NativeBufferHelpers.TileSizeFp32;
+                var tileEnd = Math.Min(tileStart + NativeBufferHelpers.TileSizeFp32, n);
+                var count = tileEnd - tileStart;
+                var zeroVector = Vector256<float>.Zero;
+                var oneVector = Vector256<float>.One;
+                var data = (float*)panel.ToPointer();
+
+                NativeBufferHelpers.Pack1dFp32Avx(inputMemoryPointer + tileStart, data, count);
+
+                var i = 0L;
+                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp32; i += NativeBufferHelpers.AvxVectorSizeFp32)
+                {
+                    var vector = Avx.LoadVector256(data + i);
+                    var mask = Avx.Compare(vector, zeroVector, FloatComparisonMode.OrderedGreaterThanNonSignaling);
+                    var result = Avx.And(mask, oneVector);
+                    Avx.Store(outputMemoryPointer + tileStart + i, result);
+                }
+
+                for (; i < count; ++i)
+                {
+                    outputMemoryPointer[i] = data[i] > 0f ? 1f : 0f;
+                }
+
+                return panel;
+            },
+            data => NativeMemory.AlignedFree((float*)data));
+    }
+
+    private static unsafe void ReLUBackwardAvxFp64(double* inputMemoryPointer, double* outputMemoryPointer, long n)
+    {
+        var tileCount = (n + NativeBufferHelpers.TileSizeFp64 - 1) / NativeBufferHelpers.TileSizeFp64;
+
+        _ = Parallel.For(
+            0,
+            tileCount,
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+            () => (nuint)NativeMemory.AlignedAlloc(NativeBufferHelpers.L1Size, 32),
+            (tileIdx, _, panel) =>
+            {
+                var tileStart = tileIdx * NativeBufferHelpers.TileSizeFp64;
+                var tileEnd = Math.Min(tileStart + NativeBufferHelpers.TileSizeFp64, n);
+                var count = tileEnd - tileStart;
+                var zeroVector = Vector256<double>.Zero;
+                var oneVector = Vector256<double>.One;
+                var data = (double*)panel.ToPointer();
+
+                NativeBufferHelpers.Pack1dFp64Avx(inputMemoryPointer + tileStart, data, count);
+
+                var i = 0L;
+                for (; i <= count - NativeBufferHelpers.AvxVectorSizeFp64; i += NativeBufferHelpers.AvxVectorSizeFp64)
+                {
+                    var vector = Avx.LoadVector256(data + i);
+                    var mask = Avx.Compare(vector, zeroVector, FloatComparisonMode.OrderedGreaterThanNonSignaling);
+                    var result = Avx.And(mask, oneVector);
+                    Avx.Store(outputMemoryPointer + tileStart + i, result);
+                }
+
+                for (; i < count; ++i)
+                {
+                    outputMemoryPointer[i] = data[i] > 0f ? 1f : 0f;
+                }
+
+                return panel;
+            },
+            data => NativeMemory.AlignedFree((double*)data));
     }
 }

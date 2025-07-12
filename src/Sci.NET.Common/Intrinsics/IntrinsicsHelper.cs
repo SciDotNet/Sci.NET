@@ -11,14 +11,54 @@ namespace Sci.NET.Common.Intrinsics;
 [PublicAPI]
 public static class IntrinsicsHelper
 {
-    /// <summary>
-    /// Gets the available SIMD instruction sets on the current platform.
-    /// </summary>
-    public static readonly SimdInstructionSet AvailableInstructionSets;
-
 #pragma warning disable CA1810
     static IntrinsicsHelper()
 #pragma warning restore CA1810
+    {
+        EnableSimd();
+    }
+
+    /// <summary>
+    /// Gets the available SIMD instruction sets on the current platform.
+    /// </summary>
+    public static SimdInstructionSet AvailableInstructionSets { get; private set; }
+
+    /// <summary>
+    /// Gets the required alignment for SIMD operations based on the available instruction sets.
+    /// </summary>
+    /// <returns>The required alignment as a <see cref="UIntPtr"/>.</returns>
+    public static UIntPtr CalculateRequiredAlignment()
+    {
+        if (Avx512F.IsSupported)
+        {
+            return new UIntPtr(64);
+        }
+
+        if (Avx2.IsSupported || Avx.IsSupported)
+        {
+            return new UIntPtr(32);
+        }
+
+        if (Sse41.IsSupported || Sse3.IsSupported || Sse2.IsSupported || Sse.IsSupported)
+        {
+            return new UIntPtr(16);
+        }
+
+        return new UIntPtr(1);
+    }
+
+    /// <summary>
+    /// Disables SIMD intrinsics, setting the available instruction sets to <see cref="SimdInstructionSet.None"/>.
+    /// </summary>
+    public static void DisableSimd()
+    {
+        AvailableInstructionSets = SimdInstructionSet.None;
+    }
+
+    /// <summary>
+    /// Enables SIMD intrinsics based on the current platform's capabilities.
+    /// </summary>
+    public static void EnableSimd()
     {
         AvailableInstructionSets = SimdInstructionSet.None;
 
@@ -56,29 +96,10 @@ public static class IntrinsicsHelper
         {
             AvailableInstructionSets |= SimdInstructionSet.Avx512F;
         }
-    }
 
-    /// <summary>
-    /// Gets the required alignment for SIMD operations based on the available instruction sets.
-    /// </summary>
-    /// <returns>The required alignment as a <see cref="UIntPtr"/>.</returns>
-    public static UIntPtr CalculateRequiredAlignment()
-    {
-        if (Avx512F.IsSupported)
+        if (Fma.IsSupported)
         {
-            return new UIntPtr(64);
+            AvailableInstructionSets |= SimdInstructionSet.Fma;
         }
-
-        if (Avx2.IsSupported || Avx.IsSupported)
-        {
-            return new UIntPtr(32);
-        }
-
-        if (Sse41.IsSupported || Sse3.IsSupported || Sse2.IsSupported || Sse.IsSupported)
-        {
-            return new UIntPtr(16);
-        }
-
-        return new UIntPtr(1);
     }
 }
