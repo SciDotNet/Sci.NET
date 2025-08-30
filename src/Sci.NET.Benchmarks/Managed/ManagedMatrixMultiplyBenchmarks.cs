@@ -8,7 +8,7 @@ using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Benchmarks.Managed;
 
-public class ManagedMatrixMultiplyBenchmarks<TNumber>
+public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
     where TNumber : unmanaged, INumber<TNumber>
 {
     [ParamsSource(nameof(RowsCols))]
@@ -16,10 +16,11 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber>
 
     public ICollection<(int Rows, int Columns)> RowsCols =>
     [
-        (100, 200),
-        (400, 600),
-        (1000, 2000),
-        (1024, 1024)
+        (1024, 1024),
+        (1080, 1920),
+        (2048, 2048),
+        (4096, 4096),
+        (8192, 8192),
     ];
 
     private Matrix<TNumber> _leftMatrix = default!;
@@ -50,6 +51,7 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber>
 
         _leftMatrix = Tensor.Random.Uniform<TNumber>(new Shape(SizeParam.Rows, SizeParam.Columns), min, max, seed: 123456).ToMatrix();
         _rightMatrix = Tensor.Random.Uniform<TNumber>(new Shape(SizeParam.Columns, SizeParam.Rows), min, max, seed: 654321).ToMatrix();
+        _result = null!;
     }
 
     [Benchmark]
@@ -64,5 +66,21 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber>
         _leftMatrix.Dispose();
         _rightMatrix.Dispose();
         _result.Dispose();
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _leftMatrix?.Dispose();
+            _rightMatrix?.Dispose();
+            _result?.Dispose();
+        }
     }
 }

@@ -16,9 +16,9 @@ public class ManagedContractionBenchmarks<TNumber>
 
     public ICollection<(int Id, Shape LeftShape, Shape RightShape, int[] AxesLeft, int[] AxesRight)> ShapeOptions =>
     [
-        // (1, new Shape(32, 16), new Shape(16, 64), [1], [0]),
-        // (2, new Shape(32, 16, 8), new Shape(16, 8, 32), [1, 2], [0, 1]),
-        // (3, new Shape(8, 16, 32, 64), new Shape(32, 64, 8, 16), [2, 3, 0], [0, 1, 2]),
+        (1, new Shape(32, 16), new Shape(16, 64), [1], [0]),
+        (2, new Shape(32, 16, 8), new Shape(16, 8, 32), [1, 2], [0, 1]),
+        (3, new Shape(8, 16, 32, 64), new Shape(32, 64, 8, 16), [2, 3, 0], [0, 1, 2]),
         (4, new Shape(8, 16, 32, 64, 128), new Shape(32, 64, 128, 16, 8), [2, 3, 4], [0, 1, 2])
     ];
 

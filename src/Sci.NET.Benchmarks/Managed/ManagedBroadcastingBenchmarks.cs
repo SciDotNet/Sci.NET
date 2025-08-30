@@ -17,8 +17,8 @@ public class ManagedBroadcastingBenchmarks<TNumber>
     public ICollection<(Shape From, Shape To)> ShapeOptions =>
     [
         (new Shape(100, 200), new Shape(100, 100, 200)),
-        (new Shape(50, 100, 200), new Shape(50, 100, 100, 200)),
-        (new Shape(5000), new Shape(2, 5000)),
+        (new Shape(100, 100, 200), new Shape(50, 100, 100, 200)),
+        (new Shape(5000), new Shape(10, 5000)),
     ];
 
     private Tensor<TNumber> _tensor = default!;

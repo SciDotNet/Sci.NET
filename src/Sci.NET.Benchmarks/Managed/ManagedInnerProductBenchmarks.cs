@@ -11,7 +11,7 @@ namespace Sci.NET.Benchmarks.Managed;
 public class ManagedInnerProductBenchmarks<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
-    [Params(500, 1024, 8192, 32768)]
+    [Params(5000, 10000, 16384, 32768)]
     public int Length { get; set; }
 
     private Mathematics.Tensors.Vector<TNumber> _left = default!;
