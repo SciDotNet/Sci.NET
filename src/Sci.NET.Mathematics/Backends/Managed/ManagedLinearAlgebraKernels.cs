@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Intrinsics;
@@ -102,6 +103,33 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         var leftMemoryBlock = (SystemMemoryBlock<TNumber>)left.Memory;
         var rightMemoryBlock = (SystemMemoryBlock<TNumber>)right.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
+
+        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
+            (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Fma) != 0 &&
+            typeof(TNumber) == typeof(float))
+        {
+            InnerProductFp32Avx(
+                (float*)leftMemoryBlock.Pointer,
+                (float*)rightMemoryBlock.Pointer,
+                (float*)resultMemoryBlock.Pointer,
+                left.Length);
+
+            return;
+        }
+
+        if ((IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
+            (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Fma) != 0 &&
+            typeof(TNumber) == typeof(double))
+        {
+            InnerProductFp64Avx(
+                (double*)leftMemoryBlock.Pointer,
+                (double*)rightMemoryBlock.Pointer,
+                (double*)resultMemoryBlock.Pointer,
+                left.Length);
+
+            return;
+        }
+
         using var sums = new ThreadLocal<TNumber>(() => TNumber.Zero, true);
 
         _ = LazyParallelExecutor.For(
@@ -328,6 +356,165 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         Avx.Store(cTile + (3 * ldc), c3);
     }
 
+    private static unsafe void InnerProductFp32Avx(float* leftMemoryPtr, float* rightMemoryPtr, float* resultPtr, long n)
+    {
+        if (n <= 0)
+        {
+            resultPtr[0] = 0.0f;
+            return;
+        }
+
+        var processes = Environment.ProcessorCount;
+        var partials = new float[processes];
+
+        _ = Parallel.For(
+            0,
+            processes,
+            tid =>
+            {
+                var start = tid * n / processes;
+                var end = (tid + 1) * n / processes;
+
+                var i = start;
+                var acc0 = Vector256<float>.Zero;
+                var acc1 = Vector256<float>.Zero;
+                var acc2 = Vector256<float>.Zero;
+                var acc3 = Vector256<float>.Zero;
+
+                for (; i + 32 <= end; i += 32)
+                {
+                    var vLeft0 = Avx.LoadVector256(leftMemoryPtr + i + 0);
+                    var vRight0 = Avx.LoadVector256(rightMemoryPtr + i + 0);
+                    var vLeft1 = Avx.LoadVector256(leftMemoryPtr + i + 8);
+                    var vRight1 = Avx.LoadVector256(rightMemoryPtr + i + 8);
+                    var vLeft2 = Avx.LoadVector256(leftMemoryPtr + i + 16);
+                    var vRight2 = Avx.LoadVector256(rightMemoryPtr + i + 16);
+                    var vLeft3 = Avx.LoadVector256(leftMemoryPtr + i + 24);
+                    var vRight3 = Avx.LoadVector256(rightMemoryPtr + i + 24);
+
+                    if (Fma.IsSupported)
+                    {
+                        acc0 = Fma.MultiplyAdd(vLeft0, vRight0, acc0);
+                        acc1 = Fma.MultiplyAdd(vLeft1, vRight1, acc1);
+                        acc2 = Fma.MultiplyAdd(vLeft2, vRight2, acc2);
+                        acc3 = Fma.MultiplyAdd(vLeft3, vRight3, acc3);
+                    }
+                    else
+                    {
+                        acc0 = Avx.Add(acc0, Avx.Multiply(vLeft0, vRight0));
+                        acc1 = Avx.Add(acc1, Avx.Multiply(vLeft1, vRight1));
+                        acc2 = Avx.Add(acc2, Avx.Multiply(vLeft2, vRight2));
+                        acc3 = Avx.Add(acc3, Avx.Multiply(vLeft3, vRight3));
+                    }
+                }
+
+                for (; i + 8 <= end; i += 8)
+                {
+                    var va = Avx.LoadVector256(leftMemoryPtr + i);
+                    var vb = Avx.LoadVector256(rightMemoryPtr + i);
+                    acc0 = Fma.IsSupported ? Fma.MultiplyAdd(va, vb, acc0) : Avx.Add(acc0, Avx.Multiply(va, vb));
+                }
+
+                var acc = Avx.Add(Avx.Add(acc0, acc1), Avx.Add(acc2, acc3));
+                var tmp = Avx.HorizontalAdd(acc, acc);
+                tmp = Avx.HorizontalAdd(tmp, tmp);
+
+                var sumVec = Avx.Add(tmp, Avx.Permute2x128(tmp, tmp, 0x01));
+                var sum = sumVec.GetElement(0);
+
+                for (; i < end; ++i)
+                {
+                    sum += leftMemoryPtr[i] * rightMemoryPtr[i];
+                }
+
+                partials[tid] = sum;
+            });
+
+        // Neumaier Sum for accuracy
+        float s = 0, c = 0;
+        for (var i = 0; i < partials.Length; i++)
+        {
+            var t = s + partials[i];
+            c += float.Abs(s) >= float.Abs(partials[i]) ? s - t + partials[i] : partials[i] - t + s;
+            s = t;
+        }
+
+        resultPtr[0] = s + c;
+    }
+
+    private static unsafe void InnerProductFp64Avx(double* leftMemoryPtr, double* rightMemoryPtr, double* resultPtr, long n)
+    {
+        if (n <= 0)
+        {
+            resultPtr[0] = 0.0d;
+            return;
+        }
+
+        var processes = Environment.ProcessorCount;
+        var partials = new double[processes];
+
+        _ = Parallel.For(
+            0,
+            processes,
+            tid =>
+            {
+                var start = tid * n / processes;
+                var end = (tid + 1) * n / processes;
+
+                var i = start;
+                var acc0 = Vector256<double>.Zero;
+                var acc1 = Vector256<double>.Zero;
+                for (; i + 8 <= end; i += 8)
+                {
+                    var vLeft0 = Avx.LoadVector256(leftMemoryPtr + i + 0);
+                    var vRight0 = Avx.LoadVector256(rightMemoryPtr + i + 0);
+                    var vLeft1 = Avx.LoadVector256(leftMemoryPtr + i + 4);
+                    var vRight1 = Avx.LoadVector256(rightMemoryPtr + i + 4);
+
+                    if (Fma.IsSupported)
+                    {
+                        acc0 = Fma.MultiplyAdd(vLeft0, vRight0, acc0);
+                        acc1 = Fma.MultiplyAdd(vLeft1, vRight1, acc1);
+                    }
+                    else
+                    {
+                        acc0 = Avx.Add(acc0, Avx.Multiply(vLeft0, vRight0));
+                        acc1 = Avx.Add(acc1, Avx.Multiply(vLeft1, vRight1));
+                    }
+                }
+
+                for (; i + 4 <= end; i += 4)
+                {
+                    var va = Avx.LoadVector256(leftMemoryPtr + i);
+                    var vb = Avx.LoadVector256(rightMemoryPtr + i);
+                    acc0 = Fma.IsSupported ? Fma.MultiplyAdd(va, vb, acc0) : Avx.Add(acc0, Avx.Multiply(va, vb));
+                }
+
+                var buf = stackalloc double[4];
+                var acc = Avx.Add(acc0, acc1);
+                Avx.Store(buf, acc);
+                var sum = buf[0] + buf[1] + buf[2] + buf[3];
+
+                for (; i < end; ++i)
+                {
+                    sum += leftMemoryPtr[i] * rightMemoryPtr[i];
+                }
+
+                partials[tid] = sum;
+            });
+
+        // Neumaier Sum for accuracy
+        double s = 0, c = 0;
+        for (var i = 0; i < partials.Length; i++)
+        {
+            var t = s + partials[i];
+            c += double.Abs(s) >= double.Abs(partials[i]) ? s - t + partials[i] : partials[i] - t + s;
+            s = t;
+        }
+
+        resultPtr[0] = s + c;
+    }
+
     private static unsafe void PackAFp32(float* src, float* dstPanel, int lda, int mTile, int kTile)
     {
         for (var i = 0; i < GemmMcFp32; i++)
@@ -362,8 +549,7 @@ internal class ManagedLinearAlgebraKernels : ILinearAlgebraKernels
         {
             for (var k = 0; k < GemmKcFp64; k++)
             {
-                dstPanel[(i * GemmKcFp64) + k] =
-                    (i < mTile && k < kTile) ? src[(i * lda) + k] : 0d;
+                dstPanel[(i * GemmKcFp64) + k] = i < mTile && k < kTile ? src[(i * lda) + k] : 0d;
             }
         }
     }

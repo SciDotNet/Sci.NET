@@ -187,13 +187,13 @@ internal class BinaryOpTensorIterator<TNumber>
         var extent0 = d0.Extent;
         var extent1 = d1.Extent;
 
-        var sL0 = d0.StrideLeft;
-        var sR0 = d0.StrideRight;
-        var sO0 = d0.StrideOut;
+        var strideLeft0 = d0.StrideLeft;
+        var strideRight0 = d0.StrideRight;
+        var strideOut0 = d0.StrideOut;
 
-        var sL1 = d1.StrideLeft;
-        var sR1 = d1.StrideRight;
-        var sO1 = d1.StrideOut;
+        var strideLeft1 = d1.StrideLeft;
+        var strideRight1 = d1.StrideRight;
+        var strideOut1 = d1.StrideOut;
 
         var total = extent0 * extent1;
 
@@ -206,13 +206,13 @@ internal class BinaryOpTensorIterator<TNumber>
                 var i = idx / extent1;
                 var j = idx % extent1;
 
-                var baseLeft = i * sL0;
-                var baseRight = i * sR0;
-                var baseOut = i * sO0;
+                var baseLeft = i * strideLeft0;
+                var baseRight = i * strideRight0;
+                var baseOut = i * strideOut0;
 
-                var offLeft = baseLeft + (j * sL1);
-                var offRight = baseRight + (j * sR1);
-                var offOut = baseOut + (j * sO1);
+                var offLeft = baseLeft + (j * strideLeft1);
+                var offRight = baseRight + (j * strideRight1);
+                var offOut = baseOut + (j * strideOut1);
 
                 action(offLeft, offRight, offOut);
             });

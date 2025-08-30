@@ -18,7 +18,7 @@ BenchmarkRunner.Run<ManagedBinaryArithmeticBenchmarks<double>>();
 BenchmarkRunner.Run<ManagedUnaryArithmeticBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedUnaryArithmeticBenchmarks<double>>();
 
-// // Activation function benchmarks
+// Activation function benchmarks
 BenchmarkRunner.Run<ManagedActivationFunctionBenchmarks<float>>();
 BenchmarkRunner.Run<ManagedActivationFunctionBenchmarks<double>>();
 

@@ -16,7 +16,6 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
 
     public ICollection<(int Rows, int Columns)> RowsCols =>
     [
-        (500, 600),
         (1024, 1024),
         (1080, 1920),
         (2048, 2048),
@@ -58,7 +57,7 @@ public class ManagedMatrixMultiplyBenchmarks<TNumber> : IDisposable
     [Benchmark]
     public void MatrixMultiply()
     {
-        _result = _leftMatrix.Multiply(_rightMatrix);
+        _result = _leftMatrix.MatrixMultiply(_rightMatrix);
     }
 
     [GlobalCleanup]
