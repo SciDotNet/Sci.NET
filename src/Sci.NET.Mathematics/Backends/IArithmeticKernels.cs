@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
+using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends;
 
@@ -12,6 +13,46 @@ namespace Sci.NET.Mathematics.Backends;
 [PublicAPI]
 public interface IArithmeticKernels
 {
+    /// <summary>
+    /// Performs element-wise addition of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The right operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the addition.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Add<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs element-wise subtraction of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The left operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The right operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the subtraction.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Subtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs element-wise multiplication of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The <paramref name="left"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The <paramref name="right"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the multiplication.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Multiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
+    /// <summary>
+    /// Performs element-wise division of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
+    /// </summary>
+    /// <param name="left">The <paramref name="left"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The <paramref name="right"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the division.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
+        where TNumber : unmanaged, INumber<TNumber>;
+
     /// <summary>
     /// Negates the elements of a <see cref="IMemoryBlock{TNumber}"/>.
     /// </summary>

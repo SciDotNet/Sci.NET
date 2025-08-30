@@ -4,7 +4,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Numerics;
-using Sci.NET.Mathematics.Backends.Iterators;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
 using Sci.NET.Mathematics.Tensors.Manipulation;
@@ -535,9 +534,8 @@ internal class ArithmeticService : IArithmeticService
         var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
         var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
-        var iterator = new BinaryOpTensorIterator<TNumber>(left, right, result);
 
-        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] + right.Memory[rOffset]);
+        device.Arithmetic.Add(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -556,9 +554,8 @@ internal class ArithmeticService : IArithmeticService
         var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
         var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
-        var iterator = new BinaryOpTensorIterator<TNumber>(left, right, result);
 
-        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] - right.Memory[rOffset]);
+        device.Arithmetic.Subtract(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -577,9 +574,8 @@ internal class ArithmeticService : IArithmeticService
         var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
         var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
-        var iterator = new BinaryOpTensorIterator<TNumber>(left, right, result);
 
-        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] * right.Memory[rOffset]);
+        device.Arithmetic.Multiply(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
@@ -598,9 +594,8 @@ internal class ArithmeticService : IArithmeticService
         var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
         var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
         var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
-        var iterator = new BinaryOpTensorIterator<TNumber>(left, right, result);
 
-        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] / right.Memory[rOffset]);
+        device.Arithmetic.Divide(left, right, result);
 
         _gradientAppenderService.AddGradientIfRequired(
             ref result,
