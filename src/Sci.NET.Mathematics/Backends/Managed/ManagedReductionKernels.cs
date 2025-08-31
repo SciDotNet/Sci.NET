@@ -1,12 +1,11 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.Collections.Concurrent;
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Linq;
 using Sci.NET.Common.Memory;
-using Sci.NET.Common.Numerics.Intrinsics;
+using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed;
@@ -18,44 +17,27 @@ internal class ManagedReductionKernels : IReductionKernels
     {
         var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var partialSums = new ConcurrentDictionary<int, ISimdVector<TNumber>>();
-        var vectorCount = SimdVector.Count<TNumber>();
+        using var partialSums = new ThreadLocal<TNumber>(() => TNumber.Zero, true);
 
-        for (var index = 0; index < partialSums.Count; index++)
-        {
-            partialSums[index] = SimdVector.Create<TNumber>();
-        }
-
-        var done = 0L;
-
-        if (tensor.Shape.ElementCount >= vectorCount)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                tensor.Shape.ElementCount,
-                1,
-                vectorCount,
-                i =>
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var currentValue = tensorMemoryBlock[i];
+                var partialSum = partialSums.Value;
+                if (currentValue != TNumber.Zero)
                 {
-                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-
-                    _ = partialSums.AddOrUpdate(
-                        Environment.CurrentManagedThreadId,
-                        vector,
-                        (_, sum) => sum.Add(vector));
-                });
-        }
+                    partialSums.Value = partialSum + currentValue;
+                }
+            });
 
         var finalSum = TNumber.Zero;
 
-        for (var i = done * vectorCount; i < tensor.Shape.ElementCount; i++)
-        {
-            finalSum += tensorMemoryBlock[i];
-        }
-
         foreach (var partialVectorSum in partialSums.Values)
         {
-            finalSum += partialVectorSum.Sum();
+            finalSum += partialVectorSum;
         }
 
         resultMemoryBlock[0] = finalSum;
@@ -109,44 +91,24 @@ internal class ManagedReductionKernels : IReductionKernels
     {
         var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var partialSums = new ConcurrentDictionary<int, ISimdVector<TNumber>>();
-        var vectorCount = SimdVector.Count<TNumber>();
+        using var partialSums = new ThreadLocal<TNumber>(() => TNumber.Zero, true);
 
-        for (var index = 0; index < partialSums.Count; index++)
-        {
-            partialSums[index] = SimdVector.Create<TNumber>();
-        }
-
-        var done = 0L;
-
-        if (tensor.Shape.ElementCount >= vectorCount)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                tensor.Shape.ElementCount,
-                1,
-                vectorCount,
-                i =>
-                {
-                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-
-                    _ = partialSums.AddOrUpdate(
-                        Environment.CurrentManagedThreadId,
-                        vector,
-                        (_, sum) => sum.Add(vector));
-                });
-        }
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var currentValue = tensorMemoryBlock[i];
+                var partialSum = partialSums.Value;
+                partialSums.Value = partialSum + currentValue;
+            });
 
         var finalSum = TNumber.Zero;
 
-        for (var i = done * vectorCount; i < tensor.Shape.ElementCount; i++)
-        {
-            finalSum += tensorMemoryBlock[i];
-        }
-
         foreach (var partialVectorSum in partialSums.Values)
         {
-            finalSum += partialVectorSum.Sum();
+            finalSum += partialVectorSum;
         }
 
         resultMemoryBlock[0] = finalSum / TNumber.CreateChecked(tensor.Shape.ElementCount);
@@ -201,44 +163,27 @@ internal class ManagedReductionKernels : IReductionKernels
     {
         var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var partialSums = new ConcurrentDictionary<int, ISimdVector<TNumber>>();
-        var vectorCount = SimdVector.Count<TNumber>();
+        using var partialMaximums = new ThreadLocal<TNumber>(GenericMath.MinValue<TNumber>, true);
 
-        for (var index = 0; index < partialSums.Count; index++)
-        {
-            partialSums[index] = SimdVector.Create<TNumber>();
-        }
-
-        var done = 0L;
-
-        if (tensor.Shape.ElementCount >= vectorCount)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                tensor.Shape.ElementCount,
-                1,
-                vectorCount,
-                i =>
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var currentValue = tensorMemoryBlock[i];
+                var partialMax = partialMaximums.Value;
+                if (currentValue > partialMax)
                 {
-                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
-
-                    _ = partialSums.AddOrUpdate(
-                        Environment.CurrentManagedThreadId,
-                        vector,
-                        (_, sum) => sum.Max(vector));
-                });
-        }
+                    partialMaximums.Value = currentValue;
+                }
+            });
 
         var max = TNumber.Zero;
 
-        for (var i = done * vectorCount; i < tensor.Shape.ElementCount; i++)
+        foreach (var partialVectorSum in partialMaximums.Values)
         {
-            max = TNumber.Max(max, tensorMemoryBlock[i]);
-        }
-
-        foreach (var partialVectorSum in partialSums.Values)
-        {
-            max = TNumber.Max(max, partialVectorSum.MaxElement());
+            max = TNumber.Max(max, partialVectorSum);
         }
 
         resultMemoryBlock[0] = max;
@@ -292,44 +237,27 @@ internal class ManagedReductionKernels : IReductionKernels
     {
         var tensorMemoryBlock = (SystemMemoryBlock<TNumber>)tensor.Memory;
         var resultMemoryBlock = (SystemMemoryBlock<TNumber>)result.Memory;
-        var partialSums = new ConcurrentDictionary<int, ISimdVector<TNumber>>();
-        var vectorCount = SimdVector.Count<TNumber>();
+        using var partialMaximums = new ThreadLocal<TNumber>(GenericMath.MaxValue<TNumber>, true);
 
-        for (var index = 0; index < partialSums.Count; index++)
-        {
-            partialSums[index] = SimdVector.Create<TNumber>();
-        }
-
-        var done = 0L;
-
-        if (tensor.Shape.ElementCount >= vectorCount)
-        {
-            done = LazyParallelExecutor.For(
-                0,
-                tensor.Shape.ElementCount,
-                1,
-                vectorCount,
-                i =>
+        _ = LazyParallelExecutor.For(
+            0,
+            tensor.Shape.ElementCount,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
+            {
+                var currentValue = tensorMemoryBlock[i];
+                var partialMax = partialMaximums.Value;
+                if (currentValue < partialMax)
                 {
-                    var vector = tensorMemoryBlock.UnsafeGetVectorUnchecked<TNumber>(i);
+                    partialMaximums.Value = currentValue;
+                }
+            });
 
-                    _ = partialSums.AddOrUpdate(
-                        Environment.CurrentManagedThreadId,
-                        vector,
-                        (_, sum) => sum.Min(vector));
-                });
-        }
+        var min = GenericMath.MaxValue<TNumber>();
 
-        var min = tensorMemoryBlock[0];
-
-        for (var i = done * vectorCount; i < tensor.Shape.ElementCount; i++)
+        foreach (var partialVectorSum in partialMaximums.Values)
         {
-            min = TNumber.Min(min, tensorMemoryBlock[i]);
-        }
-
-        foreach (var partialVectorSum in partialSums.Values)
-        {
-            min = TNumber.Min(min, partialVectorSum.MinElement());
+            min = TNumber.Min(min, partialVectorSum);
         }
 
         resultMemoryBlock[0] = min;

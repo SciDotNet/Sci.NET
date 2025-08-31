@@ -3,6 +3,7 @@
 
 using System.Numerics;
 using Sci.NET.Common.Memory;
+using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends;
 
@@ -13,222 +14,43 @@ namespace Sci.NET.Mathematics.Backends;
 public interface IArithmeticKernels
 {
     /// <summary>
-    /// Finds the element-wise sum of two <see cref="IMemoryBlock{TNumber}"/>s.
+    /// Performs element-wise addition of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="result">The result of the addition.</param>
-    /// <param name="n">The number of elements to add.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void AddTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long n)
+    /// <param name="left">The left operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The right operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the addition.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Add<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
-    /// Adds the elements of the right <see cref="IMemoryBlock{TNumber}"/> to the left <see cref="IMemoryBlock{TNumber}"/>.
+    /// Performs element-wise subtraction of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add to.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="n">The number of elements to add.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void AddTensorTensorInplace<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        long n)
+    /// <param name="left">The left operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The right operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the subtraction.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Subtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
-    /// Adds the elements of Adds the elements of two <see cref="IMemoryBlock{TNumber}"/>s together.
+    /// Performs element-wise multiplication of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="result">The result of the addition.</param>
-    /// <param name="m">The number of elements to add in the common dimensions.</param>
-    /// <param name="n">The number of elements to add in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void AddTensorBroadcastTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
+    /// <param name="left">The <paramref name="left"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The <paramref name="right"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the multiplication.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Multiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>
-    /// Adds the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
+    /// Performs element-wise division of two <see cref="ITensor{TNumber}"/>s and stores the result in a third <see cref="ITensor{TNumber}"/>.
     /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="result">The result of the addition.</param>
-    /// <param name="m">The number of elements to add in the common dimensions.</param>
-    /// <param name="n">The number of elements to add in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void AddBroadcastTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Subtracts the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to add.</param>
-    /// <param name="result">The result of the addition.</param>
-    /// <param name="n">The number of elements to add.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void SubtractTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Subtracts the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to subtract from.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to subtract.</param>
-    /// <param name="result">The result of the subtraction.</param>
-    /// <param name="m">The number of elements to subtract in the common dimensions.</param>
-    /// <param name="n">The number of elements to subtract in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void SubtractTensorBroadcastTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Subtracts the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to subtract from.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to subtract.</param>
-    /// <param name="result">The result of the subtraction.</param>
-    /// <param name="m">The number of elements to subtract in the common dimensions.</param>
-    /// <param name="n">The number of elements to subtract in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void SubtractBroadcastTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Multiplies the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="result">The result of the multiplication.</param>
-    /// <param name="n">The number of elements to multiply.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void MultiplyTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Multiplies the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="result">The result of the multiplication.</param>
-    /// <param name="m">The number of elements to multiply in the common dimensions.</param>
-    /// <param name="n">The number of elements to multiply in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void MultiplyTensorBroadcastTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Multiplies the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="result">The result of the multiplication.</param>
-    /// <param name="m">The number of elements to multiply in the common dimensions.</param>
-    /// <param name="n">The number of elements to multiply in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void MultiplyBroadcastTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Multiplies the elements of two <see cref="IMemoryBlock{TNumber}"/>s in place.
-    /// </summary>
-    /// <param name="leftMemory">The left <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="rightMemory">The right <see cref="IMemoryBlock{TNumber}"/> to multiply.</param>
-    /// <param name="shapeElementCount">The number of elements to multiply.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void MultiplyTensorTensorInplace<TNumber>(IMemoryBlock<TNumber> leftMemory, IMemoryBlock<TNumber> rightMemory, long shapeElementCount)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Divides the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
-    /// <param name="result">The result of the division.</param>
-    /// <param name="n">The number of elements to divide.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void DivideTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Divides the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
-    /// <param name="result">The result of the division.</param>
-    /// <param name="m">The number of elements to divide in the common dimensions.</param>
-    /// <param name="n">The number of elements to divide in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void DivideTensorBroadcastTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
-        where TNumber : unmanaged, INumber<TNumber>;
-
-    /// <summary>
-    /// Divides the elements of two <see cref="IMemoryBlock{TNumber}"/>s.
-    /// </summary>
-    /// <param name="left">The left <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
-    /// <param name="right">The right <see cref="IMemoryBlock{TNumber}"/> to divide.</param>
-    /// <param name="result">The result of the division.</param>
-    /// <param name="m">The number of elements to divide in the common dimensions.</param>
-    /// <param name="n">The number of elements to divide in the broadcast dimensions.</param>
-    /// <typeparam name="TNumber">The number type of the <see cref="IMemoryBlock{TNumber}"/>s.</typeparam>
-    public void DivideBroadcastTensorTensor<TNumber>(
-        IMemoryBlock<TNumber> left,
-        IMemoryBlock<TNumber> right,
-        IMemoryBlock<TNumber> result,
-        long m,
-        long n)
+    /// <param name="left">The <paramref name="left"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="right">The <paramref name="right"/> operand <see cref="ITensor{TNumber}"/>.</param>
+    /// <param name="result">The <see cref="ITensor{TNumber}"/> to store the result of the division.</param>
+    /// <typeparam name="TNumber">The numeric type of the <see cref="ITensor{TNumber}"/> elements.</typeparam>
+    public void Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>;
 
     /// <summary>

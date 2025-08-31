@@ -27,7 +27,7 @@ public static class CastingExtensions
     /// <b>I'm open to suggestions for a better name.</b>
     /// </remarks>
     /// <returns>The input cast to the <typeparamref name="TOut"/> type.</returns>
-    /// <exception cref="InvalidOperationException">Throws if the two types are not the same length.</exception>
+    /// <exception cref="InvalidOperationException">Throws if the two types are different length.</exception>
     [MethodImpl(ImplementationOptions.HotPath)]
     public static TOut ReinterpretCast<TIn, TOut>(this TIn value)
         where TIn : unmanaged
@@ -55,8 +55,9 @@ public static class CastingExtensions
     /// <b>I'm open to suggestions for a better name.</b>
     /// </remarks>
     /// <returns>The input cast to the <typeparamref name="TOut"/> type.</returns>
-    /// <exception cref="InvalidOperationException">Throws if the two types are not the same length.</exception>
+    /// <exception cref="InvalidOperationException">Throws if the two types are different length.</exception>
     [MemoryCorrupter]
+    [MethodImpl(ImplementationOptions.HotPath)]
     public static TOut DangerousReinterpretCast<TIn, TOut>(this TIn value)
         where TIn : unmanaged
         where TOut : unmanaged

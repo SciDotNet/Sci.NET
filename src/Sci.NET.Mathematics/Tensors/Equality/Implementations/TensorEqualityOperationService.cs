@@ -33,8 +33,8 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
             left,
             right,
             null,
-            grad => Tensor.Zeros<TNumber>(grad.Shape),
-            grad => Tensor.Zeros<TNumber>(grad.Shape));
+            grad => grad,
+            grad => grad);
 
         return result;
     }
@@ -54,8 +54,8 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
             left,
             right,
             null,
-            grad => Tensor.Zeros<TNumber>(grad.Shape),
-            grad => Tensor.Zeros<TNumber>(grad.Shape));
+            grad => grad,
+            grad => grad);
 
         return result;
     }
@@ -75,8 +75,8 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
             left,
             right,
             null,
-            grad => Tensor.Zeros<TNumber>(grad.Shape),
-            grad => Tensor.Zeros<TNumber>(grad.Shape));
+            grad => grad,
+            grad => grad);
 
         return result;
     }
@@ -96,8 +96,8 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
             left,
             right,
             null,
-            grad => Tensor.Zeros<TNumber>(grad.Shape),
-            grad => Tensor.Zeros<TNumber>(grad.Shape));
+            grad => grad,
+            grad => grad);
 
         return result;
     }
@@ -117,8 +117,8 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
             left,
             right,
             null,
-            grad => Tensor.Zeros<TNumber>(grad.Shape),
-            grad => Tensor.Zeros<TNumber>(grad.Shape));
+            grad => grad,
+            grad => grad);
 
         return result;
     }
@@ -138,8 +138,8 @@ internal class TensorEqualityOperationService : ITensorEqualityOperationService
             left,
             right,
             null,
-            grad => Tensor.Zeros<TNumber>(grad.Shape),
-            grad => Tensor.Zeros<TNumber>(grad.Shape));
+            grad => grad,
+            grad => grad);
 
         return result;
     }

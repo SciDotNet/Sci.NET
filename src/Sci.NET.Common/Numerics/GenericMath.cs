@@ -3,7 +3,6 @@
 
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Sci.NET.Common.Numerics.Intrinsics;
 
 namespace Sci.NET.Common.Numerics;
 
@@ -110,33 +109,56 @@ public static class GenericMath
     }
 
     /// <summary>
-    /// Finds the absolute value of the provided scalar.
+    /// Gets the maximum value for the specified number type.
     /// </summary>
-    /// <param name="scalar">The scalar to find the absolute value of.</param>
-    /// <typeparam name="TNumber">The number type.</typeparam>
-    /// <returns>The absolute value of the provided scalar.</returns>
+    /// <typeparam name="TNumber">The number type to get the maximum value for.</typeparam>
+    /// <returns>The maximum value for the specified number type.</returns>
     /// <exception cref="NotSupportedException">Thrown if the number type is not supported.</exception>
-    public static ISimdVector<TNumber> Abs<TNumber>(TNumber scalar)
+    public static TNumber MaxValue<TNumber>()
         where TNumber : unmanaged, INumber<TNumber>
     {
-        return scalar switch
+        return TNumber.Zero switch
         {
-            BFloat16 bfloat16 => new SimdScalarBackend<TNumber>((TNumber)(object)BFloat16.Abs(bfloat16)),
-            Half half => new SimdScalarBackend<TNumber>((TNumber)(object)Half.Abs(half)),
-            Complex complex => new SimdScalarBackend<TNumber>((TNumber)(object)Complex.Abs(complex)),
-            float single => new SimdScalarBackend<TNumber>((TNumber)(object)float.Abs(single)),
-            double @double => new SimdScalarBackend<TNumber>((TNumber)(object)double.Abs(@double)),
-            byte byteValue => new SimdScalarBackend<TNumber>((TNumber)(object)byteValue),
-            ushort ushortValue => new SimdScalarBackend<TNumber>((TNumber)(object)ushortValue),
-            uint uintValue => new SimdScalarBackend<TNumber>((TNumber)(object)uintValue),
-            ulong ulongValue => new SimdScalarBackend<TNumber>((TNumber)(object)ulongValue),
-            sbyte sbyteValue => new SimdScalarBackend<TNumber>((TNumber)(object)sbyte.Abs(sbyteValue)),
-            short shortValue => new SimdScalarBackend<TNumber>((TNumber)(object)short.Abs(shortValue)),
-            int intValue => new SimdScalarBackend<TNumber>((TNumber)(object)int.Abs(intValue)),
-            long longValue => new SimdScalarBackend<TNumber>((TNumber)(object)long.Abs(longValue)),
-            nint nintValue => new SimdScalarBackend<TNumber>((TNumber)(object)nint.Abs(nintValue)),
-            nuint nuintValue => new SimdScalarBackend<TNumber>((TNumber)(object)nuintValue),
-            _ => throw new NotSupportedException("Type not supported for absolute value."),
+            sbyte => TNumber.CreateChecked(sbyte.MaxValue),
+            byte => TNumber.CreateChecked(byte.MaxValue),
+            short => TNumber.CreateChecked(short.MaxValue),
+            ushort => TNumber.CreateChecked(ushort.MaxValue),
+            int => TNumber.CreateChecked(int.MaxValue),
+            uint => TNumber.CreateChecked(uint.MaxValue),
+            long => TNumber.CreateChecked(long.MaxValue),
+            ulong => TNumber.CreateChecked(ulong.MaxValue),
+            float => TNumber.CreateChecked(float.MaxValue),
+            double => TNumber.CreateChecked(double.MaxValue),
+            BFloat16 => TNumber.CreateChecked(BFloat16.MaxValue),
+            Half => TNumber.CreateChecked(Half.MaxValue),
+            _ => throw new NotSupportedException("Type not supported for MaxValue."),
+        };
+    }
+
+    /// <summary>
+    /// Gets the minimum value for the specified number type.
+    /// </summary>
+    /// <typeparam name="TNumber">The number type to get the minimum value for.</typeparam>
+    /// <returns>The minimum value for the specified number type.</returns>
+    /// <exception cref="NotSupportedException">Thrown if the number type is not supported.</exception>
+    public static TNumber MinValue<TNumber>()
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return TNumber.Zero switch
+        {
+            sbyte => TNumber.CreateChecked(sbyte.MinValue),
+            byte => TNumber.CreateChecked(byte.MinValue),
+            short => TNumber.CreateChecked(short.MinValue),
+            ushort => TNumber.CreateChecked(ushort.MinValue),
+            int => TNumber.CreateChecked(int.MinValue),
+            uint => TNumber.CreateChecked(uint.MinValue),
+            long => TNumber.CreateChecked(long.MinValue),
+            ulong => TNumber.CreateChecked(ulong.MinValue),
+            float => TNumber.CreateChecked(float.MinValue),
+            double => TNumber.CreateChecked(double.MinValue),
+            BFloat16 => TNumber.CreateChecked(BFloat16.MinValue),
+            Half => TNumber.CreateChecked(Half.MinValue),
+            _ => throw new NotSupportedException("Type not supported for MaxValue."),
         };
     }
 }

@@ -11,6 +11,8 @@ public class ContractionFunctionBackwardsTests
     [Fact]
     public void Contract_Contracts10_ReturnsCorrectResult()
     {
+        SciDotNetConfiguration.PreviewFeatures.EnableAutoGrad();
+
         // Arrange
         using var tensor1 = Tensor.FromArray<int>(Enumerable.Range(0, 3 * 4 * 5).ToArray(), requiresGradient: true).Reshape(3, 4, 5);
         using var tensor2 = Tensor.FromArray<int>(Enumerable.Range(0, 4 * 5 * 2).ToArray(), requiresGradient: true).Reshape(4, 5, 2);

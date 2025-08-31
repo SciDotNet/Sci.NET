@@ -8,5 +8,5 @@ internal struct DimRange
     public long Extent;
     public long StrideLeft;
     public long StrideRight;
-    public long StrideOut;
+    public long StrideResult;
 }

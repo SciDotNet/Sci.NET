@@ -11,7 +11,7 @@ namespace Sci.NET.Mathematics.Backends.Managed;
 [PublicAPI]
 public class ManagedTensorBackend : ITensorBackend
 {
-    internal const int ParallelizationThreshold = 10000;
+    internal const int ParallelizationThreshold = 10_000;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ManagedTensorBackend"/> class.
