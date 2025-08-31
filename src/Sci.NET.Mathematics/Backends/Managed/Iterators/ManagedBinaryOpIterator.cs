@@ -2,14 +2,8 @@
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics;
-using System.Runtime.Intrinsics.X86;
 using Sci.NET.Common.Concurrency;
-using Sci.NET.Common.Intrinsics;
-using Sci.NET.Common.Performance;
 using Sci.NET.Mathematics.Backends.Iterators;
-using Sci.NET.Mathematics.Backends.Managed.BinaryOps;
 using Sci.NET.Mathematics.Tensors;
 
 namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
@@ -17,160 +11,62 @@ namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 internal class ManagedBinaryOpIterator<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
-    private readonly DimRange[] _ranges;
-    private readonly bool _allUnitStrideNoBroadcast;
-    private readonly long _total;
+    private readonly DimRange[] _dimRanges;
 
     public ManagedBinaryOpIterator(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
     {
-        _ranges = BuildDimRanges(left, right, result);
-        _allUnitStrideNoBroadcast = CheckAllUnitStrideNoBroadcast(_ranges);
-        _total = 1;
-
-        foreach (var range in _ranges)
-        {
-            _total *= range.Extent;
-        }
+        _dimRanges = BuildDimRanges(left, right, result);
     }
 
-    public unsafe void Apply<TOp>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
-        where TOp : IManagedBinaryTensorOp
+    /// <summary>
+    /// Iterates over the tensors and applies the given action to each element.
+    /// </summary>
+    /// <param name="action">The action to apply to each element.</param>
+    public void Apply(Action<long, long, long> action)
     {
-        var leftPointer = left.Memory.ToPointer();
-        var rightPointer = right.Memory.ToPointer();
-        var resultPointer = result.Memory.ToPointer();
+        var rank = _dimRanges.Length;
 
-        if (_allUnitStrideNoBroadcast)
+        if (rank == 0)
         {
-            ApplyBlock1D<TNumber, TOp>(
-                leftPointer,
-                rightPointer,
-                resultPointer,
-                _total,
-                1,
-                1,
-                1);
-            return;
+            action(0, 0, 0);
         }
-
-        if (_ranges.Length == 0)
+        else if (rank == 1)
         {
-            var leftItem = Unsafe.Read<TNumber>(leftPointer);
-            var rightItem = Unsafe.Read<TNumber>(rightPointer);
-            Unsafe.Write(resultPointer, TOp.Invoke(leftItem, rightItem));
-            return;
+            Apply1D(action);
         }
-
-        if (_ranges.Length == 1)
+        else if (rank == 2)
         {
-            var range = _ranges[0];
-            ApplyBlock1D<TNumber, TOp>(
-                leftPointer,
-                rightPointer,
-                resultPointer,
-                range.Extent,
-                range.StrideLeft,
-                range.StrideRight,
-                range.StrideResult);
-            return;
+            Apply2D(action);
         }
-
-        if (_ranges.Length == 2)
+        else
         {
-            var outer = _ranges[0];
-            var inner = _ranges[1];
-            var nOuter = outer.Extent;
-            var strideLeftOuter = outer.StrideLeft;
-            var strideRightOuter = outer.StrideRight;
-            var strideResultOuter = outer.StrideResult;
-
-            _ = LazyParallelExecutor.For(
-                0,
-                nOuter,
-                ManagedTensorBackend.ParallelizationThreshold,
-                i =>
-                {
-                    var baseLeft = leftPointer + (i * strideLeftOuter);
-                    var baseRight = rightPointer + (i * strideRightOuter);
-                    var baseResult = resultPointer + (i * strideResultOuter);
-
-                    ApplyBlock1D<TNumber, TOp>(
-                        baseLeft,
-                        baseRight,
-                        baseResult,
-                        inner.Extent,
-                        inner.StrideLeft,
-                        inner.StrideRight,
-                        inner.StrideResult);
-                });
-            return;
+            ApplyND(action);
         }
-
-        _ = LazyParallelExecutor.For(
-            0,
-            _total,
-            ManagedTensorBackend.ParallelizationThreshold,
-            idx =>
-            {
-                long leftOffset = 0, rightOffset = 0, resultOffset = 0;
-                for (var rangeIdx = _ranges.Length - 1; rangeIdx >= 0; rangeIdx--)
-                {
-                    var range = _ranges[rangeIdx];
-                    var offset = idx % range.Extent;
-                    idx /= range.Extent;
-                    leftOffset += offset * range.StrideLeft;
-                    rightOffset += offset * range.StrideRight;
-                    resultOffset += offset * range.StrideResult;
-                }
-
-                var leftItem = Unsafe.Read<TNumber>(leftPointer + leftOffset);
-                var rightItem = Unsafe.Read<TNumber>(rightPointer + rightOffset);
-                Unsafe.Write(resultPointer + resultOffset, TOp.Invoke(leftItem, rightItem));
-            });
-    }
-
-    [MethodImpl(ImplementationOptions.FastPath)]
-    private static bool CheckAllUnitStrideNoBroadcast(DimRange[] ranges)
-    {
-        foreach (var range in ranges)
-        {
-            if (range.StrideResult != 1)
-            {
-                return false;
-            }
-
-            if (range.StrideLeft == 0 || range.StrideRight == 0)
-            {
-                return false;
-            }
-
-            if (range.StrideLeft != 1 || range.StrideRight != 1)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private static DimRange[] BuildDimRanges(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
     {
         var outRank = result.Shape.Rank;
+
         var leftDimsPadded = PadShape(left.Shape.Dimensions, outRank);
         var leftStridesPadded = PadStrides(left.Shape.Strides, outRank);
         var rightDimsPadded = PadShape(right.Shape.Dimensions, outRank);
         var rightStridesPadded = PadStrides(right.Shape.Strides, outRank);
         var outDimsPadded = PadShape(result.Shape.Dimensions, outRank);
         var outStridesPadded = PadStrides(result.Shape.Strides, outRank);
+
         var merged = new List<DimRange>();
+
         var dim = outRank - 1;
 
         while (dim >= 0)
         {
             var size = outDimsPadded[dim];
-            var leftStride = leftDimsPadded[dim] == 1 ? 0 : leftStridesPadded[dim];
-            var rightStride = rightDimsPadded[dim] == 1 ? 0 : rightStridesPadded[dim];
-            var resultStride = outStridesPadded[dim];
+
+            var sLeft = leftDimsPadded[dim] == 1 ? 0 : leftStridesPadded[dim];
+            var sRight = rightDimsPadded[dim] == 1 ? 0 : rightStridesPadded[dim];
+            var sOut = outStridesPadded[dim];
+
             var mergedSize = size;
             var moveDim = dim - 1;
 
@@ -179,21 +75,23 @@ internal class ManagedBinaryOpIterator<TNumber>
                 var nextSize = outDimsPadded[moveDim];
                 var nextLeftDim = leftDimsPadded[moveDim];
                 var nextRightDim = rightDimsPadded[moveDim];
+
                 var nextLeftStride = nextLeftDim == 1 ? 0 : leftStridesPadded[moveDim];
                 var nextRightStride = nextRightDim == 1 ? 0 : rightStridesPadded[moveDim];
                 var nextOutStride = outStridesPadded[moveDim];
-                var leftOk = leftStride == nextLeftStride * nextSize || leftStride == 0 || nextLeftStride == 0;
-                var rightOk = rightStride == nextRightStride * nextSize || rightStride == 0 || nextRightStride == 0;
-                var resultOk = resultStride == nextOutStride * nextSize;
 
-                if (!leftOk || !rightOk || !resultOk)
+                var aOk = sLeft == nextLeftStride * nextSize || sLeft == 0 || nextLeftStride == 0;
+                var bOk = sRight == nextRightStride * nextSize || sRight == 0 || nextRightStride == 0;
+                var outOk = sOut == nextOutStride * nextSize;
+
+                if (!aOk || !bOk || !outOk)
                 {
                     break;
                 }
 
                 mergedSize *= nextSize;
-                leftStride = leftStride != 0 ? leftStride : nextLeftStride;
-                rightStride = rightStride != 0 ? rightStride : nextRightStride;
+                sLeft = sLeft != 0 ? sLeft : nextLeftStride;
+                sRight = sRight != 0 ? sRight : nextRightStride;
 
                 moveDim--;
             }
@@ -202,9 +100,9 @@ internal class ManagedBinaryOpIterator<TNumber>
                 new DimRange
                 {
                     Extent = mergedSize,
-                    StrideLeft = leftStride,
-                    StrideRight = rightStride,
-                    StrideResult = resultStride
+                    StrideLeft = sLeft,
+                    StrideRight = sRight,
+                    StrideResult = sOut
                 });
 
             dim = moveDim;
@@ -259,161 +157,95 @@ internal class ManagedBinaryOpIterator<TNumber>
         return padded;
     }
 
-    private static unsafe void ApplyBlock1D<T, TOp>(
-        T* leftPointer,
-        T* rightPointer,
-        T* resultPointer,
-        long extent,
-        long leftStride,
-        long rightStride,
-        long resultStride)
-        where T : unmanaged, INumber<T>
-        where TOp : IManagedBinaryTensorOp
+    private void Apply1D(Action<long, long, long> action)
     {
-        if (CanAvx<T>() && resultStride == 1)
-        {
-            if (typeof(T) == typeof(float))
+        var d0 = _dimRanges[0];
+        var extent = d0.Extent;
+        var sL = d0.StrideLeft;
+        var sR = d0.StrideRight;
+        var sO = d0.StrideResult;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            extent,
+            ManagedTensorBackend.ParallelizationThreshold,
+            i =>
             {
-                if (TOp.IsAvxSupported<float>())
+                var offLeft = i * sL;
+                var offRight = i * sR;
+                var offOut = i * sO;
+
+                action(offLeft, offRight, offOut);
+            });
+    }
+
+    private void Apply2D(Action<long, long, long> action)
+    {
+        var dim0 = _dimRanges[0];
+        var dim1 = _dimRanges[1];
+        var extent0 = dim0.Extent;
+        var extent1 = dim1.Extent;
+        var leftStrideDim0 = dim0.StrideLeft;
+        var rightStrideDim0 = dim0.StrideRight;
+        var resultStrideDim0 = dim0.StrideResult;
+        var leftStrideDim1 = dim1.StrideLeft;
+        var rightStrideDim1 = dim1.StrideRight;
+        var resultStrideDim1 = dim1.StrideResult;
+        var total = extent0 * extent1;
+
+        _ = LazyParallelExecutor.For(
+            0,
+            total,
+            ManagedTensorBackend.ParallelizationThreshold,
+            idx =>
+            {
+                var i = idx / extent1;
+                var j = idx % extent1;
+
+                var baseLeft = i * leftStrideDim0;
+                var baseRight = i * rightStrideDim0;
+                var baseOut = i * resultStrideDim0;
+
+                var offLeft = baseLeft + (j * leftStrideDim1);
+                var offRight = baseRight + (j * rightStrideDim1);
+                var offOut = baseOut + (j * resultStrideDim1);
+
+                action(offLeft, offRight, offOut);
+            });
+    }
+
+    private void ApplyND(Action<long, long, long> action)
+    {
+        long totalElements = 1;
+        for (var d = 0; d < _dimRanges.Length; d++)
+        {
+            totalElements *= _dimRanges[d].Extent;
+        }
+
+        _ = LazyParallelExecutor.For(
+            0,
+            totalElements,
+            ManagedTensorBackend.ParallelizationThreshold,
+            idx =>
+            {
+                var offsetLeft = 0L;
+                var offsetRight = 0L;
+                var offsetOut = 0L;
+
+                var tmp = idx;
+
+                for (var dim = _dimRanges.Length - 1; dim >= 0; dim--)
                 {
-                    ApplyBlock1DAvxFp32<TOp>(
-                        (float*)leftPointer,
-                        (float*)rightPointer,
-                        (float*)resultPointer,
-                        extent,
-                        leftStride,
-                        rightStride);
-                    return;
+                    var ext = _dimRanges[dim].Extent;
+                    var coordinate = tmp % ext;
+                    tmp /= ext;
+
+                    offsetLeft += coordinate * _dimRanges[dim].StrideLeft;
+                    offsetRight += coordinate * _dimRanges[dim].StrideRight;
+                    offsetOut += coordinate * _dimRanges[dim].StrideResult;
                 }
-            }
-            else if (TOp.IsAvxSupported<double>())
-            {
-                ApplyBlock1DAvxFp64<TOp>(
-                    (double*)leftPointer,
-                    (double*)rightPointer,
-                    (double*)resultPointer,
-                    extent,
-                    leftStride,
-                    rightStride);
-                return;
-            }
-        }
 
-        for (long i = 0; i < extent; i++)
-        {
-            var a = Unsafe.Read<T>(leftPointer + (i * leftStride));
-            var b = Unsafe.Read<T>(rightPointer + (i * rightStride));
-            Unsafe.Write(resultPointer + (i * resultStride), TOp.Invoke(a, b));
-        }
-    }
-
-    private static bool CanAvx<T>()
-        where T : unmanaged, INumber<T>
-    {
-        return (IntrinsicsHelper.AvailableInstructionSets & SimdInstructionSet.Avx) != 0 &&
-               Avx.IsSupported &&
-               (typeof(T) == typeof(float) || typeof(T) == typeof(double));
-    }
-
-    private static unsafe void ApplyBlock1DAvxFp32<TOp>(
-        float* leftPointer,
-        float* rightPointer,
-        float* resultPointer,
-        long extent,
-        long leftStride,
-        long rightStride)
-        where TOp : IManagedBinaryTensorOp
-    {
-        const int vectorCount = 8;
-        long i = 0;
-
-        if (leftStride == 1 && rightStride == 1)
-        {
-            for (; i <= extent - vectorCount; i += vectorCount)
-            {
-                var left = Avx.LoadVector256(leftPointer + i);
-                var right = Avx.LoadVector256(rightPointer + i);
-                var result = TOp.InvokeAvx(left, right);
-                Avx.Store(resultPointer + i, result);
-            }
-        }
-        else if (leftStride == 0 && rightStride == 1)
-        {
-            var leftScalar = Vector256.Create(*leftPointer);
-            for (; i <= extent - vectorCount; i += vectorCount)
-            {
-                var right = Avx.LoadVector256(rightPointer + i);
-                var result = TOp.InvokeAvx(leftScalar, right);
-                Avx.Store(resultPointer + i, result);
-            }
-        }
-        else if (leftStride == 1 && rightStride == 0)
-        {
-            var rightScalar = Vector256.Create(*rightPointer);
-            for (; i <= extent - vectorCount; i += vectorCount)
-            {
-                var left = Avx.LoadVector256(leftPointer + i);
-                var result = TOp.InvokeAvx(left, rightScalar);
-                Avx.Store(resultPointer + i, result);
-            }
-        }
-
-        for (; i < extent; i++)
-        {
-            var left = *(leftPointer + (i * leftStride));
-            var right = *(rightPointer + (i * rightStride));
-            *(resultPointer + i) = TOp.Invoke(left, right);
-        }
-    }
-
-    private static unsafe void ApplyBlock1DAvxFp64<TOp>(
-        double* leftPointer,
-        double* rightPointer,
-        double* resultPointer,
-        long extent,
-        long leftStride,
-        long rightStride)
-        where TOp : IManagedBinaryTensorOp
-    {
-        const int vectorCount = 4;
-        long i = 0;
-
-        if (leftStride == 1 && rightStride == 1)
-        {
-            for (; i <= extent - vectorCount; i += vectorCount)
-            {
-                var left = Avx.LoadVector256(leftPointer + i);
-                var right = Avx.LoadVector256(rightPointer + i);
-                var result = TOp.InvokeAvx(left, right);
-                Avx.Store(resultPointer + i, result);
-            }
-        }
-        else if (leftStride == 0 && rightStride == 1)
-        {
-            var leftScalar = Vector256.Create(*leftPointer);
-            for (; i <= extent - vectorCount; i += vectorCount)
-            {
-                var right = Avx.LoadVector256(rightPointer + i);
-                var result = TOp.InvokeAvx(leftScalar, right);
-                Avx.Store(resultPointer + i, result);
-            }
-        }
-        else if (leftStride == 1 && rightStride == 0)
-        {
-            var rightScalar = Vector256.Create(*rightPointer);
-            for (; i <= extent - vectorCount; i += vectorCount)
-            {
-                var left = Avx.LoadVector256(leftPointer + i);
-                var right = TOp.InvokeAvx(left, rightScalar);
-                Avx.Store(resultPointer + i, right);
-            }
-        }
-
-        for (; i < extent; i++)
-        {
-            var left = *(leftPointer + (i * leftStride));
-            var right = *(rightPointer + (i * rightStride));
-            *(resultPointer + i) = TOp.Invoke(left, right);
-        }
+                action(offsetLeft, offsetRight, offsetOut);
+            });
     }
 }

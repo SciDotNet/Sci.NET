@@ -9,7 +9,6 @@ using Sci.NET.Common.Concurrency;
 using Sci.NET.Common.Intrinsics;
 using Sci.NET.Common.Memory;
 using Sci.NET.Common.Numerics;
-using Sci.NET.Mathematics.Backends.Managed.BinaryOps;
 using Sci.NET.Mathematics.Backends.Managed.Buffers;
 using Sci.NET.Mathematics.Backends.Managed.Iterators;
 using Sci.NET.Mathematics.Tensors;
@@ -22,28 +21,28 @@ internal class ManagedArithmeticKernels : IArithmeticKernels
         where TNumber : unmanaged, INumber<TNumber>
     {
         var iterator = new ManagedBinaryOpIterator<TNumber>(left, right, result);
-        iterator.Apply<ManagedAddOp>(left, right, result);
+        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] + right.Memory[rOffset]);
     }
 
     public void Subtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var iterator = new ManagedBinaryOpIterator<TNumber>(left, right, result);
-        iterator.Apply<ManagedSubtractOp>(left, right, result);
+        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] - right.Memory[rOffset]);
     }
 
     public void Multiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var iterator = new ManagedBinaryOpIterator<TNumber>(left, right, result);
-        iterator.Apply<ManagedMultiplyOp>(left, right, result);
+        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] * right.Memory[rOffset]);
     }
 
     public void Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var iterator = new ManagedBinaryOpIterator<TNumber>(left, right, result);
-        iterator.Apply<ManagedDivideOp>(left, right, result);
+        iterator.Apply((lOffset, rOffset, outOffset) => result.Memory[outOffset] = left.Memory[lOffset] / right.Memory[rOffset]);
     }
 
     public unsafe void Negate<TNumber>(
