@@ -3,17 +3,17 @@
 
 using System.Numerics;
 using Sci.NET.Common.Concurrency;
-using Sci.NET.Mathematics.Backends.Managed;
+using Sci.NET.Mathematics.Backends.Iterators;
 using Sci.NET.Mathematics.Tensors;
 
-namespace Sci.NET.Mathematics.Backends.Iterators;
+namespace Sci.NET.Mathematics.Backends.Managed.Iterators;
 
-internal class BinaryOpTensorIterator<TNumber>
+internal class ManagedBinaryOpIterator<TNumber>
     where TNumber : unmanaged, INumber<TNumber>
 {
     private readonly DimRange[] _dimRanges;
 
-    public BinaryOpTensorIterator(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
+    public ManagedBinaryOpIterator(ITensor<TNumber> left, ITensor<TNumber> right, ITensor<TNumber> result)
     {
         _dimRanges = BuildDimRanges(left, right, result);
     }
@@ -102,7 +102,7 @@ internal class BinaryOpTensorIterator<TNumber>
                     Extent = mergedSize,
                     StrideLeft = sLeft,
                     StrideRight = sRight,
-                    StrideOut = sOut
+                    StrideResult = sOut
                 });
 
             dim = moveDim;
@@ -163,7 +163,7 @@ internal class BinaryOpTensorIterator<TNumber>
         var extent = d0.Extent;
         var sL = d0.StrideLeft;
         var sR = d0.StrideRight;
-        var sO = d0.StrideOut;
+        var sO = d0.StrideResult;
 
         _ = LazyParallelExecutor.For(
             0,
@@ -181,20 +181,16 @@ internal class BinaryOpTensorIterator<TNumber>
 
     private void Apply2D(Action<long, long, long> action)
     {
-        var d0 = _dimRanges[0];
-        var d1 = _dimRanges[1];
-
-        var extent0 = d0.Extent;
-        var extent1 = d1.Extent;
-
-        var sL0 = d0.StrideLeft;
-        var sR0 = d0.StrideRight;
-        var sO0 = d0.StrideOut;
-
-        var sL1 = d1.StrideLeft;
-        var sR1 = d1.StrideRight;
-        var sO1 = d1.StrideOut;
-
+        var dim0 = _dimRanges[0];
+        var dim1 = _dimRanges[1];
+        var extent0 = dim0.Extent;
+        var extent1 = dim1.Extent;
+        var leftStrideDim0 = dim0.StrideLeft;
+        var rightStrideDim0 = dim0.StrideRight;
+        var resultStrideDim0 = dim0.StrideResult;
+        var leftStrideDim1 = dim1.StrideLeft;
+        var rightStrideDim1 = dim1.StrideRight;
+        var resultStrideDim1 = dim1.StrideResult;
         var total = extent0 * extent1;
 
         _ = LazyParallelExecutor.For(
@@ -206,13 +202,13 @@ internal class BinaryOpTensorIterator<TNumber>
                 var i = idx / extent1;
                 var j = idx % extent1;
 
-                var baseLeft = i * sL0;
-                var baseRight = i * sR0;
-                var baseOut = i * sO0;
+                var baseLeft = i * leftStrideDim0;
+                var baseRight = i * rightStrideDim0;
+                var baseOut = i * resultStrideDim0;
 
-                var offLeft = baseLeft + (j * sL1);
-                var offRight = baseRight + (j * sR1);
-                var offOut = baseOut + (j * sO1);
+                var offLeft = baseLeft + (j * leftStrideDim1);
+                var offRight = baseRight + (j * rightStrideDim1);
+                var offOut = baseOut + (j * resultStrideDim1);
 
                 action(offLeft, offRight, offOut);
             });
@@ -246,7 +242,7 @@ internal class BinaryOpTensorIterator<TNumber>
 
                     offsetLeft += coordinate * _dimRanges[dim].StrideLeft;
                     offsetRight += coordinate * _dimRanges[dim].StrideRight;
-                    offsetOut += coordinate * _dimRanges[dim].StrideOut;
+                    offsetOut += coordinate * _dimRanges[dim].StrideResult;
                 }
 
                 action(offsetLeft, offsetRight, offsetOut);

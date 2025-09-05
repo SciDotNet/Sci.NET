@@ -1,12 +1,12 @@
 ﻿// Copyright (c) Sci.NET Foundation. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Sci.NET.Common.Numerics;
 using Sci.NET.Mathematics.Tensors.Common;
 using Sci.NET.Mathematics.Tensors.Exceptions;
+using Sci.NET.Mathematics.Tensors.Manipulation;
 
 namespace Sci.NET.Mathematics.Tensors.Pointwise.Implementations;
 
@@ -15,2743 +15,620 @@ internal class ArithmeticService : IArithmeticService
 {
     private readonly IDeviceGuardService _deviceGuardService;
     private readonly IGradientAppenderService _gradientAppenderService;
+    private readonly IBroadcastService _broadcastService;
 
     public ArithmeticService()
     {
         _deviceGuardService = TensorServiceProvider.GetTensorOperationServiceProvider().GetDeviceGuardService();
         _gradientAppenderService = TensorServiceProvider.GetTensorOperationServiceProvider().GetGradientAppenderService();
+        _broadcastService = TensorServiceProvider.GetTensorOperationServiceProvider().GetBroadcastingService();
     }
 
-    public Scalar<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
-        Scalar<TNumber> right)
+    public Scalar<TNumber> Add<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.AddTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToScalar();
     }
 
-    public Vector<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
-        Vector<TNumber> right)
+    public Vector<TNumber> Add<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(right.Length, backend);
-
-        backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToVector();
     }
 
-    public Matrix<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
-        Matrix<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToMatrix();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Scalar<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public Vector<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
-        Scalar<TNumber> right)
+    public Vector<TNumber> Add<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToVector();
     }
 
-    public Vector<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
-        Vector<TNumber> right)
+    public Vector<TNumber> Add<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot add vectors of different lengths: {left.Length} and {right.Length}.");
-        }
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.AddTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToVector();
     }
 
-    public Matrix<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
-        Matrix<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot add vector of length {left.Length} to matrix with {right.Columns}.");
-        }
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToMatrix();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Vector<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"Cannot add vector of length {left.Length} to tensor with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public Matrix<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
-        Scalar<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Columns != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot add matrix with {left.Columns} columns to vector of length {right.Length}.");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Length,
-            right.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
-        Matrix<TNumber> right)
+    public Matrix<TNumber> Add<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Rows != right.Rows || left.Columns != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot add matrices with different shapes: {left.Shape} and {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.AddTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToMatrix();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Matrix<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"Cannot add matrix with shape {left.Shape} to tensor with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.AddBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Shape.ElementCount,
-            left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Tensor<TNumber> left,
-        Scalar<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Tensor<TNumber> left,
-        Vector<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^1] != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot add tensor with shape {left.Shape} to vector of length {right.Length}.");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Length,
-            right.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Tensor<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^1] != right.Columns || left.Shape[^2] != right.Rows)
-        {
-            throw new InvalidShapeException($"Cannot add tensor with shape {left.Shape} to matrix with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.AddTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
-
-        return result;
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Add<TNumber>(
-        Tensor<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Add<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape == right.Shape)
-        {
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.AddTensorTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                grad => grad,
-                grad => grad);
-
-            return result;
-        }
-
-        if (left.Shape.ElementCount > right.Shape.ElementCount)
-        {
-            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.AddTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                right.Shape.ElementCount,
-                left.Shape.ElementCount / right.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                grad => grad,
-                grad => grad);
-
-            return result;
-        }
-        else
-        {
-            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(right.Shape, backend);
-
-            backend.Arithmetic.AddTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount,
-                right.Shape.ElementCount / left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                grad => grad,
-                grad => grad);
-
-            return result;
-        }
+        return GenericAdd(left, right).ToTensor();
     }
 
-    public ITensor<TNumber> Add<TNumber>(
-        ITensor<TNumber> left,
-        ITensor<TNumber> right)
+    public ITensor<TNumber> Add<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.IsScalar())
-        {
-            if (right.IsScalar())
-            {
-                return Add(left.ToScalar(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Add(left.ToScalar(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Add(left.ToScalar(), right.ToMatrix());
-            }
-
-            return Add(left.ToScalar(), right.ToTensor());
-        }
-
-        if (left.IsVector())
-        {
-            if (right.IsScalar())
-            {
-                return Add(left.ToVector(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Add(left.ToVector(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Add(left.ToVector(), right.ToMatrix());
-            }
-
-            return Add(left.ToVector(), right.ToTensor());
-        }
-
-        if (left.IsMatrix())
-        {
-            if (right.IsScalar())
-            {
-                return Add(left.ToMatrix(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Add(left.ToMatrix(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Add(left.ToMatrix(), right.ToMatrix());
-            }
-
-            return Add(left.ToMatrix(), right.ToTensor());
-        }
-
-        if (left.IsTensor())
-        {
-            if (right.IsScalar())
-            {
-                return Add(left.ToTensor(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Add(left.ToTensor(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Add(left.ToTensor(), right.ToMatrix());
-            }
-
-            return Add(left.ToTensor(), right.ToTensor());
-        }
-
-        throw new UnreachableException();
+        return GenericAdd(left, right);
     }
 
-    public void AddInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+    public Scalar<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        InvalidShapeException.ThrowIfDifferentElementCount(left.Shape, right.Shape);
-
-        left.Backend.Arithmetic.AddTensorTensorInplace(left.Memory, right.Memory, left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref left,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad);
+        return GenericSubtract(left, right).ToScalar();
     }
 
-    public Scalar<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
-        Scalar<TNumber> right)
+    public Vector<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.SubtractTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToVector();
     }
 
-    public Vector<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(right.Length, backend);
-
-        backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Scalar<TNumber> left,
-        Tensor<TNumber> right)
+    public Vector<TNumber> Subtract<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToVector();
     }
 
-    public Vector<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
-        Scalar<TNumber> right)
+    public Vector<TNumber> Subtract<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToVector();
     }
 
-    public Vector<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Length)
-        {
-            throw new InvalidShapeException(
-                $"The length of the left vector ({left.Length}) " +
-                $"does not match the length of the right vector ({right.Length}).");
-        }
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.SubtractTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Columns)
-        {
-            throw new InvalidShapeException(
-                $"The length of the left vector ({left.Length}) " +
-                $"does not match the number of columns of the right matrix ({right.Columns}).");
-        }
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Vector<TNumber> left,
-        Tensor<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Shape[^1])
-        {
-            throw new ArgumentException(
-                $"The length of the left vector ({left.Length}) " +
-                $"does not match the last dimension of the right tensor ({right.Shape[0]}).");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
-        Scalar<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Columns != right.Length)
-        {
-            throw new InvalidShapeException(
-                $"The number of columns of the left matrix ({left.Columns}) " +
-                $"does not match the length of the right vector ({right.Length}).");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Rows,
-            left.Columns);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        if (left.Rows != right.Rows || left.Columns != right.Columns)
-        {
-            throw new InvalidShapeException(
-                $"The shape of the left matrix ({left.Rows}, {left.Columns}) " +
-                $"does not match the shape of the right matrix ({right.Rows}, {right.Columns}).");
-        }
-
-        var backend = left.Backend;
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.SubtractTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Matrix<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        if (left.Columns != right.Shape[^2] || left.Rows != right.Shape[^1])
-        {
-            throw new InvalidShapeException(
-                $"The shape of the left matrix ({left.Rows}, {left.Columns}) " +
-                $"does not match the last dimensions of the shape of the right tensor ({right.Shape[^2]}, {right.Shape[^1]}).");
-        }
-
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.SubtractBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Shape.ElementCount,
-            left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Tensor<TNumber> left,
-        Scalar<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Tensor<TNumber> left,
-        Vector<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^1] != right.Length)
-        {
-            throw new InvalidShapeException(
-                $"The last dimension of the left tensor ({left.Shape[^1]}) " +
-                $"does not match the length of the right vector ({right.Length}).");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Length,
-            left.Shape.ElementCount / right.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Tensor<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Subtract<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        if (left.Shape[^1] != right.Rows || left.Shape[^2] != right.Columns)
-        {
-            throw new InvalidShapeException(
-                $"The last two dimensions of the left tensor ({left.Shape[^2]}, {left.Shape[^1]}) " +
-                $"do not match the shape of the right matrix ({right.Rows}, {right.Columns}).");
-        }
-
-        var backend = left.Backend;
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.SubtractTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            grad => grad,
-            grad => grad.Negate());
-
-        return result;
+        return GenericSubtract(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Subtract<TNumber>(
-        Tensor<TNumber> left,
-        Tensor<TNumber> right)
+    public ITensor<TNumber> Subtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape == right.Shape)
-        {
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.SubtractTensorTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                grad => grad,
-                grad => grad.Negate());
-
-            return result;
-        }
-
-        if (left.Shape.ElementCount > right.Shape.ElementCount)
-        {
-            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.SubtractTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                right.Shape.ElementCount,
-                left.Shape.ElementCount / right.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                grad => grad,
-                grad => grad.Negate());
-
-            return result;
-        }
-        else
-        {
-            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(right.Shape, backend);
-
-            backend.Arithmetic.SubtractTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount,
-                right.Shape.ElementCount / left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                grad => grad,
-                grad => grad.Negate());
-
-            return result;
-        }
+        return GenericSubtract(left, right);
     }
 
-    public ITensor<TNumber> Subtract<TNumber>(
-        ITensor<TNumber> left,
-        ITensor<TNumber> right)
+    public Scalar<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.IsScalar())
-        {
-            if (right.IsScalar())
-            {
-                return Subtract(left.ToScalar(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Subtract(left.ToScalar(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Subtract(left.ToScalar(), right.ToMatrix());
-            }
-
-            return Subtract(left.ToScalar(), right.ToTensor());
-        }
-
-        if (left.IsVector())
-        {
-            if (right.IsScalar())
-            {
-                return Subtract(left.ToVector(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Subtract(left.ToVector(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Subtract(left.ToVector(), right.ToMatrix());
-            }
-
-            return Subtract(left.ToVector(), right.ToTensor());
-        }
-
-        if (left.IsMatrix())
-        {
-            if (right.IsScalar())
-            {
-                return Subtract(left.ToMatrix(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Subtract(left.ToMatrix(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Subtract(left.ToMatrix(), right.ToMatrix());
-            }
-
-            return Subtract(left.ToMatrix(), right.ToTensor());
-        }
-
-        if (left.IsTensor())
-        {
-            if (right.IsScalar())
-            {
-                return Subtract(left.ToTensor(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Subtract(left.ToTensor(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Subtract(left.ToTensor(), right.ToMatrix());
-            }
-
-            return Subtract(left.ToTensor(), right.ToTensor());
-        }
-
-        throw new UnreachableException();
+        return GenericMultiply(left, right).ToScalar();
     }
 
-    public Scalar<TNumber> Multiply<TNumber>(
-        Scalar<TNumber> left,
-        Scalar<TNumber> right)
+    public Vector<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.MultiplyTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToVector();
     }
 
-    public Vector<TNumber> Multiply<TNumber>(
-        Scalar<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(right.Length, backend);
-
-        backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(
-        Scalar<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Scalar<TNumber> left,
-        Tensor<TNumber> right)
+    public Vector<TNumber> Multiply<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToVector();
     }
 
-    public Vector<TNumber> Multiply<TNumber>(
-        Vector<TNumber> left,
-        Scalar<TNumber> right)
+    public Vector<TNumber> Multiply<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToVector();
     }
 
-    public Vector<TNumber> Multiply<TNumber>(
-        Vector<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Length)
-        {
-            throw new InvalidShapeException(
-                $"The length of the left vector ({left.Shape}) " +
-                $"does not match the length of the right vector ({right.Shape}).");
-        }
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.MultiplyTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(
-        Vector<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Columns)
-        {
-            throw new InvalidShapeException(
-                $"The length of the left vector ({left.Shape}) " +
-                $"does not match the number of rows of the right matrix ({right.Shape}).");
-        }
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length,
-            right.Rows);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Vector<TNumber> left,
-        Tensor<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"The length of the left vector ({left.Shape}) the last dimension of the right tensor ({right.Shape}).");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(
-        Matrix<TNumber> left,
-        Scalar<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(
-        Matrix<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Columns != right.Length)
-        {
-            throw new InvalidShapeException(
-                $"The number of columns of the left matrix ({left.Shape}) " +
-                $"does not match the length of the right vector ({right.Shape}).");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Length,
-            right.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Multiply<TNumber>(
-        Matrix<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape != right.Shape)
-        {
-            throw new InvalidShapeException(
-                $"The shape of the left matrix ({left.Shape}) " +
-                $"does not match the shape of the right matrix ({right.Shape}).");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, right.Columns, backend);
-
-        backend.Arithmetic.MultiplyTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Matrix<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Rows != right.Shape[^2] || left.Columns != right.Shape[^1])
-        {
-            throw new InvalidShapeException(
-                $"The shape of the left matrix ({left.Shape}) " +
-                $"does not match the last and second to last dimensions of the right tensor ({right.Shape}).");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.MultiplyBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Shape.ElementCount,
-            left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Tensor<TNumber> left,
-        Scalar<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Tensor<TNumber> left,
-        Vector<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^1] != right.Length)
-        {
-            throw new InvalidShapeException(
-                $"The last dimension of the left tensor ({left.Shape}) " +
-                $"does not match the length of the right vector ({right.Shape}).");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Length,
-            right.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Tensor<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Multiply<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
-        {
-            throw new InvalidShapeException(
-                $"The last two dimension of the left tensor ({left.Shape}) " +
-                $"does not match the shape of the right matrix ({right.Shape}).");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.MultiplyTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
-
-        return result;
+        return GenericMultiply(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Multiply<TNumber>(
-        Tensor<TNumber> left,
-        Tensor<TNumber> right)
+    public ITensor<TNumber> Multiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape == right.Shape)
-        {
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.MultiplyTensorTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                right.Multiply,
-                left.Multiply);
-
-            return result;
-        }
-
-        if (left.Shape.ElementCount > right.Shape.ElementCount)
-        {
-            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.MultiplyTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                right.Shape.ElementCount,
-                left.Shape.ElementCount / right.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                right.Multiply,
-                left.Multiply);
-
-            return result;
-        }
-        else
-        {
-            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(right.Shape, backend);
-
-            backend.Arithmetic.MultiplyTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount,
-                right.Shape.ElementCount / left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                right.Multiply,
-                left.Multiply);
-
-            return result;
-        }
-    }
-
-    public ITensor<TNumber> Abs<TNumber>(ITensor<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return Abs(value.ToTensor());
-    }
-
-    public ITensor<TNumber> Multiply<TNumber>(
-        ITensor<TNumber> left,
-        ITensor<TNumber> right)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        if (left.IsScalar())
-        {
-            if (right.IsScalar())
-            {
-                return Multiply(left.ToScalar(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Multiply(left.ToScalar(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Multiply(left.ToScalar(), right.ToMatrix());
-            }
-
-            return Multiply(left.ToScalar(), right.ToTensor());
-        }
-
-        if (left.IsVector())
-        {
-            if (right.IsScalar())
-            {
-                return Multiply(left.ToVector(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Multiply(left.ToVector(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Multiply(left.ToVector(), right.ToMatrix());
-            }
-
-            return Multiply(left.ToVector(), right.ToTensor());
-        }
-
-        if (left.IsMatrix())
-        {
-            if (right.IsScalar())
-            {
-                return Multiply(left.ToMatrix(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Multiply(left.ToMatrix(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Multiply(left.ToMatrix(), right.ToMatrix());
-            }
-
-            return Multiply(left.ToMatrix(), right.ToTensor());
-        }
-
-        if (left.IsTensor())
-        {
-            if (right.IsScalar())
-            {
-                return Multiply(left.ToTensor(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Multiply(left.ToTensor(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Multiply(left.ToTensor(), right.ToMatrix());
-            }
-
-            return Multiply(left.ToTensor(), right.ToTensor());
-        }
-
-        throw new UnreachableException();
+        return GenericMultiply(left, right);
     }
 
     public void MultiplyInplace<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        InvalidShapeException.ThrowIfDifferentElementCount(left.Shape, right.Shape);
-
-        left.Backend.Arithmetic.MultiplyTensorTensorInplace(left.Memory, right.Memory, left.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref left,
-            left,
-            right,
-            null,
-            right.Multiply,
-            left.Multiply);
+        throw new NotSupportedException("Inplace multiplication is not supported.");
     }
 
-    public Scalar<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Scalar<TNumber> right)
+    public Scalar<TNumber> Divide<TNumber>(Scalar<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.DivideTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToScalar();
     }
 
-    public Vector<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Vector<TNumber> right)
+    public Vector<TNumber> Divide<TNumber>(Scalar<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(right.Length, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToVector();
     }
 
-    public Matrix<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Matrix<TNumber> right)
+    public Matrix<TNumber> Divide<TNumber>(Scalar<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToMatrix();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Scalar<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Scalar<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public Vector<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Scalar<TNumber> right)
+    public Vector<TNumber> Divide<TNumber>(Vector<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToVector();
     }
 
-    public Vector<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Vector<TNumber> right)
+    public Vector<TNumber> Divide<TNumber>(Vector<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot divide vectors with different lengths: {left.Shape} and {right.Shape}.");
-        }
-
-        var result = new Vector<TNumber>(left.Length, backend);
-
-        backend.Arithmetic.DivideTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToVector();
     }
 
-    public Matrix<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Matrix<TNumber> right)
+    public Matrix<TNumber> Divide<TNumber>(Vector<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by matrix with shape {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(right.Rows, right.Columns, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToMatrix();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Vector<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Vector<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Length != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"Cannot divide vector with length {left.Shape} by tensor with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            right.Shape.ElementCount / left.Length,
-            left.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public Matrix<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Scalar<TNumber> right)
+    public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Vector<TNumber> right)
+    public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Columns != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by vector with length {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Rows,
-            left.Columns);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToMatrix();
     }
 
-    public Matrix<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Matrix<TNumber> right)
+    public Matrix<TNumber> Divide<TNumber>(Matrix<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        var backend = left.Backend;
-
-        if (left.Rows != right.Rows || left.Columns != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot divide matrices with different shapes: {left.Shape} and {right.Shape}.");
-        }
-
-        var result = new Matrix<TNumber>(left.Rows, left.Columns, backend);
-
-        backend.Arithmetic.DivideTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Rows * left.Columns);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToMatrix();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Matrix<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Matrix<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-
-        var backend = left.Backend;
-
-        if (left.Rows != right.Shape[^1] || left.Columns != right.Shape[^1])
-        {
-            throw new InvalidShapeException($"Cannot divide matrix with shape {left.Shape} by tensor with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(right.Shape, backend);
-
-        backend.Arithmetic.DivideBroadcastTensorTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Columns,
-            right.Shape.ElementCount / left.Columns);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Scalar<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Scalar<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount,
-            1);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Vector<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Vector<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^1] != right.Length)
-        {
-            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by vector with length {right.Length}.");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Length,
-            right.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Matrix<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Matrix<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape[^2] != right.Rows || left.Shape[^1] != right.Columns)
-        {
-            throw new InvalidShapeException($"Cannot divide tensor with shape {left.Shape} by matrix with shape {right.Shape}.");
-        }
-
-        var result = new Tensor<TNumber>(left.Shape, backend);
-
-        backend.Arithmetic.DivideTensorBroadcastTensor(
-            left.Memory,
-            right.Memory,
-            result.Memory,
-            left.Shape.ElementCount / right.Shape.ElementCount,
-            right.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            left,
-            right,
-            null,
-            right.Divide,
-            grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-        return result;
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public Tensor<TNumber> Divide<TNumber>(
-        Tensor<TNumber> left,
-        Tensor<TNumber> right)
+    public Tensor<TNumber> Divide<TNumber>(Tensor<TNumber> left, Tensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        _ = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
-        var backend = left.Backend;
-
-        if (left.Shape == right.Shape)
-        {
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.DivideTensorTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                right.Divide,
-                grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-            return result;
-        }
-
-        if (left.Shape.ElementCount > right.Shape.ElementCount)
-        {
-            for (var i = left.Shape.Rank - 1; i > right.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(left.Shape, backend);
-
-            backend.Arithmetic.DivideTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                right.Shape.ElementCount,
-                left.Shape.ElementCount / right.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                right.Divide,
-                grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-            return result;
-        }
-        else
-        {
-            for (var i = right.Shape.Rank - 1; i > left.Shape.Rank - 1; i--)
-            {
-                if (left.Shape[i] != right.Shape[i])
-                {
-                    throw new InvalidShapeException($"Cannot add tensors with different shapes: {left.Shape} and {right.Shape}.");
-                }
-            }
-
-            var result = new Tensor<TNumber>(right.Shape, backend);
-
-            backend.Arithmetic.DivideTensorBroadcastTensor(
-                left.Memory,
-                right.Memory,
-                result.Memory,
-                left.Shape.ElementCount,
-                right.Shape.ElementCount / left.Shape.ElementCount);
-
-            _gradientAppenderService.AddGradientIfRequired(
-                ref result,
-                left,
-                right,
-                null,
-                right.Divide,
-                grad => grad.Multiply(left).Divide(right.Square()).Negate());
-
-            return result;
-        }
+        return GenericDivide(left, right).ToTensor();
     }
 
-    public ITensor<TNumber> Divide<TNumber>(
-        ITensor<TNumber> left,
-        ITensor<TNumber> right)
+    public ITensor<TNumber> Divide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        if (left.IsScalar())
-        {
-            if (right.IsScalar())
-            {
-                return Divide(left.ToScalar(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Divide(left.ToScalar(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Divide(left.ToScalar(), right.ToMatrix());
-            }
-
-            return Divide(left.ToScalar(), right.ToTensor());
-        }
-
-        if (left.IsVector())
-        {
-            if (right.IsScalar())
-            {
-                return Divide(left.ToVector(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Divide(left.ToVector(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Divide(left.ToVector(), right.ToMatrix());
-            }
-
-            return Divide(left.ToVector(), right.ToTensor());
-        }
-
-        if (left.IsMatrix())
-        {
-            if (right.IsScalar())
-            {
-                return Divide(left.ToMatrix(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Divide(left.ToMatrix(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Divide(left.ToMatrix(), right.ToMatrix());
-            }
-
-            return Divide(left.ToMatrix(), right.ToTensor());
-        }
-
-        if (left.IsTensor())
-        {
-            if (right.IsScalar())
-            {
-                return Divide(left.ToTensor(), right.ToScalar());
-            }
-
-            if (right.IsVector())
-            {
-                return Divide(left.ToTensor(), right.ToVector());
-            }
-
-            if (right.IsMatrix())
-            {
-                return Divide(left.ToTensor(), right.ToMatrix());
-            }
-
-            return Divide(left.ToTensor(), right.ToTensor());
-        }
-
-        throw new UnreachableException();
-    }
-
-    public Scalar<TNumber> Sqrt<TNumber>(Scalar<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return SqrtGeneric(value).ToScalar();
-    }
-
-    public Vector<TNumber> Sqrt<TNumber>(Vector<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return SqrtGeneric(value).ToVector();
-    }
-
-    public Matrix<TNumber> Sqrt<TNumber>(Matrix<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return SqrtGeneric(value).ToMatrix();
-    }
-
-    public Tensor<TNumber> Sqrt<TNumber>(Tensor<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return SqrtGeneric(value).ToTensor();
+        return GenericDivide(left, right);
     }
 
     public Scalar<TNumber> Negate<TNumber>(Scalar<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Scalar<TNumber>(newMemoryBlock, backend);
-        }
-
-        var result = new Scalar<TNumber>(backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            value,
-            null,
-            grad => grad.Negate());
-
-        return result;
+        return GenericNegate(value).ToScalar();
     }
 
     public Vector<TNumber> Negate<TNumber>(Vector<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Vector<TNumber>(value.Length, newMemoryBlock, backend);
-        }
-
-        var result = new Vector<TNumber>(value.Length, backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            value,
-            null,
-            grad => grad.Negate());
-
-        return result;
+        return GenericNegate(value).ToVector();
     }
 
     public Matrix<TNumber> Negate<TNumber>(Matrix<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
-        var backend = value.Backend;
-
-        if (!GenericMath.IsSigned<TNumber>())
-        {
-            var newMemoryBlock = value.Memory.Copy();
-
-            return new Matrix<TNumber>(value.Rows, value.Columns, newMemoryBlock, backend);
-        }
-
-        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
-
-        backend.Arithmetic.Negate(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            value,
-            null,
-            grad => grad.Negate());
-
-        return result;
+        return GenericNegate(value).ToMatrix();
     }
 
     public Tensor<TNumber> Negate<TNumber>(Tensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
+        return GenericNegate(value).ToTensor();
+    }
+
+    public ITensor<TNumber> Negate<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericNegate(value);
+    }
+
+    public Scalar<TNumber> Abs<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericAbs(value).ToScalar();
+    }
+
+    public Vector<TNumber> Abs<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericAbs(value).ToVector();
+    }
+
+    public Matrix<TNumber> Abs<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericAbs(value).ToMatrix();
+    }
+
+    public Tensor<TNumber> Abs<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericAbs(value).ToTensor();
+    }
+
+    public ITensor<TNumber> Abs<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericAbs(value);
+    }
+
+    public Scalar<TNumber> Sqrt<TNumber>(Scalar<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericSqrt(value).ToScalar();
+    }
+
+    public Vector<TNumber> Sqrt<TNumber>(Vector<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericSqrt(value).ToVector();
+    }
+
+    public Matrix<TNumber> Sqrt<TNumber>(Matrix<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericSqrt(value).ToMatrix();
+    }
+
+    public Tensor<TNumber> Sqrt<TNumber>(Tensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericSqrt(value).ToTensor();
+    }
+
+    public ITensor<TNumber> Sqrt<TNumber>(ITensor<TNumber> tensor)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        return GenericSqrt(tensor);
+    }
+
+    private ITensor<TNumber> GenericAdd<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
+        var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
+
+        device.Arithmetic.Add(left, right, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad);
+
+        return result;
+    }
+
+    private ITensor<TNumber> GenericSubtract<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
+        var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
+
+        device.Arithmetic.Subtract(left, right, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            grad => grad,
+            grad => grad.Negate());
+
+        return result;
+    }
+
+    private ITensor<TNumber> GenericMultiply<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
+        var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
+
+        device.Arithmetic.Multiply(left, right, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Multiply,
+            left.Multiply);
+
+        return result;
+    }
+
+    private ITensor<TNumber> GenericDivide<TNumber>(ITensor<TNumber> left, ITensor<TNumber> right)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
+        var device = _deviceGuardService.GuardBinaryOperation(left.Device, right.Device);
+        var outputShape = GetBinaryOpOutputShape(left.Shape, right.Shape);
+        var result = new Tensor<TNumber>(outputShape, device, left.RequiresGradient || right.RequiresGradient);
+
+        device.Arithmetic.Divide(left, right, result);
+
+        _gradientAppenderService.AddGradientIfRequired(
+            ref result,
+            left,
+            right,
+            null,
+            right.Divide,
+            grad => grad.Multiply(left).Divide(right.Square()).Negate());
+
+        return result;
+    }
+
+    private ITensor<TNumber> GenericNegate<TNumber>(ITensor<TNumber> value)
+        where TNumber : unmanaged, INumber<TNumber>
+    {
         var backend = value.Backend;
 
         if (!GenericMath.IsSigned<TNumber>())
         {
             var newMemoryBlock = value.Memory.Copy();
 
-            return new Tensor<TNumber>(newMemoryBlock, value.Shape, backend, value.RequiresGradient);
+            var resultShortcut = new Tensor<TNumber>(newMemoryBlock, value.Shape, backend, value.RequiresGradient);
+
+            _gradientAppenderService.AddGradientIfRequired(
+                ref resultShortcut,
+                value,
+                null,
+                grad => grad.Negate());
+
+            return resultShortcut;
         }
 
-        var result = new Tensor<TNumber>(value.Shape, backend);
+        var result = new Tensor<TNumber>(backend, value.RequiresGradient, value.Shape.Dimensions);
 
         backend.Arithmetic.Negate(
             value.Memory,
@@ -2767,95 +644,27 @@ internal class ArithmeticService : IArithmeticService
         return result;
     }
 
-    public ITensor<TNumber> Negate<TNumber>(ITensor<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return Negate(value.ToTensor());
-    }
-
-    public Scalar<TNumber> Abs<TNumber>(Scalar<TNumber> value)
+    private ITensor<TNumber> GenericAbs<TNumber>(ITensor<TNumber> value)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = value.Backend;
-        var result = new Scalar<TNumber>(backend);
 
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            1);
+        if (!GenericMath.IsSigned<TNumber>())
+        {
+            var newMemoryBlock = value.Memory.Copy();
 
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            value,
-            null,
-            grad =>
-            {
-                var gradResult = new Scalar<TNumber>(TNumber.Zero, value.Backend);
-                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
+            var resultShortcut = new Tensor<TNumber>(newMemoryBlock, value.Shape, backend, value.RequiresGradient);
 
-                return gradResult;
-            });
+            _gradientAppenderService.AddGradientIfRequired(
+                ref resultShortcut,
+                value,
+                null,
+                grad => grad);
 
-        return result;
-    }
+            return resultShortcut;
+        }
 
-    public Vector<TNumber> Abs<TNumber>(Vector<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Vector<TNumber>(value.Length, backend);
-
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            value.Length);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            value,
-            null,
-            grad =>
-            {
-                var gradResult = new Vector<TNumber>(value.Length, value.Backend);
-                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
-
-                return gradResult;
-            });
-
-        return result;
-    }
-
-    public Matrix<TNumber> Abs<TNumber>(Matrix<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Matrix<TNumber>(value.Rows, value.Columns, backend);
-
-        backend.Arithmetic.Abs(
-            value.Memory,
-            result.Memory,
-            value.Shape.ElementCount);
-
-        _gradientAppenderService.AddGradientIfRequired(
-            ref result,
-            value,
-            null,
-            grad =>
-            {
-                var gradResult = new Matrix<TNumber>(value.Rows, value.Columns, value.Backend);
-                value.Backend.Arithmetic.AbsGradient(value.Memory, grad.Memory, gradResult.Memory, value.Shape.ElementCount);
-
-                return gradResult;
-            });
-
-        return result;
-    }
-
-    public Tensor<TNumber> Abs<TNumber>(Tensor<TNumber> value)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        var backend = value.Backend;
-        var result = new Tensor<TNumber>(value.Shape, backend);
+        var result = new Tensor<TNumber>(backend, value.RequiresGradient, value.Shape.Dimensions);
 
         backend.Arithmetic.Abs(
             value.Memory,
@@ -2877,17 +686,11 @@ internal class ArithmeticService : IArithmeticService
         return result;
     }
 
-    public ITensor<TNumber> Sqrt<TNumber>(ITensor<TNumber> tensor)
-        where TNumber : unmanaged, INumber<TNumber>
-    {
-        return SqrtGeneric(tensor);
-    }
-
-    private ITensor<TNumber> SqrtGeneric<TNumber>(ITensor<TNumber> tensor)
+    private ITensor<TNumber> GenericSqrt<TNumber>(ITensor<TNumber> tensor)
         where TNumber : unmanaged, INumber<TNumber>
     {
         var backend = tensor.Backend;
-        var result = new Tensor<TNumber>(tensor.Shape, backend);
+        var result = new Tensor<TNumber>(backend, tensor.RequiresGradient, tensor.Shape.Dimensions);
 
         backend.Arithmetic.Sqrt(
             tensor.Memory,
@@ -2908,5 +711,28 @@ internal class ArithmeticService : IArithmeticService
             });
 
         return result;
+    }
+
+    private Shape GetBinaryOpOutputShape(Shape left, Shape right)
+    {
+        Shape bigger, smaller;
+
+        if (left.Rank < right.Rank)
+        {
+            bigger = right;
+            smaller = left;
+        }
+        else
+        {
+            bigger = left;
+            smaller = right;
+        }
+
+        if (!_broadcastService.CanBroadcastTo(smaller, bigger))
+        {
+            throw new InvalidShapeException($"Cannot broadcast shapes {left} and {right} for a binary operation.");
+        }
+
+        return bigger;
     }
 }

@@ -155,4 +155,43 @@ public static class LazyParallelExecutor
             1,
             body);
     }
+
+    /// <summary>
+    /// Executes a loop in parallel over blocks of indices.
+    /// </summary>
+    /// <param name="iFrom">The index to start from (inclusive) for the outer loop.</param>
+    /// <param name="iTo">The index to iterate to (exclusive) for outer loop.</param>
+    /// <param name="jFrom">The index to start from (inclusive) for the inner loop.</param>
+    /// <param name="jTo">The index to iterate to (exclusive) for inner loop.</param>
+    /// <param name="iBlock">The size of the block for the outer loop.</param>
+    /// <param name="jBlock">The size of the block for the inner loop.</param>
+    /// <param name="body">The body of the for loop.</param>
+    public static void ForBlocked(
+        long iFrom,
+        long iTo,
+        long jFrom,
+        long jTo,
+        int iBlock,
+        int jBlock,
+        Action<long, long> body)
+    {
+        var iTiles = (iTo - iFrom + iBlock - 1) / iBlock;
+        var jTiles = (jTo - jFrom + jBlock - 1) / jBlock;
+        var tileCount = iTiles * jTiles;
+
+        _ = Parallel.For(
+            0,
+            tileCount,
+            new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+            flat =>
+            {
+                long ti = flat / jTiles;
+                long tj = flat - (ti * jTiles);
+
+                long i0 = iFrom + (ti * iBlock);
+                long j0 = jFrom + (tj * jBlock);
+
+                body(i0, j0);
+            });
+    }
 }
